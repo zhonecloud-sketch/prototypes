@@ -268,6 +268,10 @@ class RealisticSolarSystem {
             }
         };
         
+        // Detect mobile device
+        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                        || window.innerWidth <= 768;
+        
         this.init();
     }
     
@@ -280,6 +284,7 @@ class RealisticSolarSystem {
         this.setupLighting();
         this.setupControls();
         this.setupEventListeners();
+        this.setupMobileUI();
         this.animate();
         
         // Hide loading screen after initialization
@@ -430,6 +435,10 @@ class RealisticSolarSystem {
     }
     
     createPlanets() {
+        // Use lower geometry detail on mobile for better performance
+        const sphereSegments = this.isMobile ? 32 : 64;
+        const ringSegments = this.isMobile ? 64 : 128;
+        
         Object.keys(this.planetData).forEach((key) => {
             const data = this.planetData[key];
             
@@ -439,8 +448,8 @@ class RealisticSolarSystem {
             // Create pivot for axial tilt (separate from orbital movement)
             const tiltPivot = new THREE.Group();
             
-            // Planet geometry and material
-            const geometry = new THREE.SphereGeometry(data.radius, 64, 64);
+            // Planet geometry and material (optimized for mobile)
+            const geometry = new THREE.SphereGeometry(data.radius, sphereSegments, sphereSegments);
             
             // Create material with texture or fallback color
             const material = new THREE.MeshPhongMaterial({ 
@@ -533,10 +542,12 @@ class RealisticSolarSystem {
     }
     
     createRings(data) {
+        // Use lower detail on mobile
+        const ringSegments = this.isMobile ? 64 : 128;
         const ringGeometry = new THREE.RingGeometry(
             data.ringInnerRadius,
             data.ringOuterRadius,
-            128
+            ringSegments
         );
         
         // Fix ring UV mapping for proper texture display
@@ -955,6 +966,186 @@ class RealisticSolarSystem {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
+            // Update mobile detection on resize
+            this.isMobile = window.innerWidth <= 768;
+        });
+    }
+    
+    setupMobileUI() {
+        // Add debug class when in mobile mode
+        if (this.isMobile) {
+            document.body.classList.add('debug-mobile');
+        }
+        
+        // Mobile FAB buttons
+        const mobilePlanetBtn = document.getElementById('mobilePlanetBtn');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const planetListPanel = document.querySelector('.planet-list-panel');
+        const controlPanel = document.querySelector('.control-panel');
+        
+        if (mobilePlanetBtn && planetListPanel) {
+            mobilePlanetBtn.addEventListener('click', () => {
+                planetListPanel.classList.toggle('mobile-visible');
+                // Hide control panel when showing planet list
+                if (controlPanel) controlPanel.classList.remove('mobile-visible');
+            });
+        }
+        
+        if (mobileMenuBtn && controlPanel) {
+            mobileMenuBtn.addEventListener('click', () => {
+                controlPanel.classList.toggle('mobile-visible');
+                // Hide planet list when showing control panel
+                if (planetListPanel) planetListPanel.classList.remove('mobile-visible');
+            });
+        }
+        
+        // Close panels when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.isMobile || window.innerWidth <= 768) {
+                const isClickInsidePanel = e.target.closest('.planet-list-panel') || 
+                                          e.target.closest('.control-panel') ||
+                                          e.target.closest('.mobile-planet-fab') ||
+                                          e.target.closest('.mobile-menu-fab');
+                if (!isClickInsidePanel) {
+                    if (planetListPanel) planetListPanel.classList.remove('mobile-visible');
+                    if (controlPanel) controlPanel.classList.remove('mobile-visible');
+                }
+            }
+        });
+        
+        // Double-tap to focus on nearest planet
+        this.setupDoubleTapGesture();
+        
+        // Swipe left/right to cycle through planets
+        this.setupSwipeGesture();
+    }
+    
+    setupDoubleTapGesture() {
+        const canvas = this.renderer.domElement;
+        let lastTap = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
+        
+        canvas.addEventListener('touchend', (e) => {
+            const currentTime = new Date().getTime();
+            const tapX = e.changedTouches[0].clientX;
+            const tapY = e.changedTouches[0].clientY;
+            const tapGap = currentTime - lastTap;
+            
+            // Check for double tap (within 300ms and 50px)
+            if (tapGap < 300 && tapGap > 0) {
+                const dx = tapX - lastTapX;
+                const dy = tapY - lastTapY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 50) {
+                    e.preventDefault();
+                    this.focusNearestPlanet(tapX, tapY);
+                }
+            }
+            
+            lastTap = currentTime;
+            lastTapX = tapX;
+            lastTapY = tapY;
+        });
+    }
+    
+    focusNearestPlanet(screenX, screenY) {
+        // Convert screen coordinates to normalized device coordinates
+        const mouse = new THREE.Vector2();
+        mouse.x = (screenX / window.innerWidth) * 2 - 1;
+        mouse.y = -(screenY / window.innerHeight) * 2 + 1;
+        
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, this.camera);
+        
+        // First try to find a planet at the tap location
+        const planetMeshes = this.planets.map(p => p.userData.planetMesh);
+        const intersects = raycaster.intersectObjects(planetMeshes);
+        
+        if (intersects.length > 0) {
+            const clickedMesh = intersects[0].object;
+            const planetGroup = this.planets.find(p => p.userData.planetMesh === clickedMesh);
+            if (planetGroup) {
+                this.showPlanetInfo(planetGroup);
+                return;
+            }
+        }
+        
+        // If no direct hit, find the nearest planet to the camera ray
+        let nearestPlanet = null;
+        let nearestDistance = Infinity;
+        
+        this.planets.forEach(planet => {
+            const planetPos = planet.position.clone();
+            const cameraPos = this.camera.position.clone();
+            const rayDir = raycaster.ray.direction.clone();
+            
+            // Calculate distance from planet to ray
+            const toplanet = planetPos.clone().sub(cameraPos);
+            const projection = toplanet.dot(rayDir);
+            const closestPoint = cameraPos.clone().add(rayDir.clone().multiplyScalar(projection));
+            const distance = planetPos.distanceTo(closestPoint);
+            
+            if (distance < nearestDistance && projection > 0) {
+                nearestDistance = distance;
+                nearestPlanet = planet;
+            }
+        });
+        
+        // Only focus if reasonably close (within 100 units of the ray)
+        if (nearestPlanet && nearestDistance < 100) {
+            this.showPlanetInfo(nearestPlanet);
+        }
+    }
+    
+    setupSwipeGesture() {
+        const canvas = this.renderer.domElement;
+        let touchStartX = 0;
+        let touchStartTime = 0;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartTime = new Date().getTime();
+            }
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length === 1) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndTime = new Date().getTime();
+                const swipeDistance = touchEndX - touchStartX;
+                const swipeTime = touchEndTime - touchStartTime;
+                
+                // Detect horizontal swipe (fast, long swipe)
+                if (Math.abs(swipeDistance) > 100 && swipeTime < 300) {
+                    e.preventDefault();
+                    
+                    // Get current planet index
+                    const planetKeys = Object.keys(this.planetData);
+                    let currentIndex = -1;
+                    
+                    if (this.selectedPlanet) {
+                        currentIndex = planetKeys.indexOf(this.selectedPlanet.userData.key);
+                    }
+                    
+                    // Determine next planet based on swipe direction
+                    let nextIndex;
+                    if (swipeDistance > 0) {
+                        // Swipe right - previous planet
+                        nextIndex = currentIndex <= 0 ? planetKeys.length - 1 : currentIndex - 1;
+                    } else {
+                        // Swipe left - next planet
+                        nextIndex = currentIndex >= planetKeys.length - 1 ? 0 : currentIndex + 1;
+                    }
+                    
+                    const nextPlanet = this.planets.find(p => p.userData.key === planetKeys[nextIndex]);
+                    if (nextPlanet) {
+                        this.showPlanetInfo(nextPlanet);
+                    }
+                }
+            }
         });
     }
     
@@ -1149,6 +1340,14 @@ class RealisticSolarSystem {
                 item.classList.remove('active');
             }
         });
+        
+        // Close mobile panels after selection
+        if (this.isMobile || window.innerWidth <= 768) {
+            const planetListPanel = document.querySelector('.planet-list-panel');
+            const controlPanel = document.querySelector('.control-panel');
+            if (planetListPanel) planetListPanel.classList.remove('mobile-visible');
+            if (controlPanel) controlPanel.classList.remove('mobile-visible');
+        }
         
         // Focus camera on planet
         this.focusOnPlanet(planetGroup);
