@@ -332,12 +332,12 @@
             transform: scale(0.95);
         }
         
-        /* Mobile menu toggle */
-        .mobile-menu-fab {
+        /* Mobile info FAB (exclamation icon) - only visible when planet selected */
+        .mobile-info-fab {
             display: none;
             position: fixed !important;
-            top: 80px !important;
-            right: 20px !important;
+            bottom: 20px !important;
+            left: 20px !important;
             z-index: 99999 !important;
             background: rgba(255, 215, 0, 0.9);
             border: none;
@@ -345,85 +345,74 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             pointer-events: auto !important;
+            transition: transform 0.2s ease;
         }
         
-        /* DEBUG: Force mobile styles - remove .debug-mobile to disable */
-        .debug-mobile .header {
-            padding: 0.8rem 1rem;
+        .mobile-info-fab:active {
+            transform: scale(0.95);
         }
         
-        .debug-mobile .header h1 {
-            font-size: 1rem;
-        }
-        
-        .debug-mobile .control-panel {
+        /* Mobile speed popup */
+        .mobile-speed-popup {
             display: none;
             position: fixed;
-            top: 70px;
+            bottom: 90px;
             right: 10px;
-            left: 10px;
-            width: auto;
-            max-height: calc(100vh - 180px);
+            z-index: 99998;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            border-radius: 12px;
             padding: 1rem;
-            z-index: 10000;
+            width: 200px;
         }
         
-        .debug-mobile .control-panel.mobile-visible {
+        .mobile-speed-popup.active {
             display: block;
         }
         
-        .debug-mobile .planet-list-panel {
-            display: none;
-            position: fixed;
-            top: 130px;
-            left: 10px;
-            right: auto;
-            bottom: auto;
-            width: 180px;
-            max-height: calc(100vh - 200px);
-            z-index: 10000;
-        }
-        
-        .debug-mobile .planet-list-panel.mobile-visible {
-            display: block;
-        }
-        
-        .debug-mobile .info-panel {
-            width: calc(100% - 20px);
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            max-height: 200px;
-            padding: 1rem;
-        }
-        
-        .debug-mobile .mobile-controls {
+        .mobile-speed-popup-header {
             display: flex;
-            flex-direction: row;
-            bottom: 20px;
-            right: 10px;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            color: #ffd700;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
         }
         
-        .debug-mobile .mobile-btn {
-            width: 56px;
-            height: 56px;
-            font-size: 1.4rem;
-            margin: 0;
+        .mobile-speed-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
         }
         
-        .debug-mobile .mobile-planet-fab,
-        .debug-mobile .mobile-menu-fab {
+        .mobile-speed-popup-content {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.8rem;
+        }
+        
+        .mobile-speed-popup-content .slider {
+            flex: 1;
+        }
+        
+        .mobile-speed-popup-content span {
+            color: #ffd700;
+            font-size: 0.9rem;
+            min-width: 40px;
         }
         
         @media (max-width: 1024px) {
@@ -452,29 +441,44 @@
                 display: block !important;
             }
             
+            /* Planet list panel - slide in from right */
             .planet-list-panel {
-                display: none !important;
                 position: fixed;
-                top: 130px;
-                left: 10px;
-                right: auto;
+                top: 80px;
+                right: -180px;
+                left: auto;
                 bottom: auto;
                 width: 160px;
-                max-height: calc(100vh - 200px);
+                max-height: calc(100vh - 100px);
                 z-index: 100000;
+                display: block !important;
+                transition: right 0.3s ease;
             }
             
             .planet-list-panel.mobile-visible {
-                display: block !important;
+                right: 10px;
             }
             
+            /* Info panel - slide up from bottom, avoid overlap with zoom buttons */
             .info-panel {
-                width: calc(100% - 20px);
+                position: fixed;
                 left: 10px;
-                right: 10px;
-                bottom: 10px;
-                max-height: 200px;
+                right: 100px; /* Leave space for mobile controls */
+                bottom: -350px;
+                width: auto;
+                max-height: 250px;
                 padding: 1rem;
+                display: block !important;
+                transition: bottom 0.3s ease;
+            }
+            
+            .info-panel.active {
+                bottom: 90px; /* Move up above mobile control icons */
+            }
+            
+            /* Hide close button on mobile - use FAB to toggle */
+            .info-panel .close-btn {
+                display: none;
             }
             
             .info-panel h3 {
@@ -520,14 +524,24 @@
                 margin: 0;
             }
             
-            .mobile-planet-fab,
-            .mobile-menu-fab {
+            /* Planet FAB in upper right corner */
+            .mobile-planet-fab {
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
                 z-index: 99999 !important;
                 pointer-events: auto !important;
                 touch-action: manipulation !important;
+                top: 80px !important;
+                left: auto !important;
+                right: 20px !important;
+            }
+            
+            /* Info FAB - controlled by JS based on selectedPlanet */
+            .mobile-info-fab.visible {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
             }
             
             .slider {
@@ -730,14 +744,27 @@
     </div>
     
     <div class="mobile-controls">
+        <div class="mobile-btn" id="speedBtn">⏱</div>
         <div class="mobile-btn" id="zoomInBtn">+</div>
         <div class="mobile-btn" id="zoomOutBtn">-</div>
         <div class="mobile-btn" id="resetViewBtn">⌂</div>
     </div>
     
+    <!-- Mobile Speed Slider Popup -->
+    <div class="mobile-speed-popup" id="mobileSpeedPopup">
+        <div class="mobile-speed-popup-header">
+            <span>Orbital Speed</span>
+            <button class="mobile-speed-close" id="mobileSpeedClose">&times;</button>
+        </div>
+        <div class="mobile-speed-popup-content">
+            <input type="range" id="mobileSpeedSlider" class="slider" min="0" max="5" step="0.1" value="1">
+            <span id="mobileSpeedValue">1.0x</span>
+        </div>
+    </div>
+    
     <!-- Mobile FAB buttons -->
     <button class="mobile-planet-fab" id="mobilePlanetBtn" aria-label="Show planets">🪐</button>
-    <button class="mobile-menu-fab" id="mobileMenuBtn" aria-label="Show menu">☰</button>
+    <button class="mobile-info-fab" id="mobileInfoBtn" aria-label="Show planet info">!</button>
     
     <div class="instructions" id="instructions">
         <h2>Welcome to the Solar System</h2>
