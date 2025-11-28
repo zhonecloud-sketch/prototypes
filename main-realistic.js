@@ -269,8 +269,10 @@ class RealisticSolarSystem {
         };
         
         // Detect mobile device
-        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                        || window.innerWidth <= 768;
+        // DEBUG: Force mobile mode for testing
+        this.isMobile = true;
+        // this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        //                 || window.innerWidth <= 768;
         
         this.init();
     }
@@ -1005,6 +1007,12 @@ class RealisticSolarSystem {
         const planetListPanel = document.querySelector('.planet-list-panel');
         const controlPanel = document.querySelector('.control-panel');
         
+        console.log('setupMobileUI called, isMobile:', this.isMobile);
+        console.log('mobilePlanetBtn:', mobilePlanetBtn);
+        console.log('mobileMenuBtn:', mobileMenuBtn);
+        console.log('planetListPanel:', planetListPanel);
+        console.log('controlPanel:', controlPanel);
+        
         // On mobile, hide panels by default using inline styles
         if (this.isMobile) {
             if (planetListPanel) {
@@ -1021,30 +1029,51 @@ class RealisticSolarSystem {
                 mobilePlanetBtn.style.top = '80px';
                 mobilePlanetBtn.style.left = '20px';
                 mobilePlanetBtn.style.bottom = 'auto';
+                mobilePlanetBtn.style.zIndex = '1000';
+                mobilePlanetBtn.style.pointerEvents = 'auto';
             }
             if (mobileMenuBtn) {
                 mobileMenuBtn.style.display = 'flex';
                 mobileMenuBtn.style.alignItems = 'center';
                 mobileMenuBtn.style.justifyContent = 'center';
+                mobileMenuBtn.style.zIndex = '1000';
+                mobileMenuBtn.style.pointerEvents = 'auto';
             }
         }
         
-        if (mobilePlanetBtn && planetListPanel) {
-            mobilePlanetBtn.addEventListener('click', () => {
-                const isVisible = planetListPanel.style.display === 'block';
-                planetListPanel.style.display = isVisible ? 'none' : 'block';
+        if (mobilePlanetBtn) {
+            console.log('Adding event listeners to mobilePlanetBtn');
+            const togglePlanetPanel = (e) => {
+                console.log('Planet button clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                if (planetListPanel) {
+                    const isVisible = planetListPanel.style.display === 'block';
+                    console.log('Planet panel isVisible:', isVisible, '-> setting to:', isVisible ? 'none' : 'block');
+                    planetListPanel.style.display = isVisible ? 'none' : 'block';
+                }
                 // Hide control panel when showing planet list
                 if (controlPanel) controlPanel.style.display = 'none';
-            });
+            };
+            mobilePlanetBtn.addEventListener('click', togglePlanetPanel);
+            mobilePlanetBtn.addEventListener('touchend', togglePlanetPanel);
         }
         
-        if (mobileMenuBtn && controlPanel) {
-            mobileMenuBtn.addEventListener('click', () => {
-                const isVisible = controlPanel.style.display === 'block';
-                controlPanel.style.display = isVisible ? 'none' : 'block';
+        if (mobileMenuBtn) {
+            console.log('Adding event listeners to mobileMenuBtn');
+            const toggleControlPanel = (e) => {
+                console.log('Menu button clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                if (controlPanel) {
+                    const isVisible = controlPanel.style.display === 'block';
+                    controlPanel.style.display = isVisible ? 'none' : 'block';
+                }
                 // Hide planet list when showing control panel
                 if (planetListPanel) planetListPanel.style.display = 'none';
-            });
+            };
+            mobileMenuBtn.addEventListener('click', toggleControlPanel);
+            mobileMenuBtn.addEventListener('touchend', toggleControlPanel);
         }
         
         // Close panels when clicking outside
