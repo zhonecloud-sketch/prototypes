@@ -929,33 +929,41 @@ class RealisticSolarSystem {
             });
         }
         
-        // Mobile controls
+        // Mobile controls - with touch event handlers for mobile browsers
         const zoomInBtn = document.getElementById('zoomInBtn');
         if (zoomInBtn) {
-            zoomInBtn.addEventListener('click', () => {
+            const handleZoomIn = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.controls.cameraDistance *= 0.8;
-                // Use smaller min distance when focused on a planet
                 const minDist = this.selectedPlanet ? (this.selectedPlanet.userData.radius * 2 + 2) : 30;
                 this.controls.cameraDistance = Math.max(minDist, this.controls.cameraDistance);
-                closeControlPanelOnMobile();
-            });
+            };
+            zoomInBtn.onclick = handleZoomIn;
+            zoomInBtn.ontouchend = handleZoomIn;
         }
         
         const zoomOutBtn = document.getElementById('zoomOutBtn');
         if (zoomOutBtn) {
-            zoomOutBtn.addEventListener('click', () => {
+            const handleZoomOut = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.controls.cameraDistance *= 1.2;
                 this.controls.cameraDistance = Math.min(2500, this.controls.cameraDistance);
-                closeControlPanelOnMobile();
-            });
+            };
+            zoomOutBtn.onclick = handleZoomOut;
+            zoomOutBtn.ontouchend = handleZoomOut;
         }
         
         const resetViewBtn = document.getElementById('resetViewBtn');
         if (resetViewBtn) {
-            resetViewBtn.addEventListener('click', () => {
+            const handleResetView = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.resetView();
-                closeControlPanelOnMobile();
-            });
+            };
+            resetViewBtn.onclick = handleResetView;
+            resetViewBtn.ontouchend = handleResetView;
         }
         
         // Info panel close
@@ -1083,6 +1091,7 @@ class RealisticSolarSystem {
             const toggleSpeedPopup = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (mobileSpeedPopup) {
                     mobileSpeedPopup.classList.toggle('active');
                 }
