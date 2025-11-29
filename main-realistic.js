@@ -450,11 +450,10 @@ class RealisticSolarSystem {
             // Planet geometry and material (optimized for mobile)
             const geometry = new THREE.SphereGeometry(data.radius, sphereSegments, sphereSegments);
             
-            // Create material with texture or fallback color
-            const material = new THREE.MeshPhongMaterial({ 
+            // Create material with texture or fallback color (Lambert for matte look)
+            const material = new THREE.MeshLambertMaterial({ 
                 map: this.textures[key],
                 color: this.textures[key] ? 0xffffff : data.color,
-                shininess: data.hasAtmosphere ? 50 : 30,
             });
             
             const planetMesh = new THREE.Mesh(geometry, material);
@@ -1568,7 +1567,7 @@ class RealisticSolarSystem {
     
     updateCamera() {
         if (this.autoRotate && !this.controls.mouseDown) {
-            this.controls.cameraAngleX += 0.01; // Rotate ~34°/sec at 60fps
+            this.controls.cameraAngleX += 0.005; // Rotate ~17°/sec at 60fps
         }
         
         // Determine the look-at target (selected planet or Sun)
