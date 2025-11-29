@@ -150,7 +150,11 @@ class JapaneseHouse3D {
     enableLowPerformanceMode() {
         this.lowPerformanceMode = true;
         
-        // Reduce shadow quality
+        // Reduce shadow quality - dispose old shadow map first
+        if (this.mainLight.shadow.map) {
+            this.mainLight.shadow.map.dispose();
+            this.mainLight.shadow.map = null;
+        }
         this.mainLight.shadow.mapSize.width = 512;
         this.mainLight.shadow.mapSize.height = 512;
         
@@ -166,7 +170,11 @@ class JapaneseHouse3D {
     disableLowPerformanceMode() {
         this.lowPerformanceMode = false;
         
-        // Restore shadow quality
+        // Restore shadow quality - dispose old shadow map first
+        if (this.mainLight.shadow.map) {
+            this.mainLight.shadow.map.dispose();
+            this.mainLight.shadow.map = null;
+        }
         this.mainLight.shadow.mapSize.width = 1024;
         this.mainLight.shadow.mapSize.height = 1024;
         
@@ -850,30 +858,53 @@ class JapaneseHouse3D {
         });
         const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
         trunk.position.y = 0.4;
-        trunk.rotation.z = -15 * Math.PI / 180;  // 15 degrees slant
+        const trunkAngle = -15 * Math.PI / 180;  // 15 degrees slant
+        trunk.rotation.z = trunkAngle;
         trunk.castShadow = true;
         treeGroup.add(trunk);
 
-        // Branch - half the thickness, same length, slanting at 60 degrees
-        const branchGeometry = new THREE.CylinderGeometry(0.02, 0.03, 0.8);
-        const branch = new THREE.Mesh(branchGeometry, trunkMaterial);  // Same wood material
-        // Position at top of slanted trunk
-        const trunkTopX = Math.sin(15 * Math.PI / 180) * 0.4;
-        const trunkTopY = 0.8;
-        branch.position.set(trunkTopX + 0.3, trunkTopY + 0.2, 0);
-        branch.rotation.z = -60 * Math.PI / 180;  // 60 degrees slant
+        // Calculate the exact position on upper-side of trunk for branch connection
+        // Trunk center is at y=0.4, trunk height is 0.8
+        // We want branch to emerge from upper-side, about 60% up from trunk center
+        const trunkCenterY = 0.4;
+        const heightAlongTrunk = 0.25;  // Distance up from trunk center along trunk axis
+        const trunkRadiusAtAttach = 0.07;  // Approximate trunk radius at attach point
+        
+        // Calculate attach point considering trunk slant
+        // The trunk is rotated, so we need to find where on the tilted trunk surface the branch attaches
+        const attachX = Math.sin(-trunkAngle) * heightAlongTrunk + trunkRadiusAtAttach;
+        const attachY = trunkCenterY + Math.cos(-trunkAngle) * heightAlongTrunk;
+        
+        // Joint/bulge where branch meets trunk
+        const jointGeometry = new THREE.SphereGeometry(0.055, 8, 6);
+        const joint = new THREE.Mesh(jointGeometry, trunkMaterial);
+        joint.position.set(attachX, attachY, 0);
+        joint.scale.set(1.2, 0.8, 1);  // Slightly flattened bulge
+        joint.castShadow = true;
+        treeGroup.add(joint);
+
+        // Branch - emerges from the joint, slanting at 50 degrees from vertical
+        const branchAngle = -50 * Math.PI / 180;
+        const branchLength = 0.7;
+        const branchGeometry = new THREE.CylinderGeometry(0.02, 0.04, branchLength);
+        // Translate geometry so rotation pivot is at base of branch
+        branchGeometry.translate(0, branchLength / 2, 0);
+        const branch = new THREE.Mesh(branchGeometry, trunkMaterial);
+        // Position branch base at joint location
+        branch.position.set(attachX, attachY, 0);
+        branch.rotation.z = branchAngle;
         branch.castShadow = true;
         treeGroup.add(branch);
+        
+        // Calculate branch end position for leaf placement
+        const branchEndX = attachX + Math.sin(-branchAngle) * branchLength;
+        const branchEndY = attachY + Math.cos(-branchAngle) * branchLength;
 
         // Yellow leaves group - expanded horizontally
         const leafMaterial = new THREE.MeshLambertMaterial({ color: 0xFFD700 });  // Golden yellow
         this.materials.yellowLeaves.push(leafMaterial);  // Store reference
         
-        // Main leaf cluster at branch end
-        const branchEndX = trunkTopX + 0.3 + Math.sin(60 * Math.PI / 180) * 0.4;
-        const branchEndY = trunkTopY + 0.2 + Math.cos(60 * Math.PI / 180) * 0.4;
-        
-        // Multiple leaf spheres - wider horizontal spread
+        // Multiple leaf spheres - wider horizontal spread (branchEndX/Y calculated above)
         const leafPositions = [
             { x: 0, y: 0, z: 0, size: 0.35 },
             { x: 0.35, y: 0.05, z: 0.2, size: 0.28 },
@@ -1393,6 +1424,11 @@ class JapaneseHouse3D {
         const time = Date.now() * 0.001;
         this.frameCount++;
         
+        // Force shadow map update on first few frames to ensure shadows render
+        if (this.frameCount < 5) {
+            this.renderer.shadowMap.needsUpdate = true;
+        }
+        
         // Update controls
         this.controls.update();
         
@@ -1466,12 +1502,7 @@ class JapaneseHouse3D {
             this.windowLight.intensity = 0.3 + (1 - this.timeOfDay) * 1.0 + Math.sin(time * 3) * 0.05;
         }
         
-        // Update shadows only when needed (performance optimization)
-        if (this.frameCount % 60 === 0) {
-            this.renderer.shadowMap.needsUpdate = true;
-        }
-        
-        // Render the scene
+        // Render the scene (shadows update automatically via shadowMap.autoUpdate = true)
         this.renderer.render(this.scene, this.camera);
     }
 }
