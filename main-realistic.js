@@ -46,8 +46,8 @@ class RealisticSolarSystem {
                 axialTilt: 0.01,       // degrees - almost no tilt
                 rotationDirection: 'prograde',
                 // Animation speeds (relative, not to scale)
-                orbitSpeed: 0.04,      // Fastest orbit
-                rotationSpeed: 0.017,  // 58.6 Earth days per rotation (24/1407 hrs)
+                orbitSpeed: 0.008,      // Fastest orbit
+                rotationSpeed: 0.0034,  // 58.6 Earth days per rotation (24/1407 hrs)
                 // Visual properties
                 color: 0x8c8c8c,
                 hasAtmosphere: false,
@@ -71,8 +71,8 @@ class RealisticSolarSystem {
                 // Rotation parameters - RETROGRADE!
                 axialTilt: 177.4,      // degrees - nearly upside down!
                 rotationDirection: 'retrograde', // Rotates BACKWARDS
-                orbitSpeed: 0.015,
-                rotationSpeed: 0.004,  // 243 Earth days per rotation (24/5832 hrs)
+                orbitSpeed: 0.003,
+                rotationSpeed: 0.0008,  // 243 Earth days per rotation (24/5832 hrs)
                 // Visual properties
                 color: 0xffd700,
                 hasAtmosphere: true,
@@ -98,8 +98,8 @@ class RealisticSolarSystem {
                 // Rotation parameters
                 axialTilt: 23.4,       // degrees - causes seasons
                 rotationDirection: 'prograde',
-                orbitSpeed: 0.01,
-                rotationSpeed: 1.0,    // Baseline: 24 hours per rotation
+                orbitSpeed: 0.002,
+                rotationSpeed: 0.2,    // Baseline: 24 hours per rotation
                 // Visual properties
                 color: 0x4169e1,
                 hasAtmosphere: true,
@@ -125,8 +125,8 @@ class RealisticSolarSystem {
                 // Rotation parameters
                 axialTilt: 25.2,       // degrees - similar to Earth
                 rotationDirection: 'prograde',
-                orbitSpeed: 0.008,
-                rotationSpeed: 0.976,  // 24.6 hours per rotation (24/24.6)
+                orbitSpeed: 0.0016,
+                rotationSpeed: 0.1952,  // 24.6 hours per rotation (24/24.6)
                 // Visual properties
                 color: 0xcd5c5c,
                 hasAtmosphere: true,
@@ -153,8 +153,8 @@ class RealisticSolarSystem {
                 // Rotation parameters
                 axialTilt: 3.1,        // degrees - nearly upright
                 rotationDirection: 'prograde',
-                orbitSpeed: 0.002,
-                rotationSpeed: 2.42,   // 9.9 hours per rotation (24/9.9)
+                orbitSpeed: 0.0004,
+                rotationSpeed: 0.484,   // 9.9 hours per rotation (24/9.9)
                 // Visual properties
                 color: 0xdaa520,
                 hasAtmosphere: true,
@@ -184,8 +184,8 @@ class RealisticSolarSystem {
                 // Rotation parameters
                 axialTilt: 26.7,       // degrees - noticeable tilt
                 rotationDirection: 'prograde',
-                orbitSpeed: 0.001,
-                rotationSpeed: 2.24,   // 10.7 hours per rotation (24/10.7)
+                orbitSpeed: 0.0002,
+                rotationSpeed: 0.448,   // 10.7 hours per rotation (24/10.7)
                 // Visual properties
                 color: 0xf0e68c,
                 hasAtmosphere: true,
@@ -216,8 +216,8 @@ class RealisticSolarSystem {
                 // Rotation parameters - EXTREME TILT!
                 axialTilt: 97.8,       // degrees - rotates on its SIDE!
                 rotationDirection: 'retrograde', // Considered retrograde due to extreme tilt
-                orbitSpeed: 0.0004,
-                rotationSpeed: 1.40,   // 17.2 hours per rotation (24/17.2)
+                orbitSpeed: 0.00008,
+                rotationSpeed: 0.28,   // 17.2 hours per rotation (24/17.2)
                 // Visual properties
                 color: 0x00ffff,
                 hasAtmosphere: true,
@@ -247,8 +247,8 @@ class RealisticSolarSystem {
                 // Rotation parameters
                 axialTilt: 28.3,       // degrees - Earth-like tilt
                 rotationDirection: 'prograde',
-                orbitSpeed: 0.0002,
-                rotationSpeed: 1.49,   // 16.1 hours per rotation (24/16.1)
+                orbitSpeed: 0.00004,
+                rotationSpeed: 0.298,   // 16.1 hours per rotation (24/16.1)
                 // Visual properties
                 color: 0x0000cd,
                 hasAtmosphere: true,
@@ -268,6 +268,9 @@ class RealisticSolarSystem {
             }
         };
         
+        // Always use mobile-style UI for unified experience
+        this.isMobile = true;
+        
         this.init();
     }
     
@@ -280,6 +283,7 @@ class RealisticSolarSystem {
         this.setupLighting();
         this.setupControls();
         this.setupEventListeners();
+        this.setupMobileUI();
         this.animate();
         
         // Hide loading screen after initialization
@@ -430,6 +434,10 @@ class RealisticSolarSystem {
     }
     
     createPlanets() {
+        // Use lower geometry detail on mobile for better performance
+        const sphereSegments = this.isMobile ? 32 : 64;
+        const ringSegments = this.isMobile ? 64 : 128;
+        
         Object.keys(this.planetData).forEach((key) => {
             const data = this.planetData[key];
             
@@ -439,8 +447,8 @@ class RealisticSolarSystem {
             // Create pivot for axial tilt (separate from orbital movement)
             const tiltPivot = new THREE.Group();
             
-            // Planet geometry and material
-            const geometry = new THREE.SphereGeometry(data.radius, 64, 64);
+            // Planet geometry and material (optimized for mobile)
+            const geometry = new THREE.SphereGeometry(data.radius, sphereSegments, sphereSegments);
             
             // Create material with texture or fallback color
             const material = new THREE.MeshPhongMaterial({ 
@@ -533,10 +541,12 @@ class RealisticSolarSystem {
     }
     
     createRings(data) {
+        // Use lower detail on mobile
+        const ringSegments = this.isMobile ? 64 : 128;
         const ringGeometry = new THREE.RingGeometry(
             data.ringInnerRadius,
             data.ringOuterRadius,
-            128
+            ringSegments
         );
         
         // Fix ring UV mapping for proper texture display
@@ -736,7 +746,8 @@ class RealisticSolarSystem {
             e.preventDefault();
             this.controls.isAnimating = false; // Stop any running animation
             this.controls.cameraDistance += e.deltaY * 0.5;
-            this.controls.cameraDistance = Math.max(30, Math.min(2500, this.controls.cameraDistance));
+            const minDist = this.selectedPlanet ? (this.selectedPlanet.userData.radius * 2 + 2) : 30;
+            this.controls.cameraDistance = Math.max(minDist, Math.min(2500, this.controls.cameraDistance));
         });
         
         // Touch controls
@@ -773,6 +784,8 @@ class RealisticSolarSystem {
         let touchStartDistance = 0;
         
         canvas.addEventListener('touchstart', (e) => {
+            // Only handle touches directly on the canvas, not on UI elements
+            if (e.target !== canvas) return;
             e.preventDefault();
             
             if (e.touches.length === 1) {
@@ -787,6 +800,8 @@ class RealisticSolarSystem {
         }, { passive: false });
         
         canvas.addEventListener('touchmove', (e) => {
+            // Only handle touches directly on the canvas
+            if (e.target !== canvas) return;
             e.preventDefault();
             
             if (e.touches.length === 1 && this.controls.mouseDown) {
@@ -808,13 +823,16 @@ class RealisticSolarSystem {
                     const scale = touchStartDistance / distance;
                     this.controls.isAnimating = false; // Stop any running animation
                     this.controls.cameraDistance *= scale;
-                    this.controls.cameraDistance = Math.max(30, Math.min(2500, this.controls.cameraDistance));
+                    const minDist = this.selectedPlanet ? (this.selectedPlanet.userData.radius * 2 + 2) : 30;
+                    this.controls.cameraDistance = Math.max(minDist, Math.min(2500, this.controls.cameraDistance));
                 }
                 touchStartDistance = distance;
             }
         }, { passive: false });
         
         canvas.addEventListener('touchend', (e) => {
+            // Only handle touches directly on the canvas
+            if (e.target !== canvas) return;
             e.preventDefault();
             this.controls.mouseDown = false;
             touchStartDistance = 0;
@@ -833,6 +851,14 @@ class RealisticSolarSystem {
             });
         }
         
+        // Helper to close control panel on mobile
+        const closeControlPanelOnMobile = () => {
+            if (this.isMobile) {
+                const cp = document.querySelector('.control-panel');
+                if (cp) cp.style.display = 'none';
+            }
+        };
+        
         // Pause button
         const pauseBtn = document.getElementById('pauseBtn');
         if (pauseBtn) {
@@ -840,13 +866,17 @@ class RealisticSolarSystem {
                 this.isPaused = !this.isPaused;
                 e.target.textContent = this.isPaused ? 'Play' : 'Pause';
                 e.target.classList.toggle('active');
+                closeControlPanelOnMobile();
             });
         }
         
         // Reset view button
         const resetBtn = document.getElementById('resetBtn');
         if (resetBtn) {
-            resetBtn.addEventListener('click', () => this.resetView());
+            resetBtn.addEventListener('click', () => {
+                this.resetView();
+                closeControlPanelOnMobile();
+            });
         }
         
         // Toggle buttons
@@ -856,6 +886,7 @@ class RealisticSolarSystem {
                 this.showOrbits = !this.showOrbits;
                 e.target.classList.toggle('active');
                 this.toggleOrbits();
+                closeControlPanelOnMobile();
             });
         }
         
@@ -865,6 +896,7 @@ class RealisticSolarSystem {
                 this.showLabels = !this.showLabels;
                 e.target.classList.toggle('active');
                 this.toggleLabels();
+                closeControlPanelOnMobile();
             });
         }
         
@@ -874,15 +906,14 @@ class RealisticSolarSystem {
                 this.educationalScale = !this.educationalScale;
                 e.target.classList.toggle('active');
                 this.updatePlanetScales();
+                closeControlPanelOnMobile();
             });
         }
         
+        // Auto-rotate is always on - button does nothing (control panel is hidden anyway)
         const autoRotateBtn = document.getElementById('autoRotateBtn');
         if (autoRotateBtn) {
-            autoRotateBtn.addEventListener('click', (e) => {
-                this.autoRotate = !this.autoRotate;
-                e.target.classList.toggle('active');
-            });
+            autoRotateBtn.classList.add('active');
         }
         
         const topViewBtn = document.getElementById('topViewBtn');
@@ -894,6 +925,7 @@ class RealisticSolarSystem {
                 } else {
                     this.resetView(); // Return to default view when toggled off
                 }
+                closeControlPanelOnMobile();
             });
         }
         
@@ -902,7 +934,10 @@ class RealisticSolarSystem {
         if (zoomInBtn) {
             zoomInBtn.addEventListener('click', () => {
                 this.controls.cameraDistance *= 0.8;
-                this.controls.cameraDistance = Math.max(30, this.controls.cameraDistance);
+                // Use smaller min distance when focused on a planet
+                const minDist = this.selectedPlanet ? (this.selectedPlanet.userData.radius * 2 + 2) : 30;
+                this.controls.cameraDistance = Math.max(minDist, this.controls.cameraDistance);
+                closeControlPanelOnMobile();
             });
         }
         
@@ -911,12 +946,16 @@ class RealisticSolarSystem {
             zoomOutBtn.addEventListener('click', () => {
                 this.controls.cameraDistance *= 1.2;
                 this.controls.cameraDistance = Math.min(2500, this.controls.cameraDistance);
+                closeControlPanelOnMobile();
             });
         }
         
         const resetViewBtn = document.getElementById('resetViewBtn');
         if (resetViewBtn) {
-            resetViewBtn.addEventListener('click', () => this.resetView());
+            resetViewBtn.addEventListener('click', () => {
+                this.resetView();
+                closeControlPanelOnMobile();
+            });
         }
         
         // Info panel close
@@ -955,6 +994,293 @@ class RealisticSolarSystem {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+    
+    setupMobileUI() {
+        // Mobile FAB buttons
+        const mobilePlanetBtn = document.getElementById('mobilePlanetBtn');
+        const mobileInfoBtn = document.getElementById('mobileInfoBtn');
+        const planetListPanel = document.querySelector('.planet-list-panel');
+        const infoPanel = document.getElementById('infoPanel');
+        
+        // Speed popup elements
+        const speedBtn = document.getElementById('speedBtn');
+        const mobileSpeedPopup = document.getElementById('mobileSpeedPopup');
+        const mobileSpeedClose = document.getElementById('mobileSpeedClose');
+        const mobileSpeedSlider = document.getElementById('mobileSpeedSlider');
+        const mobileSpeedValue = document.getElementById('mobileSpeedValue');
+        
+        // On mobile, hide planet list panel by default (slides in from right)
+        if (this.isMobile) {
+            if (planetListPanel) {
+                planetListPanel.classList.remove('mobile-visible');
+            }
+            // Show FAB buttons on mobile with highest z-index
+            if (mobilePlanetBtn) {
+                mobilePlanetBtn.style.cssText = `
+                    display: flex !important;
+                    align-items: center;
+                    justify-content: center;
+                    position: fixed !important;
+                    top: 80px !important;
+                    right: 20px !important;
+                    left: auto !important;
+                    z-index: 99999 !important;
+                    pointer-events: auto !important;
+                    touch-action: manipulation !important;
+                `;
+            }
+            // Hide info FAB initially (only show when planet selected)
+            if (mobileInfoBtn) {
+                mobileInfoBtn.classList.remove('visible');
+            }
+            
+            // Set auto-rotate on by default for mobile
+            this.autoRotate = true;
+            const autoRotateBtn = document.getElementById('autoRotateBtn');
+            if (autoRotateBtn) {
+                autoRotateBtn.classList.add('active');
+            }
+        }
+        
+        // Planet list FAB - toggle planet panel (slides in from right)
+        if (mobilePlanetBtn) {
+            const togglePlanetPanel = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                if (planetListPanel) {
+                    planetListPanel.classList.toggle('mobile-visible');
+                }
+                // Hide speed popup when showing planet list
+                if (mobileSpeedPopup) {
+                    mobileSpeedPopup.classList.remove('active');
+                }
+                return false;
+            };
+            mobilePlanetBtn.onclick = togglePlanetPanel;
+            mobilePlanetBtn.ontouchend = togglePlanetPanel;
+        }
+        
+        // Info FAB - toggle info panel (slides up from bottom)
+        if (mobileInfoBtn) {
+            const toggleInfoPanel = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                if (infoPanel) {
+                    infoPanel.classList.toggle('active');
+                }
+                return false;
+            };
+            mobileInfoBtn.onclick = toggleInfoPanel;
+            mobileInfoBtn.ontouchend = toggleInfoPanel;
+        }
+        
+        // Speed button - toggle speed popup
+        if (speedBtn) {
+            const toggleSpeedPopup = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (mobileSpeedPopup) {
+                    mobileSpeedPopup.classList.toggle('active');
+                }
+                // Hide planet panel when showing speed popup
+                if (planetListPanel) {
+                    planetListPanel.classList.remove('mobile-visible');
+                }
+                return false;
+            };
+            speedBtn.onclick = toggleSpeedPopup;
+            speedBtn.ontouchend = toggleSpeedPopup;
+        }
+        
+        // Speed popup close button
+        if (mobileSpeedClose) {
+            mobileSpeedClose.onclick = () => {
+                if (mobileSpeedPopup) {
+                    mobileSpeedPopup.classList.remove('active');
+                }
+            };
+        }
+        
+        // Mobile speed slider
+        if (mobileSpeedSlider) {
+            mobileSpeedSlider.addEventListener('input', (e) => {
+                this.animationSpeed = parseFloat(e.target.value);
+                if (mobileSpeedValue) {
+                    mobileSpeedValue.textContent = this.animationSpeed.toFixed(1) + 'x';
+                }
+                // Sync with desktop slider
+                const speedSlider = document.getElementById('speedSlider');
+                const speedValue = document.getElementById('speedValue');
+                if (speedSlider) speedSlider.value = e.target.value;
+                if (speedValue) speedValue.textContent = this.animationSpeed.toFixed(1);
+            });
+        }
+        
+        // Close panels when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.isMobile || window.innerWidth <= 1024) {
+                const isClickInsidePanel = e.target.closest('.planet-list-panel') || 
+                                          e.target.closest('.mobile-speed-popup') ||
+                                          e.target.closest('.mobile-planet-fab') ||
+                                          e.target.closest('.mobile-info-fab') ||
+                                          e.target.closest('#speedBtn');
+                if (!isClickInsidePanel) {
+                    if (planetListPanel) {
+                        planetListPanel.classList.remove('mobile-visible');
+                    }
+                    if (mobileSpeedPopup) {
+                        mobileSpeedPopup.classList.remove('active');
+                    }
+                }
+            }
+        });
+        
+        // Double-tap to focus on nearest planet
+        this.setupDoubleTapGesture();
+        
+        // Swipe left/right to cycle through planets
+        this.setupSwipeGesture();
+    }
+    
+    setupDoubleTapGesture() {
+        const canvas = this.renderer.domElement;
+        let lastTap = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
+        
+        canvas.addEventListener('touchend', (e) => {
+            // Only handle touches on the canvas
+            if (e.target !== canvas) return;
+            
+            const currentTime = new Date().getTime();
+            const tapX = e.changedTouches[0].clientX;
+            const tapY = e.changedTouches[0].clientY;
+            const tapGap = currentTime - lastTap;
+            
+            // Check for double tap (within 300ms and 50px)
+            if (tapGap < 300 && tapGap > 0) {
+                const dx = tapX - lastTapX;
+                const dy = tapY - lastTapY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 50) {
+                    e.preventDefault();
+                    this.focusNearestPlanet(tapX, tapY);
+                }
+            }
+            
+            lastTap = currentTime;
+            lastTapX = tapX;
+            lastTapY = tapY;
+        });
+    }
+    
+    focusNearestPlanet(screenX, screenY) {
+        // Convert screen coordinates to normalized device coordinates
+        const mouse = new THREE.Vector2();
+        mouse.x = (screenX / window.innerWidth) * 2 - 1;
+        mouse.y = -(screenY / window.innerHeight) * 2 + 1;
+        
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, this.camera);
+        
+        // First try to find a planet at the tap location
+        const planetMeshes = this.planets.map(p => p.userData.planetMesh);
+        const intersects = raycaster.intersectObjects(planetMeshes);
+        
+        if (intersects.length > 0) {
+            const clickedMesh = intersects[0].object;
+            const planetGroup = this.planets.find(p => p.userData.planetMesh === clickedMesh);
+            if (planetGroup) {
+                this.showPlanetInfo(planetGroup);
+                return;
+            }
+        }
+        
+        // If no direct hit, find the nearest planet to the camera ray
+        let nearestPlanet = null;
+        let nearestDistance = Infinity;
+        
+        this.planets.forEach(planet => {
+            const planetPos = planet.position.clone();
+            const cameraPos = this.camera.position.clone();
+            const rayDir = raycaster.ray.direction.clone();
+            
+            // Calculate distance from planet to ray
+            const toplanet = planetPos.clone().sub(cameraPos);
+            const projection = toplanet.dot(rayDir);
+            const closestPoint = cameraPos.clone().add(rayDir.clone().multiplyScalar(projection));
+            const distance = planetPos.distanceTo(closestPoint);
+            
+            if (distance < nearestDistance && projection > 0) {
+                nearestDistance = distance;
+                nearestPlanet = planet;
+            }
+        });
+        
+        // Only focus if reasonably close (within 100 units of the ray)
+        if (nearestPlanet && nearestDistance < 100) {
+            this.showPlanetInfo(nearestPlanet);
+        }
+    }
+    
+    setupSwipeGesture() {
+        const canvas = this.renderer.domElement;
+        let touchStartX = 0;
+        let touchStartTime = 0;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            // Only handle touches on the canvas
+            if (e.target !== canvas) return;
+            
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartTime = new Date().getTime();
+            }
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            // Only handle touches on the canvas
+            if (e.target !== canvas) return;
+            
+            if (e.changedTouches.length === 1) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndTime = new Date().getTime();
+                const swipeDistance = touchEndX - touchStartX;
+                const swipeTime = touchEndTime - touchStartTime;
+                
+                // Detect horizontal swipe (fast, long swipe)
+                if (Math.abs(swipeDistance) > 100 && swipeTime < 300) {
+                    e.preventDefault();
+                    
+                    // Get current planet index
+                    const planetKeys = Object.keys(this.planetData);
+                    let currentIndex = -1;
+                    
+                    if (this.selectedPlanet) {
+                        currentIndex = planetKeys.indexOf(this.selectedPlanet.userData.key);
+                    }
+                    
+                    // Determine next planet based on swipe direction
+                    let nextIndex;
+                    if (swipeDistance > 0) {
+                        // Swipe right - previous planet
+                        nextIndex = currentIndex <= 0 ? planetKeys.length - 1 : currentIndex - 1;
+                    } else {
+                        // Swipe left - next planet
+                        nextIndex = currentIndex >= planetKeys.length - 1 ? 0 : currentIndex + 1;
+                    }
+                    
+                    const nextPlanet = this.planets.find(p => p.userData.key === planetKeys[nextIndex]);
+                    if (nextPlanet) {
+                        this.showPlanetInfo(nextPlanet);
+                    }
+                }
+            }
         });
     }
     
@@ -1020,6 +1346,18 @@ class RealisticSolarSystem {
         
         // Clear selected planet - we're switching to Sun-centered view
         this.selectedPlanet = null;
+        
+        // Hide info FAB when no planet is selected
+        const mobileInfoBtn = document.getElementById('mobileInfoBtn');
+        if (mobileInfoBtn) {
+            mobileInfoBtn.classList.remove('visible');
+        }
+        
+        // Hide info panel
+        const infoPanel = document.getElementById('infoPanel');
+        if (infoPanel) {
+            infoPanel.classList.remove('active');
+        }
         
         // Set starting spherical coordinates based on actual camera position
         this.controls.cameraDistance = Math.max(distanceFromSun, 50);
@@ -1138,8 +1476,6 @@ class RealisticSolarSystem {
         // Add axial tilt info if element exists
         setTextContent('planetAxialTilt', data.axialTiltInfo);
         
-        infoPanel.classList.add('active');
-        
         // Update planet list selection
         const planetListItems = document.querySelectorAll('.planet-list-item');
         planetListItems.forEach(item => {
@@ -1150,26 +1486,27 @@ class RealisticSolarSystem {
             }
         });
         
+        // Show info FAB when planet is selected
+        const mobileInfoBtn = document.getElementById('mobileInfoBtn');
+        if (mobileInfoBtn) {
+            mobileInfoBtn.classList.add('visible');
+        }
+        
+        // Close planet list panel after selection
+        const planetListPanel = document.querySelector('.planet-list-panel');
+        if (planetListPanel) {
+            planetListPanel.classList.remove('mobile-visible');
+        }
+        
+        // Info panel hidden by default - user toggles with FAB
+        infoPanel.classList.remove('active');
+        
         // Focus camera on planet
         this.focusOnPlanet(planetGroup);
     }
     
     focusOnPlanet(planetGroup) {
         const data = planetGroup.userData;
-        
-        // Get the planet's current position
-        const planetPosition = planetGroup.position.clone();
-        const planetDistance = planetPosition.length(); // Distance from Sun to planet
-        
-        // Calculate the direction from Sun (origin) to the planet
-        const directionFromSun = planetPosition.clone().normalize();
-        
-        // Target camera angles: align along the Sun-planet axis
-        const targetAngleX = Math.atan2(directionFromSun.z, directionFromSun.x);
-        
-        // Target elevation: align with the planet's orbital plane
-        const xzDistance = Math.sqrt(planetPosition.x * planetPosition.x + planetPosition.z * planetPosition.z);
-        const targetAngleY = Math.atan2(planetPosition.y, xzDistance);
         
         // Calculate viewing distance to capture full globe and label
         const fov = 75 * Math.PI / 180; // Camera FOV in radians
@@ -1185,18 +1522,14 @@ class RealisticSolarSystem {
         const totalHeight = Math.max(effectiveRadius, labelHeight);
         
         // Calculate distance needed to fit the planet and label in view
-        // This is the distance FROM the planet (since camera will orbit around selected planet)
         const viewingDistance = totalHeight / Math.tan(fov / 2) * 1.5;
         const minViewingDistance = 15;
         const planetViewDistance = Math.max(viewingDistance, minViewingDistance);
         
-        // Target distance from Sun (for the animation phase)
-        const targetDistance = planetDistance + planetViewDistance;
+        // Set the selected planet immediately so camera follows it during animation
+        this.selectedPlanet = planetGroup;
         
-        // Clear selected planet during animation - camera orbits Sun during transition
-        this.selectedPlanet = null;
-        
-        // Animate the camera smoothly to the target position
+        // Animate camera distance to the planet
         this.controls.isAnimating = true;
         this.controls.animationId++;
         const currentAnimationId = this.controls.animationId;
@@ -1205,26 +1538,18 @@ class RealisticSolarSystem {
             // Stop if a new animation started
             if (this.controls.animationId !== currentAnimationId) return;
             
-            // Smooth interpolation with easing factor (lower = slower)
-            const easing = 0.4;
+            // Smooth interpolation of distance only
+            const easing = 0.15;
+            this.controls.cameraDistance += (planetViewDistance - this.controls.cameraDistance) * easing;
             
-            this.controls.cameraDistance += (targetDistance - this.controls.cameraDistance) * easing;
-            this.controls.cameraAngleX += (targetAngleX - this.controls.cameraAngleX) * easing;
-            this.controls.cameraAngleY += (targetAngleY - this.controls.cameraAngleY) * easing;
+            // Check if we're close enough to target distance
+            const distanceDiff = Math.abs(this.controls.cameraDistance - planetViewDistance);
             
-            // Check if we're close enough to target
-            const distanceDiff = Math.abs(this.controls.cameraDistance - targetDistance);
-            const angleXDiff = Math.abs(this.controls.cameraAngleX - targetAngleX);
-            const angleYDiff = Math.abs(this.controls.cameraAngleY - targetAngleY);
-            
-            if (distanceDiff > 0.5 || angleXDiff > 0.001 || angleYDiff > 0.001) {
+            if (distanceDiff > 0.5) {
                 requestAnimationFrame(animate);
             } else {
-                // Animation complete - now set selectedPlanet and adjust distance
-                this.controls.cameraDistance = planetViewDistance; // Distance from planet, not Sun
-                this.controls.cameraAngleX = targetAngleX;
-                this.controls.cameraAngleY = targetAngleY;
-                this.selectedPlanet = planetGroup; // Now camera orbits around planet
+                // Animation complete
+                this.controls.cameraDistance = planetViewDistance;
                 this.controls.isAnimating = false;
             }
         };
@@ -1288,8 +1613,9 @@ class RealisticSolarSystem {
     animate() {
         requestAnimationFrame(() => this.animate());
         
-        this.updateCamera();
+        // Update planets first, then camera (so camera uses current planet position)
         this.updatePlanets();
+        this.updateCamera();
         
         this.renderer.render(this.scene, this.camera);
     }
