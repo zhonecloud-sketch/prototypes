@@ -843,9 +843,27 @@
     const aspect = width / height;
     const isMobile = window.innerWidth < 768;
     const size = isMobile ? 2.4 : 1.2;  // Shrink globe by half on mobile
+    
+    // Calculate dynamic vertical offset to center globe between header and legend
+    let yOffset = 0;
+    if (isMobile) {
+      const header = document.querySelector('.header-panel');
+      const footer = document.querySelector('.footer-controls');
+      if (header && footer) {
+        const headerBottom = header.getBoundingClientRect().bottom;
+        const footerTop = footer.getBoundingClientRect().top;
+        const availableHeight = footerTop - headerBottom;
+        const availableCenter = headerBottom + availableHeight / 2;
+        const canvasCenter = height / 2;
+        // Convert pixel offset to projection units
+        const pixelOffset = canvasCenter - availableCenter;
+        yOffset = (pixelOffset / height) * (2 * size);
+      }
+    }
+    
     const projectionMatrix = createOrthographicMatrix(
       -size * aspect, size * aspect,
-      -size, size,
+      -size - yOffset, size - yOffset,
       -10, 10
     );
     
@@ -1083,9 +1101,9 @@
   }
 
   function updateHover(screenX, screenY) {
-    const { width, height, radius, rotationMatrix, geoData, gl } = state;
+    const { width, height, radius, rotationMatrix, geoData, gl, visualCenterY } = state;
     const cx = width / 2;
-    const cy = height / 2;
+    const cy = visualCenterY ?? height / 2;
     
     // Check if point is on globe
     const dx = screenX - cx;
@@ -1185,9 +1203,9 @@
   }
 
   function handleClick(screenX, screenY) {
-    const { width, height, radius, rotationMatrix, geoData } = state;
+    const { width, height, radius, rotationMatrix, geoData, visualCenterY } = state;
     const cx = width / 2;
-    const cy = height / 2;
+    const cy = visualCenterY ?? height / 2;
     
     // Check if point is on globe
     const dx = screenX - cx;
@@ -1738,6 +1756,21 @@
     const aspect = state.width / state.height;
     // In orthographic projection, the globe fills the view based on size parameter
     state.radius = Math.min(state.width / (2 * size * aspect), state.height / (2 * size));
+    
+    // Calculate visual center dynamically based on header/legend positions
+    if (isMobile) {
+      const header = document.querySelector('.header-panel');
+      const footer = document.querySelector('.footer-controls');
+      if (header && footer) {
+        const headerBottom = header.getBoundingClientRect().bottom;
+        const footerTop = footer.getBoundingClientRect().top;
+        state.visualCenterY = headerBottom + (footerTop - headerBottom) / 2;
+      } else {
+        state.visualCenterY = state.height / 2;
+      }
+    } else {
+      state.visualCenterY = state.height / 2;
+    }
   }
 
   // ============================================================
