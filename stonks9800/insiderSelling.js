@@ -182,6 +182,17 @@ const InsiderSelling = (function() {
     return true;
   }
 
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    return `[${price}]`;
+  }
+
   // Format dollar amounts for display
   function formatDollarAmount(amount) {
     if (amount >= 1000000) {
@@ -352,7 +363,7 @@ const InsiderSelling = (function() {
     // Recalculate signal
     const signal = calculateSignal(stock);
 
-    console.log(`[INSIDER SELL] ${stock.symbol}: ${insider.name} sells ${formatDollarAmount(sale.value)} (reason: ${reason.reason}, cluster: ${signal.isClusterSell})`);
+    console.log(`[INSIDER SELL] ${getDate()}: ${stock.symbol} ${getPriceInfo(stock)} ${insider.name} sells ${formatDollarAmount(sale.value)} (reason: ${reason.reason}, cluster: ${signal.isClusterSell})`);
 
     // Generate news - emphasize that this is usually NOISE
     const headline = signal.isClusterSell
@@ -390,10 +401,10 @@ const InsiderSelling = (function() {
       
       // Educational content - KEY LESSON
       educationalNote: signal.isClusterSell
-        ? `⚠️ CLUSTER SELLING: ${signal.sellCount} insiders sold. This MAY warrant attention, ` +
-          `but could still be coordinated tax planning or lockup expiry. Verify with fundamentals.`
-        : `📚 KEY LESSON: Insider selling is NOISE. Reason: "${reason.reason}" ` +
-          `${reason.explanation}. Do NOT treat this as a bearish signal!`
+        ? `🎯 ACTION: INVESTIGATE but don't panic. ${signal.sellCount} insiders sold - could be tax/lockup. ` +
+          `Check fundamentals before deciding. Do NOT auto-sell.`
+        : `🎯 ACTION: IGNORE. Single insider sell = NOISE. Reason: "${reason.reason}" ` +
+          `Do NOT sell your position based on this!`
     });
 
     // NO sentiment penalty for single sells (it's noise!)
@@ -412,34 +423,27 @@ const InsiderSelling = (function() {
 
     const tutorial = {
       type: '',
-      probability: '',
-      whatToWatch: '',
+      description: '',    // WHAT
+      implication: '',    // IMPLICATION
       action: '',
-      keyLesson: '',
-      goldStandard: '' // Explains why selling is NOT in Gold Standard
+      timing: '',
+      catalyst: ''
     };
 
     if (newsItem.isClusterSell) {
       tutorial.type = '🟡 CLUSTER SELL - MINOR CAUTION (still mostly noise)';
-      tutorial.probability = 'Cluster selling penalty: -10% (weak signal at best)';
-      tutorial.whatToWatch = 'Multiple insiders selling is unusual. BUT: Check for lockup expiry, coordinated tax planning, or 10b5-1 schedules.';
+      tutorial.description = 'Multiple insiders selling is unusual. Check for lockup expiry, coordinated tax planning, or 10b5-1 schedules.';
+      tutorial.implication = 'Cluster selling penalty: -10% (weak signal). Even cluster selling needs verification - could be coordinated planning.';
       tutorial.action = '⚠️ Do NOT panic sell. This is NOT a Gold Standard signal. Verify with fundamentals.';
-      tutorial.keyLesson = 'Even cluster selling needs verification. Could be coordinated planning, lockup expiry, or routine diversification.';
-      tutorial.goldStandard = '❌ NOT IN GOLD STANDARD: Insider selling is excluded because it\'s 93% non-bearish. Focus on BUYING signals instead.';
-      tutorial.nlpHint = '📰 NOISE FILTER: Check for these TRAP KEYWORDS in Form 4: "10b5-1" (pre-scheduled = IGNORE), ' +
-        '"Code F" (tax withholding = IGNORE), "Code M" (option exercise = IGNORE). ' +
-        'Only Code S without 10b5-1 checkbox is potentially meaningful, but still 70%+ noise.';
+      tutorial.timing = 'No urgency - selling signals are mostly noise. Monitor but don\'t act.';
+      tutorial.catalyst = '❌ NOT IN GOLD STANDARD: Insider selling excluded because it\'s 93% non-bearish.';
     } else {
       tutorial.type = '⚪ INSIDER SELL - NOISE (IGNORE THIS)';
-      tutorial.probability = 'Signal value: +0% (ZERO predictive power - research proven)';
-      tutorial.whatToWatch = `Likely reason: ${newsItem.likelyReason || 'Tax/Diversification/Life Event'}. This is NOT a trading signal.`;
+      tutorial.description = `Likely reason: ${newsItem.likelyReason || 'Tax/Diversification/Life Event'}. This is NOT a trading signal.`;
+      tutorial.implication = 'Signal value: +0% (ZERO predictive power). THE ASYMMETRY: Buying = ONE reason (bullish). Selling = MANY reasons (93% NOT bearish).';
       tutorial.action = '🚫 IGNORE this news completely. Do NOT sell based on insider sales.';
-      tutorial.keyLesson = 'THE ASYMMETRY: Buying = ONE reason (bullish). Selling = MANY reasons (93% NOT bearish): ' +
-        'taxes, diversification, home purchase, tuition, divorce, 10b5-1 plans...';
-      tutorial.goldStandard = '📚 WHY NOT IN GOLD STANDARD: Only ~7% of insider sales are actually bearish. ' +
-        'Gold Standard focuses on BUYING signals (3+ cluster, Code P, >10% wealth).';
-      tutorial.nlpHint = '📰 HEADLINE TRAP: Media uses scary words ("dumps," "sells massive stake") to get clicks. ' +
-        'Cohen et al. (2012): 10b5-1 checkbox = ZERO predictive power. Check the Form 4 fine print!';
+      tutorial.timing = 'No action needed - this is noise.';
+      tutorial.catalyst = '📚 Only ~7% of insider sales are actually bearish. Focus on BUYING signals instead.';
     }
 
     return tutorial;

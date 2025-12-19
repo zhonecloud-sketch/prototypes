@@ -95,12 +95,15 @@ const StockSplit = (function() {
     },
 
     // Timeline (in trading days)
+    // Empirical: 3-5 week gap announcement → execution, 12-month drift
     TIMELINE: {
-      announcementToEffective: { min: 5, max: 10 },  // 5-10 days gap
-      runUpPhase: { min: 4, max: 9 },                // Days of run-up
+      announcementToEffective: { min: 15, max: 25 }, // Empirical: 3-5 weeks (~15-25 trading days)
+      runUpPhase: { min: 10, max: 20 },              // Run-up during gap period
       effectiveDay: 1,                               // The big day
-      reversalWindow: { min: 3, max: 7 },            // T+3 to T+7 reversal
-      totalDuration: { min: 10, max: 20 }            // Full cycle
+      hangoverPhase: { min: 3, max: 5 },             // Empirical: Day 3-5 post-execution hangover
+      reversalWindow: { min: 3, max: 7 },            // T+3 to T+7 reversal timing
+      driftPhase: { min: 200, max: 252 },            // Empirical: 12-month drift (~252 trading days)
+      totalDuration: { min: 25, max: 40 }            // Full short-term cycle
     },
 
     // Volume patterns
@@ -170,6 +173,8 @@ const StockSplit = (function() {
 
   function init(dependencies) {
     deps = { ...deps, ...dependencies };
+    
+    return StockSplit;
   }
 
   // Helper accessors
@@ -189,6 +194,20 @@ const StockSplit = (function() {
   }
   function randomInRange(min, max) {
     return min + deps.random() * (max - min);
+  }
+  function getDate() {
+    const gs = getGameState();
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    const split = stock.splitState;
+    const delta = split && split.priceAtAnnouncement 
+      ? `${((stock.price * split.ratio - split.priceAtAnnouncement) / split.priceAtAnnouncement * 100).toFixed(1)}%`
+      : '?';
+    return `[${price} Δ${delta.startsWith('-') ? '' : '+'}${delta}]`;
   }
 
   // ========== STOCK TIER DETECTION ==========
@@ -238,10 +257,11 @@ const StockSplit = (function() {
     const tierData = CONSTANTS.STOCK_TIERS[tier];
     const ratioData = CONSTANTS.SPLIT_RATIOS[ratio] || CONSTANTS.SPLIT_RATIOS[4];
     
+    // +1 because processStockSplit decrements BEFORE checking phase transitions
     const daysToEffective = Math.floor(randomInRange(
       CONSTANTS.TIMELINE.announcementToEffective.min,
       CONSTANTS.TIMELINE.announcementToEffective.max + 1
-    ));
+    )) + 1;
     
     const reversalDays = Math.floor(randomInRange(
       CONSTANTS.TIMELINE.reversalWindow.min,
@@ -298,7 +318,7 @@ const StockSplit = (function() {
     // Generate announcement news
     generateAnnouncementNews(stock);
 
-    console.log(`[StockSplit] ${stock.symbol} announces ${ratioData.name} split. Effective in ${daysToEffective} days. Tier: ${tier}`);
+    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} ANNOUNCED ${ratioData.name} split ${getPriceInfo(stock)} (effective in ${daysToEffective} days, tier: ${tier})`);
     
     return true;
   }
@@ -360,11 +380,13 @@ const StockSplit = (function() {
     // Generate run-up news at midpoint
     if (daysToEffective === Math.floor(split.originalDaysToEffective / 2)) {
       generateRunUpNews(stock);
+      console.log(`[SPLIT] ${getDate()}: ${stock.symbol} RUNUP NEWS ${getPriceInfo(stock)} (+${(split.runUpTotal * 100).toFixed(1)}% so far, ${daysToEffective} days left)`);
     }
     
     // Generate "tomorrow" news
     if (daysToEffective === 1) {
       generateTomorrowNews(stock);
+      console.log(`[SPLIT] ${getDate()}: ${stock.symbol} SPLIT TOMORROW ${getPriceInfo(stock)} (total run-up: +${(split.runUpTotal * 100).toFixed(1)}%)`);
     }
   }
 
@@ -396,7 +418,7 @@ const StockSplit = (function() {
     // Generate effective day news
     generateEffectiveDayNews(stock);
     
-    console.log(`[StockSplit] ${stock.symbol} split effective. New price: $${stock.price}. Run-up: +${(split.runUpTotal * 100).toFixed(1)}%`);
+    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} EFFECTIVE ${getPriceInfo(stock)} (run-up: +${(split.runUpTotal * 100).toFixed(1)}%)`);
   }
 
   function processReversalPhase(stock, daysIntoReversal) {
@@ -433,9 +455,10 @@ const StockSplit = (function() {
       // If reversal won't happen and veto factors exist, generate veto news
       if (!split.reversalWillHappen && split.vetoFactors.length > 0) {
         generateVetoNews(stock);
+        console.log(`[SPLIT] ${getDate()}: ${stock.symbol} VETO - NO REVERSAL ${getPriceInfo(stock)} (factor: ${split.vetoFactors[0]})`);
       }
       
-      console.log(`[StockSplit] ${stock.symbol} reversal decision: ${split.reversalWillHappen ? 'YES' : 'NO'} (prob: ${(reversalProb * 100).toFixed(0)}%)`);
+      console.log(`[SPLIT] ${getDate()}: ${stock.symbol} REVERSAL DECISION: ${split.reversalWillHappen ? 'YES' : 'NO'} ${getPriceInfo(stock)} (prob: ${(reversalProb * 100).toFixed(0)}%)`);
     }
 
     // Apply reversal bias if reversal is happening
@@ -469,10 +492,9 @@ const StockSplit = (function() {
     const gs = split.goldStandard;
     const goldStandardMet = gs.isMegaCap && gs.hasRunUp && gs.hasOtmSpike && gs.hasReversalSetup;
     
-    console.log(`[StockSplit] ${stock.symbol} COMPLETE:`);
-    console.log(`  Run-up: +${(split.runUpTotal * 100).toFixed(1)}%`);
-    console.log(`  Reversal: ${(reversalAmount * 100).toFixed(1)}%`);
-    console.log(`  Gold Standard: ${goldStandardMet ? 'MET' : 'NOT MET'} (${gs.isMegaCap ? '✓' : '✗'} MegaCap, ${gs.hasRunUp ? '✓' : '✗'} 15%+ Run-up, ${gs.hasOtmSpike ? '✓' : '✗'} OTM Spike, ${gs.hasReversalSetup ? '✓' : '✗'} T+3)`);
+    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} COMPLETE ${getPriceInfo(stock)}`);
+    console.log(`  Run-up: +${(split.runUpTotal * 100).toFixed(1)}%, Reversal: ${(reversalAmount * 100).toFixed(1)}%`);
+    console.log(`  Gold Standard: ${goldStandardMet ? 'MET' : 'NOT MET'} (${gs.isMegaCap ? '✓' : '✗'} MegaCap, ${gs.hasRunUp ? '✓' : '✗'} 15%+, ${gs.hasOtmSpike ? '✓' : '✗'} OTM, ${gs.hasReversalSetup ? '✓' : '✗'} T+3)`);
     
     // Clear split state
     delete stock.splitState;
@@ -582,7 +604,10 @@ const StockSplit = (function() {
       newPrice: stock.price,
       otmCallMultiple: split.otmCallMultiple,
       isGoldStandard: goldStandardReady,
-      isStockSplit: true
+      isStockSplit: true,
+      educationalNote: goldStandardReady
+        ? '🎯 ACTION: PREPARE TO SHORT in 3 days (T+3). Wait for first lower high, then short the reversal.'
+        : '🎯 ACTION: WATCH for Gold Standard setup. If run-up + OTM spike, prepare T+3 short.'
     });
   }
 
@@ -610,7 +635,10 @@ const StockSplit = (function() {
       newsType: 'stock_split',
       splitPhase: 'reversal',
       isGoldStandard: goldStandardMet,
-      isStockSplit: true
+      isStockSplit: true,
+      educationalNote: goldStandardMet
+        ? '🎯 ACTION: SHORT NOW or COVER LONGS. T+3 reversal triggered. Expect 5-10% drop over ~1 week.'
+        : '🎯 ACTION: CAUTION if long. Reversal forming - consider taking profits or hedging.'
     });
   }
 
@@ -630,7 +658,8 @@ const StockSplit = (function() {
       newsType: 'stock_split',
       splitPhase: 'veto',
       vetoFactor: vetoFactor,
-      isStockSplit: true
+      isStockSplit: true,
+      educationalNote: '🎯 ACTION: DO NOT SHORT. Veto factor present - normal reversal pattern cancelled. Exit short or stay flat.'
     });
   }
 
@@ -865,8 +894,17 @@ const StockSplit = (function() {
 })();
 
 // ========== BACKWARDS COMPATIBILITY ==========
+function checkStockSplitEvents() {
+  return StockSplit.checkStockSplitEvents();
+}
+
+// Legacy alias for backward compatibility
 function checkStockSplitEventsNew() {
   return StockSplit.checkStockSplitEvents();
+}
+
+function triggerStockSplit(stock) {
+  return StockSplit.triggerStockSplit(stock);
 }
 
 function getStockSplitTutorialHint(newsItem) {

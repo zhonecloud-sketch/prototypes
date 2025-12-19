@@ -608,7 +608,7 @@ const ShortSqueeze = (function() {
       sentiment: phase === 'reversal' ? 'negative' : (phase === 'climax' ? 'neutral' : 'positive'),
       isShortSqueeze: true,
       shortSqueezePhase: phase,
-      symbol: stock.symbol,
+      relatedStock: stock.symbol,
       stockName: stock.name,
       // Metrics for tutorial
       shortInterest: squeeze.shortInterestCurrent,
@@ -709,20 +709,53 @@ const ShortSqueeze = (function() {
 
   // ========== PUBLIC API ==========
   return {
+    // Initialization
     init,
+    
+    // Constants
     CONSTANTS,
+    
+    // Core functions
     calculateSqueezeRisk,
     triggerShortSqueeze,
     processShortSqueeze,
+    checkShortSqueezeEvents,
+    generateSqueezeNews,
+    
+    // Signal calculation
+    calculateSignal,
+    
+    // Veto management
     addVetoFactor,
     removeVetoFactor,
-    calculateSignal,
+    
+    // Tutorial hints
     getTutorialHint,
-    checkShortSqueezeEvents,
-    generateSqueezeNews
+    
+    // Testing
+    _test: {
+      calculateSqueezeRisk
+    },
+    
+    _reset: function() {
+      deps = {
+        stocks: [],
+        todayNews: [],
+        gameState: { day: 0 },
+        getMemeMultiplier: () => 1.0,
+        randomChoice: (arr) => arr[Math.floor(Math.random() * arr.length)],
+        isEventTypeEnabled: () => true,
+        random: Math.random
+      };
+    }
   };
 
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getShortSqueezeTutorialHint(newsItem) {
+  return ShortSqueeze.getTutorialHint(newsItem);
+}
 
 // Export for Node.js testing
 if (typeof module !== 'undefined' && module.exports) {

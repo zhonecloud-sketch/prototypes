@@ -102,10 +102,12 @@ const IndexRebalance = (function() {
     },
 
     // Timeline (in trading days)
+    // Empirical: 48-hour front-running window before effective date
     TIMELINE: {
       announcementToEffective: { min: 5, max: 10 }, // 5-10 days gap
       runUpPhase: { min: 3, max: 7 },               // Days of run-up
-      effectiveDay: 1,                              // The big day
+      frontRunWindow: 2,                            // Empirical: 48-hour (2-day) front-running window
+      effectiveDay: 1,                              // The big day (MOC orders execute)
       reversalWindow: { min: 3, max: 5 },           // T+1 to T+5 reversal (need enough days for 2-5% reversal)
       totalDuration: { min: 10, max: 20 }           // Full cycle
     },

@@ -88,6 +88,51 @@ const LiquiditySweep = (function() {
     }
   };
 
+  // ========== DEPENDENCIES (injected for testing) ==========
+  let deps = {
+    stocks: null,
+    todayNews: null,
+    gameState: null,
+    getMemeMultiplier: null,
+    randomChoice: null,
+    isEventTypeEnabled: null,
+    random: Math.random
+  };
+
+  // ========== INITIALIZATION ==========
+  function init(dependencies) {
+    if (dependencies.stocks !== undefined) deps.stocks = dependencies.stocks;
+    if (dependencies.todayNews !== undefined) deps.todayNews = dependencies.todayNews;
+    if (dependencies.gameState !== undefined) deps.gameState = dependencies.gameState;
+    if (dependencies.getMemeMultiplier !== undefined) deps.getMemeMultiplier = dependencies.getMemeMultiplier;
+    if (dependencies.randomChoice !== undefined) deps.randomChoice = dependencies.randomChoice;
+    if (dependencies.isEventTypeEnabled !== undefined) deps.isEventTypeEnabled = dependencies.isEventTypeEnabled;
+    if (dependencies.random !== undefined) deps.random = dependencies.random;
+    
+    return LiquiditySweep;
+  }
+
+  // ========== HELPER FUNCTIONS ==========
+  function getStocks() {
+    return deps.stocks || (typeof stocks !== 'undefined' ? stocks : []);
+  }
+
+  function getNews() {
+    return deps.todayNews || (typeof todayNews !== 'undefined' ? todayNews : []);
+  }
+
+  function random() {
+    return deps.random();
+  }
+
+  function isEventTypeEnabled(eventType) {
+    if (deps.isEventTypeEnabled) return deps.isEventTypeEnabled(eventType);
+    if (typeof window !== 'undefined' && typeof window.isEventTypeEnabled === 'function') {
+      return window.isEventTypeEnabled(eventType);
+    }
+    return true;
+  }
+
   // ========== STATE TRACKING ==========
   
   // Track active sweeps per stock
@@ -399,6 +444,7 @@ const LiquiditySweep = (function() {
       if (dayInPhase === 1) {
         result.news = {
           type: 'liquidity_sweep',
+          relatedStock: stock.symbol,
           phase: 'sweep',
           headline: `${stock.symbol} CRASHES through key support on massive volume`,
           body: `Stock plunges ${Math.abs(dailyDrop * 100).toFixed(1)}% as stop-losses trigger. ` +
@@ -467,6 +513,7 @@ const LiquiditySweep = (function() {
         result.goldStandardUpdate = true;
         result.news = {
           type: 'liquidity_sweep',
+          relatedStock: stock.symbol,
           phase: 'recovery',
           headline: `${stock.symbol} RECLAIMS support - "Failed breakdown" confirmed`,
           body: `Stock surges back above $${sweep.supportLevel.toFixed(2)} support. ` +
@@ -506,6 +553,7 @@ const LiquiditySweep = (function() {
         if (totalGain >= sweep.targetGain * 0.75 && dayInPhase === Math.floor(sweep.continuationDays / 2)) {
           result.news = {
             type: 'liquidity_sweep',
+          relatedStock: stock.symbol,
             phase: 'continuation',
             headline: `${stock.symbol} continues rally after successful sweep reversal`,
             body: `Stock up ${(totalGain * 100).toFixed(1)}% from sweep low. ` +
@@ -523,6 +571,7 @@ const LiquiditySweep = (function() {
         if (dayInPhase === 1) {
           result.news = {
             type: 'liquidity_sweep',
+          relatedStock: stock.symbol,
             phase: 'failed',
             headline: `${stock.symbol} sweep reversal FAILS - support becomes resistance`,
             body: `Stock unable to hold above reclaimed support. ` +
@@ -541,6 +590,7 @@ const LiquiditySweep = (function() {
       const finalGain = (stock.price - sweep.priceAtStart) / sweep.priceAtStart;
       result.news = {
         type: 'liquidity_sweep',
+          relatedStock: stock.symbol,
         phase: 'complete',
         headline: `${stock.symbol} liquidity sweep event complete`,
         body: sweep.willSucceed ?
@@ -654,6 +704,77 @@ const LiquiditySweep = (function() {
     return !!stock.liquiditySweep;
   }
 
+  // ========== TUTORIAL HINT GENERATOR ==========
+  function getTutorialHint(newsItem) {
+    if (!newsItem || (newsItem.type !== 'liquidity_sweep' && newsItem.newsType !== 'liquidity_sweep')) {
+      return null;
+    }
+
+    const phase = newsItem.phase || 'setup';
+    const goldCount = newsItem.goldStandardCount || 0;
+
+    const hints = {
+      setup: {
+        type: 'Liquidity Sweep SETUP - Watch for Sweep',
+        description: 'Stock approaching OBVIOUS support level. Stop-losses accumulating below.',
+        implication: 'Institutions may "sweep" these stops to fill large buy orders cheaply.',
+        action: 'WATCH - Do NOT place stops at obvious levels. Wait for sweep → recovery pattern.',
+        timing: 'ENTRY: None yet. Wait for sweep → absorption → re-entry signal.',
+        catalyst: 'Wyckoff Spring: The more "obvious" the support, the more liquidity sits below it.'
+      },
+      sweep: {
+        type: 'Liquidity Sweep IN PROGRESS - Stop Run Active',
+        description: 'Price breaking BELOW support on high volume. Stop-losses triggered. This is the "sweep."',
+        implication: 'If institutions are absorbing supply, price will quickly recover. Watch for absorption volume.',
+        action: 'DO NOT PANIC SELL. Watch for: (1) Volume spike + (2) Price fails to close lower.',
+        timing: 'ENTRY: NOT YET. Wait for price to RECLAIM support (re-entry signal).',
+        catalyst: 'Gold Standard check: Is this absorption (high vol + recovery) or real breakdown (closes lower)?'
+      },
+      recovery: {
+        type: `Liquidity Sweep RECOVERY - ${goldCount}/4 Gold Standard`,
+        description: 'Price snapping back above support. "Failed breakdown" confirming. Absorption volume detected.',
+        implication: goldCount >= 4 ? '85%+ reversal probability (Gold Standard)' : `${goldCount}/4 criteria met. ~${45 + goldCount * 10}% probability.`,
+        action: goldCount >= 3 ? 'BUY NOW - Re-entry confirmed. Classic Wyckoff Spring.' : 'CONSIDER BUY - Some criteria missing, lower probability.',
+        timing: 'ENTRY: On reclaim of support (this is Gold Standard entry). EXIT: +8% to +15% target.',
+        catalyst: `Gold Standard (${goldCount}/4): Obvious support ✓, False breakout ✓, Absorption volume ${goldCount >= 3 ? '✓' : '?'}, Re-entry ${goldCount >= 4 ? '✓' : '?'}`
+      },
+      absorption: {
+        type: `Liquidity Sweep RECOVERY - ${goldCount}/4 Gold Standard`,
+        description: 'Price snapping back above support. "Failed breakdown" confirming. Absorption volume detected.',
+        implication: goldCount >= 4 ? '85%+ reversal probability (Gold Standard)' : `${goldCount}/4 criteria met. ~${45 + goldCount * 10}% probability.`,
+        action: goldCount >= 3 ? 'BUY NOW - Re-entry confirmed. Classic Wyckoff Spring.' : 'CONSIDER BUY - Some criteria missing, lower probability.',
+        timing: 'ENTRY: On reclaim of support (this is Gold Standard entry). EXIT: +8% to +15% target.',
+        catalyst: `Gold Standard (${goldCount}/4): Obvious support ✓, False breakout ✓, Absorption volume ${goldCount >= 3 ? '✓' : '?'}, Re-entry ${goldCount >= 4 ? '✓' : '?'}`
+      },
+      continuation: {
+        type: 'Liquidity Sweep CONTINUATION - Holding Position',
+        description: 'Sweep reversal playing out. "Liquidity vacuum" propelling price higher.',
+        implication: 'No sellers left below. Path of least resistance is UP.',
+        action: 'HOLD - Trail stop at breakeven. Target +8% to +15%.',
+        timing: 'ENTRY: Late but ok if still near support. EXIT: At target or if price fails re-test.',
+        catalyst: 'Aggarwal & Wu (2006): Institutional order flow creates "vacuum" after sweep absorbs supply.'
+      },
+      complete: {
+        type: 'Liquidity Sweep COMPLETE',
+        description: 'Sweep event finished. Pattern played out.',
+        implication: newsItem.sentiment > 0 ? 'Successful reversal - typical +8% to +15% gain.' : 'Failed sweep - price continued lower after false signal.',
+        action: 'TAKE PROFITS if holding. Trade complete.',
+        timing: 'ENTRY: N/A. EXIT: Sell remaining position.',
+        catalyst: 'Key lesson: Gold Standard (4/4 criteria) = 85% success. Partial criteria = lower odds.'
+      },
+      failed: {
+        type: 'Liquidity Sweep FAILED - Not All Criteria Met',
+        description: 'Sweep reversal did NOT materialize. Price failed to hold above support.',
+        implication: 'Only partial criteria met. This was a REAL breakdown, not a sweep.',
+        action: 'EXIT if holding. The sweep failed - price likely continues lower.',
+        timing: 'ENTRY: DO NOT BUY. EXIT: Stop out at sweep low if still holding.',
+        catalyst: 'Lesson: Gold Standard filter WORKS. Partial criteria = lower success rate for a reason.'
+      }
+    };
+
+    return hints[phase] || hints.setup;
+  }
+
   // ========== PUBLIC API ==========
   return {
     // Core functions
@@ -669,6 +790,9 @@ const LiquiditySweep = (function() {
     // Signal calculation
     calculateSignal,
     
+    // Tutorial hints
+    getTutorialHint,
+    
     // State queries
     getSweepState,
     isInSweep,
@@ -676,12 +800,42 @@ const LiquiditySweep = (function() {
     // Constants (for testing/debugging)
     CONSTANTS,
     
-    // For test harness
-    _activeSweeps: activeSweeps
+    // Initialization
+    init,
+    
+    // Testing
+    _test: {
+      detectSupportLevel,
+      detectSweep,
+      detectAbsorptionVolume,
+      activeSweeps
+    },
+    
+    // Legacy alias for backward compatibility
+    _activeSweeps: activeSweeps,
+    
+    _reset: function() {
+      deps = {
+        stocks: null,
+        todayNews: null,
+        gameState: null,
+        getMemeMultiplier: null,
+        randomChoice: null,
+        isEventTypeEnabled: null,
+        random: Math.random
+      };
+      activeSweeps.clear();
+    }
   };
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getLiquiditySweepTutorialHint(newsItem) {
+  return LiquiditySweep.getTutorialHint(newsItem);
+}
 
 // Export for Node.js testing if needed
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = LiquiditySweep;
 }
+

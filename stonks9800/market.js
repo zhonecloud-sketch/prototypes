@@ -75,8 +75,11 @@ function updateStockPrices() {
     // DIRECT PRICE SHOCK on event transition days
     // Ensures news matches price action (e.g., "bounce begins" = price UP same day)
     // Used by: dead cat bounce, manipulation, FOMO, short squeeze, insider, splits, etc.
-    const transitionEffect = stock.crashTransitionEffect || 0;
+    const crashTransition = stock.crashTransitionEffect || 0;
+    const ssrTransition = stock.shortReportTransitionEffect || 0;
+    const transitionEffect = crashTransition + ssrTransition;
     stock.crashTransitionEffect = 0; // Reset after use
+    stock.shortReportTransitionEffect = 0; // Reset after use
     
     // Calculate new price
     let newPrice = stock.price * (1 + trendEffect + correction + noise + transitionEffect);
@@ -656,6 +659,13 @@ function processMeanReversion() {
 // Resolution: Either vindicated (permanent damage) or debunked (recovery).
 
 function processShortSellerReports() {
+  // NEW SSR module handles all processing - skip legacy processing if it's active
+  // The new module is called from events.js via checkShortSellerReportEvents()
+  if (typeof SSR !== 'undefined' && SSR.processShortReport) {
+    return; // Let the new module handle everything
+  }
+  
+  // Legacy fallback only runs if new module is not loaded
   stocks.forEach(stock => {
     if (!stock.shortReportPhase) return;
     
@@ -790,6 +800,13 @@ function triggerShortSellerReport(stock) {
 // ========== INSIDER TRADING SIGNALS MECHANICS ==========
 
 function processInsiderTrading() {
+  // NEW InsiderBuying module handles all processing - skip legacy if it's active
+  // The new module is called from events.js via checkInsiderBuyingEvents()
+  if (typeof InsiderBuying !== 'undefined') {
+    return; // Let the new module handle everything
+  }
+  
+  // Legacy fallback only runs if new module is not loaded
   stocks.forEach(stock => {
     if (!stock.insiderPhase) return;
     
@@ -866,6 +883,13 @@ function startInsiderBuying(stock) {
 // ========== STOCK SPLIT MECHANICS ==========
 
 function processStockSplits() {
+  // NEW StockSplit module handles all processing - skip legacy if it's active
+  // The new module is called from events.js via checkStockSplitEvents()
+  if (typeof StockSplit !== 'undefined') {
+    return; // Let the new module handle everything
+  }
+  
+  // Legacy fallback only runs if new module is not loaded
   stocks.forEach(stock => {
     if (!stock.splitPhase) return;
     
@@ -922,6 +946,12 @@ function announceStockSplit(stock, ratio) {
 }
 
 // ========== ANALYST RATING MECHANICS ==========
+// Empirical: Loh & Stulz (2011) - Rating effect duration 24-72 hours
+const ANALYST_RATING_CONSTANTS = {
+  effectDurationDays: { min: 1, max: 3 },  // Empirical: 24-72 hours
+  impactDecayRate: 0.40,                    // 40% decay per day after initial pop
+  educationalNote: 'Analyst ratings have SHORT-LIVED impact (24-72 hours) - not trend setters'
+};
 
 function processAnalystRatings() {
   stocks.forEach(stock => {

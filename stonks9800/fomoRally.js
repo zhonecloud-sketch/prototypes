@@ -141,6 +141,8 @@ const FOMORally = (function() {
     if (dependencies.random) deps.random = dependencies.random;
     if (dependencies.todayNews) deps.todayNews = dependencies.todayNews;
     if (dependencies.gameState) deps.gameState = dependencies.gameState;
+    
+    return FOMORally;
   }
 
   // ========== FOMO DETECTION ==========
@@ -663,36 +665,36 @@ const FOMORally = (function() {
 
     const hints = {
       buildup: {
-        title: 'FOMO Rally Building',
-        message: `${stock.symbol} is gaining social momentum. Mentions at ${rally.socialMentions.toFixed(1)}x baseline.`,
+        type: 'FOMO Rally Building',
+        description: `${stock.symbol} is gaining social momentum. Mentions at ${rally.socialMentions.toFixed(1)}x baseline.`,
+        implication: 'Early stage - trend could continue or fizzle. Wait for euphoria phase.',
         action: 'WATCH - Monitor sentiment indicators for euphoria phase.',
-        risk: 'Early stage - trend could continue or fizzle.',
-        goldStandard: 'Wait for 3+ SD extension and P/C ratio collapse.'
+        timing: 'Too early to short. Wait for Gold Standard setup.',
+        catalyst: 'Wait for 3+ SD extension and P/C ratio collapse.'
       },
       euphoria: {
-        title: 'EUPHORIA PHASE - Extreme Greed',
-        message: `${stock.symbol} trading ${rally.priceDeviation.toFixed(1)} SD above MA. P/C ratio at ${rally.putCallRatio.toFixed(2)}.`,
-        action: 'PREPARE TO SHORT - Gold Standard signals emerging.',
-        risk: 'Do NOT buy here. Wait for blow-off top confirmation.',
-        goldStandard: 'Look for volume climax + sentiment/price divergence.',
-        nlpHint: '📰 EUPHORIA PEAK KEYWORDS: When headlines use "Historic," "Moon," "Next [Tesla]," "Retail Frenzy," "Skyrockets," "Can\'t be stopped" ' +
-          '= TOP IS NEAR. Barber & Odean: Headlines about INVESTOR BEHAVIOR ("frenzy") instead of COMPANY PERFORMANCE = reversal imminent.'
+        type: 'EUPHORIA PHASE - Extreme Greed',
+        description: `${stock.symbol} trading ${rally.priceDeviation.toFixed(1)} SD above MA. P/C ratio at ${rally.putCallRatio.toFixed(2)}.`,
+        implication: 'Gold Standard signals emerging. Do NOT buy here - reversal probability rising.',
+        action: 'PREPARE TO SHORT - Watch for blow-off top confirmation.',
+        timing: 'Entry approaching. Wait for volume climax + sentiment/price divergence.',
+        catalyst: 'Headlines shifting to "Historic," "Moon," "Retail Frenzy" = TOP IS NEAR.'
       },
       blowOff: {
-        title: '🚨 BLOW-OFF TOP',
-        message: `DANGER: ${stock.symbol} showing classic blow-off pattern. Volume ${rally.volumeMultiple.toFixed(1)}x average.`,
+        type: '🚨 BLOW-OFF TOP',
+        description: `DANGER: ${stock.symbol} showing classic blow-off pattern. Volume ${rally.volumeMultiple.toFixed(1)}x average.`,
+        implication: 'This is the "transfer of ownership" from smart to dumb money. All criteria met.',
         action: 'SHORT or BUY PUTS on first lower high.',
-        risk: 'This is the "transfer of ownership" from smart to dumb money.',
-        goldStandard: 'All criteria met. 85% crash probability.',
-        nlpHint: '📰 PEAK CONFIRMED: Superlatives + mainstream integration ("everyone\'s buying," "don\'t miss out") = smart money exiting. ' +
-          'This is GOLD STANDARD for shorts! Empirical: 30-90 day underperformance follows.'
+        timing: 'NOW - Enter short on first lower high confirmation.',
+        catalyst: '85% crash probability. Barber & Odean: 30-90 day underperformance follows.'
       },
       crash: {
-        title: 'FOMO CRASH IN PROGRESS',
-        message: `${stock.symbol} down from peak. "Bag holders" emerging.`,
+        type: 'FOMO CRASH IN PROGRESS',
+        description: `${stock.symbol} down from peak. "Bag holders" emerging.`,
+        implication: 'Late buyers typically lose 20-30% in following week. ' + (rally.crashWillHappen ? 'Target 50-day MA.' : 'Crash not confirmed.'),
         action: rally.crashWillHappen ? 'HOLD SHORT - Target 50-day MA.' : 'CAUTION - Crash not confirmed.',
-        risk: 'Late buyers typically lose 20-30% in following week.',
-        goldStandard: 'Barber & Odean: 30-90 day underperformance expected.'
+        timing: 'Hold position. Exit at 50-day MA or on bounce exhaustion.',
+        catalyst: 'Barber & Odean: 30-90 day underperformance expected.'
       }
     };
 
@@ -724,20 +726,66 @@ const FOMORally = (function() {
 
   // ========== PUBLIC API ==========
   return {
+    // Initialization
     init,
+    
+    // Constants
     CONSTANTS,
+    
+    // Core functions
     calculateFOMOMetrics,
     triggerFOMORally,
     processFOMORally,
+    checkFOMORallyEvents,
+    generateFOMONews,
+    
+    // Signal calculation
+    calculateSignal,
+    
+    // Veto management
     addVetoFactor,
     removeVetoFactor,
-    calculateSignal,
+    
+    // Tutorial hints
     getTutorialHint,
-    checkFOMORallyEvents,
-    generateFOMONews
+    
+    // Testing
+    _test: {
+      calculateFOMOMetrics,
+      calculatePriceDeviation: function(stock) {
+        // Expose for testing (defined inside module)
+        if (!stock.priceHistory || stock.priceHistory.length < 20) return 0;
+        const history = stock.priceHistory.slice(-20);
+        const mean = history.reduce((a, b) => a + b, 0) / history.length;
+        const variance = history.reduce((sum, p) => sum + Math.pow(p - mean, 2), 0) / history.length;
+        const stdDev = Math.sqrt(variance);
+        return stdDev > 0 ? (stock.price - mean) / stdDev : 0;
+      }
+    },
+    
+    _reset: function() {
+      deps = {
+        random: Math.random,
+        todayNews: null,
+        gameState: null
+      };
+    }
   };
 
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getFOMORallyTutorialHint(newsItem) {
+  // FOMORally.getTutorialHint takes stock, not newsItem
+  // Find the stock from the newsItem's relatedStock
+  if (newsItem && newsItem.relatedStock && typeof stocks !== 'undefined') {
+    const stock = stocks.find(s => s.symbol === newsItem.relatedStock);
+    if (stock) {
+      return FOMORally.getTutorialHint(stock);
+    }
+  }
+  return null;
+}
 
 // Export for Node.js testing
 if (typeof module !== 'undefined' && module.exports) {

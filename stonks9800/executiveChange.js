@@ -93,12 +93,14 @@ const ExecutiveChange = (function() {
     },
 
     // Timeline (in days)
+    // Empirical: 90-day honeymoon period for new CEO
     TIMELINE: {
       announcement: { min: 1, max: 2 },
       stabilization: { min: 3, max: 5 },        // 3-day stabilization rule
+      honeymoonPeriod: { min: 60, max: 90 },    // Empirical: 90-day "honeymoon" for new CEO
       resolution: {
         abrupt_no_successor: { min: 20, max: 40 },  // Long decline
-        cfo_exit_clean: { min: 30, max: 60 },       // 6-month slow recovery
+        cfo_exit_clean: { min: 120, max: 180 },     // Empirical: 6-month slow recovery
         planned_internal: { min: 7, max: 14 },      // 2-week recovery
         gold_standard: { min: 7, max: 14 }          // 10-14 day recovery
       }
@@ -345,6 +347,20 @@ const ExecutiveChange = (function() {
     return true;
   }
 
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    const delta = stock.preExecChangePrice 
+      ? `${((stock.price - stock.preExecChangePrice) / stock.preExecChangePrice * 100).toFixed(1)}%`
+      : '?';
+    return `[${price} Δ${delta.startsWith('-') ? '' : '+'}${delta}]`;
+  }
+
   function getMemeMultiplier(stock) {
     if (deps.getMemeMultiplier) return deps.getMemeMultiplier(stock);
     return (stock.isMeme || stock.volatility > 0.05) ? 1.5 : 1.0;
@@ -530,8 +546,9 @@ const ExecutiveChange = (function() {
 
     // Timeline
     const timeline = CONSTANTS.TIMELINE;
+    // +1 because processExecChange decrements BEFORE checking phase transitions
     stock.execChangeDaysLeft = timeline.announcement.min + 
-      Math.floor(random() * (timeline.announcement.max - timeline.announcement.min + 1));
+      Math.floor(random() * (timeline.announcement.max - timeline.announcement.min + 1)) + 1;
     stock.execChangeDayCounter = 0;
     stock.execChangeDay1Low = null; // Will be set after Day 1
 
@@ -546,12 +563,9 @@ const ExecutiveChange = (function() {
     stock.crashTransitionEffect = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
     stock.sentimentOffset = (stock.sentimentOffset || 0) - 0.03 * memeMultiplier;
 
-    console.log(`[EXEC CHANGE] ${stock.symbol}: ${changeType.toUpperCase()} triggered`);
-    console.log(`  Role: ${signals.role}`);
-    console.log(`  Successor: ${signals.successionIntegrity?.description}`);
-    console.log(`  8-K: ${signals.cleanAudit?.isClean ? 'CLEAN' : 'WARNING'}`);
-    console.log(`  Reversal probability: ${Math.round(reversalProb * 100)}%`);
-    console.log(`  Will reverse: ${stock.execChangeWillReverse}`);
+    console.log(`[EXEC] ${getDate()}: ${stock.symbol} ${changeType.toUpperCase()} triggered ${getPriceInfo(stock)}`);
+    console.log(`  Role: ${signals.role}, Successor: ${signals.successionIntegrity?.description}, 8-K: ${signals.cleanAudit?.isClean ? 'CLEAN' : 'WARN'}`);
+    console.log(`  Reversal: ${Math.round(reversalProb * 100)}% (will: ${stock.execChangeWillReverse})`);
 
     return true;
   }
@@ -601,7 +615,8 @@ const ExecutiveChange = (function() {
       // Transition to stabilization
       stock.execChangePhase = 'stabilization';
       const timeline = CONSTANTS.TIMELINE.stabilization;
-      stock.execChangeDaysLeft = timeline.min + Math.floor(random() * (timeline.max - timeline.min + 1));
+      // +1 because processExecChange decrements BEFORE checking phase transitions
+      stock.execChangeDaysLeft = timeline.min + Math.floor(random() * (timeline.max - timeline.min + 1)) + 1;
       stock.stabilizationDaysHeld = 0;
       
       generateExecChangeNews(stock, 'stabilization');
@@ -636,7 +651,8 @@ const ExecutiveChange = (function() {
       // Transition to resolution
       stock.execChangePhase = 'resolution';
       const resTimeline = CONSTANTS.TIMELINE.resolution[changeType];
-      stock.execChangeDaysLeft = resTimeline.min + Math.floor(random() * (resTimeline.max - resTimeline.min + 1));
+      // +1 because processExecChange decrements BEFORE checking phase transitions
+      stock.execChangeDaysLeft = resTimeline.min + Math.floor(random() * (resTimeline.max - resTimeline.min + 1)) + 1;
       
       generateExecChangeNews(stock, 'resolution');
     }
@@ -661,12 +677,8 @@ const ExecutiveChange = (function() {
       const totalChange = (endPrice - startPrice) / startPrice;
       const daysTaken = stock.execChangeDayCounter;
 
-      console.log(`[EXEC CHANGE] ${stock.symbol} RESOLVED:`);
-      console.log(`  Type: ${changeType}`);
-      console.log(`  Reversed: ${stock.execChangeWillReverse}`);
-      console.log(`  Start: $${startPrice.toFixed(2)} → End: $${endPrice.toFixed(2)}`);
-      console.log(`  Total change: ${(totalChange * 100).toFixed(1)}%`);
-      console.log(`  Duration: ${daysTaken} days`);
+      console.log(`[EXEC] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)}`);
+      console.log(`  Type: ${changeType}, Reversed: ${stock.execChangeWillReverse}, Change: ${(totalChange * 100).toFixed(1)}%, Days: ${daysTaken}`);
 
       generateExecChangeNews(stock, stock.execChangeWillReverse ? 'reversal_complete' : 'decline_continues');
       clearExecChangeState(stock);
@@ -711,7 +723,7 @@ const ExecutiveChange = (function() {
             `${signals.successionIntegrity?.description}.`
           : `Uncertainty continues. ${signals.cleanAudit?.description}. Market awaits clarity.`;
         sentiment = changeType === CONSTANTS.CHANGE_TYPES.ABRUPT_NO_SUCCESSOR ? 'negative' : 'neutral';
-        educationalNote = `📊 3-DAY RULE: ${signals.threesDayStabilization?.description || 'Watching if Day 1 low holds'}`;
+        educationalNote = `🎯 ACTION: WAIT. Watch if Day 1 low holds for 3 days. ${signals.threesDayStabilization?.description || 'Tracking...'}`;
         break;
 
       case 'resolution':
@@ -728,8 +740,8 @@ const ExecutiveChange = (function() {
             `No clear succession + concerning 8-K language = fundamental re-rating.`;
         sentiment = stock.execChangeWillReverse ? 'positive' : 'negative';
         educationalNote = stock.execChangeWillReverse
-          ? '🏆 GOLD STANDARD: Internal successor + Clean 8-K + Volume capitulation + 3-day stabilization = 85% reversal'
-          : '⚠️ FUNDAMENTAL DECLINE: Missing key signals indicates structural change, not shakeout';
+          ? '� ACTION: BUY NOW. Gold Standard confirmed - 85% reversal. Enter with stop below Day 1 low.'
+          : '🎯 ACTION: SELL if holding, DO NOT BUY. Missing signals = fundamental decline, not shakeout.';
         break;
 
       case 'reversal_complete':
@@ -737,7 +749,7 @@ const ExecutiveChange = (function() {
         description = `The "Uncertainty Premium" has fully evaporated. Internal succession + clean audit + ` +
           `3-day stabilization confirmed this was a News Shakeout, not a fundamental issue.`;
         sentiment = 'positive';
-        educationalNote = '✅ PATTERN COMPLETE: Executive change with succession integrity typically recovers in 10-14 days (Huson et al.)';
+        educationalNote = '🎯 ACTION: TAKE PROFIT. Pattern COMPLETE. Sell to lock in gains. Move to next opportunity.';
         break;
 
       case 'decline_continues':
@@ -745,7 +757,7 @@ const ExecutiveChange = (function() {
         description = `Without clear succession or with concerning 8-K language, the market has re-rated the stock. ` +
           `This was NOT a shakeout - fundamental uncertainty remains.`;
         sentiment = 'negative';
-        educationalNote = '❌ VALUE TRAP: Missing gold standard signals (no successor, 8-K concerns) = <15% reversal probability';
+        educationalNote = '🎯 ACTION: SELL if holding, AVOID if watching. Leadership vacuum = more downside ahead.';
         break;
     }
 
@@ -805,10 +817,10 @@ const ExecutiveChange = (function() {
         execChangeRole: role,
         reversalProbability: stock.execChangeReversalProbability,
         educationalNote: changeType === CONSTANTS.CHANGE_TYPES.GOLD_STANDARD
-          ? '🔍 GOLD STANDARD SETUP: Check for (1) Internal successor, (2) Clean 8-K, (3) Volume 3x+, (4) 3-day stabilization'
+          ? '🎯 ACTION: PREPARE TO BUY. Check: (1) Internal successor, (2) Clean 8-K, (3) Volume 3x+, (4) 3-day hold. If all met, BUY!'
           : changeType === CONSTANTS.CHANGE_TYPES.ABRUPT_NO_SUCCESSOR
-            ? '⚠️ RED FLAGS: No successor + concerning language = likely fundamental issue, NOT a shakeout'
-            : '🔍 ANALYZE SIGNALS: Check successor status, 8-K language, and volume for reversal probability',
+            ? '🎯 ACTION: DO NOT BUY. No successor + concerning language = fundamental issue. Wait 6+ months.'
+            : '🎯 ACTION: WAIT AND ANALYZE. Check successor status, 8-K, volume before deciding.',
         execChangeSignals: signals
       });
     }
@@ -972,11 +984,41 @@ const ExecutiveChange = (function() {
     generateChangeSignals,
     clearExecChangeState,
     CONSTANTS,
-    CHANGE_TYPES: CONSTANTS.CHANGE_TYPES
+    CHANGE_TYPES: CONSTANTS.CHANGE_TYPES,
+    
+    // Testing
+    _test: {
+      classifyChangeType,
+      generateChangeSignals,
+      calculateReversalProbability,
+      clearExecChangeState
+    },
+    
+    _reset: function() {
+      deps = {
+        stocks: null,
+        todayNews: null,
+        random: Math.random,
+        randomChoice: null,
+        isEventTypeEnabled: null,
+        getMemeMultiplier: null
+      };
+    }
   };
 
   return ExecutiveChange;
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getExecutiveChangeTutorialHint(newsItem) {
+  // ExecutiveChange.getTutorialHint takes (newsItem, stock)
+  // Find the stock from the newsItem's relatedStock
+  if (newsItem && newsItem.relatedStock && typeof stocks !== 'undefined') {
+    const stock = stocks.find(s => s.symbol === newsItem.relatedStock);
+    return ExecutiveChange.getTutorialHint(newsItem, stock);
+  }
+  return ExecutiveChange.getTutorialHint(newsItem, null);
+}
 
 // Export for Node.js testing
 if (typeof module !== 'undefined' && module.exports) {

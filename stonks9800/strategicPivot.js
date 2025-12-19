@@ -325,6 +325,20 @@ const StrategicPivot = (function() {
     return true;
   }
 
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    const delta = stock.prePivotPrice 
+      ? `${((stock.price - stock.prePivotPrice) / stock.prePivotPrice * 100).toFixed(1)}%`
+      : '?';
+    return `[${price} Δ${delta.startsWith('-') ? '' : '+'}${delta}]`;
+  }
+
   function getMemeMultiplier(stock) {
     if (deps.getMemeMultiplier) return deps.getMemeMultiplier(stock);
     return (stock.isMeme || stock.volatility > 0.05) ? 1.5 : 1.0;
@@ -491,8 +505,9 @@ const StrategicPivot = (function() {
     
     // Timeline
     const timeline = CONSTANTS.TIMELINE;
+    // +1 because processPivot decrements BEFORE checking phase transitions
     stock.pivotDaysLeft = timeline.announcement.min + 
-      Math.floor(random() * (timeline.announcement.max - timeline.announcement.min + 1));
+      Math.floor(random() * (timeline.announcement.max - timeline.announcement.min + 1)) + 1;
     stock.pivotDayCounter = 0;
 
     // Calculate outcome based on signals
@@ -506,10 +521,8 @@ const StrategicPivot = (function() {
     stock.crashTransitionEffect = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
     stock.sentimentOffset = (stock.sentimentOffset || 0) - 0.03 * memeMultiplier;
 
-    console.log(`[PIVOT] ${stock.symbol}: ${pivotType.toUpperCase()} pivot triggered`);
-    console.log(`  Catalyst: ${catalyst.headline}`);
-    console.log(`  Reversal probability: ${Math.round(reversalProb * 100)}%`);
-    console.log(`  Will reverse: ${stock.pivotWillReverse}`);
+    console.log(`[PIVOT] ${getDate()}: ${stock.symbol} ${pivotType.toUpperCase()} triggered ${getPriceInfo(stock)}`);
+    console.log(`  Catalyst: ${catalyst.headline}, Reversal: ${Math.round(reversalProb * 100)}% (will: ${stock.pivotWillReverse})`);
 
     return true;
   }
@@ -556,7 +569,8 @@ const StrategicPivot = (function() {
       // Transition to execution void
       stock.strategicPivotPhase = 'execution_void';
       const timeline = CONSTANTS.TIMELINE.executionVoid;
-      stock.pivotDaysLeft = timeline.min + Math.floor(random() * (timeline.max - timeline.min + 1));
+      // +1 because processPivot decrements BEFORE checking phase transitions
+      stock.pivotDaysLeft = timeline.min + Math.floor(random() * (timeline.max - timeline.min + 1)) + 1;
       
       // Record the pivot low
       stock.pivotLowPrice = stock.price;
@@ -594,7 +608,8 @@ const StrategicPivot = (function() {
       // Transition to resolution
       stock.strategicPivotPhase = 'resolution';
       const resTimeline = CONSTANTS.TIMELINE.resolution[pivotType];
-      stock.pivotDaysLeft = resTimeline.min + Math.floor(random() * (resTimeline.max - resTimeline.min + 1));
+      // +1 because processPivot decrements BEFORE checking phase transitions
+      stock.pivotDaysLeft = resTimeline.min + Math.floor(random() * (resTimeline.max - resTimeline.min + 1)) + 1;
       
       generatePivotNews(stock, 'resolution');
     }
@@ -618,11 +633,8 @@ const StrategicPivot = (function() {
       const endPrice = stock.price;
       const totalChange = (endPrice - startPrice) / startPrice;
 
-      console.log(`[PIVOT] ${stock.symbol} RESOLVED:`);
-      console.log(`  Type: ${pivotType}`);
-      console.log(`  Reversed: ${stock.pivotWillReverse}`);
-      console.log(`  Start: $${startPrice.toFixed(2)} → End: $${endPrice.toFixed(2)}`);
-      console.log(`  Total change: ${(totalChange * 100).toFixed(1)}%`);
+      console.log(`[PIVOT] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)}`);
+      console.log(`  Type: ${pivotType}, Reversed: ${stock.pivotWillReverse}, Change: ${(totalChange * 100).toFixed(1)}%`);
 
       generatePivotNews(stock, stock.pivotWillReverse ? 'reversal_complete' : 'new_base');
       clearPivotState(stock);
@@ -666,10 +678,10 @@ const StrategicPivot = (function() {
             : `Stock stabilizes but fundamentals remain concerning. ${signals.anchorRevenue?.description}.`;
         sentiment = isGoldStandard ? 'positive' : 'neutral';
         educationalNote = isGoldStandard
-          ? '🏆 GOLD STANDARD SETUP: Non-dilutive + Anchor revenue + Insider buy + Gap fill = 85%+ reversal in 10-14 days'
+          ? '� ACTION: BUY NOW. Gold Standard setup: Non-dilutive + Anchor revenue + Insider buy. 85%+ reversal.'
           : isSymbolic
-            ? '📊 SYMBOLIC PIVOT: No CapEx commitment + Buzzword language = 65% reversal in 2-3 weeks (Tang & Agrawal)'
-            : '⚠️ STRUCTURAL/REACTIVE: Real capital commitment or dying business = low reversal probability';
+            ? '🎯 ACTION: CONSIDER BUYING. Symbolic pivot = 65% reversal in 2-3 weeks. Moderate risk.'
+            : '🎯 ACTION: DO NOT BUY. Structural/Reactive pivot = low reversal odds. Avoid.';
         break;
 
       case 'execution_void_mid':
@@ -678,7 +690,7 @@ const StrategicPivot = (function() {
           ? `Institutional absorption continues. "Uncertainty Premium" being refunded as old business remains stable.`
           : `No news from company in ${stock.pivotDayCounter} days. ${isSymbolic ? 'Short covering rally continues.' : 'Drift pattern persists.'}`;
         sentiment = 'neutral';
-        educationalNote = '📰 EXECUTION VOID: 2 weeks of no news - market processes "Uncertainty Premium" (HBS 2021)';
+        educationalNote = '🎯 ACTION: HOLD if long. No news for ~2 weeks is normal. Let the trade work.';
         break;
 
       case 'resolution':
@@ -691,8 +703,8 @@ const StrategicPivot = (function() {
           : `Stock establishes new base. ${isReactive ? 'Turnaround thesis failed.' : 'Market has re-rated the company.'}`;
         sentiment = stock.pivotWillReverse ? 'positive' : 'neutral';
         educationalNote = stock.pivotWillReverse
-          ? '✅ REVERSAL COMPLETE: "Uncertainty Premium" refunded - market realized nothing changed (Kogan 2023)'
-          : '❌ NO REVERSAL: Real structural change or dying business = permanent re-rating';
+          ? '🎯 ACTION: HOLD or TAKE PROFIT. Reversal worked! Consider trimming to lock gains.'
+          : '🎯 ACTION: SELL if holding, DO NOT BUY. Stock re-rated to new lower base. Move on.';
         break;
 
       case 'reversal_complete':
@@ -702,8 +714,8 @@ const StrategicPivot = (function() {
           : `Classic News Shakeout. The "pivot" was symbolic - no real capital commitment. Old business unchanged.`;
         sentiment = 'positive';
         educationalNote = isGoldStandard
-          ? '🏆 GOLD STANDARD CONFIRMED: Non-dilutive + Anchor revenue + Insider buy + Gap fill = 85%+ success'
-          : '✅ SYMBOLIC PIVOT REVERSAL: Buzzword pivots without CapEx reverse in 2-3 weeks (65%)';
+          ? '� ACTION: SELL NOW. Gold Standard pattern COMPLETE. Lock in profits and move on.'
+          : '🎯 ACTION: SELL NOW. Symbolic pivot reversal COMPLETE. Take profit, find next trade.';
         break;
 
       case 'new_base':
@@ -713,8 +725,8 @@ const StrategicPivot = (function() {
           : `The market has permanently re-priced ${stock.symbol}. Real capital commitment = permanent change.`;
         sentiment = 'negative';
         educationalNote = isReactive
-          ? '❌ REACTIVE PIVOT: Dying firm pivots have <10% reversal rate - value trap confirmed'
-          : '❌ STRUCTURAL PIVOT: Real capital commitment = permanent re-rating. Only 30% reverse (Brauer 2024)';
+          ? '🎯 ACTION: SELL if holding, AVOID. Dying business pivot failed. Expect long decline.'
+          : '🎯 ACTION: SELL if holding, AVOID. Real capital commitment = permanent re-rating.';
         break;
     }
 
@@ -769,8 +781,8 @@ const StrategicPivot = (function() {
         pivotPhase: 'announcement',
         reversalProbability: stock.pivotReversalProbability,
         educationalNote: isGoldStandard
-          ? '🏆 GOLD STANDARD DETECTED: Watch for Non-dilutive + Anchor revenue + Insider buy + Gap fill'
-          : `🔍 ANALYZE: ${pivotType.toUpperCase()} PIVOT - Check 4 signals to estimate reversal probability`,
+          ? '� ACTION: PREPARE TO BUY. Gold Standard! Check: Non-dilutive + Anchor revenue + Insider buy + Gap fill.'
+          : `🎯 ACTION: ANALYZE before buying. ${pivotType.toUpperCase()} PIVOT - check 4 signals to estimate odds.`,
         pivotSignals: signals
       });
     }
@@ -931,11 +943,41 @@ const StrategicPivot = (function() {
     generatePivotSignals,
     clearPivotState,
     CONSTANTS,
-    PIVOT_TYPES: CONSTANTS.PIVOT_TYPES
+    PIVOT_TYPES: CONSTANTS.PIVOT_TYPES,
+    
+    // Testing
+    _test: {
+      classifyPivot,
+      generatePivotSignals,
+      calculateReversalProbability,
+      clearPivotState
+    },
+    
+    _reset: function() {
+      deps = {
+        stocks: null,
+        todayNews: null,
+        random: Math.random,
+        randomChoice: null,
+        isEventTypeEnabled: null,
+        getMemeMultiplier: null
+      };
+    }
   };
 
   return StrategicPivot;
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getStrategicPivotTutorialHint(newsItem) {
+  // StrategicPivot.getTutorialHint takes (newsItem, stock)
+  // Find the stock from the newsItem's relatedStock
+  if (newsItem && newsItem.relatedStock && typeof stocks !== 'undefined') {
+    const stock = stocks.find(s => s.symbol === newsItem.relatedStock);
+    return StrategicPivot.getTutorialHint(newsItem, stock);
+  }
+  return StrategicPivot.getTutorialHint(newsItem, null);
+}
 
 // Export for Node.js testing
 if (typeof module !== 'undefined' && module.exports) {

@@ -104,6 +104,66 @@ const NewsShakeout = (function() {
     }
   };
 
+  // ========== DEPENDENCIES (injected for testing) ==========
+  let deps = {
+    stocks: null,
+    todayNews: null,
+    gameState: null,
+    getMemeMultiplier: null,
+    randomChoice: null,
+    isEventTypeEnabled: null,
+    random: Math.random
+  };
+
+  // ========== INITIALIZATION ==========
+  function init(dependencies) {
+    if (dependencies.stocks !== undefined) deps.stocks = dependencies.stocks;
+    if (dependencies.todayNews !== undefined) deps.todayNews = dependencies.todayNews;
+    if (dependencies.gameState !== undefined) deps.gameState = dependencies.gameState;
+    if (dependencies.getMemeMultiplier !== undefined) deps.getMemeMultiplier = dependencies.getMemeMultiplier;
+    if (dependencies.randomChoice !== undefined) deps.randomChoice = dependencies.randomChoice;
+    if (dependencies.isEventTypeEnabled !== undefined) deps.isEventTypeEnabled = dependencies.isEventTypeEnabled;
+    if (dependencies.random !== undefined) deps.random = dependencies.random;
+    
+    return NewsShakeout;
+  }
+
+  // ========== HELPER FUNCTIONS ==========
+  function getStocks() {
+    return deps.stocks || (typeof stocks !== 'undefined' ? stocks : []);
+  }
+
+  function getNews() {
+    return deps.todayNews || (typeof todayNews !== 'undefined' ? todayNews : []);
+  }
+
+  function random() {
+    return deps.random();
+  }
+
+  function isEventTypeEnabled(eventType) {
+    if (deps.isEventTypeEnabled) return deps.isEventTypeEnabled(eventType);
+    if (typeof window !== 'undefined' && typeof window.isEventTypeEnabled === 'function') {
+      return window.isEventTypeEnabled(eventType);
+    }
+    return true;
+  }
+
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock, prePanic = null) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    const ref = prePanic || stock.prePanicPrice;
+    const delta = ref 
+      ? `${((stock.price - ref) / ref * 100).toFixed(1)}%`
+      : '?';
+    return `[${price} Δ${delta.startsWith('-') ? '' : '+'}${delta}]`;
+  }
+
   // ========== STATE TRACKING ==========
   
   // Track active shakeouts per stock
@@ -386,6 +446,7 @@ const NewsShakeout = (function() {
     
     result.news = {
       type: 'news_shakeout',
+      relatedStock: stock.symbol,
       phase: 'panic',
       headline: panicHeadline,
       body: `Stock crashes on ${shakeout.panicVolume.toFixed(1)}x normal volume. ` +
@@ -435,6 +496,7 @@ const NewsShakeout = (function() {
     if (dayInPhase === 1) {
       result.news = {
         type: 'news_shakeout',
+      relatedStock: stock.symbol,
         phase: 'stabilization',
         headline: `${stock.symbol} volatile as traders assess damage`,
         body: `Day 2: Stock stabilizing after yesterday's panic. Watching for continuation or reversal.`,
@@ -480,6 +542,7 @@ const NewsShakeout = (function() {
         
         result.news = {
           type: 'news_shakeout',
+      relatedStock: stock.symbol,
           phase: 'stabilization',
           headline: `${stock.symbol} shows signs of stabilization`,
           body: `Day 3: Stock closes higher than Day 2 and holds above panic low. ` +
@@ -514,6 +577,7 @@ const NewsShakeout = (function() {
       shakeout.phase = 'entry';
       result.news = {
         type: 'news_shakeout',
+      relatedStock: stock.symbol,
         phase: 'stabilization',
         headline: `${stock.symbol} fails to stabilize - caution warranted`,
         body: `Stock making new lows, stabilization pattern NOT confirmed. High risk of value trap.`,
@@ -536,6 +600,7 @@ const NewsShakeout = (function() {
     
     result.news = {
       type: 'news_shakeout',
+      relatedStock: stock.symbol,
       phase: 'entry',
       headline: `${stock.symbol} confirms reversal pattern`,
       body: `Entry signal triggered. Target: Gap fill to $${shakeout.gapFillTarget.toFixed(2)} (+${(shakeout.gapFillGain * 100).toFixed(0)}%)`,
@@ -573,6 +638,7 @@ const NewsShakeout = (function() {
         if (gapFillProgress >= 0.5 && dayInPhase === Math.floor(shakeout.recoveryDays / 2)) {
           result.news = {
             type: 'news_shakeout',
+      relatedStock: stock.symbol,
             phase: 'recovery',
             headline: `${stock.symbol} recovery gaining momentum - 50% gap fill`,
             body: `V-bottom playing out. Stock has recovered half the panic drop. RSI now ${shakeout.currentRSI.toFixed(0)}.`,
@@ -585,6 +651,7 @@ const NewsShakeout = (function() {
         if (projectedPrice >= shakeout.gapFillTarget * 0.98) {
           result.news = {
             type: 'news_shakeout',
+      relatedStock: stock.symbol,
             phase: 'recovery',
             headline: `${stock.symbol} completes GAP FILL - overreaction fully reversed`,
             body: `Stock returns to pre-panic level. Classic News Shakeout pattern complete. Tetlock (2007): Reversal within ${shakeout.day} days.`,
@@ -602,6 +669,7 @@ const NewsShakeout = (function() {
         if (dayInPhase === 1) {
           result.news = {
             type: 'news_shakeout',
+      relatedStock: stock.symbol,
             phase: 'recovery',
             headline: `${stock.symbol} recovery stalls - value trap risk`,
             body: `Bounce failing to gain traction. News may be more terminal than initially thought.`,
@@ -621,6 +689,7 @@ const NewsShakeout = (function() {
       
       result.news = {
         type: 'news_shakeout',
+      relatedStock: stock.symbol,
         phase: 'complete',
         headline: `${stock.symbol} news shakeout event complete`,
         body: shakeout.willSucceed ?
@@ -797,7 +866,7 @@ const NewsShakeout = (function() {
         isHighestVolume: true
       };
       
-      console.log(`[NEWS SHAKEOUT] Proactive trigger for ${stock.symbol || stock.symbol}: ${newsType}, drop ${(panicDrop * 100).toFixed(1)}%, volume ${volumeMultiple.toFixed(1)}x`);
+      console.log(`[SHAKEOUT] ${getDate()}: ${stock.symbol} TRIGGERED [$${stock.price.toFixed(2)}] ${newsType}, drop ${(panicDrop * 100).toFixed(1)}%, volume ${volumeMultiple.toFixed(1)}x`);
       
       // Trigger the shakeout
       const shakeout = triggerNewsShakeout(stock, {
@@ -842,24 +911,150 @@ const NewsShakeout = (function() {
     return stock.newsShakeout || null;
   }
 
+  // ========== TUTORIAL HINT GENERATOR ==========
+  function getTutorialHint(newsItem) {
+    if (!newsItem || (newsItem.type !== 'news_shakeout' && newsItem.newsType !== 'news_shakeout')) {
+      return null;
+    }
+
+    const phase = newsItem.phase || 'panic';
+    const goldCount = newsItem.goldStandardCount || 0;
+    const isTransient = newsItem.isTransient !== false;
+    const newsType = newsItem.triggerNews || 'unknown';
+
+    const hints = {
+      panic: {
+        type: 'News Shakeout PANIC - Do Not Buy Yet',
+        description: `News-driven panic drop (${newsType}). Forced sellers (margin calls, funds) dumping shares.`,
+        implication: 'Panic selling NOT finished. More downside possible in next 24-48 hours.',
+        action: 'DO NOT BUY. Wait for 3-day stabilization pattern before entry.',
+        timing: 'ENTRY: NOT YET. Wait for Day 3 close > Day 2. EXIT: N/A.',
+        catalyst: isTransient ? 
+          'NEWS TYPE: TRANSIENT (analyst downgrade, guidance miss, rumor). Mean reversion likely.' :
+          '⚠️ WARNING: Terminal news (fraud, bankruptcy) does NOT reverse. Verify news type!'
+      },
+      stabilization: {
+        type: `News Shakeout STABILIZATION - ${goldCount}/4 Gold Standard`,
+        description: 'Forced selling clearing out. Watching for 3-day stabilization pattern.',
+        implication: goldCount >= 2 ? 
+          `Stabilization in progress. ${goldCount}/4 criteria met. Wait for Day 3 confirmation.` :
+          'Too early to confirm stabilization. Need more criteria.',
+        action: 'WATCH - Key test: Does Day 3 close ABOVE Day 2? Price must hold above panic low.',
+        timing: 'ENTRY: Wait for Day 3+ confirmation. EXIT: N/A.',
+        catalyst: `De Bondt & Thaler (1985): Extreme losers outperform. Waiting for selling exhaustion to confirm.`
+      },
+      entry: {
+        type: `News Shakeout ENTRY SIGNAL - ${goldCount}/4 Gold Standard`,
+        description: '3-day stabilization CONFIRMED. RSI oversold. Mean reversion beginning.',
+        implication: goldCount >= 4 ? 
+          '85%+ reversal probability (Gold Standard). De Bondt & Thaler pattern confirmed.' : 
+          `${goldCount}/4 criteria met. ~${50 + goldCount * 10}% probability.`,
+        action: goldCount >= 3 ? 
+          'BUY NOW - Stabilization confirmed. Classic overreaction reversal.' : 
+          'CONSIDER BUY - Some criteria missing, lower probability.',
+        timing: 'ENTRY: On first green day after stabilization. EXIT: +8% to +15% gap fill target.',
+        catalyst: `Gold Standard (${goldCount}/4): Transient news ${goldCount >= 1 ? '✓' : '?'}, Volume climax ${goldCount >= 2 ? '✓' : '?'}, Stabilization ${goldCount >= 3 ? '✓' : '?'}, RSI < 25 ${goldCount >= 4 ? '✓' : '?'}`
+      },
+      recovery: {
+        type: 'News Shakeout RECOVERY - Gap Fill in Progress',
+        description: 'Mean reversion playing out. Price recovering toward pre-panic level.',
+        implication: 'De Bondt & Thaler: Extreme losers outperform within 30-90 days.',
+        action: 'HOLD - Trail stop at breakeven. Target gap fill (pre-panic price).',
+        timing: 'ENTRY: Late but ok if still below gap fill. EXIT: At gap fill target.',
+        catalyst: 'Tetlock (2007): High media negativity predicts reversion to fundamentals within 5-10 days.'
+      },
+      complete: {
+        type: 'News Shakeout COMPLETE',
+        description: 'Overreaction recovery finished. Gap filled or pattern concluded.',
+        implication: newsItem.sentiment > 0 ? 
+          'Successful reversal - typical +8% to +15% gain from panic low.' : 
+          'Value trap - terminal news prevented recovery.',
+        action: 'TAKE PROFITS if holding. Trade complete.',
+        timing: 'ENTRY: N/A. EXIT: Sell remaining position.',
+        catalyst: 'Key lesson: Transient news reverses (85%). Terminal news (fraud, bankruptcy) = value trap.'
+      },
+      failed: {
+        type: 'News Shakeout FAILED - Value Trap',
+        description: 'Recovery did NOT materialize. This was NOT overreaction - news was structural.',
+        implication: 'Terminal news confirmed. Price likely continues lower. Cut losses.',
+        action: 'EXIT if holding. This is a VALUE TRAP, not a shakeout.',
+        timing: 'ENTRY: DO NOT BUY. EXIT: Stop out at panic low if still holding.',
+        catalyst: 'Lesson: Distinguish "News Shakeout" (transient) from "Value Trap" (terminal). Gold Standard filter helps.'
+      },
+      value_trap: {
+        type: 'News Shakeout FAILED - Value Trap',
+        description: 'Recovery did NOT materialize. This was NOT overreaction - news was structural.',
+        implication: 'Terminal news confirmed. Price likely continues lower. Cut losses.',
+        action: 'EXIT if holding. This is a VALUE TRAP, not a shakeout.',
+        timing: 'ENTRY: DO NOT BUY. EXIT: Stop out at panic low if still holding.',
+        catalyst: 'Lesson: Distinguish "News Shakeout" (transient) from "Value Trap" (terminal). Gold Standard filter helps.'
+      }
+    };
+
+    return hints[phase] || hints.panic;
+  }
+
   // ========== PUBLIC API ==========
   return {
+    // Initialization
+    init,
+    
+    // Constants
     CONSTANTS,
+    
+    // Core functions
     triggerNewsShakeout,
     processNewsShakeout,
     checkNewsShakeoutEvents,
+    
+    // Analysis functions
     classifyNews,
     detectVolumeClimax,
     calculateRSI,
     calculateATRSpike,
     getSignal,
+    
+    // Tutorial hints
+    getTutorialHint,
+    
+    // State queries
     hasActiveShakeout,
-    getShakeoutState
+    getShakeoutState,
+    
+    // Testing
+    _test: {
+      classifyNews,
+      detectVolumeClimax,
+      calculateRSI,
+      activeShakeouts
+    },
+    
+    // Legacy alias for backward compatibility
+    _activeShakeouts: activeShakeouts,
+    
+    _reset: function() {
+      deps = {
+        stocks: null,
+        todayNews: null,
+        gameState: null,
+        getMemeMultiplier: null,
+        randomChoice: null,
+        isEventTypeEnabled: null,
+        random: Math.random
+      };
+      activeShakeouts.clear();
+    }
   };
 
 })();
+
+// Global wrapper for tutorial.js compatibility
+function getNewsShakeoutTutorialHint(newsItem) {
+  return NewsShakeout.getTutorialHint(newsItem);
+}
 
 // Export for Node.js testing
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = NewsShakeout;
 }
+

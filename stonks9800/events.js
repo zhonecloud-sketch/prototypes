@@ -653,6 +653,10 @@ function checkShortSellerReportEvents() {
   // Delegate to the new SSR module if available
   if (typeof SSR !== 'undefined' && SSR.checkShortReportEvents) {
     SSR.checkShortReportEvents();
+    // Also process ongoing short reports (phase transitions, follow-up news)
+    if (SSR.processShortReport) {
+      SSR.processShortReport();
+    }
     return;
   }
   

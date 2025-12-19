@@ -61,6 +61,16 @@ const InsiderBuying = (function() {
       clusterWindow: 14              // Days to count as "cluster"
     },
 
+    // Alpha Window Timeline (Lakonishok & Lee 2001)
+    // Insider alpha is a SLOW-BURN signal, not short-term
+    ALPHA_WINDOW: {
+      peakAlphaStart: 120,           // Empirical: Alpha peaks at 6 months (~120 trading days)
+      peakAlphaEnd: 252,             // Empirical: Extends to 12 months (~252 trading days)
+      shortTermEffect: { min: 3, max: 7 },  // Immediate 3-7 day sentiment boost
+      decayProfile: 'slow',          // Slow decay (not rapid)
+      educationalNote: 'Insider buying is a SLOW signal - alpha materializes over 6-12 months, not days'
+    },
+
     // Signal strength (probability boosts for other modules)
     SIGNAL: {
       singleBuyBoost: 0.10,          // +10% reversal probability for single buy
@@ -149,6 +159,17 @@ const InsiderBuying = (function() {
       return window.isEventTypeEnabled(eventType);
     }
     return true;
+  }
+
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    return `[${price}]`;
   }
 
   // Format dollar amounts for display
@@ -343,7 +364,7 @@ const InsiderBuying = (function() {
     // Recalculate signal
     const signal = calculateSignal(stock);
 
-    console.log(`[INSIDER BUY] ${stock.symbol}: ${insider.name} buys ${formatDollarAmount(purchase.value)} (cluster: ${signal.isClusterBuy})`);
+    console.log(`[INSIDER BUY] ${getDate()}: ${stock.symbol} ${getPriceInfo(stock)} ${insider.name} buys ${formatDollarAmount(purchase.value)} (cluster: ${signal.isClusterBuy})`);
 
     // Generate news
     // Empirical NLP: "Conviction Signal" language (SEC Filings research)
@@ -381,10 +402,10 @@ const InsiderBuying = (function() {
       
       // Educational content
       educationalNote: signal.isClusterBuy
-        ? '🎯 CLUSTER BUYING: When 3+ insiders buy within 2 weeks, predictive power DOUBLES. ' +
-          'This is one of the STRONGEST bullish signals available. Expected alpha: ~9.6%/year.'
-        : `✅ INSIDER BUYING: ${insider.name} using personal funds to buy = strong conviction. ` +
-          `Form 4 Code P is the most bullish insider signal. Expected alpha: ~4.8%/year.`
+        ? '🎯 ACTION: BUY NOW or ADD. Cluster buying (3+ insiders) = STRONGEST signal. ' +
+          'Expected +9.6%/year alpha. High conviction entry!'
+        : `🎯 ACTION: CONSIDER BUYING. ${insider.name} buying with personal funds = bullish. ` +
+          `Wait for additional confirmation (rebuttal, base formation) for safer entry.`
     });
 
     // Apply sentiment boost to stock
@@ -401,11 +422,12 @@ const InsiderBuying = (function() {
 
     const tutorial = {
       type: '',
-      probability: '',
-      whatToWatch: '',
+      description: '',    // WHAT - displayed in UI
+      implication: '',    // IMPLICATION - displayed in UI
       action: '',
-      keyLesson: '',
-      goldStandard: '' // Shows the 85% "Gold Standard" requirement
+      timing: '',
+      catalyst: '',
+      goldStandard: ''    // Shows the 85% "Gold Standard" requirement
     };
 
     if (newsItem.isClusterBuy) {
@@ -413,24 +435,22 @@ const InsiderBuying = (function() {
       const meetsGoldStandard = newsItem.buyCount >= 3 && newsItem.isOpenMarket;
       
       tutorial.type = '🟢 CLUSTER BUY - VERY STRONG BULLISH';
-      tutorial.probability = `${newsItem.buyCount} insiders buying = +25% reversal boost`;
-      tutorial.whatToWatch = 'Multiple insiders betting same direction. Check: Form 4 Code P (Open Market) + significant % of wealth.';
+      tutorial.description = 'Multiple insiders betting same direction. Check: Form 4 Code P (Open Market) + significant % of wealth.';
+      tutorial.implication = `${newsItem.buyCount} insiders buying = +25% reversal boost. Cluster buying = 2x predictive power (Hjort & Bapkas 2024).`;
       tutorial.action = meetsGoldStandard 
         ? '✅ GOLD STANDARD MET. Strong entry signal if combined with DCB/SSR signals.'
         : '⏳ Good signal, but verify: Open Market purchases (Code P)? Significant wealth commitment?';
-      tutorial.keyLesson = 'Cluster buying = 2x predictive power (Hjort & Bapkas 2024). Multiple informed insiders all bullish.';
+      tutorial.timing = 'ENTRY: On cluster buy confirmation. EXIT: On catalyst announcement OR if "10b5-1 plan" revealed.';
+      tutorial.catalyst = 'Expected (70%): Better guidance, major contract, regulatory approval. Fizzle (30%): Routine plan, bad timing.';
       tutorial.goldStandard = '🏆 INSIDER Gold Standard: Cluster Buying (3+) of Open Market Shares (Code P) representing >10% of wealth';
-      tutorial.nlpHint = '📰 HEADLINE KEYWORDS: Look for "SEC Form 4," "Open Market Purchase," "Cluster Buying," "Multi-million dollar stake." ' +
-        'The phrase "OPEN MARKET" is the gold standard - distinguishes real conviction from meaningless option exercises (Code M).';
     } else {
       tutorial.type = '🟢 INSIDER BUY - BULLISH SIGNAL';
-      tutorial.probability = `${newsItem.insiderTitle || 'Insider'} purchase = +10% boost (single buy)`;
-      tutorial.whatToWatch = `Watch for MORE buys. Gold Standard needs 3+ insiders (cluster buying).`;
+      tutorial.description = `${newsItem.insiderTitle || 'Insider'} using personal funds to buy = strong conviction. Form 4 Code P is the most bullish insider signal.`;
+      tutorial.implication = 'Insiders buy for ONE reason: they believe stock will rise. Single buy = +10% boost. Watch for more buys.';
       tutorial.action = '⏳ Good signal, but NOT Gold Standard. Wait for cluster buying or other confirmations.';
-      tutorial.keyLesson = 'Insiders buy for ONE reason: they believe stock will rise. Form 4 Code P = personal funds.';
-      tutorial.goldStandard = '🎯 For 85% setup: Need Cluster (3+) Open Market Buys (Code P) with >10% wealth commitment';
-      tutorial.nlpHint = '📰 WATCH FOR: "SEC Form 4 filing" + "Code P" + dollar amount. IGNORE: "Option exercise" (Code M), "Gift" (Code G). ' +
-        'Only OPEN MARKET purchases (Code P) show true conviction.';
+      tutorial.timing = 'ENTRY: Consider small position. EXIT: On catalyst or if pattern fizzles after 7 days.';
+      tutorial.catalyst = '🎯 For 85% setup: Need Cluster (3+) Open Market Buys (Code P) with >10% wealth commitment';
+      tutorial.goldStandard = 'Need more insider buys to reach Gold Standard. Watch for cluster buying pattern.';
     }
 
     return tutorial;

@@ -97,21 +97,35 @@ const SSR = (function() {
     },
 
     // Company rebuttal quality
+    // Brendel & Ryans (2021): "Responding to Activist Short Sellers"
+    // - Only 31% of firms respond at all
+    // - Public denial: -14% 3-day return
+    // - Internal investigation: -24% 3-day return (SELL SIGNAL)
+    // - No response: 0% return, fewer SEC actions ("stay silent" paradox)
     REBUTTAL: {
       detailed: {
-        probability: 0.30,           // 30% provide detailed rebuttals
-        reversalBoost: 0.10,         // +10% to reversal probability
-        description: 'point-by-point rebuttal with supporting data'
+        probability: 0.15,           // 15% provide data-driven rebuttals (rare)
+        reversalBoost: 0.15,         // +15% to reversal probability
+        description: 'point-by-point rebuttal citing specific documents (10-K page refs, GPS logs)',
+        timing: { min: 3, max: 5 }   // Gold Standard: 3-5 trading days
       },
       generic: {
-        probability: 0.50,           // 50% give generic denials
+        probability: 0.16,           // 16% give generic denials (28% of 31% who respond * ~60%)
         reversalPenalty: 0.05,       // -5% from reversal probability
-        description: 'denies all allegations without specifics'
+        description: 'uses opinion words: "unfounded," "baseless," "categorically denies"',
+        timing: { min: 0, max: 2 }   // Immediate: 0-48 hours
+      },
+      investigation: {
+        probability: 0.08,           // 8% launch internal investigation
+        reversalPenalty: 0.25,       // -25% MAJOR penalty (confirms something to find)
+        description: 'launches internal investigation or hires special committee',
+        timing: { min: 7, max: 14 }  // Takes 2-4 weeks = SELL SIGNAL
       },
       none: {
-        probability: 0.20,           // 20% don't respond
-        reversalPenalty: 0.15,       // -15% from reversal probability
-        description: 'no response from company'
+        probability: 0.61,           // 69% don't respond (Brendel & Ryans: silence often optimal)
+        reversalPenalty: 0.00,       // NO penalty if Big 4 auditor ("noise not worth acknowledging")
+        reversalPenaltyNoBig4: 0.15, // -15% penalty if no Big 4 backing
+        description: 'no public response from company'
       }
     },
 
@@ -124,10 +138,11 @@ const SSR = (function() {
     },
 
     // Duration for various phases (in days)
+    // Brendel & Ryans (2021): >7 days without response = market assumes merit
     DURATION: {
-      initialCrash: { min: 2, max: 4 },      // 2-4 days of selling
-      rebuttalWindow: { min: 3, max: 5 },    // 3-5 days for company response
-      baseBuilding: { min: 10, max: 14 },    // 10-14 day consolidation
+      initialCrash: { min: 2, max: 4 },      // 2-4 days of selling (13.6% avg drop)
+      rebuttalWindow: { min: 5, max: 7 },    // 5-7 days - if no detailed rebuttal by day 7, bearish
+      baseBuilding: { min: 10, max: 14 },    // 10-14 day consolidation ("two-week base")
       resolution: { min: 5, max: 10 }        // 5-10 days for breakout/breakdown
     },
 
@@ -206,6 +221,20 @@ const SSR = (function() {
     return true;
   }
 
+  function getDate() {
+    let gs = (typeof gameState !== 'undefined') ? gameState : (typeof window !== 'undefined' && window.gameState) ? window.gameState : null;
+    if (gs && gs.year && gs.month && gs.day) return `Y${gs.year}/M${gs.month}/D${gs.day}`;
+    return '?';
+  }
+
+  function getPriceInfo(stock) {
+    const price = stock.price ? `$${stock.price.toFixed(2)}` : '$?';
+    const delta = stock.preReportPrice 
+      ? `${((stock.price - stock.preReportPrice) / stock.preReportPrice * 100).toFixed(1)}%`
+      : '?';
+    return `[${price} Δ${delta.startsWith('-') ? '' : '+'}${delta}]`;
+  }
+
   function random() {
     return deps.random();
   }
@@ -256,19 +285,28 @@ const SSR = (function() {
       breakdown.push(`  + Auditor (${stock.auditorName} - Boutique): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
     }
     
-    // Rebuttal quality
+    // Rebuttal quality - Brendel & Ryans (2021) findings
     if (stock.rebuttalQuality === 'detailed') {
       const boost = CONSTANTS.REBUTTAL.detailed.reversalBoost;
       runningProb += boost;
-      breakdown.push(`  + Rebuttal (DETAILED): +${(boost * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
+      breakdown.push(`  + Rebuttal (DETAILED DATA): +${(boost * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
     } else if (stock.rebuttalQuality === 'generic') {
       const penalty = CONSTANTS.REBUTTAL.generic.reversalPenalty;
       runningProb -= penalty;
-      breakdown.push(`  + Rebuttal (GENERIC): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
-    } else if (stock.rebuttalQuality === 'none') {
-      const penalty = CONSTANTS.REBUTTAL.none.reversalPenalty;
+      breakdown.push(`  + Rebuttal (GENERIC denial): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
+    } else if (stock.rebuttalQuality === 'investigation') {
+      // Investigation = MAJOR SELL SIGNAL (Brendel & Ryans: -24% vs -14%)
+      const penalty = CONSTANTS.REBUTTAL.investigation.reversalPenalty;
       runningProb -= penalty;
-      breakdown.push(`  + Rebuttal (NONE): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
+      breakdown.push(`  + Rebuttal (INVESTIGATION): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}% ⚠️ SELL SIGNAL`);
+    } else if (stock.rebuttalQuality === 'none') {
+      // Silence - penalty depends on auditor (Big 4 can stay silent credibly)
+      const penalty = stock.auditorQuality === 'big4' 
+        ? CONSTANTS.REBUTTAL.none.reversalPenalty 
+        : CONSTANTS.REBUTTAL.none.reversalPenaltyNoBig4;
+      runningProb -= penalty;
+      const note = stock.auditorQuality === 'big4' ? '(Big 4 "stay silent" paradox)' : '(no Big 4 backing)';
+      breakdown.push(`  + Rebuttal (SILENT ${note}): -${(penalty * 100).toFixed(0)}% → ${(runningProb * 100).toFixed(0)}%`);
     }
     
     // Clamp between 0.05 and 0.75
@@ -283,7 +321,7 @@ const SSR = (function() {
     
     // Log the breakdown
     if (verbose) {
-      console.log(`[SSR] ${stock.symbol} Reversal Probability Calculation:`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} Reversal Probability ${getPriceInfo(stock)}:`);
       breakdown.forEach(line => console.log(line));
     }
     
@@ -319,8 +357,9 @@ const SSR = (function() {
     stock.preReportPrice = stock.price;
     stock.reportCrashMagnitude = crashMagnitude;
     stock.shortReportPhase = 'initial_crash';
+    // +1 because processShortReport decrements BEFORE checking phase transition
     stock.shortReportDaysLeft = CONSTANTS.DURATION.initialCrash.min + 
-      Math.floor(random() * (CONSTANTS.DURATION.initialCrash.max - CONSTANTS.DURATION.initialCrash.min + 1));
+      Math.floor(random() * (CONSTANTS.DURATION.initialCrash.max - CONSTANTS.DURATION.initialCrash.min + 1)) + 1;
 
     // These will be determined later
     stock.insiderBuying = false;
@@ -340,7 +379,7 @@ const SSR = (function() {
     stock.volatilityBoost = (stock.volatilityBoost || 0) + 0.6 * memeMultiplier;
     stock.shortReportTransitionEffect = -(crashMagnitude * 0.5 + random() * crashMagnitude * 0.2);
 
-    console.log(`[SSR] Short report triggered for ${stock.symbol} by ${seller.name}: ${stock.reportType.toUpperCase()}`);
+    console.log(`[SSR] ${getDate()}: ${stock.symbol} SHORT REPORT by ${seller.name}: ${stock.reportType.toUpperCase()} ${getPriceInfo(stock)} [daysLeft=${stock.shortReportDaysLeft}]`);
 
     return true;
   }
@@ -388,8 +427,8 @@ const SSR = (function() {
           volumeIndicator: 'EXTREME (5x normal)',
           auditorInfo: `Auditor: ${stock.auditorName}`,
           educationalNote: stock.reportType === 'fraud' 
-            ? '⚠️ FRAUD allegations are serious - only 10% of these reverse. Wait for insider response!'
-            : '📊 VALUATION reports have ~40% reversal rate. Watch for insider buying and fair value support.'
+            ? '🎯 ACTION: DO NOT BUY YET. Fraud = only 10% reverse. Wait for data rebuttal + insider buying!'
+            : '🎯 ACTION: WAIT AND WATCH. Valuation = 40% reversal rate. Look for insider buying signal.'
         });
       }
     });
@@ -445,8 +484,9 @@ const SSR = (function() {
 
       // Transition to rebuttal window
       stock.shortReportPhase = 'rebuttal_window';
+      // +1 because processShortReport decrements BEFORE checking phase transition
       stock.shortReportDaysLeft = CONSTANTS.DURATION.rebuttalWindow.min + 
-        Math.floor(random() * (CONSTANTS.DURATION.rebuttalWindow.max - CONSTANTS.DURATION.rebuttalWindow.min + 1));
+        Math.floor(random() * (CONSTANTS.DURATION.rebuttalWindow.max - CONSTANTS.DURATION.rebuttalWindow.min + 1)) + 1;
 
       // Decrease volume but stay elevated
       stock.volumeMultiplier = CONSTANTS.VOLUME.panic;
@@ -460,7 +500,7 @@ const SSR = (function() {
         stock.insiderBuyingDay = 1 + Math.floor(random() * stock.shortReportDaysLeft);
       }
 
-      console.log(`[SSR] ${stock.symbol} entering REBUTTAL WINDOW (insider buying: ${stock.insiderBuying})`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} → REBUTTAL WINDOW ${getPriceInfo(stock)} (insider buying: ${stock.insiderBuying}) [daysLeft=${stock.shortReportDaysLeft}]`);
       
       // Generate news
       news.push({
@@ -470,7 +510,7 @@ const SSR = (function() {
         relatedStock: stock.symbol,
         newsType: 'short_report_update',
         volumeIndicator: 'HIGH (3x normal)',
-        educationalNote: 'Watch for: 1) Company rebuttal quality, 2) Insider buying, 3) Auditor statement'
+        educationalNote: '🎯 ACTION: WAIT. Do NOT buy yet. Watch for: 1) Data rebuttal, 2) Insider buying, 3) Base formation.'
       });
     } else {
       // Continue crash
@@ -479,42 +519,119 @@ const SSR = (function() {
   }
 
   // ===== REBUTTAL PHASE PROCESSING =====
+  // Brendel & Ryans (2021): Timing windows for company response
+  // - Day 1-2: Generic denial expected (28% of cases)
+  // - Day 3-5: Gold Standard for detailed rebuttal
+  // - Day 7+: No response = market assumes allegations have merit
   function processRebuttalPhase(stock, memeMultiplier) {
     const news = getNews();
-    const daysInPhase = (CONSTANTS.DURATION.rebuttalWindow.max - stock.shortReportDaysLeft);
+    const totalDays = CONSTANTS.DURATION.rebuttalWindow.max;
+    const daysInPhase = (totalDays - stock.shortReportDaysLeft);
 
-    // Check for insider buying event
+    // Day 1-2: Check for immediate generic denial (0-48 hours)
+    if (daysInPhase === 1 && !stock.initialDenial) {
+      // 28% of responding firms issue immediate denial
+      if (random() < 0.28) {
+        stock.initialDenial = true;
+        news.push({
+          headline: `${stock.symbol} "categorically denies" ${stock.shortSeller.name}'s allegations`,
+          description: `Company issues immediate press release calling the report "baseless" and ` +
+            `"filled with inaccuracies." No specific data provided to counter claims.`,
+          sentiment: 'neutral',
+          relatedStock: stock.symbol,
+          newsType: 'short_report_update',
+          volumeIndicator: 'HIGH',
+          educationalNote: '🎯 ACTION: WAIT. Generic denial is NOT enough. Watch for DATA rebuttal with documents in 3-5 days.'
+        });
+      }
+    }
+
+    // Day 3-5: Detailed rebuttal window (Gold Standard timing)
+    if (daysInPhase >= 3 && daysInPhase <= 5 && !stock.rebuttalQuality) {
+      // Determine rebuttal quality based on empirical probabilities
+      const rebuttalRoll = random();
+      let cumProb = 0;
+      
+      cumProb += CONSTANTS.REBUTTAL.detailed.probability;
+      if (rebuttalRoll < cumProb) {
+        stock.rebuttalQuality = 'detailed';
+        stock.rebuttalDay = daysInPhase;
+      } else {
+        cumProb += CONSTANTS.REBUTTAL.investigation.probability;
+        if (rebuttalRoll < cumProb) {
+          stock.rebuttalQuality = 'investigation';
+          stock.rebuttalDay = daysInPhase + 5; // Investigation announced later
+        } else {
+          cumProb += CONSTANTS.REBUTTAL.generic.probability;
+          if (rebuttalRoll < cumProb && !stock.initialDenial) {
+            stock.rebuttalQuality = 'generic';
+            stock.rebuttalDay = daysInPhase;
+          } else {
+            stock.rebuttalQuality = 'none';
+          }
+        }
+      }
+
+      // Generate rebuttal news if determined
+      if (stock.rebuttalQuality && stock.rebuttalQuality !== 'none') {
+        generateRebuttalNews(stock);
+      }
+      
+      // Effect based on rebuttal quality
+      if (stock.rebuttalQuality === 'detailed') {
+        stock.pendingTransitionEffect = 0.03 + random() * 0.02;
+        stock.sentimentOffset = 0.03 * memeMultiplier;
+      } else if (stock.rebuttalQuality === 'investigation') {
+        // Investigation = SELL SIGNAL (Brendel & Ryans: -24% vs -14%)
+        stock.pendingTransitionEffect = -(0.05 + random() * 0.03);
+        stock.sentimentOffset = -0.05 * memeMultiplier;
+      }
+    }
+
+    // Day 7: No detailed response = bearish signal
+    if (daysInPhase === 7 && stock.rebuttalQuality === 'none') {
+      generateRebuttalNews(stock); // Generate "no response" news
+      // Penalty depends on auditor quality (Big 4 can stay silent credibly)
+      if (stock.auditorQuality !== 'big4') {
+        stock.sentimentOffset = -0.03 * memeMultiplier;
+      }
+    }
+
+    // Check for insider buying event (strongest reversal signal)
     if (stock.insiderBuying && daysInPhase === stock.insiderBuyingDay) {
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} INSIDER BUY ${getPriceInfo(stock)} ${stock.insiderBuyingTitle} buys ${stock.insiderBuyingAmount}`);
+      
       news.push({
         headline: `💰 ${stock.symbol} ${stock.insiderBuyingTitle} BUYS ${stock.insiderBuyingAmount} in shares`,
-        description: `Company insider makes significant personal investment following short attack. ` +
-          `This is a major bullish signal - insiders rarely buy with personal money unless confident.`,
+        description: `Company insider makes significant open-market purchase following short attack. ` +
+          `Brendel & Ryans (2021): Insider buying after fast denial = highest reversal probability.`,
         sentiment: 'positive',
         relatedStock: stock.symbol,
         newsType: 'insider_buying',
         isInsiderBuying: true,
         volumeIndicator: 'MODERATE',
-        educationalNote: '✅ BULLISH SIGNAL: Insider buying $1M+ suggests allegations may be exaggerated or false.'
+        educationalNote: '🎯 ACTION: BUY NOW or PREPARE TO BUY. Insider buying = STRONGEST signal. Wait for base breakout for confirmation.'
       });
 
-      // Modest positive effect
-      stock.pendingTransitionEffect = 0.03 + random() * 0.02;
+      // Strong positive effect
+      stock.pendingTransitionEffect = 0.04 + random() * 0.02;
+      stock.sentimentOffset = 0.04 * memeMultiplier;
     }
 
-    // On last day of rebuttal window, determine rebuttal quality
+    // On last day of rebuttal window, transition to base building
     if (stock.shortReportDaysLeft <= 0) {
-      // Determine rebuttal quality
-      const rebuttalRoll = random();
-      if (rebuttalRoll < CONSTANTS.REBUTTAL.detailed.probability) {
-        stock.rebuttalQuality = 'detailed';
-      } else if (rebuttalRoll < CONSTANTS.REBUTTAL.detailed.probability + CONSTANTS.REBUTTAL.generic.probability) {
-        stock.rebuttalQuality = 'generic';
-      } else {
-        stock.rebuttalQuality = 'none';
+      // If rebuttal wasn't determined yet (edge case), determine now
+      if (!stock.rebuttalQuality) {
+        const rebuttalRoll = random();
+        if (rebuttalRoll < CONSTANTS.REBUTTAL.detailed.probability) {
+          stock.rebuttalQuality = 'detailed';
+        } else if (rebuttalRoll < CONSTANTS.REBUTTAL.detailed.probability + CONSTANTS.REBUTTAL.generic.probability) {
+          stock.rebuttalQuality = 'generic';
+        } else {
+          stock.rebuttalQuality = 'none';
+        }
+        generateRebuttalNews(stock);
       }
-
-      // Generate rebuttal news
-      generateRebuttalNews(stock);
 
       // Calculate final reversal probability
       stock.reversalProbability = calculateReversalProbability(stock);
@@ -524,8 +641,9 @@ const SSR = (function() {
 
       // Transition to base building phase
       stock.shortReportPhase = 'base_building';
+      // +1 because processShortReport decrements BEFORE checking phase transition
       stock.shortReportDaysLeft = CONSTANTS.DURATION.baseBuilding.min + 
-        Math.floor(random() * (CONSTANTS.DURATION.baseBuilding.max - CONSTANTS.DURATION.baseBuilding.min + 1));
+        Math.floor(random() * (CONSTANTS.DURATION.baseBuilding.max - CONSTANTS.DURATION.baseBuilding.min + 1)) + 1;
       stock.baseDays = 0;
       stock.baseHighPrice = stock.price;
       stock.baseLowPrice = stock.price;
@@ -539,7 +657,7 @@ const SSR = (function() {
       // This is what creates the "tight range" consolidation pattern
       stock.volatilityBoost = Math.max(0, (stock.volatilityBoost || 0) * 0.3);
 
-      console.log(`[SSR] ${stock.symbol} entering BASE BUILDING (reversal prob: ${(stock.reversalProbability * 100).toFixed(0)}%, will reverse: ${stock.willReverse})`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} → BASE BUILDING ${getPriceInfo(stock)} (reversal prob: ${(stock.reversalProbability * 100).toFixed(0)}%, will reverse: ${stock.willReverse}) [daysLeft=${stock.shortReportDaysLeft}]`);
     } else {
       // Volatile trading during rebuttal phase
       stock.sentimentOffset = (random() - 0.55) * 0.04 * memeMultiplier;
@@ -568,16 +686,14 @@ const SSR = (function() {
     if (stock.shortReportDaysLeft <= 0) {
       // Time to resolve - breakout or breakdown
       stock.shortReportPhase = 'resolution';
+      // +1 because processShortReport decrements BEFORE checking phase transition
       stock.shortReportDaysLeft = CONSTANTS.DURATION.resolution.min + 
-        Math.floor(random() * (CONSTANTS.DURATION.resolution.max - CONSTANTS.DURATION.resolution.min + 1));
+        Math.floor(random() * (CONSTANTS.DURATION.resolution.max - CONSTANTS.DURATION.resolution.min + 1)) + 1;
 
       // Log base validation for debugging
-      console.log(`[SSR] ${stock.symbol} Base Analysis:`);
-      console.log(`  Base Days: ${stock.baseDays} (min required: ${CONSTANTS.BASE_PATTERN.minDays})`);
-      console.log(`  Range: $${stock.baseLowPrice.toFixed(2)} - $${stock.baseHighPrice.toFixed(2)}`);
-      console.log(`  Range %: ${(rangePercent * 100).toFixed(1)}% (max for valid: 15%)`);
-      console.log(`  Is Valid Base: ${isValidBase}`);
-      console.log(`  Will Reverse (from probability): ${stock.willReverse}`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} BASE ANALYSIS ${getPriceInfo(stock)}`);
+      console.log(`  Days: ${stock.baseDays}/${CONSTANTS.BASE_PATTERN.minDays}, Range: $${stock.baseLowPrice.toFixed(2)}-$${stock.baseHighPrice.toFixed(2)} (${(rangePercent * 100).toFixed(1)}%)`);
+      console.log(`  Valid: ${isValidBase}, Will Reverse: ${stock.willReverse}`);
 
       // Determine direction: 
       // - If willReverse is true AND base is valid = high confidence breakout
@@ -588,6 +704,11 @@ const SSR = (function() {
         stock.volumeMultiplier = CONSTANTS.VOLUME.breakout;
         stock.volumeTrend = 'increasing';
         
+        // Set immediate price impact for breakout day
+        const breakoutStrength = 0.04 + random() * 0.03; // +4% to +7% on breakout day
+        stock.sentimentOffset = breakoutStrength * memeMultiplier;
+        stock.shortReportTransitionEffect = breakoutStrength;
+        
         const confidence = isValidBase ? 'HIGH-PROBABILITY' : 'MODERATE';
         news.push({
           headline: `📈 ${stock.symbol} BREAKS OUT above resistance on high volume`,
@@ -597,12 +718,17 @@ const SSR = (function() {
           relatedStock: stock.symbol,
           newsType: 'breakout',
           volumeIndicator: 'HIGH (2x normal)',
-          educationalNote: `✅ ${confidence} ENTRY: ${isValidBase ? '14-day tight base + ' : ''}High-volume breakout${isValidBase ? ' = 60%+ success rate.' : '.'}`
+          educationalNote: `🎯 ACTION: BUY NOW if not already in. HOLD if long. Breakout confirmed - ride the trend!`
         });
       } else {
         stock.resolutionDirection = 'breakdown';
         stock.volumeMultiplier = CONSTANTS.VOLUME.breakdown;
         stock.volumeTrend = 'increasing';
+        
+        // Set immediate price impact for breakdown day
+        const breakdownStrength = -(0.05 + random() * 0.04); // -5% to -9% on breakdown day
+        stock.sentimentOffset = breakdownStrength * memeMultiplier;
+        stock.shortReportTransitionEffect = breakdownStrength;
         
         news.push({
           headline: `📉 ${stock.symbol} BREAKS DOWN below support, new lows likely`,
@@ -612,11 +738,11 @@ const SSR = (function() {
           relatedStock: stock.symbol,
           newsType: 'breakdown',
           volumeIndicator: 'HIGH (2.5x normal)',
-          educationalNote: '⚠️ BASE FAILURE: Reversal probability was too low based on signals.'
+          educationalNote: '🎯 ACTION: SELL if holding. DO NOT BUY. Short seller was right - more downside ahead.'
         });
       }
 
-      console.log(`[SSR] ${stock.symbol} entering RESOLUTION (${stock.resolutionDirection})`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} → RESOLUTION (${stock.resolutionDirection}) ${getPriceInfo(stock)} [daysLeft=${stock.shortReportDaysLeft}]`);
     } else {
       // During base building - tight range, low volume
       // TIGHT RANGE consolidation - mean reversion to anchor price
@@ -648,7 +774,7 @@ const SSR = (function() {
           newsType: 'base_update',
           volumeIndicator: 'LOW (40% of normal)',
           baseRange: `$${stock.baseLowPrice.toFixed(2)} - $${stock.baseHighPrice.toFixed(2)}`,
-          educationalNote: 'The "Two-Week Base" pattern: 10-14 days of tight range = absorption of selling pressure.'
+          educationalNote: '🎯 ACTION: WAIT. Base forming - watch for breakout above or breakdown below this range.'
         });
       }
     }
@@ -674,6 +800,11 @@ const SSR = (function() {
       // Pattern complete
       const finalOutcome = stock.resolutionDirection === 'breakout' ? 'REVERSAL' : 'DECLINE CONFIRMED';
       const priceChange = ((stock.price - stock.preReportPrice) / stock.preReportPrice * 100).toFixed(1);
+      const startPrice = stock.preReportPrice;
+      const endPrice = stock.price;
+
+      // Log BEFORE clearing state so we have access to preReportPrice
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} COMPLETE (${finalOutcome}) [$${endPrice.toFixed(2)} Δ${priceChange >= 0 ? '+' : ''}${priceChange}% from $${startPrice.toFixed(2)}]`);
 
       news.push({
         headline: `${stock.symbol} short report saga concludes: ${finalOutcome}`,
@@ -687,38 +818,60 @@ const SSR = (function() {
         newsType: 'short_report_resolution',
         finalOutcome: stock.resolutionDirection,
         educationalNote: stock.resolutionDirection === 'breakout'
-          ? '📚 Key lesson: Patience + insider signals + base formation = safer entry.'
-          : '📚 Key lesson: Fraud allegations + no insider buying + weak rebuttal = stay away.'
+          ? `🎯 ACTION: SELL NOW to lock in profits. The short attack pattern is COMPLETE - no more upside from this event. ` +
+            `Next: Look for new opportunities elsewhere.`
+          : `🎯 ACTION: SELL if holding, DO NOT BUY. The short seller was RIGHT - expect continued decline. ` +
+            `Next: Wait 6+ months for true bottom, or move on to other stocks.`
       });
 
-      // Clear state
+      // Clear state AFTER logging
       clearShortReportState(stock);
-      console.log(`[SSR] ${stock.symbol} pattern COMPLETE (${finalOutcome})`);
     }
   }
 
   // ========== NEWS GENERATION ==========
+  // Brendel & Ryans (2021): Response types and their market interpretation
   function generateRebuttalNews(stock) {
     const news = getNews();
     
     const rebuttalDescriptions = {
       detailed: {
-        headline: `${stock.symbol} issues DETAILED rebuttal with supporting evidence`,
-        description: `Company provides point-by-point response to ${stock.shortSeller.name}'s allegations with auditor confirmation and third-party data.`,
-        sentiment: 'neutral',
-        educationalNote: '✅ BULLISH: Detailed rebuttals with data suggest allegations may be exaggerated.'
+        headline: `${stock.symbol} issues DETAILED rebuttal citing specific documents`,
+        description: `Company provides point-by-point response referencing "page 42 of the 10-K" and ` +
+          `third-party verification. ${stock.auditorName} ${stock.auditorQuality === 'big4' ? 'reaffirms' : 'reviewing'} the books.`,
+        sentiment: 'positive',
+        educationalNote: '🎯 ACTION: PREPARE TO BUY. Data-driven rebuttal = 85% reversal setup. ' +
+          'Wait for insider buying + base formation, then BUY!'
       },
       generic: {
-        headline: `${stock.symbol} DENIES allegations in brief statement`,
-        description: `Company issues generic denial: "We categorically deny all allegations and stand by our accounting practices."`,
+        headline: `${stock.symbol} "categorically denies" allegations`,
+        description: `Company uses opinion words: "baseless," "unfounded," "malicious short attack." ` +
+          `No specific data provided to counter ${stock.shortSeller.name}'s claims.`,
         sentiment: 'negative',
-        educationalNote: '⚠️ BEARISH: Generic denials without specifics often precede new lows.'
+        educationalNote: '🎯 ACTION: DO NOT BUY. Generic denial = RED FLAG (-14% avg). ' +
+          'Opinion words without data = management has no defense. Avoid.'
+      },
+      investigation: {
+        headline: `🚨 ${stock.symbol} launches INTERNAL INVESTIGATION into allegations`,
+        description: `Company announces special committee to review ${stock.shortSeller.name}'s claims. ` +
+          `This is NOT the same as a rebuttal - it confirms there is something to investigate.`,
+        sentiment: 'very_negative',
+        educationalNote: '🎯 ACTION: SELL IMMEDIATELY if holding. Internal investigation = -24% avg. ' +
+          'High delisting risk. EXIT NOW and do not look back.'
       },
       none: {
-        headline: `${stock.symbol} SILENT on short seller allegations`,
-        description: `No official company response to ${stock.shortSeller.name}'s report after ${CONSTANTS.DURATION.rebuttalWindow.max} days.`,
-        sentiment: 'very_negative',
-        educationalNote: '🚨 VERY BEARISH: Silence often indicates company cannot refute allegations.'
+        headline: stock.auditorQuality === 'big4' 
+          ? `${stock.symbol} remains SILENT - Big 4 auditor ${stock.auditorName} unchanged`
+          : `${stock.symbol} SILENT on allegations after ${CONSTANTS.DURATION.rebuttalWindow.max} days`,
+        description: stock.auditorQuality === 'big4'
+          ? `No official response, but ${stock.auditorName} (Big 4) has not resigned. ` +
+            `Market interprets as "noise not worth acknowledging."`
+          : `No company response to ${stock.shortSeller.name}'s report. Without Big 4 backing, ` +
+            `silence may indicate inability to refute allegations.`,
+        sentiment: stock.auditorQuality === 'big4' ? 'neutral' : 'very_negative',
+        educationalNote: stock.auditorQuality === 'big4'
+          ? '🎯 ACTION: WAIT AND WATCH. Big 4 silence = could go either way. Wait for more signals.'
+          : '🎯 ACTION: SELL or AVOID. No Big 4 + no response = market assumes guilt. Exit.'
       }
     };
 
@@ -744,27 +897,50 @@ const SSR = (function() {
     // Short report initial
     if (newsItem.isShortReport) {
       return {
-        title: '🔴 SHORT SELLER ATTACK',
-        message: newsItem.reportType === 'fraud'
+        type: '🔴 SHORT SELLER ATTACK',
+        description: newsItem.reportType === 'fraud'
           ? 'FRAUD allegations are extremely dangerous - only 10% of targets recover. DO NOT buy the dip! Wait for Gold Standard signals.'
           : 'VALUATION reports have ~40% reversal rate. Still risky, but watch for Gold Standard signals.',
-        severity: 'high',
-        keySignals: ['Point-by-point data rebuttal', 'Big 4 Auditor reaffirmation', 'Insider cluster buying', 'VIX decreasing'],
-        goldStandard: '🏆 SSR Gold Standard: Point-by-point DATA rebuttal OR Big 4 Auditor (Deloitte/PwC/EY/KPMG) reaffirms books',
-        nlpHint: '📰 HARD INFO KEYWORDS (permanent damage): "Exposed," "Phantom," "Fabricated," "Whistleblower," "Investigation," "Audit." ' +
-          'Loughran & McDonald (2011): Reports with specific % claims and accounting terms = 90% NO REVERSAL. ' +
-          'Wait for DATA rebuttal, not generic denial!'
+        implication: 'Brendel & Ryans (2021): Only 31% of companies respond. Watch HOW they respond.',
+        action: '⛔ DO NOT BUY. Wait for Gold Standard signals before entering.',
+        timing: 'TIMING WINDOWS: Day 1-2 generic denial expected. Day 3-5 is Gold Standard for DATA rebuttal. After Day 7 with no response = bearish.',
+        catalyst: '🏆 SSR Gold Standard: (1) DATA rebuttal within 5 days citing specific docs, (2) NO internal investigation, (3) Insider buying after rebuttal'
+      };
+    }
+
+    // Short report updates (stabilization, generic denial, etc.)
+    if (newsItem.newsType === 'short_report_update') {
+      // Check if this is a generic denial
+      if (newsItem.headline && newsItem.headline.includes('denies')) {
+        return {
+          type: '⚠️ GENERIC DENIAL - NOT A BUY SIGNAL',
+          description: 'Company issued immediate denial using opinion words ("baseless", "categorically denies").',
+          implication: 'Generic denials are RED FLAGS. 28% of firms respond this way, but it does NOT indicate truth.',
+          action: '⛔ DO NOT BUY. This is NOT the Gold Standard. Wait for DATA rebuttal.',
+          timing: 'Watch for Day 3-5: Does company provide POINT-BY-POINT data rebuttal?',
+          catalyst: '❌ MISSING: Gold Standard requires DATA rebuttal citing specific documents (10-K pages, GPS logs, etc.)'
+        };
+      }
+      // Stabilization news
+      return {
+        type: '📊 SHARES STABILIZING - WATCH FOR SIGNALS',
+        description: 'Initial panic selling has subsided. Now waiting for company response.',
+        implication: 'Stock is in "discovery" phase. Outcome depends on rebuttal quality.',
+        action: '⏳ DO NOT BUY YET. Wait for: (1) Data rebuttal, (2) Insider buying, (3) Big 4 auditor statement.',
+        timing: 'Day 1-2: Expect generic denial. Day 3-5: Gold Standard rebuttal window. Day 7+: No response = bearish.',
+        catalyst: '🔍 WATCH FOR: Rebuttal quality is key. Only DATA rebuttals matter, not opinion words.'
       };
     }
 
     // Insider buying
     if (newsItem.isInsiderBuying) {
       return {
-        title: '💰 INSIDER BUYING DETECTED',
-        message: 'Strong reversal signal! Executives buying with personal money (Code P) believe allegations are false. Check for cluster buying (3+).',
-        severity: 'medium',
-        keySignals: ['Wait for data rebuttal or auditor confirmation', 'Need cluster buying (3+) for Gold Standard'],
-        goldStandard: '🎯 Insider piece of Gold Standard: Need Cluster (3+) Open Market Buys (Code P) with >10% wealth commitment'
+        type: '💰 INSIDER BUYING DETECTED',
+        description: 'Executives buying with personal money (Code P) believe allegations are false.',
+        implication: 'Strong reversal signal! Check for cluster buying (3+).',
+        action: '⏳ Wait for data rebuttal or auditor confirmation.',
+        timing: 'Need cluster buying (3+) for Gold Standard.',
+        catalyst: '🎯 Insider piece of Gold Standard: Need Cluster (3+) Open Market Buys (Code P) with >10% wealth commitment'
       };
     }
 
@@ -772,22 +948,28 @@ const SSR = (function() {
     if (newsItem.newsType === 'rebuttal') {
       const hints = {
         detailed: {
-          title: '📋 DETAILED DATA REBUTTAL - GOLD STANDARD ✓',
-          message: 'Company provided POINT-BY-POINT counter-evidence with DATA. This is a Gold Standard signal! Still wait for base confirmation.',
-          severity: 'low',
-          goldStandard: '🏆 GOLD STANDARD MET: Point-by-point data rebuttal addresses allegations directly with evidence'
+          type: '📋 DETAILED DATA REBUTTAL - GOLD STANDARD ✓',
+          description: 'Company provided POINT-BY-POINT counter-evidence with DATA.',
+          implication: 'This is a Gold Standard signal! Still wait for base confirmation.',
+          action: '⏳ Wait for base formation and breakout.',
+          timing: 'Base typically forms in 10-14 days.',
+          catalyst: '🏆 GOLD STANDARD MET: Point-by-point data rebuttal addresses allegations directly with evidence'
         },
         generic: {
-          title: '⚠️ WEAK REBUTTAL - NOT GOLD STANDARD',
-          message: 'Generic denial without data is a RED FLAG. Does NOT meet Gold Standard. Stock likely to make new lows.',
-          severity: 'medium',
-          goldStandard: '❌ MISSING: Gold Standard requires DATA rebuttal addressing each allegation point-by-point'
+          type: '⚠️ WEAK REBUTTAL - NOT GOLD STANDARD',
+          description: 'Generic denial without data is a RED FLAG.',
+          implication: 'Does NOT meet Gold Standard. Stock likely to make new lows.',
+          action: '⛔ DO NOT BUY. Wait for better signals.',
+          timing: 'Watch for new lows in coming days.',
+          catalyst: '❌ MISSING: Gold Standard requires DATA rebuttal addressing each allegation point-by-point'
         },
         none: {
-          title: '🚨 NO REBUTTAL - DANGER',
-          message: 'Company silence is extremely bearish. Cannot meet Gold Standard without rebuttal. STAY AWAY.',
-          severity: 'high',
-          goldStandard: '❌ FAILED: No rebuttal = cannot meet Gold Standard. 90%+ chance of permanent loss.'
+          type: '🚨 NO REBUTTAL - DANGER',
+          description: 'Company silence is extremely bearish.',
+          implication: 'Cannot meet Gold Standard without rebuttal. 90%+ chance of permanent loss.',
+          action: '⛔ STAY AWAY. Do not average down.',
+          timing: 'Expect continued decline.',
+          catalyst: '❌ FAILED: No rebuttal = cannot meet Gold Standard'
         }
       };
       return hints[newsItem.rebuttalQuality] || null;
@@ -797,12 +979,16 @@ const SSR = (function() {
     if (newsItem.newsType === 'auditor_confirmation') {
       const isBig4 = ['Deloitte', 'PwC', 'EY', 'KPMG'].includes(newsItem.auditorName);
       return {
-        title: isBig4 ? '✅ BIG 4 AUDITOR CONFIRMS - GOLD STANDARD ✓' : '📋 AUDITOR CONFIRMS (non-Big 4)',
-        message: isBig4 
-          ? `${newsItem.auditorName} (Big 4) reaffirmed the books. This is a GOLD STANDARD signal for SSR reversal!`
-          : `${newsItem.auditorName} confirmed books, but not a Big 4 firm. Partial confidence only.`,
-        severity: isBig4 ? 'low' : 'medium',
-        goldStandard: isBig4 
+        type: isBig4 ? '✅ BIG 4 AUDITOR CONFIRMS - GOLD STANDARD ✓' : '📋 AUDITOR CONFIRMS (non-Big 4)',
+        description: isBig4 
+          ? `${newsItem.auditorName} (Big 4) reaffirmed the books.`
+          : `${newsItem.auditorName} confirmed books, but not a Big 4 firm.`,
+        implication: isBig4 
+          ? 'This is a GOLD STANDARD signal for SSR reversal!'
+          : 'Partial confidence only - not a Big 4 firm.',
+        action: isBig4 ? '📈 Consider buying on breakout.' : '⏳ Wait for additional signals.',
+        timing: isBig4 ? 'Watch for base breakout.' : 'May need Big 4 confirmation.',
+        catalyst: isBig4 
           ? '🏆 GOLD STANDARD MET: Big 4 Auditor (Deloitte/PwC/EY/KPMG) reaffirmation is strongest SSR signal'
           : '⚠️ PARTIAL: Gold Standard requires Big 4 Auditor. Non-Big 4 confirmation is weaker.'
       };
@@ -811,32 +997,60 @@ const SSR = (function() {
     // Base pattern
     if (newsItem.newsType === 'base_update') {
       return {
-        title: '📊 TWO-WEEK BASE FORMING',
-        message: 'Price consolidating in tight range. Check: Has company issued data rebuttal? Big 4 auditor involved?',
-        severity: 'low',
-        keySignals: ['No new lows', 'Tight trading range', 'Data rebuttal issued?', 'Big 4 auditor?'],
-        goldStandard: '🔄 BASE FORMING: But Gold Standard also needs data rebuttal OR Big 4 auditor confirmation'
+        type: '📊 TWO-WEEK BASE FORMING',
+        description: 'Price consolidating in tight range.',
+        implication: 'Check: Has company issued data rebuttal? Big 4 auditor involved?',
+        action: '⏳ Watch for breakout. Key signals: No new lows, Tight trading range.',
+        timing: 'Base formation typically 10-14 days.',
+        catalyst: '🔄 BASE FORMING: But Gold Standard also needs data rebuttal OR Big 4 auditor confirmation'
       };
     }
 
     // Breakout
     if (newsItem.newsType === 'breakout') {
       return {
-        title: '📈 BREAKOUT CONFIRMED',
-        message: 'High-volume breakout above base resistance. If Gold Standard signals present, this is a strong entry.',
-        severity: 'low',
-        goldStandard: '✅ ENTRY POINT: Breakout + Gold Standard (data rebuttal/Big 4 auditor) = 85% success setup'
+        type: '📈 BREAKOUT CONFIRMED',
+        description: 'High-volume breakout above base resistance.',
+        implication: 'If Gold Standard signals present, this is a strong entry.',
+        action: '📈 Consider BUYING if Gold Standard met.',
+        timing: 'Enter now if signals confirmed.',
+        catalyst: '✅ ENTRY POINT: Breakout + Gold Standard (data rebuttal/Big 4 auditor) = 85% success setup'
       };
     }
 
     // Breakdown
     if (newsItem.newsType === 'breakdown') {
       return {
-        title: '📉 BASE FAILED - BREAKDOWN',
-        message: 'Short seller thesis validated. Gold Standard signals were missing. Expect 50-80% permanent loss.',
-        severity: 'high',
-        goldStandard: '📚 LESSON: Without Gold Standard (data rebuttal + Big 4 auditor), most SSR targets fail'
+        type: '📉 BASE FAILED - BREAKDOWN',
+        description: 'Short seller thesis validated. Gold Standard signals were missing.',
+        implication: 'Expect 50-80% permanent loss.',
+        action: '⛔ DO NOT BUY. Cut losses if holding.',
+        timing: 'Further decline expected.',
+        catalyst: '📚 LESSON: Without Gold Standard (data rebuttal + Big 4 auditor), most SSR targets fail'
       };
+    }
+
+    // Resolution (saga concludes)
+    if (newsItem.newsType === 'short_report_resolution') {
+      if (newsItem.finalOutcome === 'breakout') {
+        return {
+          type: '✅ SHORT REPORT SAGA RESOLVED - REVERSAL',
+          description: 'Company successfully defended against short attack. Gold Standard criteria were met.',
+          implication: 'Stock has recovered - the dip was a buying opportunity for those who waited for confirmation.',
+          action: '📚 Review what worked: Data rebuttal? Big 4 auditor? Insider buying?',
+          timing: 'Pattern complete. Normal trading resumes.',
+          catalyst: '🎓 LESSON: Patience + Gold Standard signals = successful SSR reversal trade'
+        };
+      } else {
+        return {
+          type: '❌ SHORT REPORT SAGA RESOLVED - DECLINE CONFIRMED',
+          description: 'Short seller thesis validated. Allegations had merit.',
+          implication: 'Those who "bought the dip" suffered permanent capital loss.',
+          action: '📚 Review what was missing: No data rebuttal? No insider buying? Generic denial?',
+          timing: 'Pattern complete. Damage is permanent.',
+          catalyst: '🎓 LESSON: Without Gold Standard (data rebuttal + Big 4 auditor + insider buying), SSR targets rarely recover'
+        };
+      }
     }
 
     return null;
@@ -851,7 +1065,7 @@ const SSR = (function() {
     stock.reportCrashMagnitude = 0;
     stock.preReportPrice = 0;
     stock.shortReportLow = 0;
-    stock.shortReportTransitionEffect = 0;
+    // DON'T reset shortReportTransitionEffect - it was set for this day's price move
     stock.insiderBuying = false;
     stock.insiderBuyingAmount = null;
     stock.insiderBuyingTitle = null;
