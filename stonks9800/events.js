@@ -155,15 +155,27 @@ function generateDailyNews() {
     checkInsiderTradingEvents();
   }
   
-  // Check for index rebalancing events (index_rebalancing) - Tier 1
+  // Check for index rebalancing events (index_rebalancing) - Tier 2 (75-80% success)
+  // Uses the IndexRebalance module for empirically-based forced liquidity events
+  // Gold Standard: Tier 1 index + 5% run-up + MOC spike + T+2 reversal
   if (isEventTypeEnabled('index_rebalancing')) {
-    checkIndexRebalancingEvents();
+    if (typeof IndexRebalance !== 'undefined' && IndexRebalance.checkIndexRebalanceEvents) {
+      IndexRebalance.checkIndexRebalanceEvents();
+    } else {
+      checkIndexRebalancingEvents(); // Legacy fallback
+    }
   }
   
   // TIER 2: Good Educational Events
   // Check for short squeeze triggers and news (short_squeeze) - Tier 2
+  // Uses the ShortSqueeze module for empirically-based exhaustion reversal
+  // Gold Standard: Parabolic + Volume Climax + Borrow Plateau + RSI Divergence (85%)
   if (isEventTypeEnabled('short_squeeze')) {
-    checkShortSqueezeEvents();
+    if (typeof ShortSqueeze !== 'undefined' && ShortSqueeze.checkShortSqueezeEvents) {
+      stocks.forEach(stock => ShortSqueeze.checkShortSqueezeEvents(stock, todayNews));
+    } else {
+      checkShortSqueezeEvents(); // Legacy fallback
+    }
   }
   
   // Check for dead cat bounce / crash events (dead_cat_bounce) - Tier 2
@@ -172,25 +184,72 @@ function generateDailyNews() {
   }
   
   // Check for executive replacement events (executive_change) - Tier 2
-  // Different from CEO departure crash - this has successor announced = bounce pattern
+  // Uses ExecutiveChange module (empirical: Denis & Denis 1995, Huson et al. 2001, Datarails 2023)
+  // Four types: Abrupt (<15%), CFO Exit (50%), Planned Internal (70%), Gold Standard (85%)
   if (isEventTypeEnabled('executive_change')) {
-    checkExecutiveChangeEvents();
+    if (typeof ExecutiveChange !== 'undefined' && ExecutiveChange.checkExecutiveChangeEvents) {
+      // New empirical module
+      stocks.forEach(stock => ExecutiveChange.checkExecutiveChangeEvents(stock, todayNews));
+      ExecutiveChange.processExecutiveChange();
+    } else {
+      // Legacy fallback
+      checkExecutiveChangeEvents();
+    }
   }
   
   // Check for strategic pivot/restructuring events (strategic_pivot) - Tier 2
-  // "Unfavorable" announcements (layoffs, pivots, etc.) that recover in 2-3 weeks
+  // Uses StrategicPivot module (empirical: Kogan 2023, McKinsey 2023, Bernard & Thomas 2024)
+  // Two types: PR Pivot (85% reversal) vs Structural Pivot (no reversal)
   if (isEventTypeEnabled('strategic_pivot')) {
-    checkStrategicPivotEvents();
+    if (typeof StrategicPivot !== 'undefined' && StrategicPivot.checkStrategicPivotEvents) {
+      // New empirical module
+      stocks.forEach(stock => StrategicPivot.checkStrategicPivotEvents(stock, todayNews));
+      StrategicPivot.processStrategicPivot();
+    } else {
+      // Legacy fallback
+      checkStrategicPivotEvents();
+    }
   }
   
   // Check for FOMO rally news (fomo_rally) - Tier 2
+  // Uses FOMORally module if available, with legacy fallback
   if (isEventTypeEnabled('fomo_rally')) {
-    checkFOMOEvents();
+    if (typeof FOMORally !== 'undefined' && FOMORally.checkFOMORallyEvents) {
+      // New empirical module: Barber & Odean (2021), Da et al. (2024), Baltzer et al. (2023)
+      stocks.forEach(stock => FOMORally.checkFOMORallyEvents(stock, todayNews));
+    } else {
+      // Legacy fallback
+      checkFOMOEvents();
+    }
   }
   
-  // Check for stock split events (stock_split) - Tier 2
+  // Check for stock split events (stock_split) - Tier 2 (70-85% reversal success)
+  // Uses the StockSplit module for empirically-based psychology-driven events
+  // Gold Standard: Mega-cap + 15% run-up + OTM call spike + T+3 reversal
   if (isEventTypeEnabled('stock_split')) {
-    checkStockSplitEvents();
+    if (typeof StockSplit !== 'undefined' && StockSplit.checkStockSplitEvents) {
+      StockSplit.checkStockSplitEvents();
+    } else {
+      checkStockSplitEvents(); // Legacy fallback
+    }
+  }
+  
+  // Check for liquidity sweep events (liquidity_sweep) - Tier 2 (85% Gold Standard)
+  // Uses LiquiditySweep module for Wyckoff Spring / Stop-Run Reversal
+  // Gold Standard: Obvious support + False breakout + Absorption volume + Re-entry
+  if (isEventTypeEnabled('liquidity_sweep')) {
+    if (typeof LiquiditySweep !== 'undefined' && LiquiditySweep.checkLiquiditySweepEvents) {
+      stocks.forEach(stock => LiquiditySweep.checkLiquiditySweepEvents(stock, todayNews));
+    }
+  }
+
+  // Check for news shakeout events (news_shakeout) - Tier 1 (85% Gold Standard)
+  // Uses NewsShakeout module for Overreaction Hypothesis / Event-Driven Mean Reversion
+  // Gold Standard: Transient news + Volume climax (5x+) + 3-day stabilization + RSI < 25
+  if (isEventTypeEnabled('news_shakeout')) {
+    if (typeof NewsShakeout !== 'undefined' && NewsShakeout.checkNewsShakeoutEvents) {
+      stocks.forEach(stock => NewsShakeout.checkNewsShakeoutEvents(stock, todayNews));
+    }
   }
   
   // TIER 3: Moderate Educational Events
@@ -234,6 +293,13 @@ function generateDailyNews() {
   // Check for circuit breaker (circuit_breaker) - Tier 4
   if (isEventTypeEnabled('circuit_breaker')) {
     checkCircuitBreakerEvents();
+  }
+  
+  // Check for insider selling (insider_selling) - Tier 4 NOISE
+  // Educational: teaches that insider selling is NOT a reliable bearish signal
+  // 93% of insider sales are for non-bearish reasons (taxes, diversification, etc.)
+  if (isEventTypeEnabled('insider_selling')) {
+    checkInsiderSellingEvents();
   }
   
   // Check for unusual volume (unusual_volume) - Tier 4
@@ -579,9 +645,18 @@ function generateShortSqueezeNews(stock, phase) {
 }
 
 // ========== SHORT SELLER REPORT NEWS ==========
+// IMPORTANT: This legacy function is now delegated to the SSR module
+// The module handles the empirically-based short report events
+// See shortSellerReport.js for Gold Standard criteria and signal mechanics
 
 function checkShortSellerReportEvents() {
-  // Random chance to trigger a short seller report (1.5% daily)
+  // Delegate to the new SSR module if available
+  if (typeof SSR !== 'undefined' && SSR.checkShortReportEvents) {
+    SSR.checkShortReportEvents();
+    return;
+  }
+  
+  // Legacy fallback: Random chance to trigger a short seller report (1.5% daily)
   if (Math.random() < 0.015) {
     const eligibleStocks = stocks.filter(s => !s.shortReportPhase && !s.crashPhase);
     if (eligibleStocks.length > 0) {
@@ -753,40 +828,9 @@ function generateShortReportNews(stock, phase) {
   });
 }
 
-// ========== DEAD CAT BOUNCE / CRASH NEWS ==========
-// Multi-bounce system: News is now generated in market.js processDeadCatBounce()
-// This function only triggers initial crashes
-
-function checkCrashEvents() {
-  stocks.forEach(stock => {
-    // Random chance of crash for any stock (2% daily)
-    if (!stock.crashPhase && !stock.shortReportPhase && Math.random() < 0.02) {
-      const crashCatalysts = [
-        { headline: `BREAKING: ${stock.symbol} accounting irregularities discovered`, severity: 0.30 },
-        { headline: `${stock.symbol} loses major client, revenue at risk`, severity: 0.25 },
-        { headline: `Whistleblower exposes ${stock.symbol} fraud`, severity: 0.40 },
-        { headline: `${stock.symbol} product causes injuries, lawsuits filed`, severity: 0.28 },
-        { headline: `${stock.symbol} CEO sudden departure raises red flags`, severity: 0.22 }
-      ];
-      
-      const catalyst = randomChoice(crashCatalysts);
-      triggerCrash(stock, catalyst.severity);
-      
-      todayNews.push({
-        headline: catalyst.headline,
-        description: "Shares in freefall. Multiple dead cat bounces are common - don't catch falling knives.",
-        sentiment: 'negative',
-        relatedStock: stock.symbol,
-        newsType: 'crash',
-        isCrash: true,
-        crashSeverity: catalyst.severity
-      });
-    }
-    
-    // Note: Bounce and decline news now generated in market.js
-    // via generateBounceFailedNews(), generateAnotherBounceNews(), etc.
-  });
-}
+// ========== DEAD CAT BOUNCE ==========
+// All crash/bounce mechanics are now in deadCatBounce.js
+// checkCrashEvents() is now defined there
 
 // ========== EXECUTIVE CHANGE NEWS ==========
 // Different from "CEO sudden departure" crash - this is PLANNED REPLACEMENT (successor already named)
@@ -1269,20 +1313,20 @@ function checkCapitulationEvents() {
 }
 
 // ========== INSIDER TRADING NEWS ==========
+// IMPORTANT: This legacy function is now delegated to the InsiderBuying module
+// The module handles the empirically-based signal generation
+// See insiderBuying.js for Gold Standard criteria and signal mechanics
 
 function checkInsiderTradingEvents() {
-  // Random chance to start insider buying (3% daily)
-  if (Math.random() < 0.03) {
-    const eligibleStocks = stocks.filter(s => !s.insiderPhase && !s.crashPhase);
-    if (eligibleStocks.length > 0) {
-      const target = randomChoice(eligibleStocks);
-      if (startInsiderBuying(target)) {
-        generateInsiderNews(target, 'buy_start');
-      }
-    }
+  // Delegate to the new InsiderBuying module
+  // The module uses empirical data (Lakonishok & Lee 2001, Hjort & Bapkas 2024)
+  // for realistic signal generation with proper cluster detection
+  if (typeof InsiderBuying !== 'undefined' && InsiderBuying.checkInsiderBuyingEvents) {
+    InsiderBuying.checkInsiderBuyingEvents();
   }
   
-  // Generate news for ongoing insider activity
+  // Legacy: Generate news for ongoing insider activity (old phase system)
+  // Kept for backward compatibility with stocks that may have old insiderPhase
   stocks.forEach(stock => {
     // Mid-accumulation update
     if (stock.insiderPhase === 'accumulating' && stock.insiderDaysLeft === 2) {
@@ -1299,10 +1343,6 @@ function checkInsiderTradingEvents() {
       generateInsiderFizzleNews(stock);
     }
   });
-  
-  // NOTE: Insider SELLING news removed - low educational value
-  // Per tutorial: "Insider SELLING is less meaningful (diversification, taxes, etc.)"
-  // Selling doesn't give actionable signal like buying does
 }
 
 function generateInsiderNews(stock, type) {

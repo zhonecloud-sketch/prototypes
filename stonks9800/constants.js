@@ -630,25 +630,37 @@ const CHOICE_EVENTS = [
 // TIER 3: Moderate - Requires experience, harder to time
 // TIER 4: Advanced/Random - Unpredictable or difficult
 // eventType field maps to gameSettings.enabledEvents keys
+//
+// FOUR CORE MODULES (DCB, SSR, InsiderBuying, InsiderSelling) + IndexRebalance:
+// - DCB (Dead Cat Bounce): Tier 2 - Clear phases but requires volume/Fib analysis
+// - SSR (Short Seller Report): Tier 1 - Clear timeline, rebuttal windows, auditor signals
+// - InsiderBuying: Tier 1 - Strong bullish signal (+4.8% alpha), cluster = Gold Standard
+// - InsiderSelling: Tier 4 - NOISE (93% non-bearish) - Educational: teaches what to IGNORE
+// - IndexRebalance: Tier 1 - Forced liquidity, 75-80% reversal probability
+//
 const PHENOMENA = [
-  // Tier 1 - Highly Educational
-  { id: 10, eventType: 'short_seller_report', name: 'Short Seller Report', desc: 'Multi-wave attacks with clear escalation signals', pred: 'predictable', icon: '🟢', tier: 1 },
-  { id: 16, eventType: 'insider_buying', name: 'Insider Buying', desc: 'Executives buying = strong bullish signal', pred: 'predictable', icon: '🟢', tier: 1 },
-  { id: 19, eventType: 'index_rebalancing', name: 'Index Rebalance', desc: 'Forced buying/selling with known timeline', pred: 'predictable', icon: '🟢', tier: 1 },
+  // Tier 1 - Highly Educational (Clear signals, 85%+ success with Gold Standard)
+  { id: 10, eventType: 'short_seller_report', name: 'Short Seller Report (SSR)', desc: 'Multi-phase pattern: crash → rebuttal window → base building. Gold Standard: Data rebuttal OR Big 4 auditor (85%+).', pred: 'predictable', icon: '🟢', tier: 1 },
+  { id: 16, eventType: 'insider_buying', name: 'Insider Buying', desc: 'Executives buying with personal funds = strong bullish signal (+4.8% alpha). Gold Standard: Cluster (3+) + Code P + >10% wealth (85%+).', pred: 'predictable', icon: '🟢', tier: 1 },
+  { id: 5, eventType: 'short_squeeze', name: 'Short Squeeze Exhaustion', desc: 'SHORT the exhaustion after climax. Gold Standard: Parabolic 100%+ + Volume 5x+ + Borrow Plateau + RSI >85 (85%+ success).', pred: 'predictable', icon: '🟢', tier: 1 },
+  { id: 26, eventType: 'news_shakeout', name: 'News Shakeout (Overreaction)', desc: 'Event-driven mean reversion. Gold Standard: Transient news + Volume climax (5x+) + 3-day stabilization + RSI < 25 (85%+). De Bondt & Thaler.', pred: 'predictable', icon: '🟢', tier: 1 },
   
-  // Tier 2 - Good Educational
-  { id: 6, eventType: 'dead_cat_bounce', name: 'Dead Cat Bounce', desc: 'Multiple false bounces after crash', pred: 'partial', icon: '🟡', tier: 2 },
-  { id: 17, eventType: 'stock_split', name: 'Stock Split', desc: 'Clear mechanics, sentiment-driven', pred: 'predictable', icon: '🟢', tier: 2 },
-  { id: 5, eventType: 'short_squeeze', name: 'Short Squeeze', desc: 'High short interest + catalyst = squeeze', pred: 'partial', icon: '🟡', tier: 2 },
-  { id: 7, eventType: 'fomo_rally', name: 'FOMO Rally', desc: 'Identifiable euphoria phases', pred: 'predictable', icon: '🟢', tier: 2 },
+  // Tier 2 - Good Educational (Clear signals, 65-85% success rate)
+  { id: 19, eventType: 'index_rebalancing', name: 'Index Rebalance', desc: 'Forced buying/selling by passive funds. Gold Standard: Tier 1 index + 5% run-up + MOC spike + T+2 reversal (75-80%).', pred: 'partial', icon: '🟡', tier: 2 },
+  { id: 6, eventType: 'dead_cat_bounce', name: 'Dead Cat Bounce (DCB)', desc: 'Post-crash pattern with false bounces. Gold Standard: 61.8% Fib level + rising volume + higher lows (65-75%).', pred: 'partial', icon: '🟡', tier: 2 },
+  { id: 17, eventType: 'stock_split', name: 'Stock Split', desc: 'Psychology-driven reversal. Gold Standard: Mega-cap + 15% run-up + OTM call spike + T+3 lower high (70-85%).', pred: 'partial', icon: '🟡', tier: 2 },
+  { id: 7, eventType: 'fomo_rally', name: 'FOMO Rally Exhaustion', desc: 'Sentiment-driven herding → crash. Gold Standard: 3+ SD + P/C <0.4 + Divergence + Blow-off (85%+). Barber & Odean: 30-90 day underperformance.', pred: 'predictable', icon: '🟢', tier: 2 },
+  { id: 24, eventType: 'liquidity_sweep', name: 'Liquidity Sweep (Wyckoff Spring)', desc: 'Stop-run reversal. Gold Standard: Obvious support + False breakout + Absorption volume + Re-entry (85%). Aggarwal & Wu: Institutional order flow.', pred: 'predictable', icon: '🟢', tier: 2 },
+  { id: 27, eventType: 'executive_change', name: 'Executive Change', desc: 'Gold Standard (85%): Internal successor + Clean 8-K + Volume 3x+ + 3-day stabilization. Abrupt/no successor = <15% reversal (Denis & Denis 1995).', pred: 'partial', icon: '🟡', tier: 2 },
+  { id: 28, eventType: 'strategic_pivot', name: 'Strategic Pivot', desc: '4 Types: Reactive (<10%), Structural (30%), Symbolic (65%), Gold Standard (85%+). Kogan 2023: Insider BUY + Non-Dilutive + Anchor Revenue + Gap Fill.', pred: 'partial', icon: '🟡', tier: 2 },
   
-  // Tier 3 - Moderate
-  { id: 24, eventType: 'institutional_manipulation', name: 'Institutional Manipulation', desc: 'Hard to detect, high failure rate (~40%)', pred: 'partial', icon: '🟡', tier: 3 },
+  // Tier 3 - Moderate (Requires experience, harder to time)
   { id: 18, eventType: 'analyst', name: 'Analyst Rating', desc: 'Upgrades/downgrades, short-lived impact', pred: 'partial', icon: '🟡', tier: 3 },
   { id: 8, eventType: 'capitulation', name: 'Capitulation', desc: 'Mass panic - hard to time bottom', pred: 'partial', icon: '🟡', tier: 3 },
   { id: 21, eventType: 'tax_loss_harvesting', name: 'Tax Loss Harvest', desc: 'Calendar-based, weak signals', pred: 'partial', icon: '🟡', tier: 3 },
   
-  // Tier 4 - Advanced/Random
+  // Tier 4 - Advanced/Random (Unpredictable or NOISE - teaches what to ignore)
+  { id: 25, eventType: 'insider_selling', name: 'Insider Selling (NOISE)', desc: '⚠️ NOT predictive! 93% of sales are non-bearish (taxes, diversification, etc). Educational: teaches what to IGNORE.', pred: 'unpredictable', icon: '🔴', tier: 4 },
   { id: 1, eventType: 'basic_news', name: 'Basic News', desc: 'Random daily news without telltales', pred: 'partial', icon: '🟡', tier: 4 },
   { id: 11, eventType: 'sector_rotation', name: 'Sector Rotation', desc: 'Money flows between sectors - gradual', pred: 'partial', icon: '🟡', tier: 4 },
   { id: 12, eventType: 'dividend_trap', name: 'Dividend Trap', desc: 'High yield masks troubled company', pred: 'unpredictable', icon: '🔴', tier: 4 },
@@ -661,17 +673,19 @@ const PHENOMENA = [
 ];
 
 // Updated presets based on tier system
-// IDs map to: 10=short_seller, 16=insider, 19=index, 6=deadcat, 17=split, 5=squeeze, 7=fomo
-//             24=manipulation, 18=analyst, 8=capitulation, 21=tax_loss
-//             1=basic_news, 11=sector, 12=dividend, 13=gap, 14=correlation, 15=liquidity, 20=window, 22=whisper, 23=circuit
+// IDs map to: 10=SSR, 16=insider_buy, 19=index, 6=DCB, 17=split, 5=squeeze, 7=fomo, 24=liquidity_sweep, 26=news_shakeout
+//             27=executive_change, 28=strategic_pivot
+//             18=analyst, 8=capitulation, 21=tax_loss
+//             25=insider_sell (NOISE), 1=basic_news, 11=sector, 12=dividend, 13=gap, 14=correlation, 15=liquidity, 20=window, 22=whisper, 23=circuit
 const PHENOMENA_PRESETS = {
-  // Tier 1 only - Best for learning
-  beginner: [10, 16, 19],
-  // Tier 1 + 2 - Good educational mix (DEFAULT)
-  intermediate: [5, 6, 7, 10, 16, 17, 19],
-  // Tier 1-3 - More challenging
-  advanced: [5, 6, 7, 8, 10, 16, 17, 18, 19, 21, 24],
-  // All phenomena
-  all: [1, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+  // Tier 1 only - Best for learning (SSR + InsiderBuying + NewsShakeout) - 85%+ Gold Standard
+  beginner: [10, 16, 26],
+  // Tier 1 + 2 - Good educational mix (DEFAULT) - Adds Index, DCB, Split, Squeeze, FOMO, Liquidity Sweep, ExecChange, StrategicPivot
+  intermediate: [5, 6, 7, 10, 16, 17, 19, 24, 26, 27, 28],
+  // Tier 1-3 + InsiderSelling for educational contrast
+  // InsiderSelling (25) included to teach "what NOT to trade on"
+  advanced: [5, 6, 7, 8, 10, 16, 17, 18, 19, 21, 24, 25, 26, 27, 28],
+  // All phenomena including noise events
+  all: [1, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
   none: []
 };

@@ -16,6 +16,15 @@ const DETAILED_TRADING_HINTS = {
       '📊 Stock previously had no issues - attack comes out of nowhere',
       '🔍 Look for "Part 2" or "follow-up" reports = more waves coming'
     ],
+    nlpFilter: {
+      title: '📰 SHORT REPORT HARD INFO KEYWORDS (Loughran & McDonald 2011)',
+      hardKeywords: ['Exposed', 'Phantom', 'Fabricated', 'Investigation', 'Whistleblower', 'Audit', 'SEC', 'Restatement'],
+      hardExplained: 'Reports using specific ACCOUNTING TERMS and % claims = HARD INFO = permanent damage (90% no reversal)',
+      verbs: 'Active/Aggressive verbs: "Exposed," "Fabricated," "Inflated" = Fundamental Integrity Shock',
+      goldStandard: '🏆 SSR Gold Standard (Reversal): Point-by-point DATA rebuttal OR Big 4 Auditor (Deloitte/PwC/EY/KPMG) confirms books',
+      trapExample: '❌ TRAP: Generic denial ("We disagree") without DATA = stock makes new lows',
+      headlineExample: '🔴 HARD INFO: "Hindenburg Research Claims Stock Y Fabricated 40% of Revenue" (specific % = permanent)'
+    },
     phases: {
       initial: {
         name: 'Initial Crash',
@@ -81,69 +90,74 @@ const DETAILED_TRADING_HINTS = {
   },
   
   // === INDEX REBALANCING ===
+  // Empirically-based: Petajisto (2011), Kappou (2010), BPP (2021)
+  // TIER 2: 75-80% success rate (below 85% Gold Standard threshold)
   indexRebalancing: {
     name: 'Index Rebalancing',
-    tier: 1,
+    tier: 2,
+    goldStandard: '🏆 Tier 1 Index + 5%+ Run-up + MOC Spike + T+2 Reversal = 75-80% Success Rate',
     telltales: [
       '📰 News: "X to be ADDED to S&P 500" or "X REMOVED from Russell 2000"',
-      '📅 Specific effective date announced (usually 5-10 days out)',
-      '📊 Stock shows steady buying/selling pressure leading up to date',
-      '💰 Index funds MUST buy/sell regardless of price'
+      '📅 Effective date announced (5-10 trading days out)',
+      '📊 Run-up begins immediately after announcement (+0.5-1.5%/day)',
+      '💰 Passive funds MUST buy/sell - this is a FORCED TRADE, not a choice'
     ],
     phases: {
-      announced: {
+      announcement: {
         name: 'Announcement',
-        timing: 'Day 1',
-        priceImpact: '+8% to +13% immediate (addition), -8% to -13% (removal)',
-        action: 'BUY on addition announcement, SHORT on removal announcement',
-        strategy: 'Enter immediately on news. Index funds will front-run for days.'
+        timing: 'Day 0',
+        priceImpact: '+2-4% immediate (addition), -2-4% (removal)',
+        action: 'DO NOT BUY NOW! Monitor for Gold Standard setup.',
+        strategy: 'The retail edge is NOT buying the addition - it\'s shorting the exhaustion AFTER effective date.'
       },
-      frontrun: {
-        name: 'Front-Running Period',
-        timing: 'Days 2 to effective-1',
-        priceImpact: '+2% to +3.5% per day (addition), -2% to -3.5% (removal)',
-        action: 'HOLD through this period. Momentum continues.',
-        strategy: 'Let the index fund buying/selling push price in your favor.'
+      runUp: {
+        name: 'Run-Up / Front-Running',
+        timing: 'Days 1 to effective-1',
+        priceImpact: '+0.5-1.5% per day (Tier 1 = 1.5x impact)',
+        action: 'Track cumulative run-up. Need 5%+ for Gold Standard.',
+        strategy: 'Speculators front-run passive funds. Watch for 5%+ run-up criterion.'
       },
-      effective: {
+      effectiveDay: {
         name: 'Effective Date',
         timing: 'Effective day',
-        priceImpact: 'Peak on effective day, then slight reversal',
-        action: 'SELL day before or morning of effective date.',
-        strategy: '"Buy the rumor, sell the news" - exit as forced buying completes.'
+        priceImpact: '+1-3% final push with 20-50x MOC volume spike',
+        action: 'Observe MOC volume. Prepare for T+2 entry.',
+        strategy: 'Massive Market-on-Close volume. The "marginal buyer" is now gone.'
       },
-      aftermath: {
-        name: 'Post-Effective',
-        timing: 'Day after effective',
-        priceImpact: '-2% to -5% reversal (addition), +2% to +5% bounce (removal)',
-        action: 'Consider counter-trade after forced flow completes.',
-        strategy: 'Overreaction often corrects. Removal stocks may bounce.'
+      reversal: {
+        name: 'T+2 Reversal',
+        timing: 'T+1 to T+5 (3-5 trading days)',
+        priceImpact: '-2% to -5% mean reversion (Petajisto 2011)',
+        action: 'ENTER SHORT on T+2 lower high. Target 2-5% gain.',
+        strategy: 'With Gold Standard 4-step filter: 75-80% success rate on reversal trade.'
       }
     },
     sellSignals: {
       timing: [
-        '⏱️ SELL on the day BEFORE the effective date (peak price)',
-        '⏱️ Or SELL morning of effective date before close',
-        '⏱️ Do NOT hold past effective date - reversal starts immediately',
-        '⏱️ If trading removal: Cover short on effective date'
+        '⏱️ If you bought the addition: SELL before effective day',
+        '⏱️ If shorting reversal: ENTER on T+2 (first lower high)',
+        '⏱️ EXIT reversal short: 3-5 days after entry for 2-5% gain',
+        '⏱️ Deletion bounce: BUY T+1 or T+2, EXIT +2-4%'
       ],
       priceTargets: [
-        '🎯 Addition Target: +15% to +25% from announcement price',
-        '🎯 Removal Target: -15% to -25% from announcement price (short profit)',
-        '🎯 Stop Loss: -3% from entry if momentum stalls early',
-        '🎯 Counter-trade: +5% bounce after effective date (removal stocks)'
+        '🎯 Reversal Short Target: -2% to -5% from effective day peak',
+        '🎯 Deletion Bounce Target: +2% to +4% from effective day low',
+        '🎯 Stop Loss: Exit if reversal doesn\'t materialize by T+5',
+        '🎯 Empirical basis: Kappou (2010), 2-4% abnormal return post-inclusion'
       ]
     },
     expectedReturn: {
-      addition: '+15% to +25% from announcement to effective date',
-      removal: '-15% to -25% from announcement to effective date',
-      reversal: '+3% to +7% counter-trade after effective date'
+      runUp: '+5% to +15% from announcement to effective (you\'re NOT trading this)',
+      reversalShort: '+2% to +5% from shorting the post-effective reversal (Gold Standard trade)',
+      deletionBounce: '+2% to +4% from buying the deletion bounce',
+      successRate: '75-80% when all 4 Gold Standard criteria met'
     },
     keyLessons: [
-      'Index funds MUST buy/sell - it\'s forced, not a choice',
-      'Front-running is legal and everyone does it',
-      'Sell BEFORE effective date - forced buying = your exit liquidity',
-      'Removal stocks often bounce after forced selling exhausted'
+      'The highest probability trade is NOT buying the addition - it\'s shorting the exhaustion',
+      'Passive funds MUST buy/sell - the calendar is PUBLIC (S&P quarterly, Russell annual)',
+      'Gold Standard: Tier 1 index + 5%+ run-up + MOC spike + T+2 reversal',
+      'Petajisto (2011): S&P 500 additions reverse ~4% post-inclusion',
+      'Front-running is legal - everyone does it. That\'s why you SHORT the exhaustion.'
     ]
   },
   
@@ -158,6 +172,15 @@ const DETAILED_TRADING_HINTS = {
       '⏰ Insiders know 2-4 weeks before public catalyst',
       '⚠️ WARNING: ~30% of insider buying leads to nothing (routine/bad timing)'
     ],
+    nlpFilter: {
+      title: '📰 INSIDER BUYING HEADLINE KEYWORDS (SEC Filing Research)',
+      goldKeywords: ['SEC Form 4', 'Open Market Purchase', 'Cluster Buying', 'Multi-million dollar stake', 'Code P'],
+      goldExplained: 'The phrase "OPEN MARKET" is the gold standard - distinguishes real conviction from meaningless exercises.',
+      trapKeywords: ['Option Exercise', 'Code M', 'Scheduled', '10b5-1 Plan', 'Compensation'],
+      trapExplained: 'These indicate pre-planned, routine transactions with ZERO predictive power.',
+      headlineExample: '✅ GOLD: "CEO and Three Directors Purchase $5M in Shares via Open Market"',
+      trapExample: '❌ TRAP: "CEO Exercises Stock Options" (Code M = meaningless)'
+    },
     phases: {
       initial: {
         name: 'First Insider Purchase',
@@ -307,6 +330,14 @@ const DETAILED_TRADING_HINTS = {
       '🔄 Each bounce is WEAKER than the previous one',
       '📊 Count the bounces - more bounces = closer to real bottom'
     ],
+    nlpFilter: {
+      title: '📰 DCB HEADLINE TRAP (Tetlock 2007)',
+      description: 'Bounce headlines use "no-catalyst" language - a trap signature!',
+      trapKeywords: ['bargain hunters', 'technical rebound', 'oversold bounce', 'relief rally', 'finding support'],
+      trapExplained: 'When reporters use these filler phrases, they have NO fundamental reason for the rise. Classic DCB trap!',
+      confirmationKeywords: ['SEC Form 4', 'insider buying', 'cluster purchase', 'dividend announced'],
+      confirmationExplained: 'Only trust bounce if accompanied by HARD catalyst like insider buying.'
+    },
     phases: {
       crash: {
         name: 'Initial Crash',
@@ -372,185 +403,262 @@ const DETAILED_TRADING_HINTS = {
   
   // === STOCK SPLIT ===
   stockSplit: {
-    name: 'Stock Split Momentum',
+    name: 'Stock Split Reversal',
     tier: 2,
     telltales: [
       '📰 News: "X announces 4:1 stock split"',
       '📅 Effective date set 5-10 days out',
-      '💰 High-priced stocks (>$5000) more likely to split',
-      '📊 Steady buying pressure into effective date'
+      '💰 High-priced stocks (>$5000 = Mega-Cap = Gold Standard)',
+      '📊 OTM call volume spiking (retail FOMO)'
     ],
     phases: {
-      announced: {
-        name: 'Announcement',
-        timing: 'Day 1',
-        priceImpact: '+5% immediate pop',
+      announcement: {
+        name: 'Announcement Pop',
+        timing: 'Day 0',
+        priceImpact: '+2% to +5% immediate',
         action: 'BUY on announcement. Momentum begins.',
-        strategy: 'Splits attract retail buyers. Ride the wave.'
+        strategy: 'Splits attract retail buyers. Psychology drives price.'
       },
-      runup: {
-        name: 'Pre-Split Rally',
-        timing: 'Days 2 to effective-1',
-        priceImpact: '+2% to +3% per day',
-        action: 'HOLD. Momentum continues into split.',
-        strategy: 'Psychological effect brings new buyers daily.'
+      runUp: {
+        name: 'Pre-Split Run-up',
+        timing: 'Days 1 to effective-1',
+        priceImpact: '+1% to +2.5% daily (15%+ total for Gold Standard)',
+        action: 'HOLD. Watch for 15%+ run-up (Gold Standard criterion).',
+        strategy: 'Track OTM call volume. 3x spike = retail euphoria.'
       },
-      effective: {
-        name: 'Split Effective',
+      effectiveDay: {
+        name: 'Split Effective Day',
         timing: 'Effective day',
-        priceImpact: 'Price adjusts, often +2% post-split momentum',
-        action: 'Consider taking profits or hold for continued momentum.',
-        strategy: 'Lower price attracts new retail. May continue up.'
+        priceImpact: '+2% to +6% (price adjusts down, may pop)',
+        action: 'SELL LONG POSITION. Prepare for reversal trade.',
+        strategy: 'Peak retail euphoria. Smart money exits here.'
+      },
+      reversal: {
+        name: 'THE TRADE: T+3 Reversal',
+        timing: 'T+2 to T+5 after effective',
+        priceImpact: '-0.8% to -2% daily decline',
+        action: 'SHORT or BUY PUTS on T+3 lower high.',
+        strategy: 'Gold Standard: 70-85% success if all criteria met.'
       }
     },
     expectedReturn: {
-      stock: '+10% to +25% from announcement to effective',
-      calls: '+50% to +100% on ATM calls',
-      holdTime: '5-10 days typical'
+      longPosition: '+10% to +25% from announcement to effective',
+      reversalTrade: '+5% to +15% shorting post-split fade',
+      calls: '+50% to +100% on ATM calls (sell before effective)',
+      holdTime: '5-10 days typical (exit by T+3 post-split)'
+    },
+    goldStandard: {
+      criteria: [
+        '✓ Mega-Cap Stock: Price >$5000 pre-split',
+        '✓ 15%+ Run-up: From announcement to effective',
+        '✓ OTM Call Spike: 3x+ normal volume',
+        '✓ T+3 Lower High: Entry trigger for short'
+      ],
+      successRate: '70-85% when all 4 criteria met',
+      strategy: 'Wait for T+3 confirmation. Then SHORT the fade.'
     },
     sellSignals: {
       timing: [
-        '🚪 Sell 50% on split effective date',
-        '🚪 Sell remaining within 2-3 days after split',
-        '⚠️ Post-split momentum rarely lasts >5 days'
+        '🚪 Sell longs on split effective date',
+        '🩳 SHORT on T+3 if lower high confirmed',
+        '🎯 Target: -5% to -15% from peak',
+        '🚪 Cover short after 5-day reversal window'
       ],
       priceTargets: {
-        conservative: '+10% to +15% (sell before effective date)',
-        standard: '+15% to +20% (sell on effective date)',
-        aggressive: '+20% to +25% (hold 2 days post-split)'
+        conservative: '+10% to +15% (sell before effective)',
+        standard: '+15% to +20% (sell on effective)',
+        reversalTrade: '+5% to +10% (short the T+3 fade)'
       },
-      exitStrategy: 'Effective date is the natural exit. Take most profits by then.'
+      exitStrategy: 'Two trades: (1) Long announcement→effective, (2) Short T+3 reversal.'
     },
     keyLessons: [
       'Splits don\'t change fundamental value',
-      'Psychology drives price up (feels "cheaper")',
-      'Retail accessibility increases = more buyers',
-      'Momentum typically continues past effective date'
+      'Psychology drives run-up ("feels cheaper")',
+      'Ikenberry (1996): +7.9% run-up, -2.8% post-split fade',
+      'The REAL alpha is shorting the T+3 reversal (70-85% success)'
     ]
   },
   
   // === SHORT SQUEEZE ===
   shortSqueeze: {
-    name: 'Short Squeeze',
-    tier: 2,
+    name: 'Short Squeeze Exhaustion',
+    tier: 1,
     telltales: [
-      '📊 "Short interest hits 35%+" news',
-      '⚠️ "Squeeze warning" or "potential squeeze" headlines',
-      '📈 Positive catalyst + high SI = explosion trigger',
-      '🚀 Explosive upward move with "shorts covering" news'
+      '📊 Short Interest >30% (danger zone), >50% (extreme)',
+      '📅 Days to Cover >5 (high risk), >10 (extreme)',
+      '💰 Cost to Borrow >50% (critical), 100%+ (final spark)',
+      '📈 Utilization 95-100% = no shares left to borrow'
     ],
     phases: {
-      building: {
-        name: 'Short Interest Building',
-        timing: '5-10 days',
-        priceImpact: '-2% per day drift (shorts pushing down)',
-        action: 'WATCH. Need catalyst to trigger squeeze.',
-        strategy: 'High SI is the gun. Wait for trigger (positive news).'
-      },
-      trigger: {
-        name: 'Squeeze Triggered',
-        timing: 'Day 1 of squeeze',
-        priceImpact: '+20% to +60% explosion',
-        action: 'BUY early if you catch it. HIGH RISK.',
-        strategy: 'Get in fast, get out fast. This is not investing.'
+      buildup: {
+        name: 'Pressure Building',
+        timing: '3-7 days',
+        priceImpact: '+2% to +5% daily creep',
+        action: 'WATCH. Monitor SI, CTB, utilization metrics.',
+        strategy: 'High SI is the fuel. Wait for ignition catalyst.'
       },
       squeeze: {
-        name: 'Squeeze In Progress',
-        timing: 'Days 1-4',
-        priceImpact: '+20% to +60% additional (meme stocks)',
-        action: 'TAKE PROFITS if holding. Do NOT buy here.',
-        strategy: 'Shorts being destroyed. But end is coming.'
+        name: 'Parabolic Squeeze',
+        timing: '2-5 days',
+        priceImpact: '+10% to +25% daily (EXTREME)',
+        action: 'DO NOT BUY HERE. Wait for exhaustion.',
+        strategy: 'Shorts are covering. This is forced buying, not real demand.'
       },
-      unwind: {
-        name: 'Unwind Phase',
-        timing: 'Days 3-6',
-        priceImpact: '-12% to -24% correction',
-        action: 'EXIT if still holding. Late buyers get crushed.',
-        strategy: 'Squeeze exhausted. Give back 30-50% of gains typical.'
+      climax: {
+        name: 'Blow-Off Top',
+        timing: '1 day',
+        priceImpact: '+15% to +50% final surge',
+        action: 'PREPARE TO SHORT. Gold Standard signals emerging.',
+        strategy: 'Volume climax + RSI >85 + CTB plateau = exhaustion imminent.'
+      },
+      reversal: {
+        name: 'THE TRADE: Reversal',
+        timing: '3-5 days',
+        priceImpact: '-8% to -15% daily decline',
+        action: 'SHORT or BUY PUTS. 50% of gains lost in 72 hours.',
+        strategy: 'Gold Standard: 85% success rate on shorting exhaustion.'
       }
     },
     expectedReturn: {
-      earlyBuyer: '+50% to +200% if timed well (rare)',
-      lateBuyer: '-30% to -60% loss if buy during squeeze peak',
-      riskLevel: 'EXTREME - most traders lose money on squeezes'
+      shortTheTop: '+30% to +60% shorting the reversal (85% Gold Standard)',
+      buyingEarly: '+50% to +200% (rare, requires perfect timing)',
+      buyingLate: '-50% to -80% loss (typical retail outcome)',
+      riskLevel: 'The TRADE is shorting exhaustion, NOT buying the squeeze'
+    },
+    goldStandard: {
+      criteria: [
+        '✓ Parabolic Extension: 100%+ above 20-day MA',
+        '✓ Volume Climax: 5x+ average volume',
+        '✓ Borrow Fee Plateau: CTB drops while price peaks',
+        '✓ RSI Divergence: RSI >85 at peak'
+      ],
+      successRate: '85%+ when all 4 criteria met',
+      strategy: 'Wait for ALL 4 signals. Then SHORT the backside.'
     },
     sellSignals: {
       timing: [
-        '🚪 Sell 50% at +30% (lock in profits EARLY)',
-        '🚪 Sell remaining at +50% or "squeeze exhausted" news',
-        '💀 "Unwind" or "shorts covered" = SELL ALL IMMEDIATELY'
+        '🩳 Volume Climax + RSI >85 = INITIATE SHORT',
+        '🩳 CTB dropping while price peaks = CONFIRMATION',
+        '🎯 Target: 50% of squeeze gains retraced in 72 hours',
+        '🚪 Cover short when RSI <30 or volume normalizes'
       ],
       priceTargets: {
-        conservative: '+25% to +35% (take profits, leave table)',
-        standard: '+40% to +60% (sell into squeeze momentum)',
-        aggressive: 'NEVER - greed causes massive losses in squeezes'
+        conservative: '+20% to +30% (cover early)',
+        standard: '+40% to +50% (50% retracement)',
+        aggressive: '+60%+ (full unwind)'
       },
-      exitStrategy: 'Exit EARLY. Most squeeze profits evaporate in unwind phase. Sell into strength, never into weakness.'
+      exitStrategy: 'Cover shorts when panic selling exhausts. Look for volume dry-up.'
     },
     keyLessons: [
-      'High short interest is the FUEL, not the trigger',
-      'Need positive catalyst to ignite squeeze',
-      'Sell into strength - don\'t wait for top',
-      '"Squeeze likely exhausted" news = EXIT immediately'
+      'The REAL trade is SHORTING exhaustion, not buying the squeeze',
+      'CFA Institute: Stocks lose 50% of gains within 72 hours',
+      'Gold Standard exhaustion filter = 85%+ success rate',
+      'Buying squeezes is gambling. Shorting exhaustion is trading.'
     ]
   },
   
-  // === FOMO RALLY ===
+  // === FOMO RALLY EXHAUSTION ===
+  // Empirical Sources: Barber & Odean (2008/2021), Da, Engelberg & Gao (2011/2024), Baltzer et al. (2023)
+  // Gold Standard: SHORT the Sentiment Exhaustion (85%+ reversal)
   fomoRally: {
-    name: 'FOMO Rally',
+    name: 'FOMO Rally Exhaustion',
     tier: 2,
-    telltales: [
-      '📈 Stock up +30% from recent low with momentum',
-      '📰 "Rally attracts retail", "social media buzzing" news',
-      '🔥 "Don\'t miss out!" headlines = TOP IS NEAR',
-      '💥 Collapse follows with "FOMO buyers holding bags" news'
+    empiricalSources: [
+      'Barber & Odean (2021): Attention-driven buying → 30-90 day underperformance',
+      'Da, Engelberg & Gao (2024): Search volume predicts 1-2 week spike, then reversal',
+      'Baltzer et al. (2023): Positive feedback loops exhaust at "marginal buyer"'
     ],
+    telltales: [
+      '📊 Stock trading 3+ SD above 20-day MA (Bollinger extension)',
+      '🎰 Put/Call ratio collapses to <0.40 (extreme greed)',
+      '📉 DIVERGENCE: Record social mentions but price fails new high',
+      '💥 Blow-off top: Gap up → close near low → record volume'
+    ],
+    nlpFilter: {
+      title: '📰 EUPHORIA PEAK KEYWORDS (Barber & Odean - Attention-Driven Buying)',
+      peakKeywords: ['Historic', 'Moon', 'Next Tesla', 'Retail Frenzy', 'Skyrockets', "Can't be stopped", 'Diamond hands'],
+      peakExplained: 'When headlines become EXTRAVAGANT and focus on INVESTOR BEHAVIOR instead of company performance, the TOP is near!',
+      focusShift: 'Headlines about "frenzy" and "everyone buying" = smart money exiting to dumb money',
+      goldStandard: '🏆 GOLD STANDARD (Shorts): Superlatives + mainstream integration + volume climax = 85% crash probability',
+      headlineExample: '✅ SHORT SIGNAL: "Retail Frenzy Continues as Stock Z Skyrockets to Historic Highs"'
+    },
     phases: {
-      building: {
-        name: 'FOMO Building',
-        timing: '3-6 days',
-        priceImpact: '+8% to +15% per day',
-        action: 'RISKY BUY but best entry if you want in.',
-        strategy: 'Early FOMO stage has best risk/reward.'
+      buildup: {
+        name: 'BUILDUP (Day 1-7)',
+        timing: '5-10 days',
+        priceImpact: '+2-5% daily',
+        action: 'WATCH only. Mentions building 3x→10x baseline.',
+        strategy: 'Too early to short. Monitor sentiment indicators.'
       },
-      blowoff: {
-        name: 'Blowoff Top',
-        timing: '1-2 days',
-        priceImpact: '+20% to +35% final surge',
-        action: 'SELL IMMEDIATELY. "Don\'t miss out" = you\'re the exit liquidity.',
-        strategy: 'This is the top. Every buyer here loses.'
-      },
-      collapse: {
-        name: 'Collapse',
+      euphoria: {
+        name: 'EUPHORIA (Day 8-11)',
         timing: '3-5 days',
-        priceImpact: '-20% to -35% crash',
-        action: 'DO NOT BUY. Bag holders being created.',
-        strategy: 'Late FOMO buyers suffer massive losses.'
+        priceImpact: '+5-10% daily (parabolic)',
+        action: 'PREPARE TO SHORT. 3+ SD extension developing.',
+        strategy: 'Wait for blow-off confirmation. Do NOT buy here.'
+      },
+      blowOff: {
+        name: 'BLOW-OFF TOP (Day 12)',
+        timing: '1 day',
+        priceImpact: '+0-5% then reversal',
+        action: 'SHORT or BUY PUTS on "first lower high"',
+        strategy: 'This is the "transfer of ownership." 85% crash follows.'
+      },
+      crash: {
+        name: 'CRASH (Day 13-22)',
+        timing: '5-10 days',
+        priceImpact: '-3-8% daily → -20-60% total',
+        action: 'HOLD SHORT. Target 50-day MA.',
+        strategy: 'Return to mean is "almost inevitable" per research.'
+      }
+    },
+    goldStandard: {
+      criteria: [
+        '📊 VERTICALITY: 3+ SD above 20-day MA',
+        '🎰 RETAIL EUPHORIA: P/C ratio <0.40 (extreme greed)',
+        '📉 DIVERGENCE: Record mentions + price fails new high',
+        '💥 BLOW-OFF: Gap up + close near low + 3x+ volume'
+      ],
+      successRate: '85%+ reversal when ALL 4 criteria met',
+      partialRates: {
+        parabolicOnly: '60% reversal',
+        plusSentiment: '70% reversal',
+        plusDivergence: '80% reversal',
+        allFour: '85%+ reversal (Gold Standard)'
       }
     },
     expectedReturn: {
-      earlyBuyer: '+30% to +60% if sell at blowoff',
-      blowoffBuyer: '-30% to -50% loss',
-      putBuyer: '+100% to +200% on puts bought at blowoff'
+      shortAtBlowOff: '+20-40% gain from short/puts',
+      earlyBuyer: '+30-60% if sell before blow-off',
+      blowOffBuyer: '-30-50% loss (bag holder created)',
+      afterCrash: 'Return to 50-day MA typical'
     },
+    vetoFactors: [
+      '⚡ GAMMA LOOP: Good news reignites squeeze (-35% prob)',
+      '🎪 EXTENDED MANIA: Market stays irrational months (-25% prob)',
+      '🏦 INSTITUTIONAL BUYING: Real accumulation detected (-40% prob)',
+      '📈 SHORT SQUEEZE FUEL: High SI adds upward pressure (-20% prob)'
+    ],
     sellSignals: {
       timing: [
-        '🚪 Sell 50% when "FOMO" or "retail piling in" news appears',
-        '🚪 Sell remaining 50% at first red day',
-        '💀 "Don\'t miss out!" headlines = SELL 100% IMMEDIATELY'
+        '🎯 Wait for "First Day of Lower Highs" (key empirical signal)',
+        '📊 Sentiment/Price divergence = entry for shorts',
+        '💥 Blow-off candle (gap up, close low, volume spike) = go short',
+        '📉 Target: Return to 50-day MA'
       ],
       priceTargets: {
-        conservative: '+20% to +30% (sell during building phase)',
-        standard: '+30% to +50% (sell into FOMO peak)',
-        aggressive: 'NEVER hold for blowoff top - you WILL miss it'
+        conservative: 'Short at -10% from peak, cover at -25%',
+        standard: 'Short at blow-off, cover at 50-day MA',
+        aggressive: 'Short at 3+ SD, pyramind on lower highs'
       },
-      exitStrategy: 'FOMO rallies end suddenly. Sell when greed is highest. "Don\'t miss out" = you\'re the exit liquidity.'
+      exitStrategy: 'Cover shorts when price approaches 50-day MA or sentiment normalizes'
     },
     keyLessons: [
-      '"Don\'t miss out!" is the SELL signal, not buy',
-      'When everyone is buying, you should be selling',
-      'Blowoff tops look exciting but destroy wealth',
-      'The last buyers fund the early sellers\' profits'
+      '"Don\'t miss out!" = YOU are the exit liquidity (Barber & Odean)',
+      'Social mentions peak → price fails = marginal buyer exhausted',
+      'Parabolic moves (3+ SD) are mathematically unsustainable',
+      'Wait for CONFIRMATION (first lower high), not the exact peak',
+      '30-90 day underperformance is empirically documented'
     ]
   },
   
@@ -591,38 +699,594 @@ const DETAILED_TRADING_HINTS = {
       'V-shaped reversals common after capitulation',
       'Position size matters - start small'
     ]
+  },
+  
+  // === LIQUIDITY SWEEP (WYCKOFF SPRING) ===
+  // Empirical Sources: Aggarwal & Wu (2006), Comerton-Forde & Putniņš (2014), Lee et al. (2024)
+  // Gold Standard: BUY the Failed Breakdown (85%+ reversal)
+  liquiditySweep: {
+    name: 'Liquidity Sweep (Wyckoff Spring)',
+    tier: 2,
+    empiricalSources: [
+      'Aggarwal & Wu (2006): SEC manipulation study - institutional order flow patterns',
+      'Comerton-Forde & Putniņš (2014): Closing price manipulation detection',
+      'Lee, Li & Wang (2024): Deep learning for spoofing detection - order flow toxicity'
+    ],
+    telltales: [
+      '📊 Price approaches OBVIOUS support level (double bottom, 3+ touches, long-term)',
+      '💥 Sudden break BELOW support on HIGH VOLUME (stop-loss hunting)',
+      '📈 Long lower wick (price recovers within same day)',
+      '🔄 Volume spike but price FAILS to close lower (absorption)'
+    ],
+    phases: {
+      setup: {
+        name: 'Setup (Support Formation)',
+        timing: '10-30 days prior',
+        priceImpact: 'Range-bound, testing support',
+        action: 'IDENTIFY obvious support levels (3+ touches).',
+        strategy: 'The more "obvious" the support, the more stops are sitting below it.'
+      },
+      sweep: {
+        name: 'The Sweep (Stop-Run)',
+        timing: '1-3 days',
+        priceImpact: '-2% to -8% below support',
+        action: 'DO NOT PANIC SELL. Watch for absorption volume.',
+        strategy: 'Institutions sweep retail stops to fill large buy orders cheaply.'
+      },
+      absorption: {
+        name: 'Absorption (Volume Spike)',
+        timing: 'Same day or next',
+        priceImpact: 'Price refuses to stay down',
+        action: 'LOOK FOR: 3x+ volume but price doesn\'t close lower.',
+        strategy: 'High volume + price recovery = institutions absorbing supply.'
+      },
+      reEntry: {
+        name: 'Re-Entry (BUY Signal)',
+        timing: '1-2 days after sweep',
+        priceImpact: '+2% to +5% back above support',
+        action: 'BUY when price RECLAIMS support. This is Gold Standard entry.',
+        strategy: '"Failed breakdown" = bullish. Liquidity vacuum propels price higher.'
+      },
+      continuation: {
+        name: 'Continuation',
+        timing: '5-15 days',
+        priceImpact: '+8% to +15% from sweep low',
+        action: 'HOLD for target. Trail stop at breakeven.',
+        strategy: 'No sellers left = price rises with low resistance.'
+      }
+    },
+    goldStandard: {
+      criteria: [
+        '✓ Obvious Support: Clear double bottom or 3+ touch support level',
+        '✓ False Breakout: Aggressive break below support (2-10%), immediate recovery',
+        '✓ Absorption Volume: 3x+ average volume, but price fails to close lower',
+        '✓ Re-Entry: Price reclaims support level - BUY the retest'
+      ],
+      successRate: '85%+ when all 4 criteria met',
+      partialRates: {
+        supportOnly: '45% reversal',
+        plusSweep: '60% reversal',
+        plusVolume: '75% reversal',
+        goldStandard: '85%+ reversal (all 4 criteria)'
+      }
+    },
+    expectedReturn: {
+      goldStandard: '+8% to +15% from sweep low (85% success)',
+      partial: '+5% to +10% with 2-3 criteria (60-75% success)',
+      failed: 'True breakdown continues -15%+ (no absorption = real selling)',
+      riskLevel: 'Entry ONLY on re-entry above support, never during sweep'
+    },
+    vetoFactors: [
+      '🐻 Bear Market: Overall market in downtrend (-20% probability)',
+      '📉 Sector Weakness: Sector declining, not just stock (-15% probability)',
+      '📰 Real Bad News: Actual fundamental issue vs stop hunting (-25% probability)',
+      '🔄 Multiple Failures: Support failed before, now weaker (-30% probability)'
+    ],
+    sellSignals: {
+      timing: [
+        '🎯 BUY: When price reclaims support after sweep (re-entry)',
+        '⏱️ HOLD: Through continuation phase (5-15 days)',
+        '📊 SELL: At +8% to +15% target OR trail stop at breakeven',
+        '🚪 STOP: If price fails to reclaim support within 3 days'
+      ],
+      priceTargets: {
+        conservative: '+8% from entry (secure gain)',
+        standard: '+12% from entry (typical sweep target)',
+        aggressive: '+15%+ if momentum strong'
+      },
+      exitStrategy: 'Exit if price fails re-entry test or breaks below sweep low.'
+    },
+    keyLessons: [
+      'Stop hunting is NOT retail paranoia - institutions DO sweep stops (Aggarwal & Wu)',
+      'The more "obvious" the support, the more liquidity sits below it',
+      '"False breakdown" = bullish. "Real breakdown" = no absorption, continued selling.',
+      'BUY the failed breakdown, not the breakout. Opposite of what retail does.',
+      'Volume is key: High volume + price recovery = absorption. Low volume = real selling.'
+    ]
+  },
+
+  // === STRATEGIC PIVOT (4 Types with Different Outcomes) ===
+  // Empirical Sources: Kogan, Wei & Zhao (2023), Brauer & Wiersema (2024), Tang & Agrawal (2022), HBS "Pivot Penalty" (2021)
+  // KEY INSIGHT: Four distinct types with VERY different reversal probabilities
+  strategicPivot: {
+    name: 'Strategic Pivot (4 Types)',
+    tier: 2,
+    empiricalSources: [
+      'Kogan, Wei & Zhao (2023): "Buzzword Effect" - Pivots without R&D history reverse 75% in 22 days',
+      'Brauer & Wiersema (2024): No 8-K CapEx change in 30 days = symbolic, reverses',
+      'Tang & Agrawal (2022): "Uncertainty Gap" - Deviant strategies recover in 15-20 days',
+      'HBS "Pivot Penalty" (2021): -4.5% Day 1, proactive pivots reverse <3 weeks (68%)'
+    ],
+    telltales: [
+      '📰 LANGUAGE TYPE: Buzzwords ("AI-First," "Blockchain") = SYMBOLIC (good). Technical metrics = STRUCTURAL (bad).',
+      '💰 NON-DILUTIVE: No share issuance, no debt increase = SYMBOLIC (not raising money = overreaction)',
+      '📊 ANCHOR REVENUE: Old business stable/growing = Cash Cow still works → REVERSAL',
+      '👔 INSIDER BUY: 2+ insiders buy within 48 hours = MOST POWERFUL signal (85%+ reversal)',
+      '📈 GAP FILL: Closes in upper 25% of day\'s range on high volume = Institutional absorption'
+    ],
+    nlpFilter: {
+      title: '📰 PIVOT CLASSIFICATION (4 TYPES)',
+      description: 'Classify pivot type to determine reversal probability!',
+      reactive: {
+        label: 'REACTIVE (<10% Reversal) ⛔',
+        characteristics: 'Dying firm, last resort, revenue collapse',
+        signals: 'Business declining + Desperate language + Cash bleeding',
+        action: 'DO NOT BUY - Permanent re-rating. No reversal.'
+      },
+      structural: {
+        label: 'STRUCTURAL (30% Reversal, 6 months) ⚠️',
+        characteristics: 'Real capital commitment, debt/restructuring',
+        signals: 'New debt + Divestiture + Technical language + R&D shift',
+        action: 'SKIP - Too slow. 6-month timeframe, better opportunities elsewhere.'
+      },
+      symbolic: {
+        label: 'SYMBOLIC (65% Reversal, 2-3 weeks) 📈',
+        characteristics: 'Buzzwords, no CapEx change, hype-based',
+        signals: 'Buzzword language + No capital raised + Old biz stable',
+        action: 'CONSIDER BUYING - Market overreacted to words, not substance.'
+      },
+      goldStandard: {
+        label: 'GOLD STANDARD (85%+ Reversal, 10-14 days) 🏆',
+        characteristics: 'Symbolic + ALL 4 confirmation signals',
+        signals: 'Non-Dilutive + Anchor Revenue + Insider Buy + Gap Fill',
+        action: 'HIGH CONVICTION BUY - Best setup. Full reversal expected.'
+      }
+    },
+    pivotTypes: {
+      reactive: {
+        name: 'Reactive Pivot',
+        reversalProbability: '<10%',
+        timeframe: 'No reversal - long drift',
+        description: 'Dying firm grasping at straws. Revenue collapsing, this is desperation.',
+        characteristics: [
+          'Business fundamentally broken',
+          'Last resort after repeated failures',
+          'Often accompanied by "strategic alternatives" (sale)',
+          'Desperation language: "exploring options," "challenging environment"'
+        ],
+        action: '⛔ DO NOT BUY - This is permanent re-rating, not opportunity'
+      },
+      structural: {
+        name: 'Structural Pivot',
+        reversalProbability: '30%',
+        timeframe: '6 months',
+        description: 'Real capital commitment signals genuine change. Market is RE-RATING.',
+        characteristics: [
+          'New debt or credit facility announced',
+          'Divestiture or asset sale',
+          'R&D budget shift with specific metrics',
+          'Technical language: "unit economics," "LTV/CAC," "restructuring charge"'
+        ],
+        action: '⚠️ SKIP - Even if it recovers, 6-month timeframe too slow'
+      },
+      symbolic: {
+        name: 'Symbolic Pivot',
+        reversalProbability: '65%',
+        timeframe: '2-3 weeks',
+        description: 'Buzzwords without substance. Market overreacted to press release.',
+        characteristics: [
+          'Buzzword-heavy: "AI-First," "Blockchain," "Platform," "Synergies"',
+          'No capital raised - pivot is "free"',
+          'Old business still operating normally',
+          'No insider selling (they know it\'s just PR)'
+        ],
+        action: '📈 CONSIDER BUYING - "Nothing has changed" = reversal'
+      },
+      goldStandard: {
+        name: 'Gold Standard Pivot',
+        reversalProbability: '85%+',
+        timeframe: '10-14 days',
+        description: 'Symbolic pivot with ALL 4 confirmation signals. Best setup.',
+        characteristics: [
+          '✓ Non-Dilutive: No share issuance, no debt increase',
+          '✓ Anchor Revenue: Old business stable or growing',
+          '✓ Insider Buy: 2+ insiders BUY within 48 hours (MOST POWERFUL)',
+          '✓ Gap Fill: Closes in upper 25% of range on high volume'
+        ],
+        action: '🏆 HIGH CONVICTION BUY - Full reversal expected'
+      }
+    },
+    goldStandardSignals: {
+      nonDilutive: {
+        name: 'Non-Dilutive',
+        description: 'No share issuance, no debt increase',
+        why: 'If not raising money, pivot is "symbolic" - market overreacted',
+        weight: 'IMPORTANT - Proves nothing fundamentally changed'
+      },
+      anchorRevenue: {
+        name: 'Anchor Revenue',
+        description: 'Old business stable or growing',
+        why: '"Cash Cow" still operating - groundwork hasn\'t ramped down',
+        weight: 'IMPORTANT - Core business intact'
+      },
+      insiderBuy: {
+        name: 'Insider Buy',
+        description: '2+ insiders buy within 48 hours of announcement',
+        why: 'Leaders know pivot is ADDITIVE, not destructive',
+        weight: 'MOST POWERFUL - Insider buys are the strongest reversal signal'
+      },
+      gapFill: {
+        name: 'Gap Fill',
+        description: 'Closes in upper 25% of day\'s range on high volume',
+        why: 'Institutional absorption - smart money buying retail panic',
+        weight: 'CONFIRMS - Shows institutions are stepping in'
+      }
+    },
+    phases: {
+      announcement: {
+        name: 'Announcement Drop',
+        timing: 'Day 1',
+        priceImpact: '-4.5% average (HBS 2021)',
+        action: 'WAIT. Classify the pivot type. Don\'t rush.',
+        strategy: 'Analyze: Language type? Capital raised? Insider action?'
+      },
+      uncertaintyGap: {
+        name: 'Uncertainty Gap',
+        timing: 'Days 2-7',
+        priceImpact: 'Drifts or stabilizes',
+        action: 'SYMBOLIC/GOLD: Watch for insider buys and gap fill.',
+        strategy: 'This is when insiders show their hand. Watch Form 4 filings.'
+      },
+      recovery: {
+        name: 'Recovery',
+        timing: 'Days 8-20',
+        priceImpact: 'Symbolic: +65%. Gold Standard: +85%.',
+        action: 'SYMBOLIC/GOLD: Take profits at pre-announcement level.',
+        strategy: 'Recovery window closes around Day 22 (Kogan 2023).'
+      }
+    },
+    expectedReturn: {
+      goldStandard: '+8% to +15% in 10-14 days (85% success)',
+      symbolic: '+5% to +10% in 2-3 weeks (65% success)',
+      structural: 'Skip - too slow, better setups exist',
+      reactive: 'DO NOT BUY - permanent damage'
+    },
+    vetoFactors: [
+      '⛔ REACTIVE: Business fundamentally broken (-90% reversal chance)',
+      '⚠️ STRUCTURAL: New debt/credit facility announced (-55% reversal chance)',
+      '⚠️ STRUCTURAL: Divestiture with specific metrics (-50% reversal chance)',
+      '🚫 NO INSIDER BUY: Missing the most powerful signal (-40% reversal chance)'
+    ],
+    sellSignals: {
+      timing: [
+        '📥 GOLD STANDARD BUY: Days 2-3 (after signals confirm)',
+        '📥 SYMBOLIC BUY: Days 3-5 (after stabilization)',
+        '📤 SELL: At pre-announcement level (full reversal)',
+        '⚠️ STOP: -10% from entry, or if pivot becomes structural'
+      ],
+      priceTargets: {
+        goldStandardEntry: 'Day 2-3 after insider buy confirms',
+        symbolicEntry: 'Day 3-5 after stabilization',
+        exitTarget: 'Pre-announcement level',
+        stopLoss: '-10% from entry'
+      },
+      exitStrategy: 'Gold/Symbolic: Exit at pre-announcement. Structural/Reactive: Never enter.'
+    },
+    keyLessons: [
+      'Insider BUYING is the most powerful signal - opposite of insider selling!',
+      'Buzzword pivots reverse because "nothing has changed" (Kogan 2023).',
+      'Structural pivots don\'t reverse fast - real capital = real re-rating.',
+      'Reactive pivots are death traps - dying firm, no hope.',
+      '4 signals aligned = 85%+ reversal. Missing signals = much lower success.',
+      'Gap Fill + Insider Buy = Institutions absorbing retail panic.'
+    ]
+  },
+
+  // === EXECUTIVE CHANGE (LEADERSHIP TRANSITION / UNCERTAINTY PREMIUM) ===
+  // Empirical Sources: Denis & Denis (1995), Warner Watts & Wruck (1988), Huson et al. (2001), Datarails (2023)
+  // KEY INSIGHT: Four types with VERY different outcomes
+  executiveChange: {
+    name: 'Executive Change (Leadership Transition)',
+    tier: 2,
+    empiricalSources: [
+      'Denis & Denis (1995): "Causes and Consequences of Management Turnover" - Forced turnovers = positive abnormal returns',
+      'Warner, Watts & Wruck (1988): Market overreacts to uncertainty of new leader; inverse relation to firm performance',
+      'Huson et al. (2001): "Leadership Vacuum" without successor increases volatility, decreases reversal chance',
+      'ResearchGate (2024): V-Shaped recovery pattern after forced turnover (kitchen-sink → good news rally)',
+      'Datarails (2023): CFO exits cause 3% drop, 30-day drift, but recover by 180 days if no fraud'
+    ],
+    telltales: [
+      '📰 8-K LANGUAGE: "Retirement," "Planned transition," "Distinguished career" = GOOD (Shakeout)',
+      '⚠️ 8-K RED FLAGS: "Effective immediately," "Personal reasons," "Disagreements" = BAD (Fundamental)',
+      '👔 SUCCESSION: Internal successor named immediately = 70-85% reversal',
+      '❌ NO SUCCESSOR: "Board initiating search" = <15% reversal (Leadership Vacuum)',
+      '📋 CLEAN AUDIT: "No disagreements on accounting matters" clause = CRITICAL (85%+ if present)',
+      '📊 VOLUME CLIMAX: 5-10% drop on 3x+ volume = emotional liquidation exhausted'
+    ],
+    nlpFilter: {
+      goldStandardKeywords: ['retirement', 'planned transition', 'internal successor', 'promoted', 'COO', 'President', 'distinguished career', 'orderly transition'],
+      redFlagKeywords: ['effective immediately', 'personal reasons', 'pursue other opportunities', 'disagreements', 'accounting review', 'internal investigation', 'strategic differences'],
+      cleanAuditPhrase: 'no disagreements on any matter of accounting principles or practices',
+      warningAuditPhrase: 'disagreements regarding accounting or disclosure'
+    },
+    changeTypes: {
+      abruptNoSuccessor: {
+        pattern: 'ABRUPT RESIGNATION + NO SUCCESSOR',
+        reversalProbability: '<15%',
+        outcome: 'Fundamental Crash - DO NOT BUY',
+        characteristics: [
+          '"Effective immediately" departure',
+          'No replacement named - "board initiating search"',
+          '8-K contains concerning language about "disagreements"',
+          'Often precedes fraud investigation or SEC inquiry'
+        ]
+      },
+      cfoExitClean: {
+        pattern: 'CFO EXIT (CLEAN AUDIT)',
+        reversalProbability: '50%',
+        outcome: 'Slow 6-month recovery',
+        characteristics: [
+          'CFO departs but Big 4 auditor confirms clean books',
+          '3% initial drop, 30-day negative drift',
+          'Recovery by 180-day mark (Datarails 2023)',
+          'Not worth trading - better opportunities elsewhere'
+        ]
+      },
+      plannedInternal: {
+        pattern: 'CEO RETIREMENT + INTERNAL SUCCESSOR',
+        reversalProbability: '70%',
+        outcome: 'Good reversal in 2 weeks',
+        characteristics: [
+          'Planned transition announced in advance',
+          'Internal successor named (COO, President)',
+          '"Uncertainty dip" only - fundamentals unchanged',
+          'Consider buying after stabilization'
+        ]
+      },
+      goldStandard: {
+        pattern: 'GOLD STANDARD (ALL 4 FILTERS)',
+        reversalProbability: '85%+',
+        outcome: 'Full reversal in 10-14 days',
+        characteristics: [
+          '✓ Succession Integrity: Internal successor named immediately',
+          '✓ Clean Audit: 8-K contains "no disagreements" boilerplate',
+          '✓ Volume Capitulation: 5-10% drop on 3x+ average volume',
+          '✓ 3-Day Stabilization: Stock holds Day 1 low for 3 consecutive days'
+        ]
+      }
+    },
+    phases: {
+      announcement: {
+        description: 'Day 1-2: Initial drop on news',
+        priceAction: '-5% to -25% depending on type',
+        behavior: 'Emotional liquidation - retail and stop-loss funds sell uncertainty'
+      },
+      stabilization: {
+        description: 'Days 3-5: The "3-Day Rule"',
+        priceAction: 'Should hold Day 1 low if reversal coming',
+        behavior: 'Institutional buyers step in to absorb retail panic'
+      },
+      resolution: {
+        description: 'Days 6-14: Recovery or continued decline',
+        priceAction: '+8% to +15% if gold standard; continued decline if fundamental',
+        behavior: '"Uncertainty Premium" evaporates for good setups'
+      }
+    },
+    goldStandard: {
+      title: '🏆 EXECUTIVE CHANGE GOLD STANDARD (85%+ Reversal)',
+      criteria: [
+        'Step 1: SUCCESSION INTEGRITY - Internal successor named at same time as departure',
+        'Step 2: CLEAN AUDIT CLAUSE - 8-K states "no disagreements on accounting matters"',
+        'Step 3: VOLUME CAPITULATION - 5-10% drop with volume > 3x 50-day average',
+        'Step 4: 3-DAY STABILIZATION - Stock holds Day 1 low for 3 consecutive days'
+      ],
+      why: 'If all 4 criteria met, the drop was pure "Uncertainty Premium" - fundamentals unchanged. Once retail panic exhausted, price returns to fair value.',
+      empiricalBasis: 'Denis & Denis (1995) found forced turnovers with successors show positive abnormal returns; Huson et al. (2001) confirmed succession integrity is key.'
+    },
+    expectedReturn: {
+      goldStandardBuyer: '+8% to +15% in 10-14 days',
+      abruptBuyer: '-10% to -25% additional loss (VALUE TRAP)',
+      cfoExitBuyer: 'Slow 6-month recovery - not worth the capital',
+      patience: 'The 8-K language is EVERYTHING. Read it before buying.'
+    },
+    vetoFactors: [
+      '⚠️ NO SUCCESSOR: "Board initiating search" = Leadership Vacuum (-40% reversal)',
+      '⚠️ 8-K RED FLAGS: "Disagreements," "accounting review," "SEC" = Fundamental (-50% reversal)',
+      '⚠️ IMMEDIATE: "Effective immediately" departure = Something bad coming (-35% reversal)',
+      '⚠️ NEW LOWS: Stock makes lower low on Day 2 or 3 = Not shakeout (-30% reversal)'
+    ],
+    sellSignals: {
+      timing: [
+        '📥 BUY: After 3-day stabilization confirms (Day 4-5)',
+        '⏱️ HOLD: Through recovery phase (Days 5-14)',
+        '📊 SELL: At pre-announcement level OR +10-15% from lows',
+        '🚪 STOP: Below Day 1 low (invalidates stabilization)'
+      ],
+      priceTargets: {
+        entry: '-5% to -10% from pre-announcement',
+        exit: 'Pre-announcement level (full reversal)',
+        stopLoss: 'Below Day 1 low'
+      },
+      exitStrategy: 'Exit at pre-announcement level. If breaks Day 1 low, exit immediately - becomes fundamental.'
+    },
+    keyLessons: [
+      'NOT all executive changes are tradeable - 85% require FOUR specific signals.',
+      'The 8-K "no disagreements" clause is the #1 predictor of reversal vs crash.',
+      'Internal successor = continuity. External search = leadership vacuum.',
+      'The 3-day stabilization rule separates shakeouts from fundamental declines.',
+      '"Uncertainty Premium" evaporates quickly when succession is clear (Huson et al.).',
+      'CFO exits are slow recoveries (6 months) - skip unless all gold signals present.'
+    ]
+  },
+
+  // === NEWS SHAKEOUT (OVERREACTION HYPOTHESIS) ===
+  // Empirical Sources: De Bondt & Thaler (1985), Tetlock (2007), Atkins & Dyl (1990), Chan (2003)
+  // Gold Standard: BUY the Overreaction Recovery (85%+ reversal)
+  newsShakeout: {
+    name: 'News Shakeout (Overreaction Hypothesis)',
+    tier: 1,
+    empiricalSources: [
+      'De Bondt & Thaler (1985): "Does the Stock Market Overreact?" - Extreme losers outperform extreme winners',
+      'Tetlock (2007): High media negativity predicts high trading volume and reversion to fundamentals',
+      'Atkins & Dyl (1990): Transaction data confirms 2-5 day overreaction reversals for news events',
+      'Chan (2003): News-driven drops revert 40-60% faster than non-news drops'
+    ],
+    telltales: [
+      '📰 "NOISE" news: Analyst downgrade, guidance miss, litigation rumor, macro scare (TRANSIENT)',
+      '📊 Volume Climax: Panic selling creates 5x+ average volume (selling exhaustion)',
+      '📉 RSI Oversold: RSI drops below 25 (rubber band stretched to extreme)',
+      '⏳ Three-Day Stabilization: Day 3 close > Day 2, price holds above Day 1 low'
+    ],
+    nlpFilter: {
+      title: '📰 HEADLINE LINGUISTIC FILTER (Loughran & McDonald 2011, Tetlock 2007)',
+      description: 'Markets overreact to SOFT info but underreact to HARD info. Use headline language to classify!',
+      softInfo: {
+        label: 'SOFT INFO → REVERSES (Buy the dip)',
+        verbType: 'Subjective: "Fears," "Worries," "Concerns," "Uncertainty"',
+        focus: 'Price-focused: "Plunges," "Tumbles," "Crashes"',
+        content: 'Opinions, macro noise, rumors',
+        timing: 'Often mid-day (reactive)',
+        keywords: ['fears', 'concerns', 'worries', 'uncertainty', 'rumors', 'shadows', 'plunges']
+      },
+      hardInfo: {
+        label: 'HARD INFO → CONTINUES (Do NOT buy)',
+        verbType: 'Objective: "Files," "Reports," "Sues," "Investigation"',
+        focus: 'Cause-focused: "Defaulted," "Fraud," "SEC Filing"',
+        content: 'Earnings, fraud, contracts, regulatory action',
+        timing: 'Before open / after close (planned)',
+        keywords: ['fraud', 'investigation', 'SEC', 'files', 'recalls', 'bankruptcy', 'restatement']
+      },
+      goldStandard: '🏆 85% GOLD STANDARD: Company you know is healthy + SOFT news headline ("Fears") + 10% drop on record volume + Day 3: Insider cluster buying'
+    },
+    phases: {
+      panic: {
+        name: 'The Panic (Day 1)',
+        timing: 'Day of news',
+        priceImpact: '-8% to -25% drop',
+        action: 'DO NOT BUY. Panic selling not finished. Wait for stabilization.',
+        strategy: 'Forced sellers (margin calls, funds) create artificial selling pressure.'
+      },
+      stabilization: {
+        name: 'Stabilization (Days 2-3)',
+        timing: '48-72 hours post-panic',
+        priceImpact: 'Range-bound, testing panic low',
+        action: 'WATCH for: Day 3 close > Day 2 AND price above Day 1 low.',
+        strategy: 'Forced selling clearing out. "Value buyers" starting to step in.'
+      },
+      entry: {
+        name: 'Entry (Day 3-4)',
+        timing: 'After 3-day stabilization confirmed',
+        priceImpact: 'First green day, +2% to +5%',
+        action: 'BUY when RSI < 25 + stabilization confirmed. This is Gold Standard entry.',
+        strategy: 'Mean reversion beginning. "Transient" news = temporary, not structural.'
+      },
+      recovery: {
+        name: 'Recovery (Days 4-14)',
+        timing: '5-14 days post-panic',
+        priceImpact: '+8% to +15% gap fill',
+        action: 'HOLD for gap fill target. Trail stop at breakeven.',
+        strategy: 'De Bondt & Thaler: Extreme losers outperform within 30-90 days.'
+      },
+      complete: {
+        name: 'Complete',
+        timing: 'Target reached or failed',
+        priceImpact: 'Gap filled or reversal failed',
+        action: 'TAKE PROFITS at gap fill target.',
+        strategy: 'Mean reversion complete. Pattern cycle ends.'
+      }
+    },
+    goldStandard: {
+      criteria: [
+        '✓ Transient News: News does NOT change 12-month outlook (not fraud, not bankruptcy)',
+        '✓ Volume Climax: 5x+ average volume on panic day (selling exhaustion)',
+        '✓ Three-Day Stabilization: Day 3 close > Day 2, price above Day 1 low',
+        '✓ RSI Oversold: RSI < 25 (rubber band stretched to extreme, snap-back likely)'
+      ],
+      successRate: '85%+ when all 4 criteria met',
+      partialRates: {
+        newsOnly: '50% reversal (need more confirmation)',
+        plusVolume: '65% reversal (selling exhaustion detected)',
+        plusStabilization: '75% reversal (forced selling cleared)',
+        goldStandard: '85%+ reversal (all 4 criteria - mean reversion confirmed)'
+      }
+    },
+    expectedReturn: {
+      goldStandard: '+8% to +15% gap fill (85% success)',
+      partial: '+5% to +10% with 2-3 criteria (60-75% success)',
+      failed: 'Value Trap: Terminal news → price keeps falling -20%+ (no recovery)',
+      riskLevel: 'Entry ONLY after 3-day stabilization, never during panic'
+    },
+    vetoFactors: [
+      '💀 Terminal News: Fraud, bankruptcy, delisting = NO RECOVERY (-40% probability)',
+      '📉 No Volume Climax: Low volume drop = more selling to come (-15% probability)',
+      '🔻 Failed Stabilization: Day 3 close < Day 2 = still falling (-20% probability)',
+      '🌊 Sector Collapse: Whole sector falling, not stock-specific (-25% probability)',
+      '📊 Prior Downtrend: Stock was already falling before news (-10% probability)'
+    ],
+    sellSignals: {
+      timing: [
+        '🎯 BUY: After 3-day stabilization + RSI < 25',
+        '⏱️ HOLD: Through recovery phase (5-14 days)',
+        '📊 SELL: At gap fill target (pre-panic price) OR +12% from entry',
+        '🚪 STOP: If price breaks below panic low'
+      ],
+      priceTargets: {
+        conservative: '+8% from panic low (secure recovery)',
+        standard: '+12% from entry (typical overreaction recovery)',
+        aggressive: 'Full gap fill to pre-panic price (15%+)'
+      },
+      exitStrategy: 'Exit if stabilization fails (new lows) or terminal news confirmed.'
+    },
+    keyLessons: [
+      'Distinguish "News Shakeout" (reverses) from "Value Trap" (keeps falling)',
+      'Transient news (analyst, rumor, miss) reverses. Terminal news (fraud, bankruptcy) does NOT.',
+      'Volume Climax (5x+) = selling exhaustion. Low volume drop = more selling ahead.',
+      'Three-Day Rule: Day 3 must close > Day 2. If not, stabilization failed.',
+      'RSI < 25 = rubber band stretched to extreme. Mathematical mean reversion likely.'
+    ]
   }
 };
 
 // Tutorial hint definitions for all phenomena and events
 const TUTORIAL_HINTS = {
-    // ========== FOMO Rally ==========
+    // ========== FOMO Rally Exhaustion ==========
+    // Empirical: Barber & Odean (2021), Da et al. (2024), Baltzer et al. (2023)
     fomoRally: {
-        type: 'FOMO Rally',
+        type: 'FOMO Rally Exhaustion',
         phases: {
             early: {
-                day: '1-2 of ~7',
-                description: 'Fear Of Missing Out is driving retail investors to pile in. Social media buzz is building and everyone wants a piece of the action.',
-                implication: 'Stock will likely continue rising for several more days as more buyers join. Volume increasing.',
-                action: 'CONSIDER BUYING - Early stage has best risk/reward. Set a target exit price around +20-40%.',
-                timing: 'ENTRY: On "rally attracts retail" news. EXIT: On "Don\'t miss out!" or first red day.',
-                catalyst: 'Watch for: "FOMO MANIA" or "Don\'t miss out" headlines = SELL SIGNAL. Blowoff top imminent.'
+                day: 'Day 1-7 (Buildup)',
+                description: 'Social mentions building 3-10x baseline. Retail "attention-driven buying" beginning (Barber & Odean).',
+                implication: 'Too early to trade. Price deviation < 2 SD. Sentiment indicators not extreme yet.',
+                action: 'WATCH - Monitor for 3+ SD extension and P/C ratio collapse.',
+                timing: 'ENTRY: None yet. EXIT: N/A.',
+                catalyst: 'Watch for: Mentions going viral (10x+), P/C ratio falling below 0.50'
             },
             mid: {
-                day: '3-5 of ~7',
-                description: 'FOMO rally in full swing. Late buyers are rushing in. Smart money may be starting to take profits.',
-                implication: 'Rally could continue but risk is increasing. Watch for volume decline as warning sign.',
-                action: 'IF HOLDING: Consider selling half to lock profits. IF BUYING: Very risky entry point.',
-                timing: 'ENTRY: DO NOT BUY. EXIT: Sell 50% now if holding.',
-                catalyst: 'Warning signs: Slowing momentum, "Don\'t miss out" headlines appearing.'
+                day: 'Day 8-11 (Euphoria)',
+                description: 'PARABOLIC phase. Price 3+ SD above MA. P/C ratio collapsing toward 0.40. "Positive feedback loop" active.',
+                implication: 'Gold Standard criteria emerging. Mathematically unsustainable. "Marginal buyer" approaching.',
+                action: 'PREPARE TO SHORT - Watch for blow-off top confirmation.',
+                timing: 'ENTRY: Wait for blow-off. EXIT: If long, SELL NOW.',
+                catalyst: 'Gold Standard setup: 3+ SD + P/C <0.4 + Volume surge = SHORT entry imminent'
             },
             late: {
-                day: '6-7 of ~7',
-                description: 'FOMO exhaustion approaching. Most who wanted to buy have bought. Selling pressure building.',
-                implication: 'Rally will likely end soon. Sharp reversal possible as early buyers take profits.',
-                action: 'SELL - Take profits now. Do NOT buy at this stage. Reversal imminent.',
-                timing: 'ENTRY: NEVER. EXIT: IMMEDIATELY - sell 100% now.',
-                catalyst: 'Collapse news coming: "FOMO buyers left holding bags" - you don\'t want to be one of them.'
+                day: 'Day 12+ (Blow-off & Crash)',
+                description: 'BLOW-OFF TOP: Gap up → close near low → record volume. This is "transfer of ownership" to FOMO buyers.',
+                implication: '85% reversal probability. Barber & Odean: 30-90 day underperformance ahead.',
+                action: 'SHORT NOW or BUY PUTS. Target 50-day MA.',
+                timing: 'ENTRY: On first lower high (empirically optimal). EXIT: Cover at 50-day MA.',
+                catalyst: '"First Day of Lower Highs" = confirmed top. Sentiment still high but price decaying.'
             }
         }
     },
@@ -862,12 +1526,12 @@ const TUTORIAL_HINTS = {
 
     // ========== Stock Split ==========
     stockSplit: {
-        type: 'Stock Split',
-        description: 'Company dividing shares to lower price per share. No change in total value.',
-        implication: 'Psychologically bullish. Lower price attracts retail buyers.',
-        action: 'BUY on announcement - Splits attract retail. Expect +10% to +20% run into effective date.',
-        timing: 'ENTRY: On split announcement. EXIT: Day before or day of effective date.',
-        catalyst: 'Expected: Steady buying pressure into effective date. Post-split momentum may continue 2-3 days.'
+        type: 'Stock Split Announced',
+        description: 'Company dividing shares to lower price per share. "Cosmetic" but psychologically powerful.',
+        implication: 'Expect +15-25% run-up to effective date. BUT: the Gold Standard trade is the REVERSAL.',
+        action: 'DO NOT BUY NOW. Wait for T+3 after effective day to SHORT the post-split hangover.',
+        timing: 'ENTRY: T+3 after split effective (short). EXIT: 5-7 days for 5-10% reversal gain.',
+        catalyst: 'Watch for: 15%+ run-up, OTM call spike on effective day, then T+3 lower high = 77% reversal setup.'
     },
 
     // ========== Buyback ==========
@@ -1117,39 +1781,175 @@ function getTutorialForNews(newsItem) {
         return tutorial;
     }
     
-    // ========== Check for Dead Cat Bounce news ==========
-    if (newsItem.isDeadCatBounce || newsItem.newsType === 'dead_cat_bounce') {
-        const bounceNum = newsItem.bounceNumber || 1;
-        const rsi = newsItem.bounceRSI || (30 - bounceNum * 4);
+    // ========== Dead Cat Bounce / Crash Resolution / Recovery hints ==========
+    // All DCB-related hints are now generated by getDeadCatBounceTutorialHint() in deadCatBounce.js
+    if (newsItem.isDeadCatBounce || newsItem.newsType === 'dead_cat_bounce' ||
+        newsItem.isCrashResolution || newsItem.newsType === 'crash_resolution' ||
+        newsItem.isRecovery || newsItem.newsType === 'recovery') {
+        const dcbHint = getDeadCatBounceTutorialHint(newsItem);
+        if (dcbHint && dcbHint.type) {
+            return dcbHint;
+        }
+    }
+    
+    // ========== Index Rebalancing hints ==========
+    // All Index Rebalance hints are generated by getIndexRebalanceTutorialHint() in indexRebalance.js
+    if (newsItem.isIndexRebalance || newsItem.newsType === 'index_rebalance') {
+        const indexHint = getIndexRebalanceTutorialHint(newsItem);
+        if (indexHint && indexHint.type) {
+            return indexHint;
+        }
+    }
+    
+    // ========== Insider Buying hints ==========
+    // All Insider Buying hints are generated by getInsiderBuyingTutorialHint() in insiderBuying.js
+    if (newsItem.isInsiderBuy || newsItem.newsType === 'insider_buy') {
+        const insiderHint = getInsiderBuyingTutorialHint(newsItem);
+        if (insiderHint && insiderHint.type) {
+            return insiderHint;
+        }
+    }
+    
+    // ========== Insider Selling hints ==========
+    // All Insider Selling hints are generated by getInsiderSellingTutorialHint() in insiderSelling.js
+    if (newsItem.isInsiderSell || newsItem.newsType === 'insider_sell') {
+        const insiderSellHint = getInsiderSellingTutorialHint(newsItem);
+        if (insiderSellHint && insiderSellHint.type) {
+            return insiderSellHint;
+        }
+    }
+    
+    // ========== Short Seller Report hints ==========
+    // SSR hints are generated by getShortReportTutorialHint() in shortSellerReport.js
+    if (newsItem.isShortReport || newsItem.newsType === 'short_report') {
+        const ssrHint = getShortReportTutorialHint(newsItem);
+        if (ssrHint && ssrHint.type) {
+            return ssrHint;
+        }
+    }
+    
+    // ========== Stock Split hints ==========
+    // All Stock Split hints are generated by getStockSplitTutorialHint() in stockSplit.js
+    if (newsItem.isStockSplit || newsItem.newsType === 'stock_split') {
+        const splitHint = getStockSplitTutorialHint(newsItem);
+        if (splitHint && splitHint.type) {
+            return splitHint;
+        }
+    }
+    
+    // ========== Liquidity Sweep hints ==========
+    // Wyckoff Spring / Stop-Run Reversal (85% Gold Standard)
+    if (newsItem.type === 'liquidity_sweep' || newsItem.newsType === 'liquidity_sweep') {
+        const phase = newsItem.phase || 'setup';
+        const goldCount = newsItem.goldStandardCount || 0;
         
-        if (bounceNum >= 4) {
-            tutorial.type = `Dead Cat Bounce #${bounceNum} (STRONG BUY Signal)`;
-            tutorial.description = `Multiple confirmations: RSI(14) divergence + Bollinger Band support + volume exhaustion after ${bounceNum} bounces.`;
-            tutorial.implication = `${Math.min(90, 65 + (bounceNum-3)*12)}% probability this is the REAL bottom. Sellers completely exhausted.`;
-            tutorial.action = `STRONG BUY SIGNAL - Confluence of indicators: RSI divergence, Bollinger support, volume dried up.`;
-            tutorial.timing = `ENTRY: NOW - ${bounceNum} bounces = very high probability bottom. EXIT: +15% to +25% recovery.`;
-            tutorial.catalyst = 'INDICATORS TO LEARN: After 4+ bounces, you want RSI divergence (price lower, RSI higher) + low volume + price at Bollinger Band.';
-        } else if (bounceNum === 3) {
-            tutorial.type = `Dead Cat Bounce #3 (RSI DIVERGENCE)`;
-            tutorial.description = `Key signal: Price made new low, but RSI(14) made HIGHER low. This "bullish divergence" = sellers weakening.`;
-            tutorial.implication = '65% chance this is the real bottom. RSI divergence is a powerful signal.';
-            tutorial.action = 'CONSIDER BUYING - RSI divergence detected. Start small position.';
-            tutorial.timing = 'ENTRY: On bounce #3 with RSI divergence. EXIT: +15% to +25% recovery.';
-            tutorial.catalyst = 'INDICATOR TO LEARN: RSI Divergence = price makes new low but RSI makes higher low. Shows sellers losing momentum.';
-        } else if (bounceNum === 2) {
-            tutorial.type = `Dead Cat Bounce #2 (Volume Declining)`;
-            tutorial.description = `RSI(14) still oversold. Watch for: selling VOLUME declining = sellers running out of shares to sell.`;
-            tutorial.implication = '45% chance of bottom. Volume exhaustion is good sign, but need more confirmation.';
-            tutorial.action = 'DO NOT BUY YET - Two signals (RSI oversold + volume decline) but still risky. Wait for bounce #3.';
-            tutorial.timing = 'ENTRY: WAIT for bounce #3 with RSI divergence. EXIT: N/A.';
-            tutorial.catalyst = 'INDICATOR TO LEARN: After RSI oversold fails, watch if selling VOLUME decreases each bounce. Volume dry-up = sellers exhausted.';
-        } else {
-            tutorial.type = `Dead Cat Bounce #1 (RSI Oversold Only)`;
-            tutorial.description = `RSI(14) hit oversold (<30) triggering algorithmic buying. Single indicator = UNRELIABLE.`;
-            tutorial.implication = 'Only 30% chance of bottom. RSI oversold alone is NOT a buy signal.';
-            tutorial.action = 'DO NOT BUY - Single indicator (RSI oversold) fails 70% of the time. Wait for bounce #3.';
-            tutorial.timing = 'ENTRY: WAIT for bounce #3+. EXIT: N/A - don\'t buy first bounce.';
-            tutorial.catalyst = 'INDICATOR TO LEARN: RSI(14) < 30 = "oversold" but this alone is WEAK signal. Need multiple confirmations.';
+        if (phase === 'setup') {
+            tutorial.type = 'Liquidity Sweep SETUP - Watch for Sweep';
+            tutorial.description = 'Stock approaching OBVIOUS support level. Stop-losses accumulating below.';
+            tutorial.implication = 'Institutions may "sweep" these stops to fill large buy orders cheaply.';
+            tutorial.action = 'WATCH - Do NOT place stops at obvious levels. Wait for sweep → recovery pattern.';
+            tutorial.timing = 'ENTRY: None yet. Wait for sweep → absorption → re-entry signal.';
+            tutorial.catalyst = 'Wyckoff Spring: The more "obvious" the support, the more liquidity sits below it.';
+        } else if (phase === 'sweep') {
+            tutorial.type = 'Liquidity Sweep IN PROGRESS - Stop Run Active';
+            tutorial.description = 'Price breaking BELOW support on high volume. Stop-losses triggered. This is the "sweep."';
+            tutorial.implication = 'If institutions are absorbing supply, price will quickly recover. Watch for absorption volume.';
+            tutorial.action = 'DO NOT PANIC SELL. Watch for: (1) Volume spike + (2) Price fails to close lower.';
+            tutorial.timing = 'ENTRY: NOT YET. Wait for price to RECLAIM support (re-entry signal).';
+            tutorial.catalyst = 'Gold Standard check: Is this absorption (high vol + recovery) or real breakdown (closes lower)?';
+        } else if (phase === 'recovery' || phase === 'absorption') {
+            tutorial.type = `Liquidity Sweep RECOVERY - ${goldCount}/4 Gold Standard`;
+            tutorial.description = 'Price snapping back above support. "Failed breakdown" confirming. Absorption volume detected.';
+            tutorial.implication = goldCount >= 4 ? '85%+ reversal probability (Gold Standard)' : `${goldCount}/4 criteria met. ~${45 + goldCount * 10}% probability.`;
+            tutorial.action = goldCount >= 3 ? 'BUY NOW - Re-entry confirmed. Classic Wyckoff Spring.' : 'CONSIDER BUY - Some criteria missing, lower probability.';
+            tutorial.timing = 'ENTRY: On reclaim of support (this is Gold Standard entry). EXIT: +8% to +15% target.';
+            tutorial.catalyst = `Gold Standard (${goldCount}/4): Obvious support ✓, False breakout ✓, Absorption volume ${goldCount >= 3 ? '✓' : '?'}, Re-entry ${goldCount >= 4 ? '✓' : '?'}`;
+        } else if (phase === 'continuation') {
+            tutorial.type = 'Liquidity Sweep CONTINUATION - Holding Position';
+            tutorial.description = 'Sweep reversal playing out. "Liquidity vacuum" propelling price higher.';
+            tutorial.implication = 'No sellers left below. Path of least resistance is UP.';
+            tutorial.action = 'HOLD - Trail stop at breakeven. Target +8% to +15%.';
+            tutorial.timing = 'ENTRY: Late but ok if still near support. EXIT: At target or if price fails re-test.';
+            tutorial.catalyst = 'Aggarwal & Wu (2006): Institutional order flow creates "vacuum" after sweep absorbs supply.';
+        } else if (phase === 'complete') {
+            tutorial.type = 'Liquidity Sweep COMPLETE';
+            tutorial.description = 'Sweep event finished. Pattern played out.';
+            tutorial.implication = newsItem.sentiment > 0 ? 'Successful reversal - typical +8% to +15% gain.' : 'Failed sweep - price continued lower after false signal.';
+            tutorial.action = 'TAKE PROFITS if holding. Trade complete.';
+            tutorial.timing = 'ENTRY: N/A. EXIT: Sell remaining position.';
+            tutorial.catalyst = 'Key lesson: Gold Standard (4/4 criteria) = 85% success. Partial criteria = lower odds.';
+        } else if (phase === 'failed') {
+            tutorial.type = 'Liquidity Sweep FAILED - Not All Criteria Met';
+            tutorial.description = 'Sweep reversal did NOT materialize. Price failed to hold above support.';
+            tutorial.implication = 'Only partial criteria met. This was a REAL breakdown, not a sweep.';
+            tutorial.action = 'EXIT if holding. The sweep failed - price likely continues lower.';
+            tutorial.timing = 'ENTRY: DO NOT BUY. EXIT: Stop out at sweep low if still holding.';
+            tutorial.catalyst = 'Lesson: Gold Standard filter WORKS. Partial criteria = lower success rate for a reason.';
+        }
+        return tutorial;
+    }
+
+    // ========== News Shakeout hints ==========
+    // Overreaction Hypothesis / Event-Driven Mean Reversion (85% Gold Standard)
+    // Empirical: De Bondt & Thaler (1985), Tetlock (2007), Atkins & Dyl (1990), Chan (2003)
+    if (newsItem.type === 'news_shakeout' || newsItem.newsType === 'news_shakeout') {
+        const phase = newsItem.phase || 'panic';
+        const goldCount = newsItem.goldStandardCount || 0;
+        const isTransient = newsItem.isTransient !== false;
+        const newsType = newsItem.triggerNews || 'unknown';
+        
+        if (phase === 'panic') {
+            tutorial.type = 'News Shakeout PANIC - Do Not Buy Yet';
+            tutorial.description = `News-driven panic drop (${newsType}). Forced sellers (margin calls, funds) dumping shares.`;
+            tutorial.implication = 'Panic selling NOT finished. More downside possible in next 24-48 hours.';
+            tutorial.action = 'DO NOT BUY. Wait for 3-day stabilization pattern before entry.';
+            tutorial.timing = 'ENTRY: NOT YET. Wait for Day 3 close > Day 2. EXIT: N/A.';
+            tutorial.catalyst = isTransient ? 
+                'NEWS TYPE: TRANSIENT (analyst downgrade, guidance miss, rumor). Mean reversion likely.' :
+                '⚠️ WARNING: Terminal news (fraud, bankruptcy) does NOT reverse. Verify news type!';
+        } else if (phase === 'stabilization') {
+            tutorial.type = `News Shakeout STABILIZATION - ${goldCount}/4 Gold Standard`;
+            tutorial.description = 'Forced selling clearing out. Watching for 3-day stabilization pattern.';
+            tutorial.implication = goldCount >= 2 ? 
+                `Stabilization in progress. ${goldCount}/4 criteria met. Wait for Day 3 confirmation.` :
+                'Too early to confirm stabilization. Need more criteria.';
+            tutorial.action = 'WATCH - Key test: Does Day 3 close ABOVE Day 2? Price must hold above panic low.';
+            tutorial.timing = 'ENTRY: Wait for Day 3+ confirmation. EXIT: N/A.';
+            tutorial.catalyst = `De Bondt & Thaler (1985): Extreme losers outperform. Waiting for selling exhaustion to confirm.`;
+        } else if (phase === 'entry') {
+            tutorial.type = `News Shakeout ENTRY SIGNAL - ${goldCount}/4 Gold Standard`;
+            tutorial.description = '3-day stabilization CONFIRMED. RSI oversold. Mean reversion beginning.';
+            tutorial.implication = goldCount >= 4 ? 
+                '85%+ reversal probability (Gold Standard). De Bondt & Thaler pattern confirmed.' : 
+                `${goldCount}/4 criteria met. ~${50 + goldCount * 10}% probability.`;
+            tutorial.action = goldCount >= 3 ? 
+                'BUY NOW - Stabilization confirmed. Classic overreaction reversal.' : 
+                'CONSIDER BUY - Some criteria missing, lower probability.';
+            tutorial.timing = 'ENTRY: On first green day after stabilization. EXIT: +8% to +15% gap fill target.';
+            tutorial.catalyst = `Gold Standard (${goldCount}/4): Transient news ${goldCount >= 1 ? '✓' : '?'}, Volume climax ${goldCount >= 2 ? '✓' : '?'}, Stabilization ${goldCount >= 3 ? '✓' : '?'}, RSI < 25 ${goldCount >= 4 ? '✓' : '?'}`;
+        } else if (phase === 'recovery') {
+            tutorial.type = 'News Shakeout RECOVERY - Gap Fill in Progress';
+            tutorial.description = 'Mean reversion playing out. Price recovering toward pre-panic level.';
+            tutorial.implication = 'De Bondt & Thaler: Extreme losers outperform within 30-90 days.';
+            tutorial.action = 'HOLD - Trail stop at breakeven. Target gap fill (pre-panic price).';
+            tutorial.timing = 'ENTRY: Late but ok if still below gap fill. EXIT: At gap fill target.';
+            tutorial.catalyst = 'Tetlock (2007): High media negativity predicts reversion to fundamentals within 5-10 days.';
+        } else if (phase === 'complete') {
+            tutorial.type = 'News Shakeout COMPLETE';
+            tutorial.description = 'Overreaction recovery finished. Gap filled or pattern concluded.';
+            tutorial.implication = newsItem.sentiment > 0 ? 
+                'Successful reversal - typical +8% to +15% gain from panic low.' : 
+                'Value trap - terminal news prevented recovery.';
+            tutorial.action = 'TAKE PROFITS if holding. Trade complete.';
+            tutorial.timing = 'ENTRY: N/A. EXIT: Sell remaining position.';
+            tutorial.catalyst = 'Key lesson: Transient news reverses (85%). Terminal news (fraud, bankruptcy) = value trap.';
+        } else if (phase === 'failed' || phase === 'value_trap') {
+            tutorial.type = 'News Shakeout FAILED - Value Trap';
+            tutorial.description = 'Recovery did NOT materialize. This was NOT overreaction - news was structural.';
+            tutorial.implication = 'Terminal news confirmed. Price likely continues lower. Cut losses.';
+            tutorial.action = 'EXIT if holding. This is a VALUE TRAP, not a shakeout.';
+            tutorial.timing = 'ENTRY: DO NOT BUY. EXIT: Stop out at panic low if still holding.';
+            tutorial.catalyst = 'Lesson: Distinguish "News Shakeout" (transient) from "Value Trap" (terminal). Gold Standard filter helps.';
         }
         return tutorial;
     }
@@ -1191,52 +1991,97 @@ function getTutorialForNews(newsItem) {
         return tutorial;
     }
     
-    // ========== Check for Strategic Pivot news ==========
+    // ========== Check for Strategic Pivot news (4-Type Framework) ==========
     if (newsItem.isStrategicPivot || newsItem.newsType === 'strategic_pivot') {
         const phase = newsItem.strategicPivotPhase || 'announced';
-        const pivotType = newsItem.pivotType || 'restructuring';
-        const narrative = newsItem.pivotNarrative || 'efficiency';
+        const pivotType = newsItem.pivotType || 'symbolic';
+        const signals = newsItem.pivotSignals || {};
+        const goldSignalsMet = signals.goldSignalsMet || 0;
         
-        const pivotLabels = {
-            layoffs: 'Layoffs/Job Cuts',
-            restructuring: 'Restructuring',
-            market_exit: 'Market Exit',
-            product_kill: 'Product Discontinuation',
-            pivot: 'Strategic Pivot',
-            divestiture: 'Divestiture',
-            cost_cutting: 'Cost Cutting'
+        const typeLabels = {
+            reactive: 'REACTIVE (⛔ <10% reversal)',
+            structural: 'STRUCTURAL (⚠️ 30% reversal)',
+            symbolic: 'SYMBOLIC (📈 65% reversal)',
+            gold_standard: 'GOLD STANDARD (🏆 85%+ reversal)'
         };
         
-        const label = pivotLabels[pivotType] || 'Strategic Change';
+        const typeLabel = typeLabels[pivotType] || 'Strategic Pivot';
+        
+        // Generate signal summary
+        let signalSummary = '';
+        if (signals.nonDilutive) signalSummary += signals.nonDilutive.isMet ? '✓ Non-Dilutive ' : '✗ Dilutive ';
+        if (signals.anchorRevenue) signalSummary += signals.anchorRevenue.isMet ? '✓ Anchor Revenue ' : '✗ No Anchor ';
+        if (signals.insiderBuy) signalSummary += signals.insiderBuy.isMet ? '✓ INSIDER BUY ' : '✗ No Insider Buy ';
+        if (signals.gapFill) signalSummary += signals.gapFill.isMet ? '✓ Gap Fill ' : '✗ No Gap Fill ';
         
         if (phase === 'announced') {
-            tutorial.type = `${label} Announced - Initial Drop`;
-            tutorial.description = `"Unfavorable" strategic announcement. Market reacts negatively initially, but these often RECOVER in 2-3 weeks.`;
-            tutorial.implication = 'Initial -5% to -12% drop is normal. Recovery expected as "${narrative}" narrative takes hold.';
-            tutorial.action = 'CONSIDER BUYING THE DIP - History shows "bad news" pivots often lead to rallies.';
-            tutorial.timing = 'ENTRY: On dip after announcement (or wait for "digesting" phase). EXIT: +8% to +15% during rerating.';
-            tutorial.catalyst = `KEY PATTERN: "Unfavorable news" → Market digests → Analysts reframe as "${narrative}" → Recovery rally.`;
-        } else if (phase === 'digesting') {
-            tutorial.type = `${label} - Market Digesting`;
-            tutorial.description = 'Initial selling exhausted. Market processing the strategic change.';
-            tutorial.implication = 'Dip likely near bottom. Watch for narrative shift from "bad" to "bold."';
-            tutorial.action = 'BUY if you haven\'t - Selling pressure fading. Recovery phase coming.';
-            tutorial.timing = 'ENTRY: Good entry point. EXIT: +8% to +15% during rerating phase.';
-            tutorial.catalyst = `Expected: Analysts will soon reframe this as "${narrative}" story → stock rebounds.`;
-        } else if (phase === 'rerating') {
-            tutorial.type = `${label} - "Bold Move" Rally`;
-            tutorial.description = `Narrative shift complete! What was "bad news" is now "${narrative}" story. Stock recovering.`;
-            tutorial.implication = 'Recovery in progress. Pattern typically recovers most/all of initial drop.';
+            if (pivotType === 'reactive') {
+                tutorial.type = `${typeLabel} - AVOID`;
+                tutorial.description = 'Dying firm grasping at straws. Revenue collapsing, this is desperation not opportunity.';
+                tutorial.implication = '<10% reversal probability. Stock likely continues lower. NOT a dip to buy.';
+                tutorial.action = '⛔ DO NOT BUY - This is permanent re-rating, not market overreaction.';
+                tutorial.timing = 'ENTRY: NEVER. EXIT: N/A - avoid completely.';
+                tutorial.catalyst = 'DEATH TRAP: "Strategic alternatives," "exploring options," "challenging environment" = dying firm.';
+            } else if (pivotType === 'structural') {
+                tutorial.type = `${typeLabel} - SKIP`;
+                tutorial.description = 'Real capital commitment (debt, divestiture). Market is RE-RATING the company.';
+                tutorial.implication = '30% reversal probability, but takes 6 MONTHS. Not worth trading.';
+                tutorial.action = '⚠️ SKIP - Even if it recovers, 6-month timeframe too slow. Better opportunities elsewhere.';
+                tutorial.timing = 'ENTRY: Not recommended. EXIT: N/A.';
+                tutorial.catalyst = 'STRUCTURAL SIGNALS: New debt, divestiture, "unit economics," "restructuring charge" = real change.';
+            } else if (pivotType === 'symbolic') {
+                tutorial.type = `${typeLabel} - Watch for Confirmation`;
+                tutorial.description = 'Buzzword pivot without substance. Market likely overreacted to press release.';
+                tutorial.implication = `65% reversal in 2-3 weeks. Watch for Gold Standard signals! (${goldSignalsMet}/4 met)`;
+                tutorial.action = 'CONSIDER BUYING - "Nothing has changed" = reversal likely. Wait for insider buy signal.';
+                tutorial.timing = 'ENTRY: Days 3-5 after stabilization. EXIT: Pre-announcement level (+8% to +12%).';
+                tutorial.catalyst = `SIGNALS: ${signalSummary || 'Watch for: Non-Dilutive, Anchor Revenue, Insider Buy, Gap Fill'}`;
+            } else if (pivotType === 'gold_standard') {
+                tutorial.type = `${typeLabel} - HIGH CONVICTION BUY`;
+                tutorial.description = 'Symbolic pivot with ALL 4 confirmation signals! Best setup.';
+                tutorial.implication = '85%+ reversal in 10-14 days. Full recovery expected to pre-announcement.';
+                tutorial.action = '🏆 BUY NOW - All signals aligned. This is the ideal setup.';
+                tutorial.timing = 'ENTRY: Day 2-3 (confirmed by insider buy). EXIT: Pre-announcement level.';
+                tutorial.catalyst = `GOLD STANDARD: ${signalSummary}`;
+            } else {
+                tutorial.type = 'Strategic Pivot - Classify Type';
+                tutorial.description = 'Analyze language and signals to determine pivot type.';
+                tutorial.implication = 'Reactive (<10%), Structural (30%), Symbolic (65%), Gold Standard (85%+).';
+                tutorial.action = 'WAIT - Classify the pivot first. Don\'t rush.';
+                tutorial.timing = 'ENTRY: After classification. EXIT: Depends on type.';
+                tutorial.catalyst = 'CLASSIFY: Buzzwords = Symbolic (good). Technical metrics = Structural (bad). Desperation = Reactive (death trap).';
+            }
+        } else if (phase === 'uncertainty_gap' || phase === 'digesting') {
+            tutorial.type = `${typeLabel} - Uncertainty Gap`;
+            tutorial.description = 'Initial selling exhausted. Now watching for confirmation signals.';
+            tutorial.implication = pivotType === 'gold_standard' || pivotType === 'symbolic' ?
+                `Good setup! ${goldSignalsMet}/4 Gold Standard signals met. Watch for insider buying.` :
+                'Structural/Reactive pivot - stay away even during stabilization.';
+            tutorial.action = pivotType === 'gold_standard' ? 
+                '🏆 BUY - Signals confirmed. Enter position.' :
+                pivotType === 'symbolic' ?
+                'WATCH - Wait for insider buy signal to upgrade to Gold Standard.' :
+                '⚠️ AVOID - This pivot type doesn\'t reverse quickly.';
+            tutorial.timing = 'ENTRY: Now for Gold Standard. Days 3-5 for Symbolic. Never for Structural/Reactive.';
+            tutorial.catalyst = `Current signals: ${signalSummary || 'Analyzing...'}`;
+        } else if (phase === 'recovery' || phase === 'rerating') {
+            tutorial.type = `${typeLabel} - Recovery`;
+            tutorial.description = pivotType === 'gold_standard' || pivotType === 'symbolic' ?
+                'Recovery in progress! Price moving toward pre-announcement level.' :
+                'Bounce in progress - but be cautious if Structural/Reactive.';
+            tutorial.implication = pivotType === 'gold_standard' ? '85%+ chance of full recovery.' :
+                pivotType === 'symbolic' ? '65% chance of recovery to pre-announcement.' :
+                'Low probability recovery - consider taking profits if any.';
             tutorial.action = 'HOLD or TAKE PARTIAL PROFITS - Rally playing out as expected.';
-            tutorial.timing = 'ENTRY: Late but potentially ok. EXIT: Consider selling at +10% to +15% from bottom.';
-            tutorial.catalyst = 'Classic Wall Street: Bad news → "Actually this is smart" → Rally. Human nature at work.';
+            tutorial.timing = 'ENTRY: Late but ok for Symbolic/Gold. EXIT: Pre-announcement level.';
+            tutorial.catalyst = 'Kogan 2023: Symbolic pivots complete reversal within 22 days.';
         } else if (phase === 'complete') {
-            tutorial.type = `${label} - Priced In`;
-            tutorial.description = 'Strategic pivot fully digested. Stock returns to trading on fundamentals.';
-            tutorial.implication = 'Easy money made. Future depends on execution of the plan.';
+            tutorial.type = `Strategic Pivot Complete`;
+            tutorial.description = 'Pivot fully digested. Stock returns to trading on fundamentals.';
+            tutorial.implication = 'Easy money made (or avoided). Trade pattern finished.';
             tutorial.action = 'TAKE PROFITS if holding - The predictable trade is over.';
             tutorial.timing = 'ENTRY: No longer attractive. EXIT: Close remaining position.';
-            tutorial.catalyst = 'Trade complete. Now watch for actual results from the strategic changes.';
+            tutorial.catalyst = 'Trade complete. Now watch for actual execution results.';
         }
         return tutorial;
     }
@@ -1420,6 +2265,12 @@ function getTutorialForNews(newsItem) {
             return tutorial;
             
         case 'stock_split':
+            // Delegate to StockSplit module for phase-aware hints
+            const stockSplitHint = getStockSplitTutorialHint(newsItem);
+            if (stockSplitHint && stockSplitHint.type) {
+                return stockSplitHint;
+            }
+            // Fallback for legacy newsType without isStockSplit flag
             tutorial.type = TUTORIAL_HINTS.stockSplit.type;
             tutorial.description = TUTORIAL_HINTS.stockSplit.description;
             tutorial.implication = TUTORIAL_HINTS.stockSplit.implication;
@@ -1444,21 +2295,27 @@ function getTutorialForNews(newsItem) {
             return tutorial;
             
         case 'index_rebalance':
-            const isAddition = newsItem.indexAction === 'add' || (newsItem.headline || '').toLowerCase().includes('added');
-            if (isAddition) {
-                tutorial.type = 'Index Addition (Forced Buying Coming)';
-                tutorial.description = 'Stock being ADDED to major index. Index funds MUST buy regardless of price.';
-                tutorial.implication = 'Modern markets are efficient. Expect +3-5% total from entry to exit (realistic).';
-                tutorial.action = 'BUY on announcement - modest but reliable gains from forced index fund buying.';
-                tutorial.timing = 'ENTRY: Buy when you see "joins index" news. EXIT: Sell on "Effective TOMORROW" news.';
-                tutorial.catalyst = '⚠️ "Effective tomorrow" news = YOUR SELL SIGNAL. Next day is too late!';
+            // Delegate to IndexRebalance module for phase-aware hints
+            const indexRebalanceHint = getIndexRebalanceTutorialHint(newsItem);
+            if (indexRebalanceHint && indexRebalanceHint.type) {
+                return indexRebalanceHint;
+            }
+            // Fallback for legacy newsType without isIndexRebalance flag
+            const isAdditionLegacy = newsItem.indexAction === 'add' || (newsItem.headline || '').toLowerCase().includes('added');
+            if (isAdditionLegacy) {
+                tutorial.type = '📅 Index Addition (Forced Buying)';
+                tutorial.description = 'Stock being ADDED to major index. Passive funds MUST buy regardless of price.';
+                tutorial.implication = 'Run-up expected (+5-15%). The REAL trade is the reversal AFTER effective date.';
+                tutorial.action = 'DO NOT BUY NOW. Wait for Gold Standard setup (5%+ run-up, MOC spike, T+2 reversal).';
+                tutorial.timing = 'ENTRY: T+2 after effective day. EXIT: 3-5 days for 2-5% reversal gain.';
+                tutorial.catalyst = '🏆 Gold Standard: Tier 1 index + 5%+ run-up + MOC spike + T+2 lower high = 78% success';
             } else {
-                tutorial.type = 'Index Removal (Forced Selling Coming)';
-                tutorial.description = 'Stock being REMOVED from major index. Index funds MUST sell regardless of price.';
-                tutorial.implication = 'Expect -3-5% total drop. Short sellers profit from forced selling pressure.';
-                tutorial.action = 'SHORT or AVOID - Forced selling creates predictable downward pressure.';
-                tutorial.timing = 'ENTRY (short): On announcement. EXIT: Cover on effective date, watch for bounce.';
-                tutorial.catalyst = 'Post-removal bounce often +2-3% as selling exhausts. Reversal trade possible.';
+                tutorial.type = '📅 Index Deletion (Forced Selling)';
+                tutorial.description = 'Stock being REMOVED from index. Passive funds MUST sell regardless of price.';
+                tutorial.implication = 'Sell-off expected (-8-15%). Bounce opportunity after selling exhausts.';
+                tutorial.action = 'Wait for BOUNCE after effective day. Deletions often recover 2-4%.';
+                tutorial.timing = 'ENTRY: After effective day (T+1 or T+2). EXIT: +2-4% bounce over 3-5 days.';
+                tutorial.catalyst = '🎯 Deletion Trade: Forced selling → overshoot → recovery bounce';
             }
             return tutorial;
             
