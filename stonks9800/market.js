@@ -91,11 +91,30 @@ function updateStockPrices() {
     const newHistory = [...stock.history, { day: gameState.day, price: newPrice }];
     if (newHistory.length > MAX_HISTORY_POINTS) newHistory.shift();
     
+    // Track consecutive up days for FOMO Rally detection
+    const priceChange = newPrice - stock.price;
+    const newConsecutiveUpDays = priceChange > 0 
+      ? (stock.consecutiveUpDays || 0) + 1 
+      : 0;
+    
+    // Track recent high/low for momentum calculations (30-day rolling window)
+    const recentPrices = newHistory.slice(-30).map(h => h.price);
+    const newRecentHigh = Math.max(...recentPrices);
+    const newRecentLow = Math.min(...recentPrices);
+    
+    // Track priceHistory (simple array of prices) for modules that need it
+    const newPriceHistory = [...(stock.priceHistory || []), newPrice];
+    if (newPriceHistory.length > MAX_HISTORY_POINTS) newPriceHistory.shift();
+    
     return { 
       ...stock, 
       previousPrice: stock.price, 
       price: Math.round(newPrice), 
-      history: newHistory 
+      history: newHistory,
+      priceHistory: newPriceHistory,
+      consecutiveUpDays: newConsecutiveUpDays,
+      recentHigh: newRecentHigh,
+      recentLow: newRecentLow
     };
   });
 }

@@ -341,7 +341,8 @@ const NewsShakeout = (function() {
         processRecoveryPhase(stock, shakeout, result);
         break;
       case 'complete':
-        // Clean up
+        // Clean up and set cooldown
+        stock.newsShakeoutCooldown = EVENT_CONFIG.cooldownDays;
         delete stock.newsShakeout;
         activeShakeouts.delete(stock.ticker);
         return result;
@@ -709,8 +710,25 @@ const NewsShakeout = (function() {
     };
   }
 
+  // ========== EVENT GENERATION CONSTANTS ==========
+  const EVENT_CONFIG = {
+    // Daily probability of a news shakeout event occurring per stock
+    // Set to achieve ~1-2 events per month across 10 stocks
+    dailyProbability: 0.008,  // ~0.8% per stock per day = ~2.4 events/month across 10 stocks
+    
+    // Maximum concurrent shakeouts
+    maxConcurrent: 2,
+    
+    // Cooldown after a shakeout completes (days)
+    cooldownDays: 10,
+    
+    // Transient news types for random selection
+    newsTypes: ['litigation_rumor', 'macro_scare', 'sector_rotation', 'analyst_downgrade', 'guidance_miss', 'metric_miss']
+  };
+
   /**
    * Check for news shakeout events
+   * Can trigger proactively (based on probability) or reactively (based on price drop)
    */
   function checkNewsShakeoutEvents(stock, newsArray) {
     // Process existing shakeout
@@ -722,16 +740,31 @@ const NewsShakeout = (function() {
       return result;
     }
 
-    // Check for new shakeout trigger (significant price drop)
-    if (!stock.newsShakeout && stock.dailyChange && stock.dailyChange <= -0.08) {
+    // Skip if on cooldown
+    if (stock.newsShakeoutCooldown && stock.newsShakeoutCooldown > 0) {
+      stock.newsShakeoutCooldown--;
+      return null;
+    }
+
+    // Count active shakeouts globally
+    let activeCount = 0;
+    if (typeof activeShakeouts !== 'undefined') {
+      activeCount = activeShakeouts.size;
+    }
+    if (activeCount >= EVENT_CONFIG.maxConcurrent) {
+      return null;
+    }
+
+    // REACTIVE TRIGGER: Check for existing significant price drop
+    if (stock.dailyChange && stock.dailyChange <= -0.08) {
       // Check for volume spike
       const volumeInfo = detectVolumeClimax(stock);
       if (volumeInfo.isClimax) {
-        // Trigger shakeout
+        // Trigger shakeout from existing conditions
         const shakeout = triggerNewsShakeout(stock, {
           panicDrop: stock.dailyChange,
           volumeInfo: volumeInfo,
-          newsType: 'macro_scare' // Default
+          newsType: EVENT_CONFIG.newsTypes[Math.floor(Math.random() * EVENT_CONFIG.newsTypes.length)]
         });
         
         if (shakeout) {
@@ -741,6 +774,54 @@ const NewsShakeout = (function() {
           }
           return result;
         }
+      }
+    }
+
+    // PROACTIVE TRIGGER: Random event generation (based on probability)
+    // This allows news_shakeout to work independently when enabled alone
+    if (Math.random() < EVENT_CONFIG.dailyProbability) {
+      // Generate a news shakeout event proactively
+      const newsType = EVENT_CONFIG.newsTypes[Math.floor(Math.random() * EVENT_CONFIG.newsTypes.length)];
+      const newsClassification = classifyNews(newsType);
+      
+      // Generate panic drop (8-20%)
+      const panicDrop = -(0.08 + Math.random() * 0.12);
+      
+      // Generate volume spike (3x-6x)
+      const volumeMultiple = 3 + Math.random() * 3;
+      const volumeInfo = {
+        volumeMultiple: volumeMultiple,
+        isClimax: true,
+        isGoldStandard: volumeMultiple >= 5.0,
+        isExhaustion: volumeMultiple >= 4.0,
+        isHighestVolume: true
+      };
+      
+      console.log(`[NEWS SHAKEOUT] Proactive trigger for ${stock.symbol || stock.ticker}: ${newsType}, drop ${(panicDrop * 100).toFixed(1)}%, volume ${volumeMultiple.toFixed(1)}x`);
+      
+      // Trigger the shakeout
+      const shakeout = triggerNewsShakeout(stock, {
+        panicDrop: panicDrop,
+        volumeInfo: volumeInfo,
+        newsType: newsType,
+        newsClassification: newsClassification,
+        prePanicPrice: stock.price
+      });
+      
+      if (shakeout) {
+        // Apply the panic drop to the stock price
+        stock.previousPrice = stock.price;
+        stock.price = stock.price * (1 + panicDrop);
+        stock.dailyChange = panicDrop;
+        
+        // Set cooldown after event completes
+        stock.newsShakeoutCooldown = 0; // Will be set when event completes
+        
+        const result = processNewsShakeout(stock);
+        if (result && result.news) {
+          newsArray.push(result.news);
+        }
+        return result;
       }
     }
 

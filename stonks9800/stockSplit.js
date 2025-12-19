@@ -62,7 +62,7 @@ const StockSplit = (function() {
     STOCK_TIERS: {
       megaCap: {
         name: 'Mega-Cap',
-        minPrice: 5000,                  // Stocks >$5000 likely mega-caps in game
+        minPrice: 800,                   // Top-tier priced stocks
         examples: ['NVDA', 'TSLA', 'AAPL', 'AMZN', 'GOOGL'],
         impactMultiplier: 1.5,           // Larger retail interest
         reversalProbability: 0.82,       // Higher reversal probability
@@ -70,7 +70,7 @@ const StockSplit = (function() {
       },
       largeCap: {
         name: 'Large-Cap',
-        minPrice: 1000,
+        minPrice: 400,
         impactMultiplier: 1.2,
         reversalProbability: 0.72,
         description: 'Moderate retail interest - decent reversal probability'
@@ -213,7 +213,7 @@ const StockSplit = (function() {
 
     // Random chance to trigger new split on high-priced stocks
     const eligibleStocks = stockList.filter(s => 
-      s.price >= 1000 && !s.splitState && !s.splitPhase
+      s.price >= 500 && !s.splitState && !s.splitPhase
     );
     
     if (eligibleStocks.length > 0 && deps.random() < 0.012) {
@@ -222,8 +222,8 @@ const StockSplit = (function() {
       
       // Higher ratio for higher-priced stocks
       let ratioOptions = [2, 3, 4];
-      if (target.price >= 5000) ratioOptions = [4, 5, 10];
-      if (target.price >= 10000) ratioOptions = [10, 20];
+      if (target.price >= 800) ratioOptions = [4, 5, 10];
+      if (target.price >= 1500) ratioOptions = [10, 20];
       
       const ratio = randomChoice(ratioOptions);
       triggerStockSplit(target, ratio);

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Short Squeeze Module Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff00; padding: 20px; min-height: 100vh; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 10px; color: #ff4444; text-shadow: 0 0 10px #ff4444; }
+    .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+    .panel { background: #111; border: 1px solid #333; border-radius: 8px; padding: 15px; }
+    .panel h2 { color: #ffff00; font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    button { background: #222; color: #00ff00; border: 1px solid #00ff00; padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 14px; border-radius: 4px; transition: all 0.2s; }
+    button:hover { background: #00ff00; color: #000; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.danger { border-color: #ff4444; color: #ff4444; }
+    button.danger:hover { background: #ff4444; color: #000; }
+    .scenario-select { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
+    select { background: #222; color: #00ff00; border: 1px solid #00ff00; padding: 8px 12px; font-family: inherit; font-size: 14px; border-radius: 4px; }
+    .stock-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; }
+    .stat { background: #1a1a1a; padding: 10px; border-radius: 4px; text-align: center; }
+    .stat-label { color: #888; font-size: 10px; }
+    .stat-value { font-size: 16px; font-weight: bold; }
+    .stat-value.positive { color: #00ff00; }
+    .stat-value.negative { color: #ff4444; }
+    .stat-value.gold { color: #ffd700; text-shadow: 0 0 5px #ffd700; }
+    .stat-value.danger { color: #ff4444; text-shadow: 0 0 5px #ff4444; }
+    .gold-standard { background: linear-gradient(135deg, #1a1a00 0%, #0a0a00 100%); border: 2px solid #ffd700; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .gold-standard h3 { color: #ffd700; margin-bottom: 10px; }
+    .criteria-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .criterion { display: flex; align-items: center; gap: 8px; padding: 8px; background: #0a0a00; border-radius: 4px; font-size: 12px; }
+    .criterion.met { color: #00ff00; }
+    .criterion.unmet { color: #666; }
+    .timeline { background: #1a1a1a; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .timeline h3 { color: #00ffff; margin-bottom: 15px; font-size: 14px; }
+    .timeline-bar { display: flex; gap: 2px; margin-bottom: 10px; }
+    .timeline-segment { flex: 1; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 9px; border-radius: 2px; }
+    .timeline-segment.buildup { background: #333366; }
+    .timeline-segment.squeeze { background: #006600; }
+    .timeline-segment.climax { background: #ffd700; color: #000; font-weight: bold; }
+    .timeline-segment.reversal { background: #660000; }
+    .timeline-segment.current { box-shadow: 0 0 10px #fff; z-index: 1; }
+    .timeline-labels { display: flex; justify-content: space-between; font-size: 10px; color: #888; }
+    .chart-container { background: #0a0a0a; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .chart-container h3 { color: #00ffff; margin-bottom: 10px; font-size: 14px; }
+    #priceChart { width: 100%; height: 250px; background: #111; border-radius: 4px; }
+    .console-log { background: #000; border: 1px solid #333; border-radius: 4px; padding: 10px; font-size: 11px; max-height: 350px; overflow-y: auto; }
+    .console-log .log-entry { margin-bottom: 2px; white-space: pre-wrap; }
+    .console-log .log-entry.info { color: #00ffff; }
+    .console-log .log-entry.success { color: #00ff00; }
+    .console-log .log-entry.warning { color: #ffff00; }
+    .console-log .log-entry.error { color: #ff4444; }
+    .tutorial-hint { background: linear-gradient(135deg, #1a0000 0%, #0a0000 100%); border: 1px solid #ff4444; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .tutorial-hint h4 { color: #ff4444; margin-bottom: 10px; font-size: 14px; }
+    .tutorial-hint .content { font-size: 12px; line-height: 1.6; }
+    .tutorial-hint .content p { margin: 8px 0; }
+    .tutorial-hint .content strong { color: #ffaa00; }
+    .tutorial-hint .highlight { color: #ffd700; font-weight: bold; background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 4px; margin-top: 10px; display: block; }
+    .summary-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .summary-stat { background: #1a1a1a; padding: 15px; border-radius: 8px; text-align: center; }
+    .summary-stat .label { color: #888; font-size: 11px; margin-bottom: 5px; }
+    .summary-stat .value { font-size: 24px; font-weight: bold; }
+    .news-feed { max-height: 200px; overflow-y: auto; }
+    .news-item { background: #1a1a1a; border-left: 3px solid #444; padding: 8px; margin-bottom: 6px; font-size: 11px; }
+    .news-item.positive { border-color: #00ff00; }
+    .news-item.negative { border-color: #ff4444; }
+    .news-item.neutral { border-color: #ffff00; }
+    .news-item .headline { font-weight: bold; margin-bottom: 3px; }
+    .news-item .meta { color: #666; font-size: 10px; margin-top: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🩳 SHORT SQUEEZE MODULE TEST</h1>
+    <p class="subtitle">
+      CFA Institute (2023): 1,000+ squeezes | ResearchGate: 15% of short attacks → squeeze | Gold Standard: SHORT the Exhaustion (85%)
+    </p>
+    
+    <div class="summary-stats">
+      <div class="summary-stat"><div class="label">CURRENT DAY</div><div class="value" id="currentDay">0</div></div>
+      <div class="summary-stat"><div class="label">STOCK PRICE</div><div class="value" id="currentPrice">$50.00</div></div>
+      <div class="summary-stat"><div class="label">TOTAL GAIN</div><div class="value" id="totalGain">0.00%</div></div>
+      <div class="summary-stat"><div class="label">PHASE</div><div class="value" id="currentPhase">-</div></div>
+    </div>
+    
+    <div class="panel">
+      <h2>⚙️ SIMULATION CONTROLS</h2>
+      <div class="scenario-select">
+        <label>Scenario:</label>
+        <select id="scenarioSelect">
+          <option value="gold_standard">⭐ Gold Standard: Extreme SI (50%+) - SHORT Reversal</option>
+          <option value="major_squeeze">Major Squeeze: High SI (35%)</option>
+          <option value="minor_squeeze">Minor Squeeze: Moderate SI (25%)</option>
+          <option value="biotech">Biotech Squeeze (1.5x sector weight)</option>
+          <option value="veto_gamma">Veto: Gamma Squeeze (OTM Calls)</option>
+          <option value="veto_catalyst">Veto: Fundamental Catalyst</option>
+        </select>
+        <button onclick="initializeScenario()">Initialize</button>
+      </div>
+      <div class="controls">
+        <button onclick="nextDay()" id="nextDayBtn" disabled>▶ Next Day</button>
+        <button onclick="advanceDays(3)" id="advance3Btn" disabled>⏩ +3 Days</button>
+        <button onclick="runToCompletion()" id="runAllBtn" disabled>🏁 Run to Completion</button>
+        <button onclick="resetSimulation()" class="danger">🔄 Reset</button>
+      </div>
+    </div>
+    
+    <div class="gold-standard">
+      <h3>⭐ GOLD STANDARD 4-STEP EXHAUSTION FILTER (85%+ Success)</h3>
+      <div class="criteria-list">
+        <div class="criterion unmet" id="criterion1"><span class="icon">○</span><span>1. Parabolic: 100%+ above 20-day MA</span></div>
+        <div class="criterion unmet" id="criterion2"><span class="icon">○</span><span>2. Volume Climax: 5x+ average</span></div>
+        <div class="criterion unmet" id="criterion3"><span class="icon">○</span><span>3. Borrow Fee Plateau: CTB dropping</span></div>
+        <div class="criterion unmet" id="criterion4"><span class="icon">○</span><span>4. RSI Divergence: RSI > 85 at peak</span></div>
+      </div>
+    </div>
+    
+    <div class="timeline">
+      <h3>📊 SQUEEZE TIMELINE</h3>
+      <div class="timeline-bar" id="timelineBar"></div>
+      <div class="timeline-labels">
+        <span>Buildup</span>
+        <span>Squeeze</span>
+        <span>Climax</span>
+        <span>Reversal</span>
+      </div>
+    </div>
+    
+    <div class="grid">
+      <div>
+        <div class="chart-container">
+          <h3>📈 PRICE CHART (Parabolic → Reversal)</h3>
+          <canvas id="priceChart"></canvas>
+        </div>
+        <div class="panel">
+          <h2>📊 SQUEEZE METRICS</h2>
+          <div class="stock-info">
+            <div class="stat"><div class="stat-label">SHORT INT %</div><div class="stat-value danger" id="shortInt">-</div></div>
+            <div class="stat"><div class="stat-label">DAYS TO COVER</div><div class="stat-value" id="dtc">-</div></div>
+            <div class="stat"><div class="stat-label">UTILIZATION</div><div class="stat-value" id="util">-</div></div>
+            <div class="stat"><div class="stat-label">COST TO BORROW</div><div class="stat-value" id="ctb">-</div></div>
+            <div class="stat"><div class="stat-label">VOLUME</div><div class="stat-value" id="volume">-</div></div>
+            <div class="stat"><div class="stat-label">RSI</div><div class="stat-value" id="rsi">-</div></div>
+            <div class="stat"><div class="stat-label">MAGNITUDE</div><div class="stat-value" id="magnitude">-</div></div>
+            <div class="stat"><div class="stat-label">REV. PROB</div><div class="stat-value" id="revProb">-</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="tutorial-hint" id="tutorialHint">
+          <h4>📚 Educational Hint</h4>
+          <div class="content" id="tutorialContent">Select a scenario and click Initialize to begin.</div>
+        </div>
+        <div class="panel">
+          <h2>📰 NEWS FEED</h2>
+          <div class="news-feed" id="newsFeed"><div class="news-item neutral"><div class="headline">Waiting...</div></div></div>
+        </div>
+        <div class="panel">
+          <h2>🖥️ DEBUG LOG</h2>
+          <div class="console-log" id="consoleLog"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="shortSqueeze.js"></script>
+  <script>
+    let testStock = null;
+    let testNews = [];
+    let gameState = { day: 0 };
+    let priceHistory = [];
+    let isInitialized = false;
+    
+    const SCENARIOS = {
+      gold_standard: {
+        name: 'Gold Standard: Extreme SI Squeeze',
+        basePrice: 50,
+        shortInterest: 0.55,
+        daysToCover: 12,
+        utilization: 1.0,
+        costToBorrow: 0.80,
+        sectorWeight: 1.2,
+        addVeto: null,
+        description: 'Perfect setup: 55% SI, 12 DTC, 100% util. SHORT the reversal after climax.'
+      },
+      major_squeeze: {
+        name: 'Major Squeeze: High SI',
+        basePrice: 80,
+        shortInterest: 0.35,
+        daysToCover: 8,
+        utilization: 0.98,
+        costToBorrow: 0.45,
+        sectorWeight: 1.0,
+        addVeto: null,
+        description: 'High SI (35%), 8 DTC. Major squeeze potential with 100-200% gain target.'
+      },
+      minor_squeeze: {
+        name: 'Minor Squeeze: Moderate SI',
+        basePrice: 120,
+        shortInterest: 0.25,
+        daysToCover: 5,
+        utilization: 0.90,
+        costToBorrow: 0.25,
+        sectorWeight: 1.0,
+        addVeto: null,
+        description: 'Moderate SI (25%), 5 DTC. Minor squeeze with 50-100% gain target.'
+      },
+      biotech: {
+        name: 'Biotech Squeeze',
+        basePrice: 30,
+        shortInterest: 0.40,
+        daysToCover: 10,
+        utilization: 1.0,
+        costToBorrow: 0.60,
+        sectorWeight: 1.5,
+        addVeto: null,
+        description: 'Biotech sector: 1.5x squeeze frequency. Higher volatility.'
+      },
+      veto_gamma: {
+        name: 'Veto: Gamma Squeeze',
+        basePrice: 50,
+        shortInterest: 0.50,
+        daysToCover: 10,
+        utilization: 1.0,
+        costToBorrow: 0.70,
+        sectorWeight: 1.2,
+        addVeto: 'gammaSqueeze',
+        description: 'OTM call volume rising → Market maker hedging extends squeeze.'
+      },
+      veto_catalyst: {
+        name: 'Veto: Fundamental Catalyst',
+        basePrice: 50,
+        shortInterest: 0.45,
+        daysToCover: 9,
+        utilization: 0.98,
+        costToBorrow: 0.50,
+        sectorWeight: 1.0,
+        addVeto: 'fundamentalCatalyst',
+        description: 'Real positive news (FDA approval) prevents typical reversal.'
+      }
+    };
+    
+    function setupTestEnvironment() {
+      ShortSqueeze.init({
+        stocks: [],
+        todayNews: testNews,
+        gameState: gameState,
+        getMemeMultiplier: () => 1.0,
+        randomChoice: (arr) => arr[Math.floor(Math.random() * arr.length)],
+        isEventTypeEnabled: () => true,
+        random: Math.random
+      });
+    }
+    
+    function initializeScenario() {
+      const scenarioKey = document.getElementById('scenarioSelect').value;
+      const scenario = SCENARIOS[scenarioKey];
+      
+      gameState.day = 0;
+      testNews = [];
+      priceHistory = [];
+      
+      testStock = {
+        symbol: 'SQZE',
+        name: 'Squeeze Corp',
+        price: scenario.basePrice,
+        previousPrice: scenario.basePrice,
+        basePrice: scenario.basePrice,
+        volatility: 0.03,
+        shortInterest: scenario.shortInterest,
+        daysToCover: scenario.daysToCover,
+        utilization: scenario.utilization,
+        costToBorrow: scenario.costToBorrow
+      };
+      
+      priceHistory.push({ day: 0, price: scenario.basePrice, phase: 'pre' });
+      setupTestEnvironment();
+      
+      const metrics = {
+        shortInterest: scenario.shortInterest,
+        daysToCover: scenario.daysToCover,
+        utilization: scenario.utilization,
+        costToBorrow: scenario.costToBorrow,
+        riskScore: 0
+      };
+      // Calculate risk score
+      if (metrics.shortInterest >= 0.50) metrics.riskScore += 40;
+      else if (metrics.shortInterest >= 0.30) metrics.riskScore += 30;
+      else if (metrics.shortInterest >= 0.20) metrics.riskScore += 15;
+      if (metrics.daysToCover >= 10) metrics.riskScore += 30;
+      else if (metrics.daysToCover >= 5) metrics.riskScore += 20;
+      if (metrics.utilization >= 1.0) metrics.riskScore += 20;
+      else if (metrics.utilization >= 0.95) metrics.riskScore += 15;
+      if (metrics.costToBorrow >= 0.50) metrics.riskScore += 10;
+      metrics.isCandidate = metrics.riskScore >= 50;
+      
+      ShortSqueeze.triggerShortSqueeze(testStock, { 
+        metrics: metrics,
+        sectorWeight: scenario.sectorWeight
+      });
+      
+      if (scenario.addVeto) {
+        ShortSqueeze.addVetoFactor(testStock, scenario.addVeto);
+      }
+      
+      isInitialized = true;
+      document.getElementById('nextDayBtn').disabled = false;
+      document.getElementById('advance3Btn').disabled = false;
+      document.getElementById('runAllBtn').disabled = false;
+      
+      // ===== DAY 0 DEBUG =====
+      const sq = testStock.shortSqueeze;
+      const C = ShortSqueeze.CONSTANTS;
+      
+      console.log(`\n╔══════════════════════════════════════════════════════════════╗`);
+      console.log(`║           SHORT SQUEEZE SIMULATION INITIALIZED               ║`);
+      console.log(`╚══════════════════════════════════════════════════════════════╝`);
+      console.log(`\n========== DAY 0: SQUEEZE SETUP ==========`);
+      console.log(`Scenario: ${scenario.name}`);
+      console.log(`Description: ${scenario.description}`);
+      
+      console.log(`\n--- SQUEEZE CANDIDATE METRICS ---`);
+      console.log(`Short Interest: ${(metrics.shortInterest * 100).toFixed(1)}% (baseline: 20%, danger: 30%, extreme: 50%)`);
+      console.log(`Days to Cover: ${metrics.daysToCover} (high risk: >5, extreme: >10)`);
+      console.log(`Utilization: ${(metrics.utilization * 100).toFixed(0)}% (maxed: 100%)`);
+      console.log(`Cost to Borrow: ${(metrics.costToBorrow * 100).toFixed(0)}% (critical: >50%)`);
+      console.log(`Risk Score: ${metrics.riskScore}/100 (candidate: ≥50)`);
+      console.log(`Is Squeeze Candidate: ${metrics.isCandidate ? '✓ YES' : '✗ NO'}`);
+      
+      console.log(`\n--- SQUEEZE PARAMETERS ---`);
+      console.log(`Magnitude: ${sq.magnitude.toUpperCase()}`);
+      console.log(`Target Gain: ${(sq.targetGain * 100).toFixed(0)}%`);
+      console.log(`Base Reversal Probability: ${(sq.baseProbability * 100).toFixed(0)}%`);
+      
+      console.log(`\n--- TIMELINE ---`);
+      console.log(`Buildup Days: ${sq.buildupDays} (Day 0 to ${sq.buildupEndDay})`);
+      console.log(`Squeeze Days: ${sq.squeezeDays} (Day ${sq.buildupEndDay + 1} to ${sq.climaxDay - 1})`);
+      console.log(`Climax Day: ${sq.climaxDay}`);
+      console.log(`Reversal Days: ${sq.reversalDays} (Day ${sq.climaxDay + 1} to ${sq.reversalEndDay})`);
+      
+      console.log(`\n--- PRICE IMPACT CONSTANTS ---`);
+      console.log(`Buildup: +${(C.PRICE_IMPACT.buildup.min*100).toFixed(0)}% to +${(C.PRICE_IMPACT.buildup.max*100).toFixed(0)}% daily`);
+      console.log(`Squeeze: +${(C.PRICE_IMPACT.squeeze.min*100).toFixed(0)}% to +${(C.PRICE_IMPACT.squeeze.max*100).toFixed(0)}% daily`);
+      console.log(`Climax: +${(C.PRICE_IMPACT.climax.min*100).toFixed(0)}% to +${(C.PRICE_IMPACT.climax.max*100).toFixed(0)}%`);
+      console.log(`Reversal: ${(C.PRICE_IMPACT.reversal.min*100).toFixed(0)}% to ${(C.PRICE_IMPACT.reversal.max*100).toFixed(0)}% daily`);
+      
+      console.log(`\n--- GOLD STANDARD REQUIREMENTS ---`);
+      console.log(`1. Parabolic Extension: 100%+ above 20-day MA`);
+      console.log(`2. Volume Climax: 5x+ average volume`);
+      console.log(`3. Borrow Fee Plateau: CTB drops while price peaks`);
+      console.log(`4. RSI Divergence: RSI > 85 at peak`);
+      console.log(`Success Rate: 85%+ when all 4 met`);
+      
+      if (scenario.addVeto) {
+        const veto = C.VETO_FACTORS[scenario.addVeto];
+        console.log(`\n--- VETO FACTOR ACTIVE ---`);
+        console.log(`Type: ${scenario.addVeto}`);
+        console.log(`Description: ${veto.description}`);
+        console.log(`Probability Reduction: -${(veto.probabilityReduction * 100).toFixed(0)}%`);
+      }
+      
+      console.log(`\n--- KEY INSIGHT ---`);
+      console.log(`The trade is NOT buying the squeeze.`);
+      console.log(`The trade is SHORTING the exhaustion after climax.`);
+      console.log(`Empirical: Stocks lose 50% of gains within 72 hours.`);
+      
+      updateDisplay();
+      logMessage(`Initialized: ${scenario.name}`, 'info');
+      logMessage(`SI: ${(metrics.shortInterest*100).toFixed(0)}% | DTC: ${metrics.daysToCover} | Risk Score: ${metrics.riskScore}`, 'info');
+    }
+    
+    function nextDay() {
+      if (!isInitialized || !testStock.shortSqueeze) return;
+      
+      gameState.day++;
+      testNews = [];
+      
+      const prevPrice = testStock.price;
+      testStock.previousPrice = testStock.price;
+      
+      const sq = testStock.shortSqueeze;
+      const phaseBefore = sq.phase;
+      
+      ShortSqueeze.init({ todayNews: testNews, gameState: gameState });
+      ShortSqueeze.processShortSqueeze(testStock);
+      
+      const signal = ShortSqueeze.calculateSignal(testStock);
+      const dailyBias = signal.dailyBias || 0;
+      const randomNoise = (Math.random() - 0.5) * 0.04;
+      const totalChange = dailyBias + randomNoise;
+      
+      testStock.price = testStock.price * (1 + totalChange);
+      
+      // Update currentGain and Gold Standard after price change
+      if (testStock.shortSqueeze) {
+        const sq = testStock.shortSqueeze;
+        sq.currentGain = (testStock.price - sq.priceAtStart) / sq.priceAtStart;
+        
+        // Check Gold Standard: Parabolic Extension after price update
+        if (sq.currentGain >= 1.00 && !sq.goldStandard.hasParabolicExtension) {
+          sq.goldStandard.hasParabolicExtension = true;
+        }
+      }
+      
+      const phaseAfter = testStock.shortSqueeze ? testStock.shortSqueeze.phase : 'complete';
+      priceHistory.push({ day: gameState.day, price: testStock.price, phase: phaseAfter, bias: dailyBias });
+      
+      // ===== DETAILED DEBUG =====
+      console.log(`\n========== DAY ${gameState.day} ==========`);
+      console.log(`Phase: ${phaseBefore} → ${phaseAfter}`);
+      
+      if (testStock.shortSqueeze) {
+        const s = testStock.shortSqueeze;
+        
+        console.log(`\n--- SQUEEZE METRICS ---`);
+        console.log(`Short Interest: ${(s.shortInterestCurrent * 100).toFixed(1)}% (${s.shortInterestCurrent < s.metrics.shortInterest ? '↓ covering' : '↑ increasing'})`);
+        console.log(`Cost to Borrow: ${(s.ctbCurrent * 100).toFixed(0)}%`);
+        console.log(`Volume Multiple: ${s.volumeMultiple.toFixed(1)}x`);
+        console.log(`RSI: ${s.rsiValue.toFixed(0)}`);
+        console.log(`Current Gain: ${(s.currentGain * 100).toFixed(1)}%`);
+        
+        if (phaseBefore === 'buildup') {
+          console.log(`\n--- BUILDUP PHASE ---`);
+          console.log(`Pressure building. SI rising, CTB increasing.`);
+          console.log(`Day ${s.dayInPhase + 1} of ${s.buildupDays} buildup days.`);
+        }
+        
+        if (phaseBefore === 'squeeze') {
+          console.log(`\n--- SQUEEZE PHASE (PARABOLIC) ---`);
+          console.log(`SHORTS ARE COVERING - forced buying!`);
+          console.log(`Gain so far: ${(s.currentGain * 100).toFixed(0)}% (target: ${(s.targetGain * 100).toFixed(0)}%)`);
+          console.log(`Gold Standard Parabolic (100%+): ${s.goldStandard.hasParabolicExtension ? '✓ MET' : '✗ NOT MET'}`);
+          console.log(`Gold Standard Volume (5x+): ${s.goldStandard.hasVolumeClimax ? '✓ MET' : '✗ NOT MET'}`);
+        }
+        
+        if (phaseBefore === 'climax') {
+          console.log(`\n--- CLIMAX DAY (BLOW-OFF TOP) ---`);
+          console.log(`*** THIS IS TYPICALLY THE PEAK ***`);
+          console.log(`Volume: ${s.volumeMultiple.toFixed(0)}x (climax threshold: 5x)`);
+          console.log(`RSI: ${s.rsiValue.toFixed(0)} (exhaustion threshold: 85)`);
+          console.log(`Price at Climax: $${s.priceAtClimax?.toFixed(2) || testStock.price.toFixed(2)}`);
+          console.log(`Gold Standard Borrow Plateau: ${s.goldStandard.hasBorrowPlateau ? '✓ MET' : '✗ NOT MET'}`);
+          console.log(`Gold Standard RSI Divergence: ${s.goldStandard.hasRsiDivergence ? '✓ MET' : '✗ NOT MET'}`);
+          console.log(`\nReversal Will Happen: ${s.reversalWillHappen ? '✓ YES (SHORT IT!)' : '✗ NO (VETO ACTIVE)'}`);
+          console.log(`Final Reversal Probability: ${(s.finalReversalProb * 100).toFixed(0)}%`);
+        }
+        
+        if (phaseBefore === 'reversal') {
+          console.log(`\n--- REVERSAL PHASE (THE TRADE) ---`);
+          console.log(`T+${s.dayInPhase} after climax.`);
+          console.log(`Reversal Active: ${s.reversalWillHappen ? '✓ YES' : '✗ NO'}`);
+          if (s.reversalWillHappen) {
+            const fromPeak = s.priceAtClimax ? ((testStock.price - s.priceAtClimax) / s.priceAtClimax * 100) : 0;
+            console.log(`Drop from Peak: ${fromPeak.toFixed(1)}%`);
+            console.log(`Empirical Target: -50% of gains within 72 hours`);
+          }
+        }
+        
+        // Gold Standard status
+        const gs = s.goldStandard;
+        const gsMet = Object.values(gs).filter(Boolean).length;
+        console.log(`\n--- GOLD STANDARD STATUS (${gsMet}/4) ---`);
+        console.log(`1. Parabolic (100%+): ${gs.hasParabolicExtension ? '✓' : '✗'}`);
+        console.log(`2. Volume Climax (5x+): ${gs.hasVolumeClimax ? '✓' : '✗'}`);
+        console.log(`3. Borrow Plateau: ${gs.hasBorrowPlateau ? '✓' : '✗'}`);
+        console.log(`4. RSI Divergence (>85): ${gs.hasRsiDivergence ? '✓' : '✗'}`);
+        
+        if (gsMet === 4) {
+          console.log(`\n⭐⭐⭐ GOLD STANDARD COMPLETE - SHORT THE BACKSIDE! 85%+ ⭐⭐⭐`);
+        }
+      }
+      
+      console.log(`\n--- PRICE CALCULATION ---`);
+      console.log(`Previous: $${prevPrice.toFixed(2)}`);
+      console.log(`Daily Bias: ${(dailyBias * 100).toFixed(2)}%`);
+      console.log(`Random Noise: ${(randomNoise * 100).toFixed(2)}%`);
+      console.log(`Total Change: ${(totalChange * 100).toFixed(2)}%`);
+      console.log(`New Price: $${testStock.price.toFixed(2)}`);
+      console.log(`Total Gain: ${((testStock.price / priceHistory[0].price - 1) * 100).toFixed(1)}%`);
+      
+      logMessage(`Day ${gameState.day}: ${phaseBefore}→${phaseAfter} | Bias:${(dailyBias*100).toFixed(1)}% | $${testStock.price.toFixed(2)}`,
+        dailyBias > 0.05 ? 'success' : dailyBias < -0.05 ? 'error' : 'info');
+      
+      updateDisplay();
+      
+      if (!testStock.shortSqueeze) {
+        const startPrice = priceHistory[0].price;
+        const climaxPrice = sq.priceAtClimax || Math.max(...priceHistory.map(p => p.price));
+        const totalGain = ((testStock.price / startPrice) - 1) * 100;
+        const fromClimax = ((testStock.price / climaxPrice) - 1) * 100;
+        const gainsLost = sq.priceAtClimax ? ((climaxPrice - testStock.price) / (climaxPrice - startPrice) * 100) : 0;
+        
+        console.log(`\n╔══════════════════════════════════════════════════════════════╗`);
+        console.log(`║                    SQUEEZE COMPLETE                          ║`);
+        console.log(`╚══════════════════════════════════════════════════════════════╝`);
+        console.log(`Final Price: $${testStock.price.toFixed(2)}`);
+        console.log(`Total Days: ${gameState.day}`);
+        console.log(`\n--- RETURN ANALYSIS ---`);
+        console.log(`From Start ($${startPrice.toFixed(2)}): ${totalGain >= 0 ? '+' : ''}${totalGain.toFixed(1)}%`);
+        console.log(`From Climax ($${climaxPrice.toFixed(2)}): ${fromClimax.toFixed(1)}%`);
+        console.log(`% of Gains Lost in Reversal: ${gainsLost.toFixed(0)}%`);
+        console.log(`\n--- EMPIRICAL COMPARISON ---`);
+        console.log(`Expected: 50% of gains lost in 72 hours`);
+        console.log(`Actual: ${gainsLost.toFixed(0)}% of gains lost`);
+        console.log(`CFA Institute alignment: ${gainsLost >= 40 ? '✓ MATCHED' : '✗ NOT MATCHED'}`);
+        
+        logMessage('=== SQUEEZE COMPLETE ===', 'warning');
+        logMessage(`Total: ${totalGain >= 0 ? '+' : ''}${totalGain.toFixed(1)}% | From Peak: ${fromClimax.toFixed(1)}%`, 'info');
+        logMessage(`Reversal captured ${gainsLost.toFixed(0)}% of gains`, sq.reversalWillHappen ? 'success' : 'error');
+        
+        document.getElementById('nextDayBtn').disabled = true;
+        document.getElementById('advance3Btn').disabled = true;
+        document.getElementById('runAllBtn').disabled = true;
+      }
+    }
+    
+    function advanceDays(n) { for (let i = 0; i < n && testStock.shortSqueeze; i++) nextDay(); }
+    function runToCompletion() { while (testStock.shortSqueeze) nextDay(); }
+    
+    function resetSimulation() {
+      testStock = null; testNews = []; gameState.day = 0; priceHistory = []; isInitialized = false;
+      document.getElementById('nextDayBtn').disabled = true;
+      document.getElementById('advance3Btn').disabled = true;
+      document.getElementById('runAllBtn').disabled = true;
+      document.getElementById('consoleLog').innerHTML = '';
+      updateDisplay();
+      logMessage('Reset. Select a scenario.', 'info');
+    }
+    
+    function updateDisplay() {
+      document.getElementById('currentDay').textContent = gameState.day;
+      const price = testStock ? testStock.price : 50;
+      document.getElementById('currentPrice').textContent = `$${price.toFixed(2)}`;
+      
+      const startPrice = priceHistory.length > 0 ? priceHistory[0].price : 50;
+      const totalGain = testStock ? ((testStock.price / startPrice) - 1) * 100 : 0;
+      const gainEl = document.getElementById('totalGain');
+      gainEl.textContent = `${totalGain >= 0 ? '+' : ''}${totalGain.toFixed(1)}%`;
+      gainEl.className = 'value ' + (totalGain > 50 ? 'gold' : totalGain > 0 ? 'positive' : totalGain < 0 ? 'negative' : '');
+      
+      document.getElementById('currentPhase').textContent = testStock?.shortSqueeze?.phase?.toUpperCase() || '-';
+      
+      if (testStock?.shortSqueeze) {
+        const sq = testStock.shortSqueeze;
+        document.getElementById('shortInt').textContent = `${(sq.shortInterestCurrent * 100).toFixed(0)}%`;
+        document.getElementById('dtc').textContent = sq.metrics.daysToCover;
+        document.getElementById('util').textContent = `${(sq.utilizationCurrent * 100).toFixed(0)}%`;
+        document.getElementById('ctb').textContent = `${(sq.ctbCurrent * 100).toFixed(0)}%`;
+        document.getElementById('volume').textContent = `${sq.volumeMultiple.toFixed(1)}x`;
+        document.getElementById('rsi').textContent = sq.rsiValue.toFixed(0);
+        document.getElementById('magnitude').textContent = sq.magnitude.toUpperCase();
+        document.getElementById('revProb').textContent = `${(sq.finalReversalProb * 100).toFixed(0)}%`;
+        
+        updateGoldStandard(sq.goldStandard);
+        updateTimeline(sq);
+        updateTutorialHint();
+      } else {
+        document.getElementById('shortInt').textContent = '-';
+        document.getElementById('dtc').textContent = '-';
+        document.getElementById('util').textContent = '-';
+        document.getElementById('ctb').textContent = '-';
+        document.getElementById('volume').textContent = '-';
+        document.getElementById('rsi').textContent = '-';
+        document.getElementById('magnitude').textContent = '-';
+        document.getElementById('revProb').textContent = '-';
+      }
+      
+      updateNewsFeed();
+      updateChart();
+    }
+    
+    function updateGoldStandard(gs) {
+      const criteria = [
+        { id: 'criterion1', met: gs.hasParabolicExtension, label: '1. Parabolic: 100%+ above 20-day MA' },
+        { id: 'criterion2', met: gs.hasVolumeClimax, label: '2. Volume Climax: 5x+ average' },
+        { id: 'criterion3', met: gs.hasBorrowPlateau, label: '3. Borrow Fee Plateau: CTB dropping' },
+        { id: 'criterion4', met: gs.hasRsiDivergence, label: '4. RSI Divergence: RSI > 85 at peak' }
+      ];
+      criteria.forEach(c => {
+        const el = document.getElementById(c.id);
+        el.className = 'criterion ' + (c.met ? 'met' : 'unmet');
+        el.innerHTML = `<span class="icon">${c.met ? '✓' : '○'}</span><span>${c.label}</span>`;
+      });
+    }
+    
+    function updateTimeline(sq) {
+      let html = '';
+      for (let i = 0; i <= sq.buildupDays; i++) {
+        html += `<div class="timeline-segment buildup ${gameState.day === sq.startDay + i ? 'current' : ''}"></div>`;
+      }
+      for (let i = 1; i < sq.squeezeDays; i++) {
+        html += `<div class="timeline-segment squeeze ${gameState.day === sq.buildupEndDay + i ? 'current' : ''}"></div>`;
+      }
+      html += `<div class="timeline-segment climax ${gameState.day === sq.climaxDay ? 'current' : ''}">⚡</div>`;
+      for (let i = 1; i <= sq.reversalDays; i++) {
+        html += `<div class="timeline-segment reversal ${gameState.day === sq.climaxDay + i ? 'current' : ''}">T+${i}</div>`;
+      }
+      document.getElementById('timelineBar').innerHTML = html;
+    }
+    
+    function updateTutorialHint() {
+      const news = testNews[testNews.length - 1];
+      if (news?.isShortSqueeze) {
+        const hint = ShortSqueeze.getTutorialHint(news);
+        if (hint?.type) {
+          document.getElementById('tutorialHint').querySelector('h4').textContent = hint.type;
+          let content = '';
+          if (hint.description) content += `<p><strong>What:</strong> ${hint.description}</p>`;
+          if (hint.implication) content += `<p><strong>Implication:</strong> ${hint.implication}</p>`;
+          if (hint.action) content += `<p><strong>Action:</strong> ${hint.action}</p>`;
+          if (hint.timing) content += `<p><strong>Timing:</strong> ${hint.timing}</p>`;
+          if (hint.catalyst) content += `<p><strong>Catalyst:</strong> ${hint.catalyst}</p>`;
+          if (hint.goldStandard) content += `<p class="highlight">${hint.goldStandard}</p>`;
+          document.getElementById('tutorialContent').innerHTML = content;
+        }
+      }
+    }
+    
+    function updateNewsFeed() {
+      const feed = document.getElementById('newsFeed');
+      if (testNews.length === 0 && !isInitialized) {
+        feed.innerHTML = `<div class="news-item neutral"><div class="headline">Waiting...</div></div>`;
+        return;
+      }
+      let html = '';
+      testNews.forEach(item => {
+        html += `<div class="news-item ${item.sentiment||'neutral'}">
+          <div class="headline">${item.headline}</div>
+          <div class="meta">Day ${gameState.day} | ${item.shortSqueezePhase||'info'}</div>
+        </div>`;
+      });
+      if (html) feed.innerHTML = html + feed.innerHTML;
+    }
+    
+    function updateChart() {
+      const canvas = document.getElementById('priceChart');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth - 30;
+      canvas.height = 250;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      if (priceHistory.length < 2) {
+        ctx.fillStyle = '#666'; ctx.font = '14px Courier New'; ctx.textAlign = 'center';
+        ctx.fillText('Chart appears after simulation starts', canvas.width/2, canvas.height/2);
+        return;
+      }
+      
+      const prices = priceHistory.map(p => p.price);
+      const minP = Math.min(...prices) * 0.95, maxP = Math.max(...prices) * 1.05;
+      const range = maxP - minP;
+      const pad = { left: 60, right: 20, top: 20, bottom: 30 };
+      const cW = canvas.width - pad.left - pad.right, cH = canvas.height - pad.top - pad.bottom;
+      
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 1;
+      for (let i = 0; i <= 5; i++) {
+        const y = pad.top + (cH * i / 5);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(canvas.width - pad.right, y); ctx.stroke();
+        ctx.fillStyle = '#666'; ctx.font = '10px Courier New'; ctx.textAlign = 'right';
+        ctx.fillText(`$${(maxP - (range * i / 5)).toFixed(0)}`, pad.left - 5, y + 4);
+      }
+      
+      const colors = { pre:'#888', buildup:'#6666aa', squeeze:'#00ff00', climax:'#ffd700', reversal:'#ff4444', complete:'#888' };
+      ctx.lineWidth = 2;
+      
+      priceHistory.forEach((pt, i) => {
+        const x = pad.left + (i / (priceHistory.length - 1)) * cW;
+        const y = pad.top + cH - ((pt.price - minP) / range * cH);
+        ctx.fillStyle = colors[pt.phase] || '#00ff00';
+        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+        if (i > 0) {
+          const px = pad.left + ((i-1) / (priceHistory.length - 1)) * cW;
+          const py = pad.top + cH - ((priceHistory[i-1].price - minP) / range * cH);
+          ctx.strokeStyle = colors[pt.phase] || '#00ff00';
+          ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke();
+        }
+      });
+    }
+    
+    function logMessage(msg, type = 'info') {
+      const log = document.getElementById('consoleLog');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTestEnvironment();
+      logMessage('Short Squeeze Test loaded. Select a scenario.', 'info');
+      logMessage('Gold Standard: SHORT the exhaustion after climax (85%+ success)', 'info');
+    });
+  </script>
+</body>
+</html>
