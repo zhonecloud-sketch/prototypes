@@ -94,11 +94,12 @@ const ENERGY_COST = {
   VEHICLE_VIEW: 3
 };
 
-// Bank rates
+// Bank rates (monthly, applied each month-end)
+// Real-world reference: High-yield savings ~4-5% APY, Margin loans ~8-12% APR
 const BANK = {
-  SAVINGS_RATE: 0.005,
-  LOAN_RATE: 0.02,
-  MAX_LOAN_RATIO: 0.5,
+  SAVINGS_RATE: 0.004,   // 0.4%/month = ~4.9% APY (realistic high-yield savings)
+  LOAN_RATE: 0.01,       // 1%/month = ~12% APR (realistic margin loan rate)
+  MAX_LOAN_RATIO: 0.5,   // Can borrow up to 50% of net worth
   MISSED_PAYMENTS_LIMIT: 3
 };
 

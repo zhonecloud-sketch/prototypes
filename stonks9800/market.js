@@ -1638,6 +1638,19 @@ function executeShortSell(stock, qty) {
     return false;
   }
   
+  // Check hard-to-borrow status (SI > 35%)
+  const si = stock.shortInterest || 0.10;
+  if (si >= SHORT_HARD_TO_BORROW_THRESHOLD) {
+    showEvent("Hard to Borrow", `${stock.symbol} has ${(si * 100).toFixed(0)}% short interest - no shares available to borrow!`);
+    return false;
+  }
+  
+  // Warn about squeeze risk (SI > 25%)
+  if (si >= SHORT_SQUEEZE_WARNING_THRESHOLD) {
+    const proceed = confirm(`⚠️ SQUEEZE WARNING: ${stock.symbol} has ${(si * 100).toFixed(0)}% short interest!\n\nBorrow rate: ${(SHORT_BORROW_RATE_BASE * (si >= 0.30 ? 20 : 8) * 100).toFixed(0)}% APR\n\nShort squeezes can cause UNLIMITED losses.\n\nProceed anyway?`);
+    if (!proceed) return false;
+  }
+  
   // Margin requirement: 150% of position value
   const positionValue = stock.price * qty;
   const marginRequired = positionValue * 1.5;
@@ -1746,25 +1759,60 @@ function calculateShortPnL() {
 }
 
 // Process daily borrowing cost for short positions
+// Uses dynamic rate based on stock's short interest (higher SI = higher borrow cost)
 function processShortBorrowingCosts() {
   let totalCost = 0;
+  const details = [];
   
   Object.entries(gameState.shortPositions).forEach(([symbol, pos]) => {
     if (pos.qty > 0) {
       const stock = stocks.find(s => s.symbol === symbol);
       if (stock) {
-        // Daily borrowing fee (0.1% of current position value)
-        const dailyFee = Math.round(stock.price * pos.qty * SHORT_BORROW_RATE);
+        // Calculate dynamic borrow rate based on short interest
+        const si = stock.shortInterest || 0.10;
+        let multiplier = SHORT_BORROW_RATE_MULTIPLIERS.LOW; // Default 1x
+        
+        if (si >= 0.30) {
+          multiplier = SHORT_BORROW_RATE_MULTIPLIERS.EXTREME; // 20x at >30% SI
+        } else if (si >= 0.20) {
+          multiplier = SHORT_BORROW_RATE_MULTIPLIERS.HIGH;    // 8x at 20-30% SI
+        } else if (si >= 0.10) {
+          multiplier = SHORT_BORROW_RATE_MULTIPLIERS.MEDIUM;  // 3x at 10-20% SI
+        }
+        
+        // Convert annual rate to daily rate: APR / 360
+        const annualRate = SHORT_BORROW_RATE_BASE * multiplier; // e.g., 2% * 20 = 40% APR
+        const dailyRate = annualRate / 360;
+        
+        const dailyFee = Math.round(stock.price * pos.qty * dailyRate);
         totalCost += dailyFee;
+        
+        if (dailyFee > 0) {
+          details.push({
+            symbol,
+            fee: dailyFee,
+            apr: (annualRate * 100).toFixed(0),
+            si: (si * 100).toFixed(0)
+          });
+        }
       }
     }
   });
   
   if (totalCost > 0) {
     gameState.cash -= totalCost;
-    // Don't generate news for small daily costs - only for large ones
+    if (!gameState.borrowFeesPaid) gameState.borrowFeesPaid = 0;
+    gameState.borrowFeesPaid += totalCost;
+    
+    // Log significant borrow fees
+    if (totalCost > 100) {
+      const summary = details.map(d => `${d.symbol}:$${d.fee}@${d.apr}%`).join(', ');
+      console.log(`[BORROW] Daily short fees: $${totalCost} (${summary})`);
+    }
+    
+    // News only for very high fees
     if (totalCost > 10000) {
-      addNews(`Short borrow fees today: $${formatNumber(totalCost)}`, 'neutral', null);
+      addNews(`⚠️ Short borrow fees: $${formatNumber(totalCost)}/day - SI elevated!`, 'negative', null);
     }
   }
   

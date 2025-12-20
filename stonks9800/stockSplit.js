@@ -418,7 +418,7 @@ const StockSplit = (function() {
     // Generate effective day news
     generateEffectiveDayNews(stock);
     
-    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} EFFECTIVE ${getPriceInfo(stock)} (run-up: +${(split.runUpTotal * 100).toFixed(1)}%)`);
+    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} EFFECTIVE ${getPriceInfo(stock)} (run-up: +${(split.runUpTotal * 100).toFixed(1)}%) [reversalDays=${CONSTANTS.DURATION.reversalWindow}]`);
   }
 
   function processReversalPhase(stock, daysIntoReversal) {
@@ -458,7 +458,7 @@ const StockSplit = (function() {
         console.log(`[SPLIT] ${getDate()}: ${stock.symbol} VETO - NO REVERSAL ${getPriceInfo(stock)} (factor: ${split.vetoFactors[0]})`);
       }
       
-      console.log(`[SPLIT] ${getDate()}: ${stock.symbol} REVERSAL DECISION: ${split.reversalWillHappen ? 'YES' : 'NO'} ${getPriceInfo(stock)} (prob: ${(reversalProb * 100).toFixed(0)}%)`);
+      console.log(`[SPLIT] ${getDate()}: ${stock.symbol} REVERSAL DECISION: ${split.reversalWillHappen ? 'YES' : 'NO'} ${getPriceInfo(stock)} (prob: ${(reversalProb * 100).toFixed(0)}%) [daysLeft=${CONSTANTS.DURATION.reversalWindow - daysIntoReversal}]`);
     }
 
     // Apply reversal bias if reversal is happening
@@ -492,7 +492,7 @@ const StockSplit = (function() {
     const gs = split.goldStandard;
     const goldStandardMet = gs.isMegaCap && gs.hasRunUp && gs.hasOtmSpike && gs.hasReversalSetup;
     
-    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} COMPLETE ${getPriceInfo(stock)}`);
+    console.log(`[SPLIT] ${getDate()}: ${stock.symbol} COMPLETE ${getPriceInfo(stock)} [END]`);
     console.log(`  Run-up: +${(split.runUpTotal * 100).toFixed(1)}%, Reversal: ${(reversalAmount * 100).toFixed(1)}%`);
     console.log(`  Gold Standard: ${goldStandardMet ? 'MET' : 'NOT MET'} (${gs.isMegaCap ? '✓' : '✗'} MegaCap, ${gs.hasRunUp ? '✓' : '✗'} 15%+, ${gs.hasOtmSpike ? '✓' : '✗'} OTM, ${gs.hasReversalSetup ? '✓' : '✗'} T+3)`);
     

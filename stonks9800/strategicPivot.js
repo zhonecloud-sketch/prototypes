@@ -518,10 +518,16 @@ const StrategicPivot = (function() {
     // Initial price impact
     const impact = CONSTANTS.PRICE_IMPACT.announcement[pivotType];
     const memeMultiplier = getMemeMultiplier(stock);
-    stock.crashTransitionEffect = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
+    const actualImpact = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
+    stock.crashTransitionEffect = actualImpact;
     stock.sentimentOffset = (stock.sentimentOffset || 0) - 0.03 * memeMultiplier;
 
-    console.log(`[PIVOT] ${getDate()}: ${stock.symbol} ${pivotType.toUpperCase()} triggered ${getPriceInfo(stock)}`);
+    // Store expected outcome for consistent log/GUI display
+    // Use actual impact (what happens today)
+    stock.eventExpectedPrice = stock.price * (1 + actualImpact);
+    stock.eventExpectedDelta = actualImpact;
+    
+    console.log(`[PIVOT] ${getDate()}: ${stock.symbol} ${pivotType.toUpperCase()} triggered [$${stock.eventExpectedPrice.toFixed(2)} Δ${(stock.eventExpectedDelta * 100).toFixed(1)}%] [daysLeft=${stock.pivotDaysLeft}]`);
     console.log(`  Catalyst: ${catalyst.headline}, Reversal: ${Math.round(reversalProb * 100)}% (will: ${stock.pivotWillReverse})`);
 
     return true;
@@ -561,9 +567,12 @@ const StrategicPivot = (function() {
   }
 
   function processAnnouncementPhase(stock, pivotType, memeMultiplier) {
-    // Continued selling pressure
-    const impact = CONSTANTS.PRICE_IMPACT.announcement[pivotType];
-    stock.crashTransitionEffect = (impact.min * 0.3 + random() * Math.abs(impact.min * 0.3)) * memeMultiplier;
+    // Skip price impact on day 1 - trigger already set crashTransitionEffect
+    if (stock.pivotDayCounter > 1) {
+      // Continued selling pressure on subsequent days
+      const impact = CONSTANTS.PRICE_IMPACT.announcement[pivotType];
+      stock.crashTransitionEffect = (impact.min * 0.3 + random() * Math.abs(impact.min * 0.3)) * memeMultiplier;
+    }
 
     if (stock.pivotDaysLeft <= 0) {
       // Transition to execution void
@@ -633,7 +642,7 @@ const StrategicPivot = (function() {
       const endPrice = stock.price;
       const totalChange = (endPrice - startPrice) / startPrice;
 
-      console.log(`[PIVOT] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)}`);
+      console.log(`[PIVOT] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)} [END]`);
       console.log(`  Type: ${pivotType}, Reversed: ${stock.pivotWillReverse}, Change: ${(totalChange * 100).toFixed(1)}%`);
 
       generatePivotNews(stock, stock.pivotWillReverse ? 'reversal_complete' : 'new_base');
@@ -744,6 +753,9 @@ const StrategicPivot = (function() {
         educationalNote: educationalNote,
         pivotSignals: signals
       });
+      
+      // Log each news phase to terminal
+      console.log(`[PIVOT] ${getDate()}: ${stock.symbol} ${phase.toUpperCase()} ${getPriceInfo(stock)} [daysLeft=${stock.pivotDaysLeft}]`);
     }
   }
 

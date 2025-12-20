@@ -322,12 +322,18 @@ const DCB = (function() {
     stock.volumeMultiplier = CONSTANTS.VOLUME.crash;
     stock.volumeTrend = 'spike';
     
-    // Apply immediate crash impact
+    // Apply immediate crash impact (50-70% of total crash magnitude on day 1)
+    const immediateImpact = -(crashMagnitude * 0.5 + random() * crashMagnitude * 0.2);
     stock.sentimentOffset = -severity * memeMultiplier;
     stock.volatilityBoost = (stock.volatilityBoost || 0) + 0.5 * memeMultiplier;
-    stock.crashTransitionEffect = -(crashMagnitude * 0.5 + random() * crashMagnitude * 0.2);
+    stock.crashTransitionEffect = immediateImpact;
     
-    console.log(`[DCB] ${getDate()}: ${stock.symbol} CRASH TRIGGERED ${getPriceInfo(stock)} [daysLeft=${stock.crashDaysLeft}]`);
+    // Store expected outcome for consistent log/GUI display
+    // Use immediate impact (what happens today), not eventual target
+    stock.eventExpectedPrice = stock.price * (1 + immediateImpact);
+    stock.eventExpectedDelta = immediateImpact;
+    
+    console.log(`[DCB] ${getDate()}: ${stock.symbol} CRASH TRIGGERED [$${stock.eventExpectedPrice.toFixed(2)} Δ${(stock.eventExpectedDelta * 100).toFixed(1)}%] [daysLeft=${stock.crashDaysLeft}]`);
     
     return true;
   }
@@ -556,7 +562,7 @@ const DCB = (function() {
         generateAnotherBounceNews(stock);
       } else {
         // Final capitulation - crash cycle ends
-        console.log(`[DCB] ${getDate()}: ${stock.symbol} CAPITULATION ${getPriceInfo(stock)} after ${stock.bounceNumber} bounces`);
+        console.log(`[DCB] ${getDate()}: ${stock.symbol} CAPITULATION ${getPriceInfo(stock)} after ${stock.bounceNumber} bounces [END]`);
         // Set negative transition effect BEFORE clearing state (news says decline confirmed)
         stock.crashTransitionEffect = -(0.08 + random() * 0.06) * memeMultiplier;
         generateCapitulationNews(stock);
@@ -613,7 +619,7 @@ const DCB = (function() {
   // ===== RECOVERY PHASE PROCESSING =====
   function processRecoveryPhaseInternal(stock, memeMultiplier) {
     if (stock.crashDaysLeft <= 0) {
-      console.log(`[DCB] ${getDate()}: ${stock.symbol} RECOVERY COMPLETE ${getPriceInfo(stock)}`);
+      console.log(`[DCB] ${getDate()}: ${stock.symbol} RECOVERY COMPLETE ${getPriceInfo(stock)} [END]`);
       // Set positive transition effect BEFORE clearing state (news says recovery)
       stock.crashTransitionEffect = (0.03 + random() * 0.03) * memeMultiplier;
       generateRecoveryCompleteNews(stock);

@@ -374,12 +374,18 @@ const SSR = (function() {
     stock.volumeMultiplier = CONSTANTS.VOLUME.reportDay;
     stock.volumeTrend = 'spike';
 
-    // Apply immediate crash impact
+    // Apply immediate crash impact (50-70% of total crash magnitude on day 1)
+    const immediateImpact = -(crashMagnitude * 0.5 + random() * crashMagnitude * 0.2);
     stock.sentimentOffset = -(crashMagnitude * 0.7) * memeMultiplier;
     stock.volatilityBoost = (stock.volatilityBoost || 0) + 0.6 * memeMultiplier;
-    stock.shortReportTransitionEffect = -(crashMagnitude * 0.5 + random() * crashMagnitude * 0.2);
+    stock.shortReportTransitionEffect = immediateImpact;
 
-    console.log(`[SSR] ${getDate()}: ${stock.symbol} SHORT REPORT by ${seller.name}: ${stock.reportType.toUpperCase()} ${getPriceInfo(stock)} [daysLeft=${stock.shortReportDaysLeft}]`);
+    // Store expected outcome for consistent log/GUI display
+    // Use immediate impact (what happens today), not eventual target
+    stock.eventExpectedPrice = stock.price * (1 + immediateImpact);
+    stock.eventExpectedDelta = immediateImpact;
+    
+    console.log(`[SSR] ${getDate()}: ${stock.symbol} SHORT REPORT by ${seller.name}: ${stock.reportType.toUpperCase()} [$${stock.eventExpectedPrice.toFixed(2)} Δ${(stock.eventExpectedDelta * 100).toFixed(1)}%] [daysLeft=${stock.shortReportDaysLeft}]`);
 
     return true;
   }
@@ -599,7 +605,7 @@ const SSR = (function() {
 
     // Check for insider buying event (strongest reversal signal)
     if (stock.insiderBuying && daysInPhase === stock.insiderBuyingDay) {
-      console.log(`[SSR] ${getDate()}: ${stock.symbol} INSIDER BUY ${getPriceInfo(stock)} ${stock.insiderBuyingTitle} buys ${stock.insiderBuyingAmount}`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} INSIDER BUY ${getPriceInfo(stock)} ${stock.insiderBuyingTitle} buys ${stock.insiderBuyingAmount} [daysLeft=${stock.shortReportDaysLeft}]`);
       
       news.push({
         headline: `💰 ${stock.symbol} ${stock.insiderBuyingTitle} BUYS ${stock.insiderBuyingAmount} in shares`,
@@ -657,6 +663,20 @@ const SSR = (function() {
       // This is what creates the "tight range" consolidation pattern
       stock.volatilityBoost = Math.max(0, (stock.volatilityBoost || 0) * 0.3);
 
+      // Generate news for base building transition
+      news.push({
+        headline: `${stock.symbol} enters consolidation - analysts await resolution`,
+        sentiment: 'neutral',
+        relatedStock: stock.symbol,
+        newsType: 'base_building',
+        phase: 'base_building',
+        expectedDirection: 0,
+        eventExpectedDelta: 0,
+        tutorialHint: stock.willReverse ?
+          '📊 BASE BUILDING: Tight sideways = accumulation. Watch for breakout!' :
+          '📊 BASE BUILDING: Consolidation phase - waiting for resolution'
+      });
+
       console.log(`[SSR] ${getDate()}: ${stock.symbol} → BASE BUILDING ${getPriceInfo(stock)} (reversal prob: ${(stock.reversalProbability * 100).toFixed(0)}%, will reverse: ${stock.willReverse}) [daysLeft=${stock.shortReportDaysLeft}]`);
     } else {
       // Volatile trading during rebuttal phase
@@ -691,7 +711,7 @@ const SSR = (function() {
         Math.floor(random() * (CONSTANTS.DURATION.resolution.max - CONSTANTS.DURATION.resolution.min + 1)) + 1;
 
       // Log base validation for debugging
-      console.log(`[SSR] ${getDate()}: ${stock.symbol} BASE ANALYSIS ${getPriceInfo(stock)}`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} BASE ANALYSIS ${getPriceInfo(stock)} [daysLeft=${stock.shortReportDaysLeft}]`);
       console.log(`  Days: ${stock.baseDays}/${CONSTANTS.BASE_PATTERN.minDays}, Range: $${stock.baseLowPrice.toFixed(2)}-$${stock.baseHighPrice.toFixed(2)} (${(rangePercent * 100).toFixed(1)}%)`);
       console.log(`  Valid: ${isValidBase}, Will Reverse: ${stock.willReverse}`);
 
@@ -804,7 +824,7 @@ const SSR = (function() {
       const endPrice = stock.price;
 
       // Log BEFORE clearing state so we have access to preReportPrice
-      console.log(`[SSR] ${getDate()}: ${stock.symbol} COMPLETE (${finalOutcome}) [$${endPrice.toFixed(2)} Δ${priceChange >= 0 ? '+' : ''}${priceChange}% from $${startPrice.toFixed(2)}]`);
+      console.log(`[SSR] ${getDate()}: ${stock.symbol} COMPLETE (${finalOutcome}) [$${endPrice.toFixed(2)} Δ${priceChange >= 0 ? '+' : ''}${priceChange}% from $${startPrice.toFixed(2)}] [END]`);
 
       news.push({
         headline: `${stock.symbol} short report saga concludes: ${finalOutcome}`,

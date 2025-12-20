@@ -112,3 +112,28 @@ function drawChart(canvas, data, color) {
   ctx.lineWidth = 2;
   ctx.stroke();
 }
+
+/**
+ * Store expected price outcome on stock for consistent GUI/log display
+ * Both GUI and terminal logs should reference these values
+ * @param {Object} stock - The stock object
+ * @param {number} expectedPrice - The expected price after the event applies
+ * @param {number} expectedDelta - The expected percentage change (negative for drops)
+ */
+function setExpectedOutcome(stock, expectedPrice, expectedDelta) {
+  stock.eventExpectedPrice = expectedPrice;
+  stock.eventExpectedDelta = expectedDelta;
+}
+
+/**
+ * Format expected outcome for log display
+ * @param {Object} stock - The stock object with eventExpectedPrice/Delta set
+ * @returns {string} Formatted string like "[$25.00 Δ-15.0%]"
+ */
+function formatExpectedOutcome(stock) {
+  if (!stock.eventExpectedPrice || stock.eventExpectedDelta === undefined) {
+    return `[$${stock.price?.toFixed(2) || '?'} Δ?%]`;
+  }
+  const sign = stock.eventExpectedDelta >= 0 ? '+' : '';
+  return `[$${stock.eventExpectedPrice.toFixed(2)} Δ${sign}${(stock.eventExpectedDelta * 100).toFixed(1)}%]`;
+}

@@ -560,10 +560,16 @@ const ExecutiveChange = (function() {
     // Initial price impact
     const impact = CONSTANTS.PRICE_IMPACT.announcement[changeType];
     const memeMultiplier = getMemeMultiplier(stock);
-    stock.crashTransitionEffect = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
+    const actualImpact = (impact.min + random() * (impact.max - impact.min)) * memeMultiplier;
+    stock.crashTransitionEffect = actualImpact;
     stock.sentimentOffset = (stock.sentimentOffset || 0) - 0.03 * memeMultiplier;
 
-    console.log(`[EXEC] ${getDate()}: ${stock.symbol} ${changeType.toUpperCase()} triggered ${getPriceInfo(stock)}`);
+    // Store expected outcome for consistent log/GUI display
+    // Use actual impact (what happens today)
+    stock.eventExpectedPrice = stock.price * (1 + actualImpact);
+    stock.eventExpectedDelta = actualImpact;
+    
+    console.log(`[EXEC] ${getDate()}: ${stock.symbol} ${changeType.toUpperCase()} triggered [$${stock.eventExpectedPrice.toFixed(2)} Δ${(stock.eventExpectedDelta * 100).toFixed(1)}%] [daysLeft=${stock.execChangeDaysLeft}]`);
     console.log(`  Role: ${signals.role}, Successor: ${signals.successionIntegrity?.description}, 8-K: ${signals.cleanAudit?.isClean ? 'CLEAN' : 'WARN'}`);
     console.log(`  Reversal: ${Math.round(reversalProb * 100)}% (will: ${stock.execChangeWillReverse})`);
 
@@ -604,9 +610,12 @@ const ExecutiveChange = (function() {
   }
 
   function processAnnouncementPhase(stock, changeType, memeMultiplier) {
-    // Continued selling pressure
-    const impact = CONSTANTS.PRICE_IMPACT.announcement[changeType];
-    stock.crashTransitionEffect = (impact.min * 0.3 + random() * Math.abs(impact.min * 0.3)) * memeMultiplier;
+    // Skip price impact on day 1 - trigger already set crashTransitionEffect
+    if (stock.execChangeDayCounter > 1) {
+      // Continued selling pressure on subsequent days
+      const impact = CONSTANTS.PRICE_IMPACT.announcement[changeType];
+      stock.crashTransitionEffect = (impact.min * 0.3 + random() * Math.abs(impact.min * 0.3)) * memeMultiplier;
+    }
 
     if (stock.execChangeDaysLeft <= 0) {
       // Record Day 1 low for 3-day stabilization check
@@ -677,7 +686,7 @@ const ExecutiveChange = (function() {
       const totalChange = (endPrice - startPrice) / startPrice;
       const daysTaken = stock.execChangeDayCounter;
 
-      console.log(`[EXEC] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)}`);
+      console.log(`[EXEC] ${getDate()}: ${stock.symbol} RESOLVED ${getPriceInfo(stock)} [END]`);
       console.log(`  Type: ${changeType}, Reversed: ${stock.execChangeWillReverse}, Change: ${(totalChange * 100).toFixed(1)}%, Days: ${daysTaken}`);
 
       generateExecChangeNews(stock, stock.execChangeWillReverse ? 'reversal_complete' : 'decline_continues');
@@ -776,6 +785,9 @@ const ExecutiveChange = (function() {
         educationalNote: educationalNote,
         execChangeSignals: signals
       });
+      
+      // Log each news phase to terminal
+      console.log(`[EXEC] ${getDate()}: ${stock.symbol} ${phase.toUpperCase()} ${getPriceInfo(stock)} [daysLeft=${stock.execChangeDaysLeft}]`);
     }
   }
 
