@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Year of the Horse - Chinese New Year Greeting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100dvh;
+            background: linear-gradient(135deg, #8B0000 0%, #C41E3A 50%, #8B0000 100%);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #FFF8DC;
+            /* Ensure body takes full width for click events */
+            width: 100%; 
+        }
+
+        /* Landscape Orientation Warning */
+        .rotate-device {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #8B0000;
+            color: #FFD700;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .rotate-device { display: flex; }
+            body { overflow: hidden; }
+        }
+
+        .rotate-device svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            animation: rotateAnim 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes rotateAnim {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(90deg); }
+        }
+
+        /* Fireworks Canvas */
+        #fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to elements below */
+            z-index: 0;
+        }
+
+        /* Main container */
+        .card-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            gap: 25px;
+        }
+
+        /* Lanterns */
+        .lantern {
+            position: absolute;
+            top: 0;
+            z-index: 5;
+            animation: sway 3s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .lantern-1 { left: 5%; top: 2%; width: 50px; animation-delay: 0s; }
+        .lantern-2 { right: 5%; top: 3%; width: 55px; animation-delay: 0.5s; }
+        
+        @media (max-width: 400px) {
+            .lantern-3, .lantern-4 { display: none; }
+        }
+        .lantern-3 { left: 15%; top: 8%; width: 40px; animation-delay: 1s; }
+        .lantern-4 { right: 15%; top: 5%; width: 45px; animation-delay: 1.5s; }
+
+        /* Typography */
+        .greeting {
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+            width: 100%;
+        }
+
+        .greeting h1 {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            line-height: 1.2;
+        }
+
+        .greeting .recipient {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #FFE4B5;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .greeting .wish {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-style: italic;
+            padding: 0 10px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .greeting .sub-wish {
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            color: #FFD700;
+            opacity: 0.9;
+        }
+
+        /* Horse Image Container */
+        .horse-container {
+            position: relative;
+            width: 85%;
+            max-width: 400px;
+            height: auto;
+            animation: floatHorse 4s ease-in-out infinite;
+            z-index: 5;
+            background: #FFF8DC;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 3px #FFD700;
+        }
+
+        .horse-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        /* Bottom Section */
+        .bottom-text {
+            text-align: center;
+            width: 100%;
+            animation: fadeInUp 1.5s ease-out 0.5s both;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .year-text {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            color: #FFD700;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            margin-bottom: 5px;
+        }
+
+        .english-text {
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            color: #FFE4B5;
+            letter-spacing: 1px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        /* Sender Signature */
+        .sender {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: #FFD700;
+            margin-top: 10px; 
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .coins-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .coin {
+            position: absolute;
+            animation: fallCoin linear infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatHorse {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.01); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        @keyframes fallCoin {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 5px 35px rgba(255, 215, 0, 0.7); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Landscape Warning -->
+    <div class="rotate-device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2" />
+            <line x1="12" y1="18" x2="12" y2="18.01" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h2>Please Rotate Your Device</h2>
+        <p>This experience is best viewed in portrait mode.</p>
+    </div>
+
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworks"></canvas>
+
+    <!-- Lanterns -->
+    <svg class="lantern lantern-1" viewBox="0 0 60 90">
+        <defs>
+            <radialGradient id="lanternGlow1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#8B0000"/>
+            </radialGradient>
+            <filter id="glow1"><feGaussianBlur stdDeviation="2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect x="20" y="0" width="20" height="8" fill="#FFD700"/>
+        <ellipse cx="30" cy="45" rx="25" ry="35" fill="url(#lanternGlow1)" filter="url(#glow1)"/>
+        <line x1="30" y1="10" x2="30" y2="20" stroke="#FFD700" stroke-width="2"/>
+        <rect x="22" y="78" width="16" height="6" fill="#FFD700"/>
+        <path d="M26 84 Q30 95 34 84" stroke="#FFD700" stroke-width="2" fill="none"/>
+    </svg>
+
+    <svg class="lantern lantern-2" viewBox="0 0 60 90">
+        <defs>
+            <radialGradient id="lanternGlow2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF8C00"/>
+            </radialGradient>
+        </defs>
+        <rect x="20" y="0" width="20" height="8" fill="#C41E3A"/>
+        <ellipse cx="30" cy="45" rx="25" ry="35" fill="url(#lanternGlow2)" filter="url(#glow1)"/>
+        <line x1="30" y1="10" x2="30" y2="20" stroke="#C41E3A" stroke-width="2"/>
+        <rect x="22" y="78" width="16" height="6" fill="#C41E3A"/>
+        <path d="M26 84 Q30 95 34 84" stroke="#C41E3A" stroke-width="2" fill="none"/>
+    </svg>
+
+    <svg class="lantern lantern-3" viewBox="0 0 60 90">
+        <rect x="20" y="0" width="20" height="8" fill="#FFD700"/>
+        <ellipse cx="30" cy="45" rx="25" ry="35" fill="url(#lanternGlow1)" filter="url(#glow1)"/>
+        <line x1="30" y1="10" x2="30" y2="20" stroke="#FFD700" stroke-width="2"/>
+        <rect x="22" y="78" width="16" height="6" fill="#FFD700"/>
+        <path d="M26 84 Q30 95 34 84" stroke="#FFD700" stroke-width="2" fill="none"/>
+    </svg>
+
+    <svg class="lantern lantern-4" viewBox="0 0 60 90">
+        <rect x="20" y="0" width="20" height="8" fill="#C41E3A"/>
+        <ellipse cx="30" cy="45" rx="25" ry="35" fill="url(#lanternGlow2)" filter="url(#glow1)"/>
+        <line x1="30" y1="10" x2="30" y2="20" stroke="#C41E3A" stroke-width="2"/>
+        <rect x="22" y="78" width="16" height="6" fill="#C41E3A"/>
+        <path d="M26 84 Q30 95 34 84" stroke="#C41E3A" stroke-width="2" fill="none"/>
+    </svg>
+
+    <!-- Main Card Content -->
+    <div class="card-container">
+        <div class="greeting">
+            <h1>馬年大吉</h1>
+            <p class="recipient" id="recipientName">Dear Friend</p>
+            <p class="wish">Wishing you prosperity, success and boundless joy</p>
+            <p class="sub-wish">祝你馬到成功，萬事如意</p>
+        </div>
+
+        <!-- Raster Horse Image Container -->
+        <div class="horse-container">
+            <img src="grok-rear.webp" 
+                 alt="Rearing Horse" 
+                 class="horse-img">
+        </div>
+
+        <div class="bottom-text">
+            <p class="year-text">YEAR OF THE HORSE</p>
+            <p class="english-text">Galloping Towards Success</p>
+            <!-- Button Removed -->
+            <p class="sender">Warmly, Goh & Family</p>
+        </div>
+    </div>
+
+    <!-- Coins Container -->
+    <div class="coins-container" id="coinsContainer"></div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+        if (name) {
+            document.getElementById('recipientName').textContent = `Dear ${name}`;
+        }
+
+        // --- Fireworks System ---
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor(x, y, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = velocity;
+                this.gravity = 0.05;
+                this.friction = 0.99;
+                this.size = 3;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            }
+
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color.replace('1)', `${this.alpha})`);
+                ctx.fill();
+            }
+        }
+
+        class Firework {
+            constructor(x, targetY) {
+                this.x = x;
+                this.y = canvas.height;
+                this.targetY = targetY;
+                this.velocity = { x: 0, y: -12 - Math.random() * 4 };
+                this.color = this.getRandomColor();
+                this.particles = [];
+                this.exploded = false;
+            }
+
+            getRandomColor() {
+                const colors = [
+                    'rgba(255, 215, 0, 1)', 'rgba(255, 165, 0, 1)', 
+                    'rgba(255, 69, 0, 1)', 'rgba(255, 255, 255, 1)'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y += this.velocity.y;
+                    this.velocity.y += 0.2;
+                    if (this.y <= this.targetY) this.explode();
+                }
+                this.particles = this.particles.filter(p => p.alpha > 0);
+                this.particles.forEach(p => p.update());
+            }
+
+            explode() {
+                this.exploded = true;
+                const count = 60;
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2 / count) * i;
+                    const speed = Math.random() * 5 + 2;
+                    this.particles.push(new Particle(
+                        this.x, this.y, this.color,
+                        { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed }
+                    ));
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+                this.particles.forEach(p => p.draw());
+            }
+
+            isDead() { return this.exploded && this.particles.length === 0; }
+        }
+
+        let fireworks = [];
+
+        function launchFirework() {
+            const x = Math.random() * canvas.width;
+            const targetY = Math.random() * canvas.height * 0.5;
+            fireworks.push(new Firework(x, targetY));
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(139, 0, 0, 0.15)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            fireworks = fireworks.filter(f => !f.isDead());
+            fireworks.forEach(f => {
+                f.update();
+                f.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+        
+        // Auto launch logic
+        setInterval(() => {
+            if (Math.random() > 0.6) launchFirework();
+        }, 1500);
+        
+        setTimeout(() => { launchFirework(); launchFirework(); }, 500);
+
+        // --- Global Click Event ---
+        // Launches 3 fireworks whenever/wherever the user clicks
+        document.body.addEventListener('click', () => {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(launchFirework, i * 200);
+            }
+        });
+
+        // --- Falling Coins ---
+        const coinsContainer = document.getElementById('coinsContainer');
+        
+        function createCoin() {
+            const coin = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            coin.classList.add('coin');
+            coin.setAttribute('width', '20');
+            coin.setAttribute('height', '20');
+            coin.setAttribute('viewBox', '0 0 30 30');
+            
+            coin.innerHTML = `
+                <circle cx="15" cy="15" r="12" fill="#FFD700" stroke="#B8860B" stroke-width="1.5"/>
+                <text x="15" y="19" text-anchor="middle" font-size="10" fill="#8B0000" font-weight="bold">福</text>
+            `;
+            
+            coin.style.left = Math.random() * 100 + '%';
+            coin.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            
+            coinsContainer.appendChild(coin);
+            setTimeout(() => coin.remove(), 9000);
+        }
+
+        setInterval(createCoin, 600);
+    </script>
+</body>
+</html>
