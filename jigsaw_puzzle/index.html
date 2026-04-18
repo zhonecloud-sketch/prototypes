@@ -1,1 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Puzzle Game</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #1a1a2e; color: #fff; overflow: hidden; height: 100vh; height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0px); }
+#header { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 8px 12px; background: #16213e; z-index: 10; }
+#header button { padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: bold; }
+#btnLoad { background: #e94560; color: #fff; }
+#btnManual { background: #0f3460; color: #fff; }
+#btnAI { background: #533483; color: #fff; }
+#btnReset { background: #e94560; color: #fff; }
+#timer { font-size: 18px; font-weight: bold; color: #e94560; min-width: 70px; text-align: center; }
+#status { font-size: 12px; color: #aaa; text-align: center; padding: 2px; background: #16213e; }
+#gameArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+#boardContainer { flex: 1; overflow: auto; position: relative; display: flex; justify-content: center; align-items: flex-start; padding: 4px; touch-action: none; }
+#board { position: relative; border: 2px solid #e94560; background: #0a0a1a; }
+#trayContainer { height: 35vh; min-height: 150px; overflow-y: auto; overflow-x: hidden; background: #0f0f23; border-top: 2px solid #533483; padding: 8px; position: relative; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+#tray { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-content: flex-start; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); touch-action: pan-y; }
+.piece { position: absolute; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); transition: box-shadow 0.2s; }
+.piece.selected { box-shadow: 0 0 12px 3px #e94560; z-index: 100; }
+.piece.in-tray { position: relative; }
+.hint-cell { position: absolute; border: 1px dashed rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); }
+.hint-cell.next-hint { border-color: rgba(233,69,96,0.6); background: rgba(233,69,96,0.08); }
+#dragPiece { display: none; }
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 999; }
+#overlay .msg { text-align: center; font-size: 28px; color: #e94560; }
+#overlay .msg p { margin: 10px 0; }
+#instructions { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 998; justify-content: center; align-items: center; padding: 20px; }
+#instructions .box { background: #16213e; border-radius: 12px; padding: 24px; max-width: 400px; text-align: center; }
+#instructions .box h2 { color: #e94560; margin-bottom: 12px; }
+#instructions .box p { margin: 8px 0; font-size: 14px; line-height: 1.5; color: #ccc; }
+#instructions .box button { margin-top: 16px; padding: 10px 30px; background: #e94560; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+input[type=file] { display: none; }
+#rotateHint { display: none; }
+#pieceControl { display: flex; align-items: center; gap: 8px; }
+#pieceControl label { font-size: 13px; color: #aaa; white-space: nowrap; }
+#pieceRange { width: 120px; accent-color: #e94560; cursor: pointer; }
+#pieceCount { font-size: 13px; color: #e94560; font-weight: bold; min-width: 28px; text-align: center; }
+</style>
+</head>
+<body>
 
+<div id="header">
+  <input type="file" id="fileInput" accept="image/*">
+  <button id="btnLoad" onclick="document.getElementById('fileInput').click()">📷 Load</button>
+  <div id="pieceControl">
+    <label for="pieceRange">Pieces:</label>
+    <input type="range" id="pieceRange" min="10" max="200" value="20" oninput="updatePieceCount(this.value)">
+    <span id="pieceCount">20</span>
+  </div>
+  <button id="btnManual" onclick="startGame('manual')" disabled>🖐 Manual</button>
+  <button id="btnAI" onclick="startGame('ai')" disabled>🤖 AI</button>
+  <div id="timer">00:00</div>
+  <button id="btnReset" onclick="resetGame()">↺</button>
+</div>
+<div id="status">Load an image to begin</div>
+
+<div id="gameArea">
+  <div id="boardContainer">
+    <canvas id="board"></canvas>
+  </div>
+  <div id="trayContainer">
+    <div id="tray"></div>
+  </div>
+</div>
+
+<div id="rotateHint">⬆ Swipe Up: CCW | ⬇ Swipe Down: CW</div>
+
+<div id="overlay" style="display:none">
+  <div class="msg" id="overlayMsg"></div>
+</div>
+
+<div id="instructions" style="display:flex">
+  <div class="box">
+    <h2>🧩 Puzzle Game</h2>
+    <p>1️⃣ Tap <b>📷 Load</b> to pick an image</p>
+    <p>2️⃣ Adjust the <b>Pieces</b> slider if you want</p>
+    <p>3️⃣ Tap <b>🖐 Manual</b> to solve yourself, or <b>🤖 AI</b> to watch it solve</p>
+    <button onclick="closeInstructions()">Got it!</button>
+  </div>
+</div>
+
+<script>
+let COLS = 5, ROWS = 4, TOTAL = 20;
+let targetPieces = 20;
+let img = null, pieceW, pieceH, pieces = [], placedCount = 0;
+let selectedPiece = null, mode = null, timerInterval = null, startTime = 0, elapsed = 0;
+let gameStarted = false, gameOver = false;
+let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+let boardRect = null;
+const board = document.getElementById('board');
+const ctx = board.getContext('2d');
+const tray = document.getElementById('tray');
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    img = new Image();
+    img.onload = () => {
+      setupPuzzle();
+      document.getElementById('btnManual').disabled = false;
+      document.getElementById('btnAI').disabled = false;
+      document.getElementById('status').textContent = 'Choose Manual or AI mode to start';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function updatePieceCount(val) {
+  targetPieces = parseInt(val);
+  document.getElementById('pieceCount').textContent = targetPieces;
+  if (img) setupPuzzle();
+}
+
+function computeGrid(total, aspect) {
+  // Find cols x rows closest to total with aspect ratio matching image
+  let bestCols = 1, bestRows = total, bestDiff = Infinity;
+  for (let c = 1; c <= total; c++) {
+    const r = Math.round(total / c);
+    if (r < 1) continue;
+    const actual = c * r;
+    const gridAspect = c / r;
+    const aspectDiff = Math.abs(gridAspect - aspect);
+    const countDiff = Math.abs(actual - total);
+    const score = countDiff * 2 + aspectDiff;
+    if (score < bestDiff) {
+      bestDiff = score;
+      bestCols = c;
+      bestRows = r;
+    }
+  }
+  return { cols: bestCols, rows: bestRows };
+}
+
+function setupPuzzle() {
+  gameStarted = false; gameOver = false; placedCount = 0; pieces = []; selectedPiece = null;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('timer').textContent = '00:00';
+
+  // Compute grid dimensions from target pieces and image aspect ratio
+  const aspect = img.width / img.height;
+  const grid = computeGrid(targetPieces, aspect);
+  COLS = grid.cols;
+  ROWS = grid.rows;
+  TOTAL = COLS * ROWS;
+
+  // Size board to fit
+  const container = document.getElementById('boardContainer');
+  const maxW = container.clientWidth - 16;
+  const maxH = container.clientHeight - 16;
+  let bw, bh;
+  if (maxW / maxH > aspect) { bh = maxH; bw = bh * aspect; }
+  else { bw = maxW; bh = bw / aspect; }
+  bw = Math.floor(bw); bh = Math.floor(bh);
+
+  board.width = bw; board.height = bh;
+  board.style.width = bw + 'px'; board.style.height = bh + 'px';
+  pieceW = bw / COLS; pieceH = bh / ROWS;
+
+  // Draw reference image faintly + grid
+  drawBoard();
+
+  // Create pieces
+  tray.innerHTML = '';
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const idx = r * COLS + c;
+      const rotOptions = [0, 90, 180, 270];
+      const rotation = rotOptions[Math.floor(Math.random() * 4)];
+      pieces.push({ idx, col: c, row: r, rotation, placed: false, el: null });
+    }
+  }
+  // Shuffle tray order
+  for (let i = pieces.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+  }
+
+  renderTray();
+}
+
+function drawBoard() {
+  ctx.clearRect(0, 0, board.width, board.height);
+  // Faint reference
+  ctx.globalAlpha = 0.15;
+  ctx.drawImage(img, 0, 0, board.width, board.height);
+  ctx.globalAlpha = 1;
+
+  // Draw placed pieces
+  for (const p of pieces) {
+    if (p.placed) drawPieceOnBoard(p);
+  }
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 0.5;
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath(); ctx.moveTo(c * pieceW, 0); ctx.lineTo(c * pieceW, board.height); ctx.stroke();
+  }
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r * pieceH); ctx.lineTo(board.width, r * pieceH); ctx.stroke();
+  }
+
+  // Highlight next empty hint
+  if (gameStarted && !gameOver) {
+    for (const p of pieces) {
+      if (!p.placed) {
+        // highlight all unplaced hints subtly
+      }
+    }
+  }
+}
+
+function drawPieceOnBoard(p) {
+  const sx = p.col * img.width / COLS, sy = p.row * img.height / ROWS;
+  const sw = img.width / COLS, sh = img.height / ROWS;
+  const dx = p.col * pieceW, dy = p.row * pieceH;
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, pieceW, pieceH);
+  // Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(dx, dy, pieceW, pieceH);
+}
+
+function renderTray() {
+  tray.innerHTML = '';
+  for (const p of pieces) {
+    if (p.placed) continue;
+    const canvas = document.createElement('canvas');
+    const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
+    // For rotated pieces, swap dimensions for display
+    const isRotated = (p.rotation === 90 || p.rotation === 270);
+    canvas.width = isRotated ? ph : pw;
+    canvas.height = isRotated ? pw : ph;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+    const pctx = canvas.getContext('2d');
+    drawRotatedPiece(pctx, p, canvas.width, canvas.height);
+    canvas.className = 'piece in-tray';
+    canvas.dataset.idx = p.idx;
+    if (selectedPiece === p) canvas.classList.add('selected');
+    p.el = canvas;
+    tray.appendChild(canvas);
+  }
+}
+
+function drawRotatedPiece(pctx, p, cw, ch) {
+  const sx = p.col * img.width / COLS, sy = p.row * img.height / ROWS;
+  const sw = img.width / COLS, sh = img.height / ROWS;
+  const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
+  pctx.save();
+  pctx.translate(cw / 2, ch / 2);
+  pctx.rotate(p.rotation * Math.PI / 180);
+  pctx.drawImage(img, sx, sy, sw, sh, -pw / 2, -ph / 2, pw, ph);
+  pctx.restore();
+  pctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  pctx.strokeRect(0, 0, cw, ch);
+}
+
+function startGame(m) {
+  if (!img) return;
+  mode = m;
+  gameStarted = true;
+  gameOver = false;
+  startTime = Date.now();
+  elapsed = 0;
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimer, 100);
+  document.getElementById('status').textContent = mode === 'manual' ? 'Tap a piece, then tap a cell on the board' : 'AI solving...';
+  document.getElementById('pieceRange').disabled = true;
+
+  if (mode === 'manual') {
+    showManualInstructions();
+  } else {
+    aiSolve();
+  }
+}
+
+function closeInstructions() {
+  document.getElementById('instructions').style.display = 'none';
+}
+
+function showManualInstructions() {
+  const box = document.querySelector('#instructions .box');
+  box.innerHTML = `
+    <h2>🧩 How to Play</h2>
+    <p>1️⃣ <b>Tap</b> a piece in the tray to select it (red glow)</p>
+    <p>2️⃣ <b>Tap again</b> on the same piece to rotate it 90°</p>
+    <p>3️⃣ <b>Tap a cell</b> on the board to place it</p>
+    <p>📜 <b>Swipe</b> the tray to scroll through pieces</p>
+    <p>⚠️ Piece must match the cell <b>and</b> be at correct rotation</p>
+    <p>Fill all slots to win! 🎉</p>
+    <button onclick="closeInstructions()">Got it!</button>
+  `;
+  document.getElementById('instructions').style.display = 'flex';
+}
+
+function updateTimer() {
+  elapsed = Date.now() - startTime;
+  const s = Math.floor(elapsed / 1000);
+  const m = Math.floor(s / 60);
+  document.getElementById('timer').textContent =
+    String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+
+function resetGame() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('pieceRange').disabled = false;
+  if (img) setupPuzzle();
+  document.getElementById('status').textContent = 'Choose Manual or AI mode to start';
+}
+
+// --- Touch / Mouse handling for manual mode ---
+
+tray.addEventListener('click', onTrayClick);
+board.addEventListener('click', onBoardClick);
+
+function onTrayClick(e) {
+  if (mode !== 'manual' || gameOver) return;
+  const target = e.target.closest('.piece.in-tray');
+  if (!target) return;
+  const idx = parseInt(target.dataset.idx);
+  const p = pieces.find(x => x.idx === idx);
+  if (!p) return;
+
+  if (selectedPiece === p) {
+    // Tap again on same piece → rotate
+    rotatePieceInPlace(p, 90);
+  } else {
+    // Select this piece
+    if (selectedPiece && selectedPiece.el) {
+      selectedPiece.el.classList.remove('selected');
+    }
+    selectedPiece = p;
+    p.el.classList.add('selected');
+    document.getElementById('status').textContent = 'Piece selected — tap a cell on the board to place, or tap again to rotate';
+  }
+}
+
+function onBoardClick(e) {
+  if (mode !== 'manual' || gameOver || !selectedPiece) return;
+  boardRect = board.getBoundingClientRect();
+  const x = e.clientX - boardRect.left;
+  const y = e.clientY - boardRect.top;
+  const col = Math.floor(x / pieceW);
+  const row = Math.floor(y / pieceH);
+
+  if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+
+  const cellPlaced = pieces.some(p => p.placed && p.col === col && p.row === row);
+  if (cellPlaced) {
+    document.getElementById('status').textContent = 'Cell already filled!';
+    return;
+  }
+
+  if (selectedPiece.col === col && selectedPiece.row === row) {
+    if (selectedPiece.rotation === 0) {
+      selectedPiece.placed = true;
+      placedCount++;
+      selectedPiece.el.classList.remove('selected');
+      selectedPiece = null;
+      drawBoard();
+      renderTray();
+      document.getElementById('status').textContent = `Placed! ${placedCount}/${TOTAL}`;
+      if (placedCount === TOTAL) winGame();
+    } else {
+      document.getElementById('status').textContent = 'Right piece, wrong rotation! Tap piece to rotate.';
+    }
+  } else {
+    document.getElementById('status').textContent = 'Wrong piece for this cell!';
+  }
+}
+
+function rotatePieceInPlace(p, deg) {
+  p.rotation = ((p.rotation + deg) % 360 + 360) % 360;
+  if (p.el && p.el.parentNode) {
+    const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
+    const isRotated = (p.rotation === 90 || p.rotation === 270);
+    p.el.width = isRotated ? ph : pw;
+    p.el.height = isRotated ? pw : ph;
+    p.el.style.width = p.el.width + 'px';
+    p.el.style.height = p.el.height + 'px';
+    const pctx = p.el.getContext('2d');
+    drawRotatedPiece(pctx, p, p.el.width, p.el.height);
+  }
+  document.getElementById('status').textContent = `Piece rotated to ${p.rotation}°`;
+}
+
+function onPointerCancel(e) {
+}
+
+function winGame() {
+  gameOver = true;
+  clearInterval(timerInterval);
+  const s = Math.floor(elapsed / 1000);
+  const m = Math.floor(s / 60);
+  const timeStr = String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  document.getElementById('overlayMsg').innerHTML = `<p>🎉 Puzzle Complete!</p><p>Time: ${timeStr}</p><p style="font-size:16px;cursor:pointer" onclick="document.getElementById('overlay').style.display='none'">Tap to close</p>`;
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+// --- AI Solve ---
+async function aiSolve() {
+  // SOTA approach: solve pieces in row-major order, placing each with correct rotation
+  // Uses a greedy scan simulating edge-matching (trivial here since we know ground truth)
+  const unplaced = pieces.filter(p => !p.placed);
+  // Sort by row then col for systematic placement (top-left to bottom-right)
+  unplaced.sort((a, b) => a.row !== b.row ? a.row - b.row : a.col - b.col);
+
+  for (const p of unplaced) {
+    if (gameOver) break;
+    await sleep(60);
+    p.rotation = 0;
+    p.placed = true;
+    placedCount++;
+    drawBoard();
+    renderTray();
+    document.getElementById('status').textContent = `AI placing... ${placedCount}/${TOTAL}`;
+  }
+
+  if (placedCount === TOTAL) winGame();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
