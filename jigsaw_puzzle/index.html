@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Jigsaw Puzzle GPT-5.4</title>
+  <title>Jigsaw Puzzle (by Chong)</title>
   <style>
     :root {
       --panel: rgba(255, 250, 243, 0.92);
@@ -922,9 +922,11 @@
     }
 
     function updatePieceLabel() {
-      state.totalPieces = Number(pieceSlider.value);
-      const nextGrid = chooseGridForTotal(state.totalPieces);
-      pieceLabel.textContent = `${state.totalPieces} pieces`;
+      const sliderValue = Number(pieceSlider.value);
+      const nextGrid = chooseGridForTotal(sliderValue);
+      state.totalPieces = nextGrid.total;
+      const adjusted = nextGrid.total !== sliderValue ? ` (adjusted to ${nextGrid.total})` : "";
+      pieceLabel.textContent = `${sliderValue} pieces${adjusted}`;
       gridMeta.textContent = `Grid will be ${nextGrid.rows} x ${nextGrid.cols} for the current image.`;
     }
 
@@ -936,19 +938,25 @@
     function chooseGridForTotal(totalPieces) {
       const ratio = state.loadedImage ? state.loadedImage.width / state.loadedImage.height : 1;
       const logRatio = Math.log(ratio);
-      let best = { rows: 1, cols: totalPieces, score: Number.POSITIVE_INFINITY };
-      for (let rows = 1; rows <= totalPieces; rows += 1) {
-        if (totalPieces % rows !== 0) {
-          continue;
-        }
-        const cols = totalPieces / rows;
-        const gridRatio = cols / rows;
-        const score = Math.abs(Math.log(gridRatio) - logRatio);
-        if (score < best.score) {
-          best = { rows, cols, score };
+      const searchRange = 5;
+      let best = { rows: 1, cols: totalPieces, total: totalPieces, score: Number.POSITIVE_INFINITY };
+
+      for (let candidate = Math.max(4, totalPieces - searchRange); candidate <= totalPieces + searchRange; candidate += 1) {
+        for (let rows = 2; rows <= candidate; rows += 1) {
+          if (candidate % rows !== 0) continue;
+          const cols = candidate / rows;
+          if (cols < 2) continue;
+          const gridRatio = cols / rows;
+          const ratioScore = Math.abs(Math.log(gridRatio) - logRatio);
+          const deltaScore = Math.abs(candidate - totalPieces) * 0.1;
+          const score = ratioScore + deltaScore;
+          if (score < best.score) {
+            best = { rows, cols, total: candidate, score };
+          }
         }
       }
-      return { rows: best.rows, cols: best.cols };
+
+      return { rows: best.rows, cols: best.cols, total: best.total };
     }
 
     /* ── Timer ────────────────────────────────────────────────── */
@@ -1200,8 +1208,8 @@
         return;
       }
 
-      state.totalPieces = Number(pieceSlider.value);
-      const grid = chooseGridForTotal(state.totalPieces);
+      const grid = chooseGridForTotal(Number(pieceSlider.value));
+      state.totalPieces = grid.total;
       state.rows = grid.rows;
       state.cols = grid.cols;
       state.pieces = buildPieces();
