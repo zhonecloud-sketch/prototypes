@@ -1,434 +1,1681 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Puzzle Game</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: Arial, sans-serif; background: #1a1a2e; color: #fff; overflow: hidden; height: 100vh; height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0px); }
-#header { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 8px 12px; background: #16213e; z-index: 10; }
-#header button { padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: bold; }
-#btnLoad { background: #e94560; color: #fff; }
-#btnManual { background: #0f3460; color: #fff; }
-#btnAI { background: #533483; color: #fff; }
-#btnReset { background: #e94560; color: #fff; }
-#timer { font-size: 18px; font-weight: bold; color: #e94560; min-width: 70px; text-align: center; }
-#status { font-size: 12px; color: #aaa; text-align: center; padding: 2px; background: #16213e; }
-#gameArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-#boardContainer { flex: 1; overflow: auto; position: relative; display: flex; justify-content: center; align-items: flex-start; padding: 4px; touch-action: none; }
-#board { position: relative; border: 2px solid #e94560; background: #0a0a1a; }
-#trayContainer { height: 35vh; min-height: 150px; overflow-y: auto; overflow-x: hidden; background: #0f0f23; border-top: 2px solid #533483; padding: 8px; position: relative; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
-#tray { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-content: flex-start; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); touch-action: pan-y; }
-.piece { position: absolute; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); transition: box-shadow 0.2s; }
-.piece.selected { box-shadow: 0 0 12px 3px #e94560; z-index: 100; }
-.piece.in-tray { position: relative; }
-.hint-cell { position: absolute; border: 1px dashed rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); }
-.hint-cell.next-hint { border-color: rgba(233,69,96,0.6); background: rgba(233,69,96,0.08); }
-#dragPiece { display: none; }
-#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 999; }
-#overlay .msg { text-align: center; font-size: 28px; color: #e94560; }
-#overlay .msg p { margin: 10px 0; }
-#instructions { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 998; justify-content: center; align-items: center; padding: 20px; }
-#instructions .box { background: #16213e; border-radius: 12px; padding: 24px; max-width: 400px; text-align: center; }
-#instructions .box h2 { color: #e94560; margin-bottom: 12px; }
-#instructions .box p { margin: 8px 0; font-size: 14px; line-height: 1.5; color: #ccc; }
-#instructions .box button { margin-top: 16px; padding: 10px 30px; background: #e94560; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
-input[type=file] { display: none; }
-#rotateHint { display: none; }
-#pieceControl { display: flex; align-items: center; gap: 8px; }
-#pieceControl label { font-size: 13px; color: #aaa; white-space: nowrap; }
-#pieceRange { width: 120px; accent-color: #e94560; cursor: pointer; }
-#pieceCount { font-size: 13px; color: #e94560; font-weight: bold; min-width: 28px; text-align: center; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jigsaw Puzzle GPT-5.4</title>
+  <style>
+    :root {
+      --panel: rgba(255, 250, 243, 0.92);
+      --panel-strong: #fff8ef;
+      --ink: #1f2430;
+      --muted: #6b7280;
+      --accent: #dd6b3d;
+      --accent-strong: #a6411b;
+      --line: rgba(31, 36, 48, 0.14);
+      --success: #236746;
+      --warning: #a94923;
+      --shadow: 0 18px 42px rgba(88, 47, 20, 0.16);
+      --radius: 22px;
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(221, 107, 61, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(44, 122, 123, 0.18), transparent 28%),
+        linear-gradient(180deg, #f8f4ee 0%, #f1e7d8 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .screen {
+      height: 100%;
+      display: grid;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .screen.hidden {
+      display: none;
+    }
+
+    .menu-toolbar,
+    .stats {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .menu-screen {
+      grid-template-rows: minmax(0, 1fr);
+      align-content: start;
+      overflow: hidden;
+    }
+
+    .menu-toolbar {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .menu-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .menu-head h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: 0.03em;
+    }
+
+    .menu-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .image-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent) 0%, #e38a33 100%);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .image-label input {
+      display: none;
+    }
+
+    .setup-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .step-card {
+      border-radius: 14px;
+      padding: 8px;
+      display: grid;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(31, 36, 48, 0.08);
+    }
+
+    .step-card.active {
+      background: #fff2e8;
+      border-color: rgba(166, 65, 27, 0.24);
+    }
+
+    .step-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(31, 36, 48, 0.08);
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: var(--ink);
+    }
+
+    .step-card.active .step-chip {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .step-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .step-copy {
+      font-size: 0.72rem;
+      line-height: 1.3;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .control-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .control-row > .control-card {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .control-card {
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(31, 36, 48, 0.08);
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .control-card strong,
+    .stat strong {
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .meta-line {
+      font-size: 0.74rem;
+      color: var(--muted);
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mode-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mode-option input {
+      display: none;
+    }
+
+    .mode-option span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--muted);
+    }
+
+    .mode-option input:checked + span {
+      background: #fff0e8;
+      color: var(--accent-strong);
+      border-color: rgba(166, 65, 27, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(166, 65, 27, 0.1);
+    }
+
+    .slider-row {
+      display: grid;
+      gap: 4px;
+    }
+
+    .slider-row label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .button-row.single {
+      grid-template-columns: 1fr;
+    }
+
+    button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(180deg, #2f8f85 0%, #236a63 100%);
+      box-shadow: 0 14px 28px rgba(35, 106, 99, 0.28);
+    }
+
+    button.secondary {
+      background: linear-gradient(180deg, #d9865d 0%, #b35a35 100%);
+      box-shadow: 0 14px 28px rgba(179, 90, 53, 0.28);
+    }
+
+    button:disabled,
+    input:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
+    }
+
+    .stats {
+      padding: 8px 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .game-screen .stats {
+      padding: 4px 8px;
+      gap: 6px;
+      border-radius: 16px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 16px;
+      padding: 10px 12px;
+      min-height: 70px;
+      display: grid;
+      gap: 4px;
+      align-content: center;
+    }
+
+    .game-screen .stat {
+      padding: 4px 8px;
+      min-height: 0;
+      border-radius: 12px;
+      gap: 1px;
+    }
+
+    .game-screen .stat strong {
+      font-size: 0.68rem;
+    }
+
+    .game-screen .stat-value {
+      font-size: 0.82rem;
+    }
+
+    .stat-value {
+      font-size: 1.02rem;
+      font-weight: 800;
+    }
+
+    .status-text {
+      color: var(--warning);
+    }
+
+    .status-text.ok {
+      color: var(--success);
+    }
+
+    .game-shell {
+      min-height: 0;
+      display: grid;
+      gap: 6px;
+      grid-template-rows: minmax(0, 1fr) minmax(148px, 0.42fr);
+    }
+
+    .board-panel,
+    .tray-panel {
+      background: var(--panel-strong);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+    }
+
+    .board-panel {
+      padding: 8px;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 6px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 2px 4px 0;
+      font-weight: 800;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+
+    .panel-title span:last-child {
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .board-wrap {
+      position: relative;
+      min-height: 0;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(245, 232, 214, 0.9), rgba(255, 248, 237, 0.96)),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2));
+      border: 1px dashed rgba(31, 36, 48, 0.16);
+      overflow: hidden;
+    }
+
+    #boardCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: manipulation;
+    }
+
+    .tray-panel {
+      padding: 8px;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 4px;
+      min-height: 0;
+    }
+
+    .tray-scroll {
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior-y: contain;
+      padding-right: 4px;
+    }
+
+    .tray-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-start;
+      align-content: flex-start;
+    }
+
+    .piece-card {
+      width: 74px;
+      min-width: 74px;
+      height: 90px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 238, 229, 0.98));
+      border: 1px solid rgba(31, 36, 48, 0.1);
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      box-shadow: 0 14px 22px rgba(31, 36, 48, 0.08);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      touch-action: manipulation;
+    }
+
+    .piece-card.selected {
+      transform: translateY(-3px);
+      border-color: rgba(221, 107, 61, 0.5);
+      box-shadow: 0 16px 30px rgba(221, 107, 61, 0.18);
+      background: linear-gradient(180deg, #fff4eb, #fff9f3);
+    }
+
+    .piece-card canvas {
+      width: 56px;
+      height: 56px;
+      display: block;
+    }
+
+    .piece-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tray-empty {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 12px;
+    }
+
+    .game-screen {
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      overflow: hidden;
+      gap: 4px;
+    }
+
+    .game-screen .game-action-bar {
+      padding: 2px 6px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .game-action-bar .action-spacer {
+      flex: 1 1 0;
+    }
+
+    .game-action-bar button {
+      min-height: 28px;
+      min-width: 58px;
+      padding: 0 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(35, 106, 99, 0.14);
+    }
+
+    .game-action-bar .image-label.compact {
+      min-height: 28px;
+      min-width: 58px;
+      padding: 0 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+
+    .game-action-bar .mode-options {
+      display: flex;
+      gap: 4px;
+    }
+
+    .game-action-bar .mode-option span {
+      min-height: 28px;
+      min-width: 58px;
+      padding: 0 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+
+    .game-action-bar strong {
+      font-size: 0.66rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .hint-toggle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      min-height: 28px;
+      min-width: 58px;
+      padding: 0 6px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,238,229,0.98));
+      border: 1px solid rgba(31,36,48,0.1);
+      justify-content: center;
+    }
+
+    .hint-toggle input {
+      margin: 0;
+    }
+
+    .game-status-bar {
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      font-size: 0.78rem;
+    }
+
+    .game-status-bar strong {
+      font-size: 0.66rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .game-status-bar .status-text {
+      color: var(--ink);
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .firework-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+
+    .firework-overlay.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <section id="menuScreen" class="screen menu-screen">
+      <div class="menu-toolbar">
+        <div class="menu-head">
+          <div>
+            <h1>Puzzle Menu</h1>
+            <p class="menu-subtitle">Step 1: load image. Step 2: select mode. Step 3: press Start.</p>
+          </div>
+        </div>
 
-<div id="header">
-  <input type="file" id="fileInput" accept="image/*">
-  <button id="btnLoad" onclick="document.getElementById('fileInput').click()">📷 Load</button>
-  <div id="pieceControl">
-    <label for="pieceRange">Pieces:</label>
-    <input type="range" id="pieceRange" min="10" max="200" value="20" oninput="updatePieceCount(this.value)">
-    <span id="pieceCount">20</span>
+        <div class="setup-steps">
+          <div class="step-card" data-step="image">
+            <span class="step-chip">1</span>
+            <div class="step-title">Load Image</div>
+            <div class="step-copy" id="imageMeta">Default artwork loaded.</div>
+          </div>
+          <div class="step-card" data-step="mode">
+            <span class="step-chip">2</span>
+            <div class="step-title">Select Mode</div>
+            <div class="step-copy" id="modeMeta">Manual mode is selected.</div>
+          </div>
+          <div class="step-card" data-step="start">
+            <span class="step-chip">3</span>
+            <div class="step-title">Start Game</div>
+            <div class="step-copy" id="startMeta">Choose pieces and press Start.</div>
+          </div>
+        </div>
+
+        <div class="control-grid">
+          <div class="control-row">
+            <div class="control-card">
+              <strong>Image</strong>
+              <label class="image-label" for="imageInputMenu">Load / Change
+                <input id="imageInputMenu" type="file" accept="image/*">
+              </label>
+              <div class="meta-line" id="imageMeta2">Default artwork loaded.</div>
+            </div>
+            <div class="control-card">
+              <strong>Mode</strong>
+              <div class="mode-options">
+                <label class="mode-option">
+                  <input class="mode-input" type="radio" name="menuMode" value="manual" checked>
+                  <span>Manual</span>
+                </label>
+                <label class="mode-option">
+                  <input class="mode-input" type="radio" name="menuMode" value="ai">
+                  <span>AI</span>
+                </label>
+              </div>
+              <div class="meta-line">You can switch mode later in the game screen anytime.</div>
+            </div>
+          </div>
+          <div class="control-card">
+            <strong>Pieces</strong>
+            <div class="slider-row">
+              <label for="pieceSlider">
+                <span>Total Pieces</span>
+                <span id="pieceLabel">20 pieces</span>
+              </label>
+              <input id="pieceSlider" type="range" min="10" max="200" value="20">
+            </div>
+            <div class="meta-line" id="gridMeta">Grid will be 4 x 5 for the current image.</div>
+          </div>
+        </div>
+
+        <div class="button-row single">
+          <button id="startButton" type="button">Start</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen game-screen hidden">
+      <section class="stats">
+        <div class="stat">
+          <strong>Timer</strong>
+          <div id="timerDisplay" class="stat-value">00:00</div>
+        </div>
+        <div class="stat">
+          <strong>Placed</strong>
+          <div id="countDisplay" class="stat-value">0 / 0</div>
+        </div>
+      </section>
+
+      <div class="game-action-bar">
+        <strong>Mode</strong>
+        <div class="mode-options">
+          <label class="mode-option">
+            <input class="mode-input" type="radio" name="gameMode" value="manual" checked>
+            <span>Manual</span>
+          </label>
+          <label class="mode-option">
+            <input class="mode-input" type="radio" name="gameMode" value="ai">
+            <span>AI</span>
+          </label>
+        </div>
+        <div class="action-spacer"></div>
+        <label class="image-label compact" for="imageInputGame">Image
+          <input id="imageInputGame" type="file" accept="image/*">
+        </label>
+        <button id="resetButton" class="secondary" type="button">Reset</button>
+      </div>
+
+      <section class="game-shell">
+        <div class="board-panel">
+          <div class="panel-title">
+            <span>Placement Board</span>
+            <span>Ghost preview + grid</span>
+          </div>
+          <div class="board-wrap" id="boardWrap">
+            <canvas id="boardCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="tray-panel">
+          <div class="panel-title">
+            <span>Piece Tray</span>
+            <span>Tap to select, tap again to rotate</span>
+          </div>
+          <div class="tray-scroll">
+            <div id="trayRow" class="tray-row"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="game-status-bar">
+        <strong>Status</strong>
+        <span id="statusDisplay" class="status-text">Ready.</span>
+        <label class="hint-toggle"><input id="hintCheckbox" type="checkbox"><span>Hint</span></label>
+      </div>
+    </section>
+
+    <canvas id="fireworkCanvas" class="firework-overlay"></canvas>
   </div>
-  <button id="btnManual" onclick="startGame('manual')" disabled>🖐 Manual</button>
-  <button id="btnAI" onclick="startGame('ai')" disabled>🤖 AI</button>
-  <div id="timer">00:00</div>
-  <button id="btnReset" onclick="resetGame()">↺</button>
-</div>
-<div id="status">Load an image to begin</div>
 
-<div id="gameArea">
-  <div id="boardContainer">
-    <canvas id="board"></canvas>
-  </div>
-  <div id="trayContainer">
-    <div id="tray"></div>
-  </div>
-</div>
+  <script>
+    /* ── Configurable Constants ───────────────────────────────── */
+    const DEFAULT_IMAGE_WIDTH = 1400;
+    const DEFAULT_IMAGE_HEIGHT = 980;
+    const DEFAULT_IMAGE_NAME = "Default artwork";
+    const DEFAULT_PIECE_COUNT = 20;
 
-<div id="rotateHint">⬆ Swipe Up: CCW | ⬇ Swipe Down: CW</div>
+    const TIMER_INTERVAL_MS = 100;
+    const AI_SOLVE_INTERVAL_MS = 280;
 
-<div id="overlay" style="display:none">
-  <div class="msg" id="overlayMsg"></div>
-</div>
+    const TRAY_PIECE_CANVAS_SIZE = 172;
+    const TRAY_PIECE_DRAW_RATIO = 0.72;
 
-<div id="instructions" style="display:flex">
-  <div class="box">
-    <h2>🧩 Puzzle Game</h2>
-    <p>1️⃣ Tap <b>📷 Load</b> to pick an image</p>
-    <p>2️⃣ Adjust the <b>Pieces</b> slider if you want</p>
-    <p>3️⃣ Tap <b>🖐 Manual</b> to solve yourself, or <b>🤖 AI</b> to watch it solve</p>
-    <button onclick="closeInstructions()">Got it!</button>
-  </div>
-</div>
+    const BOARD_PADDING = 12;
+    const GHOST_IMAGE_ALPHA = 0.18;
+    const GRID_LINE_COLOR = "rgba(31, 36, 48, 0.18)";
+    const PLACED_PIECE_BORDER_COLOR = "rgba(255,255,255,0.25)";
+    const HINT_STROKE_COLOR = "rgba(221, 107, 61, 0.8)";
+    const HINT_STROKE_WIDTH = 3;
+    const HINT_INSET = 2;
 
-<script>
-let COLS = 5, ROWS = 4, TOTAL = 20;
-let targetPieces = 20;
-let img = null, pieceW, pieceH, pieces = [], placedCount = 0;
-let selectedPiece = null, mode = null, timerInterval = null, startTime = 0, elapsed = 0;
-let gameStarted = false, gameOver = false;
-let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
-let boardRect = null;
-const board = document.getElementById('board');
-const ctx = board.getContext('2d');
-const tray = document.getElementById('tray');
+    const ROTATION_OPTIONS = [0, 90, 180, 270];
 
-document.getElementById('fileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    img = new Image();
-    img.onload = () => {
-      setupPuzzle();
-      document.getElementById('btnManual').disabled = false;
-      document.getElementById('btnAI').disabled = false;
-      document.getElementById('status').textContent = 'Choose Manual or AI mode to start';
+    const FIREWORK_DURATION_MS = 6000;
+    const FIREWORK_MAX_ROCKETS = 18;
+    const FIREWORK_SPAWN_INTERVAL_MS = 500;
+    const FIREWORK_BACKDROP_ALPHA = 0.25;
+    const FIREWORK_COLORS = [
+      "#ff4d4d", "#ffae42", "#ffe066", "#66ff66",
+      "#42c6ff", "#a366ff", "#ff66b2", "#ffffff",
+      "#ff8833", "#33ffcc", "#ff5599", "#77ddff",
+    ];
+    const ROCKET_SPEED_MIN = 6;
+    const ROCKET_SPEED_RANGE = 4;
+    const ROCKET_X_MIN = 0.15;
+    const ROCKET_X_RANGE = 0.7;
+    const ROCKET_TARGET_Y_MIN = 0.1;
+    const ROCKET_TARGET_Y_RANGE = 0.35;
+    const ROCKET_TRAIL_MAX = 12;
+    const ROCKET_TRAIL_DECAY = 0.08;
+    const ROCKET_TRAIL_ALPHA = 0.6;
+    const EXPLOSION_COUNT_MIN = 60;
+    const EXPLOSION_COUNT_RANGE = 40;
+    const EXPLOSION_SPEED_MIN = 2;
+    const EXPLOSION_SPEED_RANGE = 5;
+    const PARTICLE_DECAY_MIN = 0.006;
+    const PARTICLE_DECAY_RANGE = 0.01;
+    const PARTICLE_RADIUS_MIN = 2;
+    const PARTICLE_RADIUS_RANGE = 3;
+    const PARTICLE_GRAVITY = 0.04;
+    const PARTICLE_DRAG = 0.99;
+    const PARTICLE_GLOW_RADIUS = 2.5;
+    const PARTICLE_GLOW_ALPHA = 0.3;
+
+    /* ── DOM References ───────────────────────────────────────── */
+    const menuScreen = document.getElementById("menuScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const boardCanvas = document.getElementById("boardCanvas");
+    const boardWrap = document.getElementById("boardWrap");
+    const trayRow = document.getElementById("trayRow");
+    const imageInputMenu = document.getElementById("imageInputMenu");
+    const imageInputGame = document.getElementById("imageInputGame");
+    const imageInputs = [imageInputMenu, imageInputGame];
+    const pieceSlider = document.getElementById("pieceSlider");
+    const pieceLabel = document.getElementById("pieceLabel");
+    const gridMeta = document.getElementById("gridMeta");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const countDisplay = document.getElementById("countDisplay");
+    const statusDisplay = document.getElementById("statusDisplay");
+    const startButton = document.getElementById("startButton");
+    const resetButton = document.getElementById("resetButton");
+    const hintCheckbox = document.getElementById("hintCheckbox");
+    const imageMeta = document.getElementById("imageMeta");
+    const imageMeta2 = document.getElementById("imageMeta2");
+    const modeMeta = document.getElementById("modeMeta");
+    const startMeta = document.getElementById("startMeta");
+    const stepCards = Array.from(document.querySelectorAll(".step-card"));
+    const modeInputs = Array.from(document.querySelectorAll(".mode-input"));
+    const menuModeInputs = Array.from(document.querySelectorAll('input[name="menuMode"]'));
+    const gameModeInputs = Array.from(document.querySelectorAll('input[name="gameMode"]'));
+    const boardCtx = boardCanvas.getContext("2d");
+    const fireworkCanvas = document.getElementById("fireworkCanvas");
+    const fwCtx = fireworkCanvas.getContext("2d");
+
+    /* ── Mutable State ────────────────────────────────────────── */
+    const state = {
+      rows: 0,
+      cols: 0,
+      totalPieces: DEFAULT_PIECE_COUNT,
+      mode: null,
+      loadedImage: null,
+      imageName: DEFAULT_IMAGE_NAME,
+      pieces: [],
+      selectedPieceId: null,
+      placedCount: 0,
+      timerId: null,
+      timerStartedAt: 0,
+      timerElapsedMs: 0,
+      aiTimerId: null,
+      started: false,
+      imageAcknowledged: false,
+      layout: {
+        width: 0,
+        height: 0,
+        boardWidth: 0,
+        boardHeight: 0,
+        cellWidth: 0,
+        cellHeight: 0,
+        offsetX: 0,
+        offsetY: 0,
+      },
     };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-});
 
-function updatePieceCount(val) {
-  targetPieces = parseInt(val);
-  document.getElementById('pieceCount').textContent = targetPieces;
-  if (img) setupPuzzle();
-}
+    let fwAnimId = null;
+    let fwParticles = [];
+    let fwRockets = [];
+    let fwTimeout = null;
+    let fwSpawnInterval = null;
 
-function computeGrid(total, aspect) {
-  // Find cols x rows closest to total with aspect ratio matching image
-  let bestCols = 1, bestRows = total, bestDiff = Infinity;
-  for (let c = 1; c <= total; c++) {
-    const r = Math.round(total / c);
-    if (r < 1) continue;
-    const actual = c * r;
-    const gridAspect = c / r;
-    const aspectDiff = Math.abs(gridAspect - aspect);
-    const countDiff = Math.abs(actual - total);
-    const score = countDiff * 2 + aspectDiff;
-    if (score < bestDiff) {
-      bestDiff = score;
-      bestCols = c;
-      bestRows = r;
+    /* ── Utility Functions ────────────────────────────────────── */
+    function shuffle(array) {
+      const clone = [...array];
+      for (let index = clone.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [clone[index], clone[randomIndex]] = [clone[randomIndex], clone[index]];
+      }
+      return clone;
     }
-  }
-  return { cols: bestCols, rows: bestRows };
-}
 
-function setupPuzzle() {
-  gameStarted = false; gameOver = false; placedCount = 0; pieces = []; selectedPiece = null;
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  document.getElementById('timer').textContent = '00:00';
-
-  // Compute grid dimensions from target pieces and image aspect ratio
-  const aspect = img.width / img.height;
-  const grid = computeGrid(targetPieces, aspect);
-  COLS = grid.cols;
-  ROWS = grid.rows;
-  TOTAL = COLS * ROWS;
-
-  // Size board to fit
-  const container = document.getElementById('boardContainer');
-  const maxW = container.clientWidth - 16;
-  const maxH = container.clientHeight - 16;
-  let bw, bh;
-  if (maxW / maxH > aspect) { bh = maxH; bw = bh * aspect; }
-  else { bw = maxW; bh = bw / aspect; }
-  bw = Math.floor(bw); bh = Math.floor(bh);
-
-  board.width = bw; board.height = bh;
-  board.style.width = bw + 'px'; board.style.height = bh + 'px';
-  pieceW = bw / COLS; pieceH = bh / ROWS;
-
-  // Draw reference image faintly + grid
-  drawBoard();
-
-  // Create pieces
-  tray.innerHTML = '';
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const idx = r * COLS + c;
-      const rotOptions = [0, 90, 180, 270];
-      const rotation = rotOptions[Math.floor(Math.random() * 4)];
-      pieces.push({ idx, col: c, row: r, rotation, placed: false, el: null });
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
-  }
-  // Shuffle tray order
-  for (let i = pieces.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-  }
 
-  renderTray();
-}
+    /* ── UI Helpers ───────────────────────────────────────────── */
+    function setStatus(message, ok = false) {
+      statusDisplay.textContent = message;
+      statusDisplay.classList.toggle("ok", ok);
+    }
 
-function drawBoard() {
-  ctx.clearRect(0, 0, board.width, board.height);
-  // Faint reference
-  ctx.globalAlpha = 0.15;
-  ctx.drawImage(img, 0, 0, board.width, board.height);
-  ctx.globalAlpha = 1;
+    function setMode(mode) {
+      state.mode = mode;
+      modeInputs.forEach((input) => {
+        input.checked = input.value === mode;
+      });
+    }
 
-  // Draw placed pieces
-  for (const p of pieces) {
-    if (p.placed) drawPieceOnBoard(p);
-  }
+    function showMenuScreen() {
+      menuScreen.classList.remove("hidden");
+      gameScreen.classList.add("hidden");
+      pieceSlider.disabled = false;
+      updateStepMenu();
+    }
 
-  // Grid lines
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.lineWidth = 0.5;
-  for (let c = 0; c <= COLS; c++) {
-    ctx.beginPath(); ctx.moveTo(c * pieceW, 0); ctx.lineTo(c * pieceW, board.height); ctx.stroke();
-  }
-  for (let r = 0; r <= ROWS; r++) {
-    ctx.beginPath(); ctx.moveTo(0, r * pieceH); ctx.lineTo(board.width, r * pieceH); ctx.stroke();
-  }
+    function showGameScreen() {
+      menuScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      window.requestAnimationFrame(() => {
+        resizeBoard();
+      });
+    }
 
-  // Highlight next empty hint
-  if (gameStarted && !gameOver) {
-    for (const p of pieces) {
-      if (!p.placed) {
-        // highlight all unplaced hints subtly
+    function setActiveStep(stepName) {
+      stepCards.forEach((card) => {
+        card.classList.toggle("active", card.dataset.step === stepName);
+      });
+    }
+
+    function updateStepMenu() {
+      imageMeta.textContent = `${state.imageName} is ready.`;
+      imageMeta2.textContent = `${state.imageName} loaded.`;
+      modeMeta.textContent = `${state.mode === "ai" ? "AI" : "Manual"} mode is selected. Mode can be changed anytime.`;
+      startMeta.textContent = state.started
+        ? `Game is running with ${state.totalPieces} pieces. Use Reset to reshuffle.`
+        : `Puzzle is set to ${state.totalPieces} pieces. Press Start when ready.`;
+
+      if (!state.imageAcknowledged) {
+        setActiveStep("image");
+      } else if (!state.mode) {
+        setActiveStep("mode");
+      } else {
+        setActiveStep("start");
       }
     }
-  }
-}
 
-function drawPieceOnBoard(p) {
-  const sx = p.col * img.width / COLS, sy = p.row * img.height / ROWS;
-  const sw = img.width / COLS, sh = img.height / ROWS;
-  const dx = p.col * pieceW, dy = p.row * pieceH;
-  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, pieceW, pieceH);
-  // Border
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  ctx.lineWidth = 0.5;
-  ctx.strokeRect(dx, dy, pieceW, pieceH);
-}
-
-function renderTray() {
-  tray.innerHTML = '';
-  for (const p of pieces) {
-    if (p.placed) continue;
-    const canvas = document.createElement('canvas');
-    const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
-    // For rotated pieces, swap dimensions for display
-    const isRotated = (p.rotation === 90 || p.rotation === 270);
-    canvas.width = isRotated ? ph : pw;
-    canvas.height = isRotated ? pw : ph;
-    canvas.style.width = canvas.width + 'px';
-    canvas.style.height = canvas.height + 'px';
-    const pctx = canvas.getContext('2d');
-    drawRotatedPiece(pctx, p, canvas.width, canvas.height);
-    canvas.className = 'piece in-tray';
-    canvas.dataset.idx = p.idx;
-    if (selectedPiece === p) canvas.classList.add('selected');
-    p.el = canvas;
-    tray.appendChild(canvas);
-  }
-}
-
-function drawRotatedPiece(pctx, p, cw, ch) {
-  const sx = p.col * img.width / COLS, sy = p.row * img.height / ROWS;
-  const sw = img.width / COLS, sh = img.height / ROWS;
-  const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
-  pctx.save();
-  pctx.translate(cw / 2, ch / 2);
-  pctx.rotate(p.rotation * Math.PI / 180);
-  pctx.drawImage(img, sx, sy, sw, sh, -pw / 2, -ph / 2, pw, ph);
-  pctx.restore();
-  pctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  pctx.strokeRect(0, 0, cw, ch);
-}
-
-function startGame(m) {
-  if (!img) return;
-  mode = m;
-  gameStarted = true;
-  gameOver = false;
-  startTime = Date.now();
-  elapsed = 0;
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(updateTimer, 100);
-  document.getElementById('status').textContent = mode === 'manual' ? 'Tap a piece, then tap a cell on the board' : 'AI solving...';
-  document.getElementById('pieceRange').disabled = true;
-
-  if (mode === 'manual') {
-    showManualInstructions();
-  } else {
-    aiSolve();
-  }
-}
-
-function closeInstructions() {
-  document.getElementById('instructions').style.display = 'none';
-}
-
-function showManualInstructions() {
-  const box = document.querySelector('#instructions .box');
-  box.innerHTML = `
-    <h2>🧩 How to Play</h2>
-    <p>1️⃣ <b>Tap</b> a piece in the tray to select it (red glow)</p>
-    <p>2️⃣ <b>Tap again</b> on the same piece to rotate it 90°</p>
-    <p>3️⃣ <b>Tap a cell</b> on the board to place it</p>
-    <p>📜 <b>Swipe</b> the tray to scroll through pieces</p>
-    <p>⚠️ Piece must match the cell <b>and</b> be at correct rotation</p>
-    <p>Fill all slots to win! 🎉</p>
-    <button onclick="closeInstructions()">Got it!</button>
-  `;
-  document.getElementById('instructions').style.display = 'flex';
-}
-
-function updateTimer() {
-  elapsed = Date.now() - startTime;
-  const s = Math.floor(elapsed / 1000);
-  const m = Math.floor(s / 60);
-  document.getElementById('timer').textContent =
-    String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
-}
-
-function resetGame() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  document.getElementById('pieceRange').disabled = false;
-  if (img) setupPuzzle();
-  document.getElementById('status').textContent = 'Choose Manual or AI mode to start';
-}
-
-// --- Touch / Mouse handling for manual mode ---
-
-tray.addEventListener('click', onTrayClick);
-board.addEventListener('click', onBoardClick);
-
-function onTrayClick(e) {
-  if (mode !== 'manual' || gameOver) return;
-  const target = e.target.closest('.piece.in-tray');
-  if (!target) return;
-  const idx = parseInt(target.dataset.idx);
-  const p = pieces.find(x => x.idx === idx);
-  if (!p) return;
-
-  if (selectedPiece === p) {
-    // Tap again on same piece → rotate
-    rotatePieceInPlace(p, 90);
-  } else {
-    // Select this piece
-    if (selectedPiece && selectedPiece.el) {
-      selectedPiece.el.classList.remove('selected');
+    function updatePieceLabel() {
+      state.totalPieces = Number(pieceSlider.value);
+      const nextGrid = chooseGridForTotal(state.totalPieces);
+      pieceLabel.textContent = `${state.totalPieces} pieces`;
+      gridMeta.textContent = `Grid will be ${nextGrid.rows} x ${nextGrid.cols} for the current image.`;
     }
-    selectedPiece = p;
-    p.el.classList.add('selected');
-    document.getElementById('status').textContent = 'Piece selected — tap a cell on the board to place, or tap again to rotate';
-  }
-}
 
-function onBoardClick(e) {
-  if (mode !== 'manual' || gameOver || !selectedPiece) return;
-  boardRect = board.getBoundingClientRect();
-  const x = e.clientX - boardRect.left;
-  const y = e.clientY - boardRect.top;
-  const col = Math.floor(x / pieceW);
-  const row = Math.floor(y / pieceH);
+    function updateCount() {
+      countDisplay.textContent = `${state.placedCount} / ${state.totalPieces}`;
+    }
 
-  if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+    /* ── Grid Calculation ─────────────────────────────────────── */
+    function chooseGridForTotal(totalPieces) {
+      const ratio = state.loadedImage ? state.loadedImage.width / state.loadedImage.height : 1;
+      const logRatio = Math.log(ratio);
+      let best = { rows: 1, cols: totalPieces, score: Number.POSITIVE_INFINITY };
+      for (let rows = 1; rows <= totalPieces; rows += 1) {
+        if (totalPieces % rows !== 0) {
+          continue;
+        }
+        const cols = totalPieces / rows;
+        const gridRatio = cols / rows;
+        const score = Math.abs(Math.log(gridRatio) - logRatio);
+        if (score < best.score) {
+          best = { rows, cols, score };
+        }
+      }
+      return { rows: best.rows, cols: best.cols };
+    }
 
-  const cellPlaced = pieces.some(p => p.placed && p.col === col && p.row === row);
-  if (cellPlaced) {
-    document.getElementById('status').textContent = 'Cell already filled!';
-    return;
-  }
+    /* ── Timer ────────────────────────────────────────────────── */
+    function stopClock() {
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
 
-  if (selectedPiece.col === col && selectedPiece.row === row) {
-    if (selectedPiece.rotation === 0) {
-      selectedPiece.placed = true;
-      placedCount++;
-      selectedPiece.el.classList.remove('selected');
-      selectedPiece = null;
-      drawBoard();
+    function startClock() {
+      stopClock();
+      state.timerElapsedMs = 0;
+      state.timerStartedAt = performance.now();
+      timerDisplay.textContent = formatTime(0);
+      state.timerId = window.setInterval(() => {
+        state.timerElapsedMs = performance.now() - state.timerStartedAt;
+        timerDisplay.textContent = formatTime(state.timerElapsedMs);
+      }, TIMER_INTERVAL_MS);
+    }
+
+    /* ── AI ────────────────────────────────────────────────────── */
+    function stopAI() {
+      if (state.aiTimerId) {
+        clearInterval(state.aiTimerId);
+        state.aiTimerId = null;
+      }
+    }
+
+    function startAIMode() {
+      stopAI();
+      if (!state.started) {
+        return;
+      }
+      setStatus("AI started solving.", true);
+      state.aiTimerId = window.setInterval(() => {
+        const nextPiece = state.pieces.find((piece) => !piece.placed);
+        if (!nextPiece) {
+          finishGame();
+          return;
+        }
+        nextPiece.rotation = 0;
+        placePiece(nextPiece);
+        if (state.placedCount < state.totalPieces) {
+          setStatus(`AI placed ${state.placedCount} of ${state.totalPieces}.`, true);
+        }
+      }, AI_SOLVE_INTERVAL_MS);
+    }
+
+    /* ── Board Rendering ──────────────────────────────────────── */
+    function getSourceRect(row, col) {
+      return {
+        sx: (state.loadedImage.width / state.cols) * col,
+        sy: (state.loadedImage.height / state.rows) * row,
+        sw: state.loadedImage.width / state.cols,
+        sh: state.loadedImage.height / state.rows,
+      };
+    }
+
+    function resizeBoard() {
+      const rect = boardWrap.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      boardCanvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      boardCanvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      boardCanvas.style.width = `${rect.width}px`;
+      boardCanvas.style.height = `${rect.height}px`;
+      boardCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      state.layout.width = rect.width;
+      state.layout.height = rect.height;
+
+      const availableWidth = Math.max(1, rect.width - BOARD_PADDING);
+      const availableHeight = Math.max(1, rect.height - BOARD_PADDING);
+      const imageRatio = state.loadedImage ? state.loadedImage.width / state.loadedImage.height : 1;
+      let boardWidth = availableWidth;
+      let boardHeight = boardWidth / imageRatio;
+
+      if (boardHeight > availableHeight) {
+        boardHeight = availableHeight;
+        boardWidth = boardHeight * imageRatio;
+      }
+
+      state.layout.boardWidth = boardWidth;
+      state.layout.boardHeight = boardHeight;
+      state.layout.cellWidth = boardWidth / Math.max(1, state.cols);
+      state.layout.cellHeight = boardHeight / Math.max(1, state.rows);
+      state.layout.offsetX = (rect.width - boardWidth) / 2;
+      state.layout.offsetY = (rect.height - boardHeight) / 2;
+      renderBoard();
+    }
+
+    function drawPlacedPiece(piece) {
+      const { cellWidth, cellHeight, offsetX, offsetY } = state.layout;
+      const x = offsetX + piece.col * cellWidth;
+      const y = offsetY + piece.row * cellHeight;
+      const rect = getSourceRect(piece.row, piece.col);
+      boardCtx.drawImage(
+        state.loadedImage,
+        rect.sx, rect.sy, rect.sw, rect.sh,
+        x, y, cellWidth, cellHeight
+      );
+      boardCtx.strokeStyle = PLACED_PIECE_BORDER_COLOR;
+      boardCtx.strokeRect(x + 0.5, y + 0.5, Math.max(0, cellWidth - 1), Math.max(0, cellHeight - 1));
+    }
+
+    function renderBoard() {
+      const { width, height, boardWidth, boardHeight, cellWidth, cellHeight, offsetX, offsetY } = state.layout;
+      boardCtx.clearRect(0, 0, width, height);
+
+      boardCtx.fillStyle = "rgba(255,255,255,0.75)";
+      boardCtx.fillRect(offsetX, offsetY, boardWidth, boardHeight);
+
+      if (state.loadedImage) {
+        boardCtx.save();
+        boardCtx.globalAlpha = GHOST_IMAGE_ALPHA;
+        boardCtx.drawImage(state.loadedImage, offsetX, offsetY, boardWidth, boardHeight);
+        boardCtx.restore();
+      }
+
+      boardCtx.strokeStyle = GRID_LINE_COLOR;
+      boardCtx.lineWidth = 1;
+      for (let row = 0; row <= state.rows; row += 1) {
+        const y = offsetY + row * cellHeight;
+        boardCtx.beginPath();
+        boardCtx.moveTo(offsetX, y);
+        boardCtx.lineTo(offsetX + boardWidth, y);
+        boardCtx.stroke();
+      }
+      for (let col = 0; col <= state.cols; col += 1) {
+        const x = offsetX + col * cellWidth;
+        boardCtx.beginPath();
+        boardCtx.moveTo(x, offsetY);
+        boardCtx.lineTo(x, offsetY + boardHeight);
+        boardCtx.stroke();
+      }
+
+      state.pieces.filter((piece) => piece.placed).forEach(drawPlacedPiece);
+
+      if (state.mode === "manual" && state.selectedPieceId !== null) {
+        const selected = state.pieces.find((piece) => piece.id === state.selectedPieceId);
+        if (selected && !selected.placed && hintCheckbox.checked) {
+          boardCtx.save();
+          boardCtx.strokeStyle = HINT_STROKE_COLOR;
+          boardCtx.lineWidth = HINT_STROKE_WIDTH;
+          boardCtx.strokeRect(
+            offsetX + selected.col * cellWidth + HINT_INSET,
+            offsetY + selected.row * cellHeight + HINT_INSET,
+            Math.max(0, cellWidth - HINT_INSET * 2),
+            Math.max(0, cellHeight - HINT_INSET * 2)
+          );
+          boardCtx.restore();
+        }
+      }
+    }
+
+    /* ── Tray Rendering ───────────────────────────────────────── */
+    function drawTrayPiece(canvas, piece) {
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.fillRect(0, 0, w, h);
+
+      if (!state.loadedImage) {
+        return;
+      }
+
+      const pieceRatio = (state.loadedImage.width / state.cols) / (state.loadedImage.height / state.rows);
+      const maxWidth = w * TRAY_PIECE_DRAW_RATIO;
+      const maxHeight = h * TRAY_PIECE_DRAW_RATIO;
+      let drawWidth = maxWidth;
+      let drawHeight = drawWidth / pieceRatio;
+
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = drawHeight * pieceRatio;
+      }
+
+      const rect = getSourceRect(piece.row, piece.col);
+      ctx.save();
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate((piece.rotation * Math.PI) / 180);
+      ctx.drawImage(
+        state.loadedImage,
+        rect.sx, rect.sy, rect.sw, rect.sh,
+        -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight
+      );
+      ctx.restore();
+    }
+
+    function renderTray() {
+      trayRow.innerHTML = "";
+      const remainingPieces = state.pieces.filter((piece) => !piece.placed);
+
+      if (!remainingPieces.length) {
+        const empty = document.createElement("div");
+        empty.className = "tray-empty";
+        empty.textContent = state.started ? "Tray is empty. Puzzle complete." : "Press Start to shuffle pieces into the tray.";
+        trayRow.appendChild(empty);
+        return;
+      }
+
+      remainingPieces.forEach((piece) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "piece-card";
+        if (piece.id === state.selectedPieceId) {
+          card.classList.add("selected");
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = TRAY_PIECE_CANVAS_SIZE;
+        canvas.height = TRAY_PIECE_CANVAS_SIZE;
+        drawTrayPiece(canvas, piece);
+
+        const label = document.createElement("div");
+        label.className = "piece-label";
+        label.textContent = hintCheckbox.checked ? `Piece ${piece.id + 1}` : "";
+
+        card.appendChild(canvas);
+        card.appendChild(label);
+        card.addEventListener("click", () => handleTrayTap(piece.id));
+        trayRow.appendChild(card);
+      });
+    }
+
+    /* ── Puzzle Logic ─────────────────────────────────────────── */
+    function buildPieces() {
+      let id = 0;
+      const pieces = [];
+      for (let row = 0; row < state.rows; row += 1) {
+        for (let col = 0; col < state.cols; col += 1) {
+          pieces.push({
+            id,
+            row,
+            col,
+            rotation: ROTATION_OPTIONS[Math.floor(Math.random() * ROTATION_OPTIONS.length)],
+            placed: false,
+          });
+          id += 1;
+        }
+      }
+      return shuffle(pieces);
+    }
+
+    function setupPuzzle() {
+      if (!state.loadedImage) {
+        return;
+      }
+
+      state.totalPieces = Number(pieceSlider.value);
+      const grid = chooseGridForTotal(state.totalPieces);
+      state.rows = grid.rows;
+      state.cols = grid.cols;
+      state.pieces = buildPieces();
+      state.selectedPieceId = null;
+      state.placedCount = 0;
+      updatePieceLabel();
+      updateCount();
+      updateStepMenu();
+      resizeBoard();
       renderTray();
-      document.getElementById('status').textContent = `Placed! ${placedCount}/${TOTAL}`;
-      if (placedCount === TOTAL) winGame();
-    } else {
-      document.getElementById('status').textContent = 'Right piece, wrong rotation! Tap piece to rotate.';
+      setStatus(`Ready with ${state.totalPieces} shuffled pieces on a ${state.rows} x ${state.cols} grid.`, true);
     }
-  } else {
-    document.getElementById('status').textContent = 'Wrong piece for this cell!';
-  }
-}
 
-function rotatePieceInPlace(p, deg) {
-  p.rotation = ((p.rotation + deg) % 360 + 360) % 360;
-  if (p.el && p.el.parentNode) {
-    const pw = Math.floor(pieceW), ph = Math.floor(pieceH);
-    const isRotated = (p.rotation === 90 || p.rotation === 270);
-    p.el.width = isRotated ? ph : pw;
-    p.el.height = isRotated ? pw : ph;
-    p.el.style.width = p.el.width + 'px';
-    p.el.style.height = p.el.height + 'px';
-    const pctx = p.el.getContext('2d');
-    drawRotatedPiece(pctx, p, p.el.width, p.el.height);
-  }
-  document.getElementById('status').textContent = `Piece rotated to ${p.rotation}°`;
-}
+    function finishGame() {
+      stopClock();
+      stopAI();
+      state.started = false;
+      updateStepMenu();
+      const time = formatTime(state.timerElapsedMs);
+      const congratsMsg = state.mode === "ai"
+        ? `AI solved the puzzle in ${time}!`
+        : `Congratulations! Puzzle solved in ${time}!`;
+      setStatus(congratsMsg, true);
+      renderTray();
+      requestAnimationFrame(() => launchFireworks());
+    }
 
-function onPointerCancel(e) {
-}
+    function placePiece(piece) {
+      piece.placed = true;
+      piece.rotation = 0;
+      state.selectedPieceId = null;
+      state.placedCount += 1;
+      updateCount();
+      renderBoard();
+      renderTray();
+      if (state.placedCount === state.totalPieces) {
+        finishGame();
+      }
+    }
 
-function winGame() {
-  gameOver = true;
-  clearInterval(timerInterval);
-  const s = Math.floor(elapsed / 1000);
-  const m = Math.floor(s / 60);
-  const timeStr = String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
-  document.getElementById('overlayMsg').innerHTML = `<p>🎉 Puzzle Complete!</p><p>Time: ${timeStr}</p><p style="font-size:16px;cursor:pointer" onclick="document.getElementById('overlay').style.display='none'">Tap to close</p>`;
-  document.getElementById('overlay').style.display = 'flex';
-}
+    function getPieceById(pieceId) {
+      return state.pieces.find((piece) => piece.id === pieceId) || null;
+    }
 
-// --- AI Solve ---
-async function aiSolve() {
-  // SOTA approach: solve pieces in row-major order, placing each with correct rotation
-  // Uses a greedy scan simulating edge-matching (trivial here since we know ground truth)
-  const unplaced = pieces.filter(p => !p.placed);
-  // Sort by row then col for systematic placement (top-left to bottom-right)
-  unplaced.sort((a, b) => a.row !== b.row ? a.row - b.row : a.col - b.col);
+    /* ── Input Handlers ───────────────────────────────────────── */
+    function handleTrayTap(pieceId) {
+      if (!state.started || state.mode !== "manual") {
+        if (state.mode === "ai") {
+          setStatus("AI is solving this puzzle.");
+        }
+        return;
+      }
 
-  for (const p of unplaced) {
-    if (gameOver) break;
-    await sleep(60);
-    p.rotation = 0;
-    p.placed = true;
-    placedCount++;
-    drawBoard();
-    renderTray();
-    document.getElementById('status').textContent = `AI placing... ${placedCount}/${TOTAL}`;
-  }
+      const piece = getPieceById(pieceId);
+      if (!piece || piece.placed) {
+        return;
+      }
 
-  if (placedCount === TOTAL) winGame();
-}
+      if (state.selectedPieceId === pieceId) {
+        piece.rotation = (piece.rotation + 90) % 360;
+        setStatus(`Rotated piece ${piece.id + 1}.`, true);
+      } else {
+        state.selectedPieceId = pieceId;
+        setStatus(`Selected piece ${piece.id + 1}.`, true);
+      }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-</script>
+      renderBoard();
+      renderTray();
+    }
+
+    function getCellFromPoint(clientX, clientY) {
+      const rect = boardCanvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const { offsetX, offsetY, boardWidth, boardHeight, cellWidth, cellHeight } = state.layout;
+      if (x < offsetX || y < offsetY || x > offsetX + boardWidth || y > offsetY + boardHeight) {
+        return null;
+      }
+      return {
+        col: Math.min(state.cols - 1, Math.floor((x - offsetX) / cellWidth)),
+        row: Math.min(state.rows - 1, Math.floor((y - offsetY) / cellHeight)),
+      };
+    }
+
+    function isCellFilled(row, col) {
+      return state.pieces.some((piece) => piece.placed && piece.row === row && piece.col === col);
+    }
+
+    function handleBoardTap(event) {
+      if (!state.started || state.mode !== "manual") {
+        return;
+      }
+
+      const cell = getCellFromPoint(event.clientX, event.clientY);
+      if (!cell) {
+        return;
+      }
+
+      if (isCellFilled(cell.row, cell.col)) {
+        setStatus("Cell already filled!");
+        return;
+      }
+
+      if (state.selectedPieceId === null) {
+        setStatus("Select a piece first.");
+        return;
+      }
+
+      const piece = getPieceById(state.selectedPieceId);
+      if (!piece) {
+        state.selectedPieceId = null;
+        renderTray();
+        return;
+      }
+
+      if (piece.row === cell.row && piece.col === cell.col) {
+        if (piece.rotation === 0) {
+          placePiece(piece);
+          setStatus("Piece placed correctly.", true);
+        } else {
+          setStatus("Right piece, wrong rotation!");
+        }
+      } else {
+        setStatus("Wrong piece for this cell!");
+      }
+    }
+
+    /* ── Game Flow ────────────────────────────────────────────── */
+    function startGame() {
+      if (!state.loadedImage) {
+        setStatus("Load an image first.");
+        setActiveStep("image");
+        return;
+      }
+
+      stopClock();
+      stopAI();
+      state.started = true;
+      pieceSlider.disabled = true;
+      setupPuzzle();
+      startClock();
+      updateStepMenu();
+      showGameScreen();
+
+      if (state.mode === "manual") {
+        setStatus("Manual mode started. Select a piece from the tray.", true);
+      } else {
+        startAIMode();
+      }
+    }
+
+    function resetGame() {
+      stopClock();
+      stopAI();
+      state.timerElapsedMs = 0;
+      state.started = false;
+      state.mode = null;
+      timerDisplay.textContent = "00:00";
+      pieceSlider.disabled = false;
+      modeInputs.forEach((input) => { input.checked = false; });
+      setupPuzzle();
+      updateStepMenu();
+      setStatus("Choose a mode to start");
+    }
+
+    function applyModeChange(nextMode) {
+      state.imageAcknowledged = true;
+      setMode(nextMode);
+      updateStepMenu();
+
+      if (!state.started) {
+        state.started = true;
+        pieceSlider.disabled = true;
+        startClock();
+      }
+
+      if (state.mode === "ai") {
+        state.selectedPieceId = null;
+        renderBoard();
+        renderTray();
+        startAIMode();
+      } else {
+        stopAI();
+        setStatus("Manual mode started. Select a piece from the tray.", true);
+      }
+    }
+
+    /* ── Image Loading ────────────────────────────────────────── */
+    function loadImage(src, imageName) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => {
+          state.loadedImage = image;
+          state.imageName = imageName;
+          resolve();
+        };
+        image.onerror = reject;
+        image.src = src;
+      });
+    }
+
+    function createDefaultImage() {
+      const canvas = document.createElement("canvas");
+      canvas.width = DEFAULT_IMAGE_WIDTH;
+      canvas.height = DEFAULT_IMAGE_HEIGHT;
+      const ctx = canvas.getContext("2d");
+
+      const gradient = ctx.createLinearGradient(0, 0, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT);
+      gradient.addColorStop(0, "#f59e66");
+      gradient.addColorStop(0.5, "#f6d97f");
+      gradient.addColorStop(1, "#2d8c8a");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT);
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+      for (let index = 0; index < 12; index += 1) {
+        ctx.beginPath();
+        ctx.arc(100 + index * 110, 160 + (index % 3) * 90, 82, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = "rgba(25, 48, 71, 0.18)";
+      for (let index = 0; index < 10; index += 1) {
+        ctx.fillRect(80 + index * 125, 510 - (index % 2) * 90, 56, 280);
+      }
+
+      ctx.fillStyle = "#fff7ef";
+      ctx.beginPath();
+      ctx.moveTo(120, 760);
+      ctx.bezierCurveTo(280, 560, 560, 540, 680, 760);
+      ctx.bezierCurveTo(810, 510, 1110, 530, 1280, 760);
+      ctx.lineTo(1280, 930);
+      ctx.lineTo(120, 930);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#c7542b";
+      ctx.beginPath();
+      ctx.arc(360, 360, 116, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#1f2430";
+      ctx.font = "bold 148px Trebuchet MS";
+      ctx.fillText("JIGSAW", 280, 440);
+      ctx.font = "bold 82px Trebuchet MS";
+      ctx.fillText("Puzzle Ready", 360, 545);
+
+      return canvas.toDataURL("image/png");
+    }
+
+    async function handleImageChange(file) {
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          await loadImage(reader.result, file.name);
+          state.imageAcknowledged = true;
+          resetGame();
+          renderBoard();
+        } catch (error) {
+          setStatus("Unable to load that image.");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ── Fireworks ────────────────────────────────────────────── */
+    function resizeFireworkCanvas() {
+      fireworkCanvas.width = window.innerWidth;
+      fireworkCanvas.height = window.innerHeight;
+    }
+
+    function randomColor() {
+      return FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
+    }
+
+    function spawnRocket() {
+      const w = fireworkCanvas.width;
+      const h = fireworkCanvas.height;
+      fwRockets.push({
+        x: w * (ROCKET_X_MIN + Math.random() * ROCKET_X_RANGE),
+        y: h,
+        targetY: h * (ROCKET_TARGET_Y_MIN + Math.random() * ROCKET_TARGET_Y_RANGE),
+        speed: ROCKET_SPEED_MIN + Math.random() * ROCKET_SPEED_RANGE,
+        color: randomColor(),
+        trail: [],
+      });
+    }
+
+    function explode(x, y) {
+      const count = EXPLOSION_COUNT_MIN + Math.floor(Math.random() * EXPLOSION_COUNT_RANGE);
+      const color = randomColor();
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = EXPLOSION_SPEED_MIN + Math.random() * EXPLOSION_SPEED_RANGE;
+        fwParticles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: PARTICLE_DECAY_MIN + Math.random() * PARTICLE_DECAY_RANGE,
+          color,
+          radius: PARTICLE_RADIUS_MIN + Math.random() * PARTICLE_RADIUS_RANGE,
+        });
+      }
+    }
+
+    function fwTick() {
+      const w = fireworkCanvas.width;
+      const h = fireworkCanvas.height;
+      fwCtx.clearRect(0, 0, w, h);
+
+      fwCtx.fillStyle = `rgba(0,0,0,${FIREWORK_BACKDROP_ALPHA})`;
+      fwCtx.fillRect(0, 0, w, h);
+
+      for (let i = fwRockets.length - 1; i >= 0; i--) {
+        const r = fwRockets[i];
+        r.trail.push({ x: r.x, y: r.y, life: 1 });
+        if (r.trail.length > ROCKET_TRAIL_MAX) r.trail.shift();
+        r.y -= r.speed;
+        r.trail.forEach((t) => {
+          t.life -= ROCKET_TRAIL_DECAY;
+          if (t.life > 0) {
+            fwCtx.globalAlpha = t.life * ROCKET_TRAIL_ALPHA;
+            fwCtx.beginPath();
+            fwCtx.arc(t.x, t.y, 2, 0, Math.PI * 2);
+            fwCtx.fillStyle = r.color;
+            fwCtx.fill();
+          }
+        });
+        fwCtx.globalAlpha = 1;
+        fwCtx.beginPath();
+        fwCtx.arc(r.x, r.y, 3, 0, Math.PI * 2);
+        fwCtx.fillStyle = r.color;
+        fwCtx.fill();
+        if (r.y <= r.targetY) {
+          explode(r.x, r.y);
+          fwRockets.splice(i, 1);
+        }
+      }
+
+      for (let i = fwParticles.length - 1; i >= 0; i--) {
+        const p = fwParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += PARTICLE_GRAVITY;
+        p.vx *= PARTICLE_DRAG;
+        p.life -= p.decay;
+        if (p.life <= 0) {
+          fwParticles.splice(i, 1);
+          continue;
+        }
+        fwCtx.globalAlpha = p.life;
+        fwCtx.beginPath();
+        fwCtx.arc(p.x, p.y, p.radius * (0.5 + p.life * 0.5), 0, Math.PI * 2);
+        fwCtx.fillStyle = p.color;
+        fwCtx.fill();
+
+        fwCtx.globalAlpha = p.life * PARTICLE_GLOW_ALPHA;
+        fwCtx.beginPath();
+        fwCtx.arc(p.x, p.y, p.radius * PARTICLE_GLOW_RADIUS, 0, Math.PI * 2);
+        fwCtx.fillStyle = p.color;
+        fwCtx.fill();
+      }
+
+      fwCtx.globalAlpha = 1;
+      fwAnimId = requestAnimationFrame(fwTick);
+    }
+
+    function launchFireworks() {
+      stopFireworks();
+      resizeFireworkCanvas();
+      fireworkCanvas.classList.add("active");
+      fwParticles = [];
+      fwRockets = [];
+      let spawned = 0;
+      spawnRocket();
+      spawnRocket();
+      spawned = 2;
+      fwSpawnInterval = setInterval(() => {
+        if (spawned < FIREWORK_MAX_ROCKETS) {
+          spawnRocket();
+          if (Math.random() > 0.4) spawnRocket();
+          spawned += 2;
+        } else {
+          clearInterval(fwSpawnInterval);
+          fwSpawnInterval = null;
+        }
+      }, FIREWORK_SPAWN_INTERVAL_MS);
+      fwAnimId = requestAnimationFrame(fwTick);
+      fwTimeout = setTimeout(stopFireworks, FIREWORK_DURATION_MS);
+    }
+
+    function stopFireworks() {
+      if (fwAnimId) {
+        cancelAnimationFrame(fwAnimId);
+        fwAnimId = null;
+      }
+      if (fwSpawnInterval) {
+        clearInterval(fwSpawnInterval);
+        fwSpawnInterval = null;
+      }
+      if (fwTimeout) {
+        clearTimeout(fwTimeout);
+        fwTimeout = null;
+      }
+      fwParticles = [];
+      fwRockets = [];
+      fwCtx.clearRect(0, 0, fireworkCanvas.width, fireworkCanvas.height);
+      fireworkCanvas.classList.remove("active");
+    }
+
+    /* ── Event Listeners ──────────────────────────────────────── */
+    pieceSlider.addEventListener("input", () => {
+      updatePieceLabel();
+      if (!pieceSlider.disabled) {
+        setupPuzzle();
+      }
+    });
+
+    menuModeInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        state.imageAcknowledged = true;
+        setMode(input.value);
+        updateStepMenu();
+      });
+    });
+
+    gameModeInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        applyModeChange(input.value);
+      });
+    });
+
+    imageInputs.forEach((input) => {
+      input.addEventListener("change", (event) => {
+        const [file] = event.target.files;
+        handleImageChange(file);
+      });
+    });
+
+    boardCanvas.addEventListener("click", handleBoardTap);
+    startButton.addEventListener("click", startGame);
+    resetButton.addEventListener("click", () => {
+      stopFireworks();
+      resetGame();
+    });
+    hintCheckbox.addEventListener("change", () => {
+      renderBoard();
+      renderTray();
+    });
+
+    window.addEventListener("resize", resizeBoard);
+    const resizeObserver = new ResizeObserver(() => resizeBoard());
+    resizeObserver.observe(boardWrap);
+
+    /* ── Init ─────────────────────────────────────────────────── */
+    async function init() {
+      state.mode = null;
+      state.imageAcknowledged = false;
+      modeInputs.forEach((input) => { input.checked = false; });
+      await loadImage(createDefaultImage(), DEFAULT_IMAGE_NAME);
+      updatePieceLabel();
+      setupPuzzle();
+      resizeBoard();
+      updateStepMenu();
+      showMenuScreen();
+      setStatus("Load an image or use the default, then select a mode and press Start.", true);
+    }
+
+    init();
+  </script>
 </body>
 </html>
