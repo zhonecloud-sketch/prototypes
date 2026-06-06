@@ -534,23 +534,26 @@ TOOL_POOL = [
 
 
 def lmstudio_chat(model: str, messages: list, tool_list: list) -> dict:
-    """Bulletproof text-fallback pipeline built specifically for Gemma-4 structural variances."""
-    url = f"{LMSTUDIO_BASE_URL}/chat/completions"
-    tools_string = json.dumps(tool_list, indent=2)
+    """
+    Call LM Studio using Gemma 4's native function-calling support.
 
-    gemma_system_instruction = (
-        "You are an AI assistant with access to these tools:\n"
-        f"{tools_string}\n\n"
-        "Based on the user's prompt, select the correct tool. "
-        "You MUST respond ONLY with a raw JSON object matching this exact format:\n"
-        '{"tool_calls": [{"function": {"name": "TOOL_NAME"}}]}\n'
-        "Do not output markdown block formatting (```json) or conversational text."
-    )
+    Uses the OpenAI-compatible 'tools' parameter so the model's trained
+    tool-calling template is activated. Sampling follows Gemma 4 guidelines:
+    temperature=1.0, top_p=0.95, top_k=64.
+
+    Falls back to text-based JSON parsing if the model returns content
+    instead of structured tool_calls (graceful degradation).
+    """
+    url = f"{LMSTUDIO_BASE_URL}/chat/completions"
 
     payload = {
         "model": model,
-        "messages": [{"role": "system", "content": gemma_system_instruction}] + messages,
-        "temperature": 0.0
+        "messages": messages,
+        "tools": tool_list,
+        "tool_choice": "auto",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 64,
     }
 
     try:
@@ -559,38 +562,53 @@ def lmstudio_chat(model: str, messages: list, tool_list: list) -> dict:
             url, data=data, headers={"Content-Type": "application/json"}, method="POST"
         )
 
-        # Extended 90-second timeout to safely process Apple Silicon prompt caching
+        # Extended 90-second timeout for large tool sets
         with urllib.request.urlopen(req, timeout=90) as resp:
             raw_response = json.loads(resp.read().decode("utf-8"))
 
-        content = raw_response["choices"][0]["message"].get("content", "").strip()
+        message = raw_response["choices"][0].get("message", {})
 
-        # Sanitize common model markdown additions
+        # Primary path: model returned structured tool_calls natively
+        tool_calls = message.get("tool_calls")
+        if tool_calls:
+            return raw_response
+
+        # Fallback path: model returned text content instead of structured calls.
+        # Strip Gemma 4 empty thinking tags before parsing.
+        content = message.get("content", "").strip()
+        content = re.sub(r"<\|channel>thought\n<channel\|>", "", content).strip()
+
+        # Remove markdown code fences if present
         if content.startswith("```"):
             content = re.sub(r"^```(?:json)?\n|```$", "", content, flags=re.MULTILINE).strip()
 
-        # Parse text string into structurally balanced raw JSON object
+        # Try to extract a JSON object with tool_calls
         match = re.search(r"(\{.*\})", content, re.DOTALL)
         if match:
             clean_content = match.group(1)
 
-            # Clean trailing brace/bracket hallucinations
+            # Balance braces for hallucinated trailing characters
             open_b = clean_content.count("{")
             close_b = clean_content.count("}")
             while close_b > open_b and clean_content.endswith("}"):
                 clean_content = clean_content[:-1].strip()
                 close_b -= 1
-            if clean_content.endswith("}]}]"):
-                clean_content = clean_content[:-2]
-        else:
-            clean_content = "{}"
 
-        parsed_json = json.loads(clean_content)
-        raw_response["choices"][0]["message"]["tool_calls"] = parsed_json.get("tool_calls", [])
+            parsed_json = json.loads(clean_content)
+
+            # Normalize: could be {"tool_calls": [...]} or {"name": "..."} directly
+            if "tool_calls" in parsed_json:
+                raw_response["choices"][0]["message"]["tool_calls"] = parsed_json["tool_calls"]
+            elif "name" in parsed_json:
+                raw_response["choices"][0]["message"]["tool_calls"] = [
+                    {"function": {"name": parsed_json["name"]}}
+                ]
+        else:
+            raw_response["choices"][0]["message"]["tool_calls"] = []
+
         return raw_response
 
     except Exception as e:
-        # Prevent loop drop by packaging network timeout messages into standard exceptions
         mock_err = {"choices": [{"message": {"tool_calls": [], "content": f"HTTP Error: {str(e)}"}}]}
         return mock_err
 
