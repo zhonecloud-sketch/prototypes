@@ -1,0 +1,185 @@
+Connecting to LM Studio...
+Models: qwopus3.5-9b-coder-mtp@q4_k_m
+
+Phase selection: both
+
+
+############################################################
+# MODEL: qwopus3.5-9b-coder-mtp@q4_k_m
+############################################################
+
+==================================================
+Testing with 2 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.415s)
+  [PASS] 'send_email' correctly called (4.161s)
+  >> Accuracy at 2 tools: 2/2 = 100%
+
+==================================================
+Testing with 3 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.489s)
+  [PASS] 'send_email' correctly called (4.274s)
+  [PASS] 'calculate_tip' correctly called (3.881s)
+  >> Accuracy at 3 tools: 3/3 = 100%
+
+==================================================
+Testing with 4 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.429s)
+  [PASS] 'send_email' correctly called (4.422s)
+  [PASS] 'calculate_tip' correctly called (5.609s)
+  [PASS] 'translate_text' correctly called (4.393s)
+  >> Accuracy at 4 tools: 4/4 = 100%
+
+==================================================
+Testing with 5 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.673s)
+  [PASS] 'send_email' correctly called (4.446s)
+  [PASS] 'calculate_tip' correctly called (3.989s)
+  [PASS] 'translate_text' correctly called (4.344s)
+  [PASS] 'set_timer' correctly called (3.944s)
+  >> Accuracy at 5 tools: 5/5 = 100%
+
+==================================================
+Testing with 7 tools available...
+==================================================
+  [PASS] 'search_wikipedia' correctly called (3.885s)
+  [PASS] 'get_weather' correctly called (3.512s)
+  [PASS] 'convert_currency' correctly called (4.289s)
+  [PASS] 'calculate_tip' correctly called (3.952s)
+  [PASS] 'set_timer' correctly called (3.955s)
+  >> Accuracy at 7 tools: 5/5 = 100%
+
+==================================================
+Testing with 9 tools available...
+==================================================
+  [PASS] 'translate_text' correctly called (4.508s)
+  [PASS] 'calculate_tip' correctly called (3.921s)
+  [PASS] 'search_wikipedia' correctly called (3.898s)
+  [PASS] 'get_weather' correctly called (3.816s)
+  [PASS] 'set_timer' correctly called (3.891s)
+  >> Accuracy at 9 tools: 5/5 = 100%
+
+==================================================
+Testing with 11 tools available...
+==================================================
+  [PASS] 'send_email' correctly called (4.913s)
+  [PASS] 'resize_image' correctly called (4.303s)
+  [PASS] 'convert_currency' correctly called (4.234s)
+  [PASS] 'get_weather' correctly called (3.372s)
+  [PASS] 'create_calendar_event' correctly called (5.671s)
+  >> Accuracy at 11 tools: 5/5 = 100%
+
+==================================================
+Testing with 16 tools available...
+==================================================
+  [PASS] 'calculate_tip' correctly called (4.129s)
+  [PASS] 'translate_text' correctly called (4.736s)
+  [PASS] 'generate_password' correctly called (4.193s)
+  [PASS] 'get_stock_price' correctly called (3.523s)
+  [PASS] 'resize_image' correctly called (4.605s)
+  >> Accuracy at 16 tools: 5/5 = 100%
+
+==================================================
+Testing with 21 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.945s)
+  [PASS] 'scan_port' correctly called (4.644s)
+  [PASS] 'convert_currency' correctly called (4.074s)
+  [PASS] 'find_restaurant' correctly called (4.209s)
+  [PASS] 'check_spelling' correctly called (4.729s)
+  >> Accuracy at 21 tools: 5/5 = 100%
+
+==================================================
+Testing with 26 tools available...
+==================================================
+  [PASS] 'create_calendar_event' correctly called (7.07s)
+  [PASS] 'generate_password' correctly called (3.982s)
+  [PASS] 'convert_units' correctly called (4.189s)
+  [PASS] 'get_stock_price' correctly called (3.537s)
+  [PASS] 'shorten_url' correctly called (3.855s)
+  >> Accuracy at 26 tools: 5/5 = 100%
+
+==================================================
+Testing with 31 tools available...
+==================================================
+  [PASS] 'create_qr_code' correctly called (4.642s)
+  [PASS] 'get_weather' correctly called (3.479s)
+  [PASS] 'analyze_sentiment' correctly called (4.726s)
+  [PASS] 'shorten_url' correctly called (3.887s)
+  [PASS] 'search_wikipedia' correctly called (3.824s)
+  >> Accuracy at 31 tools: 5/5 = 100%
+
+==================================================
+PHASE 1 SUMMARY
+==================================================
+Model: qwopus3.5-9b-coder-mtp@q4_k_m
+Tool pool size: 31
+Tools    Correct    Total    Accuracy
+2        2          2        100%
+3        3          3        100%
+4        4          4        100%
+5        5          5        100%
+7        5          5        100%
+9        5          5        100%
+11       5          5        100%
+16       5          5        100%
+21       5          5        100%
+26       5          5        100%
+31       5          5        100%
+
+============================================================
+PHASE 2: Adversarial Tool Recall Test
+============================================================
+Tools in pool: 25 (with semantic overlaps & decoys)
+Test cases: 28
+
+  [SEMANTIC_OVERLAP] PASS: 'search_wikipedia' (5.486s)
+  [SEMANTIC_OVERLAP] PASS: 'search_news' (4.118s)
+  [SEMANTIC_OVERLAP] PASS: 'search_academic' (5.134s)
+  [SEMANTIC_OVERLAP] PASS: 'search_local_files' (4.267s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_currency' (4.104s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_units' (4.483s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_timezone' (4.807s)
+  [SEMANTIC_OVERLAP] PASS: 'send_slack_message' (4.126s)
+  [SEMANTIC_OVERLAP] PASS: 'send_sms' (5.229s)
+  [SEMANTIC_OVERLAP] PASS: 'set_alarm' (4.771s)
+  [INDIRECT_PROMPT] PASS: 'convert_timezone' (5.794s)
+  [INDIRECT_PROMPT] PASS: 'convert_currency' (7.734s)
+  [INDIRECT_PROMPT] PASS: 'get_weather_forecast' (4.247s)
+  [INDIRECT_PROMPT] FAIL: expected 'summarize_text', got 'paraphrase_text' (6.965s)
+         Rationale: Indirect - 'make shorter' and 'one-paragraph version' implies summarize
+  [INDIRECT_PROMPT] PASS: 'paraphrase_text' (4.123s)
+  [INDIRECT_PROMPT] PASS: 'calculate_split_bill' (4.338s)
+  [INDIRECT_PROMPT] PASS: 'search_academic' (4.794s)
+  [INDIRECT_PROMPT] PASS: 'send_slack_message' (5.489s)
+  [DECOY_TOOL] PASS: 'get_air_quality' (3.492s)
+  [DECOY_TOOL] PASS: 'get_weather' (3.337s)
+  [DECOY_TOOL] FAIL: expected 'paraphrase_text', got 'none' (9.487s)
+         Rationale: Decoy: translate_text and summarize_text are tempting, but 'rewrite to sound different same info' = paraphrase
+  [DECOY_TOOL] PASS: 'set_timer' (4.102s)
+  [DECOY_TOOL] FAIL: expected 'create_reminder', got 'set_alarm' (7.055s)
+         Rationale: Decoy: send_push_notification is tempting (buzz phone), but a scheduled note about a task = reminder
+  [DECOY_TOOL] PASS: 'create_calendar_event' (6.411s)
+  [DECOY_TOOL] PASS: 'convert_file_format' (4.184s)
+  [RANDOM_ORDER] PASS: 'search_web' (5.401s)
+  [RANDOM_ORDER] PASS: 'send_push_notification' (10.834s)
+  [RANDOM_ORDER] PASS: 'convert_units' (6.702s)
+
+============================================================
+PHASE 2 SUMMARY
+============================================================
+  SEMANTIC_OVERLAP     10/10 (100%) [PASS]
+  INDIRECT_PROMPT      7/8 (88%) [DEGRADED]
+    - Expected 'summarize_text', got 'paraphrase_text'
+      Prompt: My boss wants a one-paragraph version of this report instead...
+  DECOY_TOOL           5/7 (71%) [DEGRADED]
+    - Expected 'paraphrase_text', got 'none/no-tool-call'
+      Prompt: Rewrite this paragraph to sound different but keep the same ...
+    - Expected 'create_reminder', got 'set_alarm'
+      Prompt: Can you buzz my phone with a note about buying milk tomorrow...
+  RANDOM_ORDER         3/3 (100%) [PASS]
+
+  OVERALL: 25/28 (89%)
