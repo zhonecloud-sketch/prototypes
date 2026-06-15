@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chong Boo Chean - Interactive Professional Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals with Steel Blue and Emerald Accents (Minimalistic and calm harmony) -->
+    <!-- Application Structure Plan: 
+         1. Header/Summary: Immediate context of who Chong Boo Chean is and his core value proposition.
+         2. Key Impact Dashboard: High-level quantitative metrics (Defect reduction, Attrition) to grab attention immediately.
+         3. Interactive Career Journey: A split-view timeline. The left pane allows chronological exploration; the right pane dynamically displays deep-dive details. This prevents overwhelming the user with a wall of text and encourages active exploration.
+         4. Skills & Performance Analytics: Visual representation of skills and defect reduction over time using Chart.js to quantify qualitative achievements.
+         This dashboard approach prioritizes impact and exploration over a traditional linear read. -->
+    <!-- Visualization & Content Choices: 
+         - Impact Metrics -> Goal: Inform -> Big Number Cards -> Hover effects -> Quick parsing of massive achievements (0% attrition, 96% defect drop).
+         - Career History -> Goal: Organize/Explore -> Interactive List/Detail View -> Click to view details -> Allows non-linear exploration of roles.
+         - Defect Reduction -> Goal: Compare/Change -> Bar Chart (Chart.js) -> Hover tooltips -> Visually proves management effectiveness.
+         - Skill Matrix -> Goal: Inform/Organize -> Radar Chart (Chart.js) -> Hover tooltips -> Shows balanced technical/management profile.
+         CONFIRMING: No SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        /* Custom scrollbar for timeline */
+        .timeline-scroll::-webkit-scrollbar { width: 6px; }
+        .timeline-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .timeline-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .timeline-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Chart container mandatory styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Constraints width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Controlled height */
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+        
+        /* Unicode icon sizing */
+        .u-icon { font-size: 1.25rem; line-height: 1; vertical-align: middle; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Header Section -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Chong Boo Chean</h1>
+                <p class="text-lg text-blue-700 font-medium mt-1">Software Engineering & Automation Leader</p>
+            </div>
+            <div class="flex flex-col items-start md:items-end text-sm text-stone-600 gap-1">
+                <span><span class="u-icon text-stone-400 mr-1">&#128205;</span> Penang, Malaysia</span>
+                <span><span class="u-icon text-stone-400 mr-1">&#9993;</span> gzhone@yahoo.co.uk</span>
+                <a href="https://www.linkedin.com/in/chongboochean" target="_blank" class="text-blue-600 hover:underline"><span class="u-icon mr-1">&#128279;</span> LinkedIn Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-12">
+
+        <!-- Executive Summary Section -->
+        <section aria-labelledby="summary-heading">
+            <h2 id="summary-heading" class="sr-only">Professional Summary</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-stone-100 p-6 md:p-8">
+                <p class="text-stone-700 leading-relaxed text-lg">
+                    <strong class="text-stone-900">Technologist at the core, Optimalist by design, Strategist by nature</strong> 
+                </p>
+            </div>
+        </section>
+
+        <!-- High-Impact Metrics Dashboard -->
+        <section aria-labelledby="metrics-heading">
+            <div class="mb-4">
+                <h2 id="metrics-heading" class="text-2xl font-semibold text-stone-900">Leadership Impact & Metrics</h2>
+                <p class="text-stone-600 mt-1">This section highlights key quantifiable achievements. These metrics demonstrate a consistent ability to improve quality, retain talent, and scale operations across major tech organizations.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Metric 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-t-4 border-t-emerald-500 hover:shadow-md transition-shadow">
+                    <div class="text-sm text-stone-500 font-medium uppercase tracking-wide">Defect Reduction (Cont.)</div>
+                    <div class="mt-2 text-4xl font-bold text-stone-900">96<span class="text-2xl text-stone-500">%</span></div>
+                    <div class="mt-1 text-sm text-emerald-600 font-medium">&#8595; 140+ to ~5 (2017-2021)</div>
+                </div>
+                <!-- Metric 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-t-4 border-t-blue-500 hover:shadow-md transition-shadow">
+                    <div class="text-sm text-stone-500 font-medium uppercase tracking-wide">Team Attrition (Intel)</div>
+                    <div class="mt-2 text-4xl font-bold text-stone-900">0<span class="text-2xl text-stone-500">%</span></div>
+                    <div class="mt-1 text-sm text-blue-600 font-medium">Over a 3-year period</div>
+                </div>
+                <!-- Metric 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-t-4 border-t-indigo-500 hover:shadow-md transition-shadow">
+                    <div class="text-sm text-stone-500 font-medium uppercase tracking-wide">Peak Team Size Managed</div>
+                    <div class="mt-2 text-4xl font-bold text-stone-900">24</div>
+                    <div class="mt-1 text-sm text-indigo-600 font-medium">Engineers (Cross-functional)</div>
+                </div>
+                <!-- Metric 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-t-4 border-t-amber-500 hover:shadow-md transition-shadow">
+                    <div class="text-sm text-stone-500 font-medium uppercase tracking-wide">Product Portfolio Growth</div>
+                    <div class="mt-2 text-4xl font-bold text-stone-900">4x</div>
+                    <div class="mt-1 text-sm text-amber-600 font-medium">Expanded from 1 to 4 products</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Career Journey -->
+        <section aria-labelledby="experience-heading" class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="p-6 border-b border-stone-100 bg-stone-50">
+                <h2 id="experience-heading" class="text-2xl font-semibold text-stone-900">Interactive Career Journey</h2>
+                <p class="text-stone-600 mt-1">Select a role from the timeline on the left to explore specific engineering achievements, management responsibilities, and key projects delivered during that tenure.</p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row h-auto lg:h-[500px]">
+                <!-- Left: Timeline Selector -->
+                <div class="w-full lg:w-1/3 border-r border-stone-100 bg-white timeline-scroll overflow-y-auto p-2" id="timeline-container">
+                    <!-- Timeline items injected via JS -->
+                </div>
+                
+                <!-- Right: Details View -->
+                <div class="w-full lg:w-2/3 p-6 lg:p-8 bg-white overflow-y-auto" id="role-details-container">
+                    <div class="h-full flex flex-col justify-center items-center text-stone-400 space-y-4" id="empty-state">
+                        <span class="text-5xl">&#8678;</span>
+                        <p class="text-lg">Select a role from the timeline to view details.</p>
+                    </div>
+                    <div id="role-content" class="hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl" id="detail-icon">&#127986;</span>
+                            <h3 class="text-2xl font-bold text-stone-900" id="detail-title">Role Title</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-stone-600 mb-6 font-medium">
+                            <span id="detail-company" class="text-blue-700 bg-blue-50 px-2 py-1 rounded">Company</span>
+                            <span id="detail-dates" class="bg-stone-100 px-2 py-1 rounded">Dates</span>
+                        </div>
+                        <div class="prose prose-stone max-w-none">
+                            <ul id="detail-bullets" class="space-y-3 text-stone-700 marker:text-blue-500">
+                                <!-- Bullets injected via JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Analytics Section -->
+        <section aria-labelledby="analytics-heading">
+            <div class="mb-6">
+                <h2 id="analytics-heading" class="text-2xl font-semibold text-stone-900">Performance & Skill Analytics</h2>
+                <p class="text-stone-600 mt-1">Visualizing continuous improvement and technical breadth. The charts below illustrate the significant reduction in customer-found defects achieved through improved QA processes, alongside a mapping of core technical and management competencies.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Quality Improvement Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                    <h3 class="text-lg font-semibold text-stone-800 text-center mb-4">Quality Engineering Impact: Defect Reduction</h3>
+                    <div class="chart-container">
+                        <canvas id="defectChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-stone-500 mt-4">Compares customer-found defects at the start vs. end of management tenures at Continental and Intel.</p>
+                </div>
+
+                <!-- Skills Radar Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                    <h3 class="text-lg font-semibold text-stone-800 text-center mb-4">Core Competency Matrix</h3>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-stone-500 mt-4">Relative mapping of expertise across Management, Automation, and Embedded Domains.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education & Core Skills Summary -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Technical Skills Text -->
+            <div class="bg-stone-100 p-6 rounded-xl border border-stone-200">
+                <h3 class="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
+                    <span class="text-xl">&#128736;</span> Technical & Management Skills
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <strong class="block text-stone-800 text-sm mb-1">Project/Program Management</strong>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Project Planning</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Agile/Lean Leadership</span>
+                        </div>
+                    </div>
+                    <div>
+                        <strong class="block text-stone-800 text-sm mb-1">Automation & Testing</strong>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Python</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Robot Framework</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Validation Automation</span>
+                        </div>
+                    </div>
+                    <div>
+                        <strong class="block text-stone-800 text-sm mb-1">Software & Embedded</strong>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">C/C++ & Java</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Linux on SoC</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Android</span>
+                            <span class="px-3 py-1 bg-white border border-stone-300 rounded-full text-sm text-stone-700">Computer Vision</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="bg-stone-100 p-6 rounded-xl border border-stone-200 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
+                        <span class="text-xl">&#127891;</span> Education
+                    </h3>
+                    <div class="bg-white p-4 rounded-lg border border-stone-200">
+                        <h4 class="font-bold text-stone-900">Universiti Teknologi Malaysia</h4>
+                        <p class="text-stone-700 mt-1">Bachelor Degree in Computer Science Engineering (Systems)</p>
+                        <p class="text-sm text-stone-500 mt-2">1989 &ndash; 1995</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm mt-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>Interactive CV &middot; Generated from Source Report &middot; 2026</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        // Data Storage: Career Experience
+        const experienceData = [
+            {
+                id: "intel1",
+                role: "System Software Dev Eng / Automation Lead",
+                company: "Intel Corporation",
+                dates: "Dec 2025 – Present",
+                icon: "&#128187;", // Computer
+                achievements: [
+                    "<strong>Computer Vision Engine:</strong> Architected and delivered a proprietary HSV-based corruption detector, resolving long-standing technical debt.",
+                    "<strong>Artefact Detection:</strong> Engineered a lightweight, dual-region SSIM algorithm for high-sensitivity detection of screen-tearing and subtle defects, achieving near real-time processing speeds.",
+                    "<strong>Automation Tools:</strong> Developed a low-level CLI tool to bypass GUI limitations for automated display configuration, resolving complex HDMI propagation failures.",
+                    "<strong>Test Coverage:</strong> Strategically expanded automated test coverage by re-engineering environmental dependencies for Robot and Python-based test scripts."
+                ]
+            },
+            {
+                id: "intel2",
+                role: "Software Engineering Manager",
+                company: "Intel Corporation",
+                dates: "Jan 2022 – Dec 2025",
+                icon: "&#128104;&#8205;&#128187;", // Tech Worker
+                achievements: [
+                    "Led and managed teams responsible for Media Software (video codecs), Imaging Software (camera sensors), and Component Validation.",
+                    "Managed a cross-functional team of 8 Software Engineers and 4 Test Engineers.",
+                    "Achieved and maintained <strong>0% unintended attrition</strong> over a 3-year period.",
+                    "Drove quality improvements, reducing customer-found defects from 12+ (2022) to ~4 (2025)."
+                ]
+            },
+            {
+                id: "continental",
+                role: "Manager - Functional Test",
+                company: "Continental Automotive",
+                dates: "Sep 2017 – Jan 2022",
+                icon: "&#128663;", // Car
+                achievements: [
+                    "Served as Functional Test Site Lead for automotive cluster projects (Customers: Toyota, Volkswagen, Perodua, Suzuki).",
+                    "Managed up to 24 Test engineers; led strategic key role and competency development programs.",
+                    "Spearheaded massive quality initiatives, reducing customer-found defects from 140+ (2017) to ~5 (2021).",
+                    "Successfully expanded the test product portfolio from 1 product to 4."
+                ]
+            },
+            {
+                id: "blaupunkt1",
+                role: "Section Manager - Embedded Software",
+                company: "Blaupunkt / Premium Sound",
+                dates: "Jan 2014 – Jul 2017",
+                icon: "&#128251;", // Radio
+                achievements: [
+                    "Acted as Department Head of Software Engineering and Software Project Manager.",
+                    "Led HMI and firmware teams, managed external vendors.",
+                    "Interfaced directly with global OEMs including Honda, Volvo, Proton, and others."
+                ]
+            },
+            {
+                id: "blaupunkt2",
+                role: "Program Manager",
+                company: "Blaupunkt / Premium Sound",
+                dates: "Mar 2011 – Apr 2014",
+                icon: "&#128202;", // Chart
+                achievements: [
+                    "Managed diverse R&D teams encompassing mechanical, electronics, and firmware engineering.",
+                    "Oversaw entire production processes from initial quotation to logistics."
+                ]
+            },
+            {
+                id: "blaupunkt3",
+                role: "Software Developer",
+                company: "Blaupunkt / Premium Sound",
+                dates: "Mar 2011 – Dec 2011",
+                icon: "&#128241;", // Mobile
+                achievements: [
+                    "Developed Android Apps GUI for automotive infotainment systems.",
+                    "Ported open-source graphics libraries to specific hardware platforms."
+                ]
+            },
+            {
+                id: "intel_agilent",
+                role: "Proj. Manager (Intel) / Ops Manager (Agilent)",
+                company: "Intel / Agilent Technologies",
+                dates: "Jul 2007 – Jul 2010",
+                icon: "&#9881;&#65039;", // Gear
+                achievements: [
+                    "<strong>Intel (2009-2010):</strong> Managed requirements, test scope validation, and project planning for Linux on SoC projects.",
+                    "<strong>Agilent (2007-2009):</strong> Managed multi-site teams across Malaysia and Singapore for AOI/AXI analytic projects, handling product patches and escalations."
+                ]
+            },
+            {
+                id: "early",
+                role: "Early Career (Bosch, INTI, etc.)",
+                company: "Various Organizations",
+                dates: "Apr 1995 – Jul 2007",
+                icon: "&#128194;", // Folder
+                achievements: [
+                    "<strong>Bosch (2005-2007):</strong> Software Project Manager for multi-site automotive infotainment projects.",
+                    "<strong>INTI College (2002-2005):</strong> Academic Coordinator; lectured in C/C++, Java, and Assembly.",
+                    "<strong>Han Chiang (1997-2001):</strong> Head of Computer Centre; established facility from scratch.",
+                    "<strong>SCS Systems (1995-1997):</strong> Developed C++ modules for automated credit card systems."
+                ]
+            }
+        ];
+
+        // State Management
+        let activeRoleId = null;
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTimeline();
+            initCharts();
+            
+            // Auto-select the first role
+            if(experienceData.length > 0) {
+                selectRole(experienceData[0].id);
+            }
+        });
+
+        // Render Timeline List
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = ''; // Clear
+
+            experienceData.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 mb-2 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 group timeline-btn-${item.id}`;
+                btn.onclick = () => selectRole(item.id);
+                
+                btn.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-stone-900 group-hover:text-blue-700 transition-colors">${item.role}</span>
+                        <span class="text-xs text-stone-500 mt-1">${item.company}</span>
+                        <span class="text-xs font-medium text-blue-600 mt-1">${item.dates}</span>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // Handle Role Selection and Content Update
+        function selectRole(id) {
+            activeRoleId = id;
+            const selectedData = experienceData.find(item => item.id === id);
+            
+            if(!selectedData) return;
+
+            // Update UI State for Buttons
+            document.querySelectorAll('#timeline-container button').forEach(btn => {
+                if(btn.classList.contains(`timeline-btn-${id}`)) {
+                    btn.classList.add('bg-blue-50', 'border-blue-200', 'shadow-inner');
+                    btn.classList.remove('bg-white', 'border-transparent', 'hover:bg-stone-50');
+                } else {
+                    btn.classList.remove('bg-blue-50', 'border-blue-200', 'shadow-inner');
+                    btn.classList.add('bg-white', 'border-transparent', 'hover:bg-stone-50');
+                }
+            });
+
+            // Toggle Content Visibility
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('role-content').classList.remove('hidden');
+
+            // Populate Data
+            document.getElementById('detail-icon').innerHTML = selectedData.icon;
+            document.getElementById('detail-title').textContent = selectedData.role;
+            document.getElementById('detail-company').textContent = selectedData.company;
+            document.getElementById('detail-dates').textContent = selectedData.dates;
+
+            const bulletsContainer = document.getElementById('detail-bullets');
+            bulletsContainer.innerHTML = selectedData.achievements.map(ach => `<li>${ach}</li>`).join('');
+
+            // Mobile Scroll UX: Scroll to details if on small screen
+            if(window.innerWidth < 1024) {
+                document.getElementById('role-details-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Initialize Chart.js Visualizations
+        function initCharts() {
+            // Chart 1: Defect Reduction (Bar Chart)
+            const ctxDefect = document.getElementById('defectChart').getContext('2d');
+            new Chart(ctxDefect, {
+                type: 'bar',
+                data: {
+                    labels: ['Continental (Start vs End)', 'Intel (Start vs End)'],
+                    datasets: [
+                        {
+                            label: 'Initial Defects',
+                            data: [140, 12],
+                            backgroundColor: 'rgba(239, 68, 68, 0.7)', // Red-ish
+                            borderColor: 'rgb(239, 68, 68)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Defects After Management',
+                            data: [5, 4],
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)', // Green-ish
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: "'Segoe UI', sans-serif" } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw} defects`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Number of Defects' },
+                            grid: { color: '#f3f4f6' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Chart 2: Skills Radar
+            const ctxSkills = document.getElementById('skillsChart').getContext('2d');
+            new Chart(ctxSkills, {
+                type: 'radar',
+                data: {
+                    labels: ['Project Management', 'Agile/Lean Leadership', 'Validation Auto.', 'Embedded SW', 'Computer Vision', 'QA/Test Mgmt'],
+                    datasets: [{
+                        label: 'Demonstrated Proficiency Level',
+                        data: [90, 80, 90, 70, 80, 90], // Estimated based on CV tenure/achievements
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // Blue
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e5e7eb' },
+                            grid: { color: '#e5e7eb' },
+                            pointLabels: {
+                                font: { size: 11, family: "'Segoe UI', sans-serif" },
+                                color: '#4b5563',
+                                callback: function(label) {
+                                    // Wrap labels logic (max 16 chars)
+                                    if (label.length > 16) {
+                                        return label.match(/.{1,16}(?:\s|$)/g);
+                                    }
+                                    return label;
+                                }
+                            },
+                            ticks: { display: true, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Proficiency Score: ${context.raw}/100`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
