@@ -1,0 +1,41 @@
+{
+  "test_metadata": {
+    "model_name": "mradermacher/qwopus3.5-2b-v3",
+    "base_url": "http://localhost:1234/v1",
+    "iterations_per_scenario": 5,
+    "temperature": 0.2,
+    "thinking_mode": false,
+    "execution_time_seconds": 59.98
+  },
+  "scenarios": [
+    {
+      "name": "Simple Skill 1: Contact Extractor",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 2.203
+    },
+    {
+      "name": "Simple Skill 2: Financial Calculator",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 1.665
+    },
+    {
+      "name": "Complex Skill 1: Code Refactorer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 4.595
+    },
+    {
+      "name": "Complex Skill 2: Log Analyzer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 3.469
+    }
+  ],
+  "overall_consistency_percentage": 100.0
+}
