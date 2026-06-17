@@ -1,0 +1,41 @@
+{
+  "test_metadata": {
+    "model_name": "qwopus3.5-9b-coder-mtp@q8_0",
+    "base_url": "http://localhost:1234/v1",
+    "iterations_per_scenario": 5,
+    "temperature": 0.2,
+    "thinking_mode": true,
+    "execution_time_seconds": 263.33
+  },
+  "scenarios": [
+    {
+      "name": "Simple Skill 1: Contact Extractor",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 4.888
+    },
+    {
+      "name": "Simple Skill 2: Financial Calculator",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 11.781
+    },
+    {
+      "name": "Complex Skill 1: Code Refactorer",
+      "pass_count": 4,
+      "fail_count": 1,
+      "consistency_percentage": 80.0,
+      "avg_latency_seconds": 16.548
+    },
+    {
+      "name": "Complex Skill 2: Log Analyzer",
+      "pass_count": 4,
+      "fail_count": 1,
+      "consistency_percentage": 80.0,
+      "avg_latency_seconds": 19.434
+    }
+  ],
+  "overall_consistency_percentage": 90.0
+}

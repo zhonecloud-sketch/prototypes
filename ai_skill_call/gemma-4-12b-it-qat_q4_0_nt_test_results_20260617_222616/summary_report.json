@@ -1,0 +1,41 @@
+{
+  "test_metadata": {
+    "model_name": "gemma-4-12b-it-qat",
+    "base_url": "http://localhost:1234/v1",
+    "iterations_per_scenario": 5,
+    "temperature": 0.2,
+    "thinking_mode": false,
+    "execution_time_seconds": 41.5
+  },
+  "scenarios": [
+    {
+      "name": "Simple Skill 1: Contact Extractor",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 1.899
+    },
+    {
+      "name": "Simple Skill 2: Financial Calculator",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 0.846
+    },
+    {
+      "name": "Complex Skill 1: Code Refactorer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 3.722
+    },
+    {
+      "name": "Complex Skill 2: Log Analyzer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 1.821
+    }
+  ],
+  "overall_consistency_percentage": 100.0
+}

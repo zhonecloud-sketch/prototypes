@@ -1,0 +1,201 @@
+Connecting to LM Studio...
+Models: unsloth/gemma-4-12b-it
+
+Phase selection: both
+
+
+############################################################
+# MODEL: unsloth/gemma-4-12b-it
+############################################################
+
+==================================================
+Testing with 2 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.492s)
+  [PASS] 'send_email' correctly called (4.106s)
+  >> Accuracy at 2 tools: 2/2 = 100%
+
+==================================================
+Testing with 3 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.394s)
+  [PASS] 'send_email' correctly called (4.309s)
+  [PASS] 'calculate_tip' correctly called (3.59s)
+  >> Accuracy at 3 tools: 3/3 = 100%
+
+==================================================
+Testing with 4 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.544s)
+  [PASS] 'send_email' correctly called (4.003s)
+  [PASS] 'calculate_tip' correctly called (3.498s)
+  [PASS] 'translate_text' correctly called (3.64s)
+  >> Accuracy at 4 tools: 4/4 = 100%
+
+==================================================
+Testing with 5 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (3.444s)
+  [PASS] 'send_email' correctly called (4.23s)
+  [PASS] 'calculate_tip' correctly called (3.723s)
+  [PASS] 'translate_text' correctly called (3.793s)
+  [PASS] 'set_timer' correctly called (3.716s)
+  >> Accuracy at 5 tools: 5/5 = 100%
+
+==================================================
+Testing with 7 tools available...
+==================================================
+  [FAIL] Expected 'search_wikipedia', got 'none' No tool call made (3.967s)
+  [PASS] 'get_weather' correctly called (3.308s)
+  [PASS] 'convert_currency' correctly called (3.517s)
+  [PASS] 'calculate_tip' correctly called (3.405s)
+  [PASS] 'set_timer' correctly called (3.512s)
+  >> Accuracy at 7 tools: 4/5 = 80%
+
+==================================================
+Testing with 9 tools available...
+==================================================
+  [PASS] 'translate_text' correctly called (4.246s)
+  [PASS] 'calculate_tip' correctly called (3.541s)
+  [FAIL] Expected 'search_wikipedia', got 'none' No tool call made (3.148s)
+  [PASS] 'get_weather' correctly called (3.217s)
+  [PASS] 'set_timer' correctly called (3.503s)
+  >> Accuracy at 9 tools: 4/5 = 80%
+
+==================================================
+Testing with 11 tools available...
+==================================================
+  [PASS] 'send_email' correctly called (4.697s)
+  [PASS] 'resize_image' correctly called (3.944s)
+  [PASS] 'convert_currency' correctly called (3.798s)
+  [PASS] 'get_weather' correctly called (3.018s)
+  [FAIL] Expected 'create_calendar_event', got 'none' No tool call made (4.035s)
+  >> Accuracy at 11 tools: 4/5 = 80%
+
+==================================================
+Testing with 16 tools available...
+==================================================
+  [PASS] 'calculate_tip' correctly called (4.572s)
+  [PASS] 'translate_text' correctly called (3.621s)
+  [PASS] 'generate_password' correctly called (3.696s)
+  [PASS] 'get_stock_price' correctly called (3.254s)
+  [PASS] 'resize_image' correctly called (3.82s)
+  >> Accuracy at 16 tools: 5/5 = 100%
+
+==================================================
+Testing with 21 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (4.462s)
+  [PASS] 'scan_port' correctly called (3.915s)
+  [PASS] 'convert_currency' correctly called (3.854s)
+  [PASS] 'find_restaurant' correctly called (3.602s)
+  [FAIL] Expected 'check_spelling', got 'none' No tool call made (3.509s)
+  >> Accuracy at 21 tools: 4/5 = 80%
+
+==================================================
+Testing with 26 tools available...
+==================================================
+  [PASS] 'create_calendar_event' correctly called (5.375s)
+  [PASS] 'generate_password' correctly called (3.905s)
+  [PASS] 'convert_units' correctly called (3.898s)
+  [PASS] 'get_stock_price' correctly called (3.421s)
+  [PASS] 'shorten_url' correctly called (4.206s)
+  >> Accuracy at 26 tools: 5/5 = 100%
+
+==================================================
+Testing with 31 tools available...
+==================================================
+  [PASS] 'create_qr_code' correctly called (4.942s)
+  [PASS] 'get_weather' correctly called (3.392s)
+  [PASS] 'analyze_sentiment' correctly called (3.645s)
+  [PASS] 'shorten_url' correctly called (4.163s)
+  [PASS] 'search_wikipedia' correctly called (3.475s)
+  >> Accuracy at 31 tools: 5/5 = 100%
+
+==================================================
+PHASE 1 SUMMARY
+==================================================
+Model: unsloth/gemma-4-12b-it
+Tool pool size: 31
+Tools    Correct    Total    Accuracy
+2        2          2        100%
+3        3          3        100%
+4        4          4        100%
+5        5          5        100%
+7        4          5        80%
+9        4          5        80%
+11       4          5        80%
+16       5          5        100%
+21       4          5        80%
+26       5          5        100%
+31       5          5        100%
+
+Detailed Failures:
+  At 7 tools:
+    - expected '?', got 'None' (error: No tool call made)
+  At 9 tools:
+    - expected '?', got 'None' (error: No tool call made)
+  At 11 tools:
+    - expected '?', got 'None' (error: No tool call made)
+  At 21 tools:
+    - expected '?', got 'None' (error: No tool call made)
+
+============================================================
+PHASE 2: Adversarial Tool Recall Test
+============================================================
+Tools in pool: 25 (with semantic overlaps & decoys)
+Test cases: 28
+
+  [SEMANTIC_OVERLAP] PASS: 'search_wikipedia' (9.077s)
+  [SEMANTIC_OVERLAP] FAIL: expected 'search_news', got 'none' (3.539s)
+         Rationale: Must pick search_news over search_web, search_wikipedia
+  [SEMANTIC_OVERLAP] PASS: 'search_academic' (3.613s)
+  [SEMANTIC_OVERLAP] PASS: 'search_local_files' (3.655s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_currency' (3.9s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_units' (3.902s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_timezone' (4.475s)
+  [SEMANTIC_OVERLAP] PASS: 'send_slack_message' (3.577s)
+  [SEMANTIC_OVERLAP] PASS: 'send_sms' (3.993s)
+  [SEMANTIC_OVERLAP] PASS: 'set_alarm' (3.825s)
+  [INDIRECT_PROMPT] FAIL: expected 'convert_timezone', got 'none' (4.105s)
+         Rationale: Indirect - says 'when should I dial in' not 'convert timezone'
+  [INDIRECT_PROMPT] PASS: 'convert_currency' (3.753s)
+  [INDIRECT_PROMPT] PASS: 'get_weather_forecast' (3.611s)
+  [INDIRECT_PROMPT] FAIL: expected 'summarize_text', got 'none' (6.637s)
+         Rationale: Indirect - 'make shorter' and 'one-paragraph version' implies summarize
+  [INDIRECT_PROMPT] PASS: 'paraphrase_text' (3.601s)
+  [INDIRECT_PROMPT] PASS: 'calculate_split_bill' (4.116s)
+  [INDIRECT_PROMPT] PASS: 'search_academic' (3.948s)
+  [INDIRECT_PROMPT] PASS: 'send_slack_message' (3.02s)
+  [DECOY_TOOL] PASS: 'get_air_quality' (3.339s)
+  [DECOY_TOOL] PASS: 'get_weather' (3.286s)
+  [DECOY_TOOL] PASS: 'paraphrase_text' (3.316s)
+  [DECOY_TOOL] PASS: 'set_timer' (3.586s)
+  [DECOY_TOOL] FAIL: expected 'create_reminder', got 'send_push_notification' (3.066s)
+         Rationale: Decoy: send_push_notification is tempting (buzz phone), but a scheduled note about a task = reminder
+  [DECOY_TOOL] FAIL: expected 'create_calendar_event', got 'none' (92.053s)
+         Rationale: Decoy: create_reminder is tempting, but 'put on schedule' with date+time = calendar event
+  [DECOY_TOOL] PASS: 'convert_file_format' (3.962s)
+  [RANDOM_ORDER] PASS: 'search_web' (8.84s)
+  [RANDOM_ORDER] PASS: 'send_push_notification' (8.871s)
+  [RANDOM_ORDER] PASS: 'convert_units' (8.93s)
+
+============================================================
+PHASE 2 SUMMARY
+============================================================
+  SEMANTIC_OVERLAP     9/10 (90%) [DEGRADED]
+    - Expected 'search_news', got 'none/no-tool-call'
+      Prompt: Search for recent news articles about the 2026 World Cup.
+  INDIRECT_PROMPT      6/8 (75%) [DEGRADED]
+    - Expected 'convert_timezone', got 'none/no-tool-call'
+      Prompt: I have a meeting with the Tokyo office but I'm in London - w...
+    - Expected 'summarize_text', got 'none/no-tool-call'
+      Prompt: My boss wants a one-paragraph version of this report instead...
+  DECOY_TOOL           5/7 (71%) [DEGRADED]
+    - Expected 'create_reminder', got 'send_push_notification'
+      Prompt: Can you buzz my phone with a note about buying milk tomorrow...
+    - Expected 'create_calendar_event', got 'none/no-tool-call'
+      Prompt: I want to put a doctor visit on my schedule for June 10th at...
+  RANDOM_ORDER         3/3 (100%) [PASS]
+
+  OVERALL: 23/28 (82%)

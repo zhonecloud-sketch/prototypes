@@ -1,0 +1,41 @@
+{
+  "test_metadata": {
+    "model_name": "lfm2.5-8b-a1b",
+    "base_url": "http://localhost:1234/v1",
+    "iterations_per_scenario": 5,
+    "temperature": 0.2,
+    "thinking_mode": true,
+    "execution_time_seconds": 200.14
+  },
+  "scenarios": [
+    {
+      "name": "Simple Skill 1: Contact Extractor",
+      "pass_count": 4,
+      "fail_count": 1,
+      "consistency_percentage": 80.0,
+      "avg_latency_seconds": 14.671
+    },
+    {
+      "name": "Simple Skill 2: Financial Calculator",
+      "pass_count": 4,
+      "fail_count": 1,
+      "consistency_percentage": 80.0,
+      "avg_latency_seconds": 6.226
+    },
+    {
+      "name": "Complex Skill 1: Code Refactorer",
+      "pass_count": 3,
+      "fail_count": 2,
+      "consistency_percentage": 60.0,
+      "avg_latency_seconds": 12.805
+    },
+    {
+      "name": "Complex Skill 2: Log Analyzer",
+      "pass_count": 4,
+      "fail_count": 1,
+      "consistency_percentage": 80.0,
+      "avg_latency_seconds": 6.314
+    }
+  ],
+  "overall_consistency_percentage": 75.0
+}
