@@ -1,0 +1,56 @@
+{
+  "test_metadata": {
+    "model_name": "qwopus3.5-2b-v3",
+    "model_strategy": "qwen",
+    "base_url": "http://localhost:1234/v1",
+    "iterations_per_scenario": 5,
+    "temperature": 0.2,
+    "thinking_mode": false,
+    "execution_time_seconds": 35.82
+  },
+  "scenarios": [
+    {
+      "name": "Simple Skill 1: Contact Extractor",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 0.829
+    },
+    {
+      "name": "Simple Skill 2: Financial Calculator",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 0.302
+    },
+    {
+      "name": "Moderate Skill 1: Code Refactorer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 1.238
+    },
+    {
+      "name": "Moderate Skill 2: Log Analyzer",
+      "pass_count": 5,
+      "fail_count": 0,
+      "consistency_percentage": 100.0,
+      "avg_latency_seconds": 0.712
+    },
+    {
+      "name": "Complex Skill 1: Refund Approval",
+      "pass_count": 0,
+      "fail_count": 5,
+      "consistency_percentage": 0.0,
+      "avg_latency_seconds": 3.152
+    },
+    {
+      "name": "Complex Skill 2: PII Data Transformer",
+      "pass_count": 0,
+      "fail_count": 5,
+      "consistency_percentage": 0.0,
+      "avg_latency_seconds": 0.919
+    }
+  ],
+  "overall_consistency_percentage": 66.67
+}

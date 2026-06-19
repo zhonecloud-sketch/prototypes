@@ -1,9 +1,23 @@
 #!/usr/bin/env python3
 """
-LLM Skill Intelligence & Consistency Tester
+LLM Skill Intelligence & Consistency Tester (Generic / Multi-Model)
 A cross-platform GUI application that evaluates an LLM hosted on LM Studio
 by running 6 skill-based scenarios multiple times and checking consistency,
 instruction-following, and resistance to hallucination.
+
+This is a merged, model-agnostic build. It supports multiple model families
+whose thinking-mode wiring differs:
+
+  - Qwen-style:  extra_body={"enable_thinking": bool} (flat) and thinking is
+                 suppressed via an assistant "<think></think>" prefill message.
+  - Gemma-style: extra_body={"chat_template_kwargs": {"enable_thinking": bool}}
+                 (nested) and thinking is suppressed via a system instruction.
+  - Generic:     no thinking kwargs are sent; thinking is suppressed via a
+                 system instruction.
+
+The active strategy is auto-detected from the selected model name at launch and
+on every connection / model change. The user can override it at any time from
+the "Model Family" dropdown in the GUI.
 """
 
 import json
@@ -20,11 +34,57 @@ from openai import OpenAI
 
 try:
     import customtkinter as ctk
-    from tkinter import filedialog, messagebox, Text, WORD
+    from tkinter import filedialog, messagebox, Text, WORD, TclError
 except ImportError as e:
     raise ImportError(
         "customtkinter is required. Install with: pip install customtkinter"
     ) from e
+
+
+# ============================================================================
+# Model Strategies (per-family thinking-mode wiring)
+# ============================================================================
+
+# extra_body_style:
+#   "flat"   -> {"enable_thinking": bool}
+#   "nested" -> {"chat_template_kwargs": {"enable_thinking": bool}}
+#   "none"   -> no thinking kwargs sent
+# suppress_thinking (used only when Thinking Mode is OFF):
+#   "prefill" -> append assistant message "<think>\n\n</think>"
+#   "system"  -> add a "do not use <think> tags" instruction to the system prompt
+MODEL_STRATEGIES: Dict[str, Dict[str, str]] = {
+    "qwen": {
+        "label": "Qwen / Alibaba",
+        "extra_body_style": "flat",
+        "suppress_thinking": "prefill",
+    },
+    "gemma": {
+        "label": "Gemma / Google",
+        "extra_body_style": "nested",
+        "suppress_thinking": "system",
+    },
+    "generic": {
+        "label": "Generic (no thinking kwargs)",
+        "extra_body_style": "none",
+        "suppress_thinking": "system",
+    },
+}
+
+# GUI choices. "Auto" resolves to a concrete strategy from the model name.
+STRATEGY_CHOICES: List[str] = ["Auto", "qwen", "gemma", "generic"]
+
+
+def detect_strategy(model_id: str) -> str:
+    """Pick a concrete strategy key from a model id/name."""
+    m = (model_id or "").lower()
+    if "qwen" in m:
+        return "qwen"
+    if "gemma" in m:
+        return "gemma"
+    # Other reasoning families that use the flat enable_thinking flag.
+    if any(tag in m for tag in ("deepseek", "qwq", "glm")):
+        return "qwen"
+    return "generic"
 
 
 # ============================================================================
@@ -150,19 +210,44 @@ INPUT_ANALYZE_LOGS = (
     "[10:00:10] ERROR: Database connection timeout.\n"
     "[10:00:15] INFO: Retrying connection."
 )
+# Challenge: the inputs force multi-rule reasoning rather than single-rule
+# lookups. The hard cases exercise rule *cascades* and *priority*:
+#   - Order 6: the 15% electronics deduction pushes the payout below the $20
+#     threshold, so Rule 4 must cascade into Rule 5 (APPROVED -> DENIED).
+#   - Order 7: a Premium electronics return must STILL lose the 15% deduction;
+#     the tier override (Rule 2) does not exempt restocking (Rule 4).
+#   - Order 8: Premium overrides the Food restriction (Rule 2), yet the order
+#     is still DENIED because it falls outside the 60-day Premium window
+#     (Rule 3) -- a genuine priority conflict, not a trick.
+# Every case has exactly one correct, rule-derivable answer.
 INPUT_REFUND_APPROVER = (
     "Order 1: Standard tier, 15 days ago, Books, $50.00\n"
     "Order 2: Premium tier, 45 days ago, Food, $100.00\n"
     "Order 3: Standard tier, 10 days ago, Electronics, $100.00\n"
     "Order 4: Standard tier, 10 days ago, Food, $30.00\n"
-    "Order 5: Standard tier, 40 days ago, Electronics, $25.00"
+    "Order 5: Standard tier, 40 days ago, Electronics, $25.00\n"
+    "Order 6: Standard tier, 5 days ago, Electronics, $22.00\n"
+    "Order 7: Premium tier, 20 days ago, Electronics, $40.00\n"
+    "Order 8: Premium tier, 70 days ago, Food, $80.00"
 )
+# Challenge: realistic input format variance forces normalization rather than
+# pattern-luck, and multiple items per category force array handling:
+#   - Two emails and two credit cards: the model must return ALL matches in
+#     arrays, not just the first.
+#   - Phones arrive in different shapes (+1 (555) 987.6543, 1-800-555-1234
+#     ext 5); both must normalize to (XXX) XXX-XXXX with the country code and
+#     extension dropped.
+#   - Cards arrive space- and hyphen-delimited (4111 1111 1111 1111,
+#     5500-0000-0000-0004); both must reduce to the last 4 digits.
+#   - The SSN is unformatted (123456789) and must be reshaped to XXX-XX-6789.
+#   - Only the inventory counts (5, 12) are generic numbers; the dropped phone
+#     extension "5" must NOT be treated as a generic number.
 INPUT_PII_TRANSFORMER = (
-    "Contact john.doe@example.com or 1-800-555-1234 ext 5. \n"
-    "Backup: (555) 987-6543. \n"
-    "Card: 4111111111111111. \n"
-    "SSN: 123-45-6789. \n"
-    "I ordered 5 apples and 12 oranges."
+    "Primary: john.doe@example.com, mobile +1 (555) 987.6543.\n"
+    "Support: 1-800-555-1234 ext 5, alt email support@acme.io.\n"
+    "Cards on file: 4111 1111 1111 1111 and 5500-0000-0000-0004.\n"
+    "SSN on record: 123456789.\n"
+    "Inventory: 5 apples and 12 oranges."
 )
 
 # ============================================================================
@@ -301,8 +386,8 @@ def eval_refund_approver(raw_output: str, thinking_enabled: bool) -> Tuple[bool,
     except json.JSONDecodeError as e:
         return False, f"Invalid JSON: {e}"
 
-    if not isinstance(data, list) or len(data) != 5:
-        return False, f"Expected a JSON array of 5 objects, got {len(data) if isinstance(data, list) else 'non-array'}"
+    if not isinstance(data, list) or len(data) != 8:
+        return False, f"Expected a JSON array of 8 objects, got {len(data) if isinstance(data, list) else 'non-array'}"
 
     forbidden = re.findall(r"\b(fee|policy|non-refundable)\b", output, re.IGNORECASE)
     if forbidden:
@@ -316,6 +401,9 @@ def eval_refund_approver(raw_output: str, thinking_enabled: bool) -> Tuple[bool,
         3: {"decision": "APPROVED", "payout_amount": 85.00},
         4: {"decision": "DENIED", "payout_amount": 0.0},
         5: {"decision": "DENIED", "payout_amount": 0.0},
+        6: {"decision": "DENIED", "payout_amount": 0.0},
+        7: {"decision": "APPROVED", "payout_amount": 34.00},
+        8: {"decision": "DENIED", "payout_amount": 0.0},
     }
 
     for item in data:
@@ -362,11 +450,11 @@ def eval_pii_transformer(raw_output: str, thinking_enabled: bool) -> Tuple[bool,
     if set(data.keys()) != expected_keys:
         return False, f"Expected keys {expected_keys}, got: {list(data.keys())}"
 
-    if "HASHED@example.com" not in data.get("emails", []):
+    if "HASHED@example.com" not in data.get("emails", []) or "HASHED@acme.io" not in data.get("emails", []):
         return False, "Email transformation failed."
     if "(800) 555-1234" not in data.get("phones", []) or "(555) 987-6543" not in data.get("phones", []):
         return False, "Phone transformation failed."
-    if "****-****-****-1111" not in data.get("credit_cards", []):
+    if "****-****-****-1111" not in data.get("credit_cards", []) or "****-****-****-0004" not in data.get("credit_cards", []):
         return False, "Credit card transformation failed."
     if "XXX-XX-6789" not in data.get("ssns", []):
         return False, "SSN transformation failed."
@@ -445,18 +533,27 @@ class LMStudioClient:
         return [m.id for m in resp.data]
 
     def chat_completion(
-        self, model: str, messages: List[Dict], temperature: float, enable_thinking: bool = False
+        self,
+        model: str,
+        messages: List[Dict],
+        temperature: float,
+        enable_thinking: bool,
+        extra_body_style: str,
     ) -> Tuple[str, float]:
         start = time.time()
-        extra_body = {
-            "chat_template_kwargs": {"enable_thinking": enable_thinking}
+        kwargs: Dict = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
         }
-        resp = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=1.0 if enable_thinking else temperature,
-            extra_body=extra_body
-        )
+        if extra_body_style == "flat":
+            kwargs["extra_body"] = {"enable_thinking": enable_thinking}
+        elif extra_body_style == "nested":
+            kwargs["extra_body"] = {
+                "chat_template_kwargs": {"enable_thinking": enable_thinking}
+            }
+        # "none" -> send no thinking kwargs at all.
+        resp = self.client.chat.completions.create(**kwargs)
         latency = time.time() - start
         content = resp.choices[0].message.content or ""
         return content, latency
@@ -471,6 +568,7 @@ class TestRunner:
         self,
         base_url: str,
         model: str,
+        strategy: str,
         iterations: int,
         temperature: float,
         thinking_mode: bool,
@@ -482,6 +580,7 @@ class TestRunner:
     ):
         self.base_url = base_url
         self.model = model
+        self.strategy = strategy
         self.iterations = iterations
         self.temperature = temperature
         self.thinking_mode = thinking_mode
@@ -495,16 +594,21 @@ class TestRunner:
     def stop(self):
         self._stop_flag.set()
 
-    def _build_prompt(self, scenario: Dict) -> Tuple[str, str]:
+    def _build_messages(self, scenario: Dict) -> Tuple[List[Dict], str]:
+        suppress = MODEL_STRATEGIES[self.strategy]["suppress_thinking"]
+
         system_prompt = (
             "You are a precise instruction-following assistant. "
             "You must follow the skill's constraints EXACTLY.\n\n"
             f"# ACTIVE SKILL DEFINITION\n\n{scenario['skill_content']}"
         )
-        
+
         if self.thinking_mode:
-            system_prompt += "\n\nYou must first think step-by-step inside <think> tags. After the closing </think> tag, provide your final output."
-        else:
+            system_prompt += (
+                "\n\nYou must first think step-by-step inside <think> tags. "
+                "After the closing </think> tag, provide your final output."
+            )
+        elif suppress == "system":
             system_prompt += (
                 "\n\nCRITICAL INSTRUCTION: Do NOT use <think> or <thinking> tags. "
                 "Do not output your reasoning process. Provide the final output immediately."
@@ -515,11 +619,26 @@ class TestRunner:
             f"# INSTRUCTION\n\nProcess the USER INPUT according to the SKILL DEFINITION provided in the system prompt. "
             f"Output ONLY what the skill specifies — nothing more, nothing less."
         )
-        return system_prompt, user_message
+
+        messages: List[Dict] = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message},
+        ]
+        # Qwen-style suppression: prefill an empty reasoning block so the model
+        # continues directly with the final answer.
+        if not self.thinking_mode and suppress == "prefill":
+            messages.append({"role": "assistant", "content": "<think>\n\n</think>"})
+
+        full_prompt = "\n\n".join(
+            f"[{m['role'].upper()}]\n{m['content']}" for m in messages
+        )
+        return messages, full_prompt
 
     def run(self):
         try:
+            strat_label = MODEL_STRATEGIES[self.strategy]["label"]
             self.log(f"Starting test suite. Model: {self.model}", "info")
+            self.log(f"Strategy: {self.strategy} ({strat_label})", "info")
             self.log(f"Output directory: {self.output_dir}", "info")
             self.log(
                 f"Iterations={self.iterations} | Temperature={self.temperature} | "
@@ -536,6 +655,7 @@ class TestRunner:
                 )
 
             client = LMStudioClient(self.base_url, timeout=self.timeout)
+            extra_body_style = MODEL_STRATEGIES[self.strategy]["extra_body_style"]
             raw_outputs: List[Dict] = []
             scenario_results: List[Dict] = []
             overall_start = time.time()
@@ -546,8 +666,7 @@ class TestRunner:
                     break
 
                 self.log(f"\n=== {scenario['name']} ===", "info")
-                system_prompt, user_message = self._build_prompt(scenario)
-                full_prompt = f"[SYSTEM]\n{system_prompt}\n\n[USER]\n{user_message}"
+                messages, full_prompt = self._build_messages(scenario)
 
                 passes = 0
                 fails = 0
@@ -565,6 +684,7 @@ class TestRunner:
                         "scenario_name": scenario["name"],
                         "iteration": i,
                         "timestamp": timestamp,
+                        "model_strategy": self.strategy,
                         "thinking_mode_enabled": self.thinking_mode,
                         "temperature": self.temperature,
                         "full_prompt_sent": full_prompt,
@@ -575,12 +695,12 @@ class TestRunner:
                     }
 
                     try:
-                        messages = [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_message},
-                        ]
                         raw_output, latency = client.chat_completion(
-                            self.model, messages, self.temperature, self.thinking_mode
+                            self.model,
+                            messages,
+                            self.temperature,
+                            self.thinking_mode,
+                            extra_body_style,
                         )
                         record["raw_model_output"] = raw_output
                         record["latency_seconds"] = round(latency, 3)
@@ -592,7 +712,7 @@ class TestRunner:
                             reason = "Model leaked <think>/<thinking> tags when thinking mode was disabled."
                         else:
                             passed, reason = scenario["evaluator"](raw_output, self.thinking_mode)
-                            
+
                         record["passed"] = passed
                         record["failure_reason"] = "" if passed else reason
 
@@ -629,6 +749,7 @@ class TestRunner:
             summary = {
                 "test_metadata": {
                     "model_name": self.model,
+                    "model_strategy": self.strategy,
                     "base_url": self.base_url,
                     "iterations_per_scenario": self.iterations,
                     "temperature": self.temperature,
@@ -662,9 +783,9 @@ ctk.set_default_color_theme("blue")
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("LLM Skill Intelligence & Consistency Tester")
-        self.geometry("900x720")
-        self.minsize(800, 650)
+        self.title("LLM Skill Intelligence & Consistency Tester (Multi-Model)")
+        self.geometry("900x760")
+        self.minsize(800, 680)
 
         self.runner_thread: Optional[threading.Thread] = None
         self.current_runner: Optional[TestRunner] = None
@@ -694,7 +815,7 @@ class App(ctk.CTk):
 
         ctk.CTkLabel(conn, text="Model:").grid(row=2, column=0, padx=10, pady=4, sticky="w")
         self.model_var = ctk.StringVar(value="")
-        self.model_menu = ctk.CTkOptionMenu(conn, variable=self.model_var, values=["(no models)"])
+        self.model_menu = ctk.CTkOptionMenu(conn, variable=self.model_var, values=["(no models)"], command=self._on_model_change)
         self.model_menu.grid(row=2, column=1, padx=10, pady=4, sticky="ew")
 
         self.test_conn_btn = ctk.CTkButton(conn, text="Test Connection", command=self._on_test_connection)
@@ -703,6 +824,7 @@ class App(ctk.CTk):
         # Configuration Panel
         cfg = ctk.CTkFrame(top_frame)
         cfg.grid(row=0, column=1, padx=6, pady=6, sticky="nsew")
+        cfg.grid_columnconfigure(1, weight=1)
         ctk.CTkLabel(cfg, text="Test Configuration", font=ctk.CTkFont(size=14, weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(8, 4), sticky="w")
 
         ctk.CTkLabel(cfg, text="Iterations (1-20):").grid(row=1, column=0, padx=10, pady=4, sticky="w")
@@ -716,8 +838,15 @@ class App(ctk.CTk):
         self.temp_label = ctk.CTkLabel(cfg, text="0.20")
         self.temp_label.grid(row=3, column=1, padx=10, pady=(0, 4), sticky="w")
 
+        ctk.CTkLabel(cfg, text="Model Family:").grid(row=4, column=0, padx=10, pady=4, sticky="w")
+        self.strategy_var = ctk.StringVar(value="Auto")
+        self.strategy_menu = ctk.CTkOptionMenu(cfg, variable=self.strategy_var, values=STRATEGY_CHOICES, command=self._on_strategy_change)
+        self.strategy_menu.grid(row=4, column=1, padx=10, pady=4, sticky="ew")
+        self.strategy_label = ctk.CTkLabel(cfg, text="(auto: -)", font=ctk.CTkFont(size=11))
+        self.strategy_label.grid(row=5, column=1, padx=10, pady=(0, 4), sticky="w")
+
         self.think_var = ctk.BooleanVar(value=False)
-        ctk.CTkCheckBox(cfg, text="Thinking Mode (<think> tags)", variable=self.think_var).grid(row=4, column=0, columnspan=2, padx=10, pady=(4, 10), sticky="w")
+        ctk.CTkCheckBox(cfg, text="Thinking Mode (<think> tags)", variable=self.think_var).grid(row=6, column=0, columnspan=2, padx=10, pady=(4, 10), sticky="w")
 
         # Execution Panel
         exec_frame = ctk.CTkFrame(self)
@@ -787,27 +916,75 @@ class App(ctk.CTk):
                 self.stop_btn.configure(state="disabled")
         self.after(0, update)
 
+    # ----------------------------------------------------------- strategy
+    def _resolve_strategy(self) -> str:
+        """Return the concrete strategy key for the current GUI selection."""
+        choice = self.strategy_var.get()
+        if choice == "Auto":
+            return detect_strategy(self.model_var.get())
+        return choice if choice in MODEL_STRATEGIES else "generic"
+
+    def _update_strategy_label(self):
+        choice = self.strategy_var.get()
+        effective = self._resolve_strategy()
+        label = MODEL_STRATEGIES[effective]["label"]
+        if choice == "Auto":
+            self.strategy_label.configure(text=f"(auto: {effective} - {label})")
+        else:
+            self.strategy_label.configure(text=f"(manual: {label})")
+
+    def _on_strategy_change(self, _v=None):
+        self._update_strategy_label()
+        self._log(f"Model family set to '{self.strategy_var.get()}' "
+                  f"-> effective: {self._resolve_strategy()}", "sys")
+
+    def _on_model_change(self, _v=None):
+        # Auto re-detection only matters when the user left the menu on "Auto".
+        self._update_strategy_label()
+        if self.strategy_var.get() == "Auto":
+            self._log(f"Model '{self.model_var.get()}' detected as "
+                      f"strategy '{self._resolve_strategy()}'.", "sys")
+
+    # ----------------------------------------------------------- models
     def _refresh_models(self, silent: bool):
         url = self.url_var.get().strip()
+        threading.Thread(
+            target=self._refresh_models_worker, args=(url, silent), daemon=True
+        ).start()
+
+    def _refresh_models_worker(self, url: str, silent: bool):
         try:
             client = LMStudioClient(url, timeout=30)
             models = client.list_models()
-            if not models:
-                self.model_menu.configure(values=["(no models)"])
-                self.model_var.set("(no models)")
-                if not silent:
-                    messagebox.showwarning("No models", "LM Studio returned an empty model list. Load a model in LM Studio first.")
-                return
-            self.model_menu.configure(values=models)
-            self.model_var.set(models[0])
-            if not silent:
-                self._log(f"Found {len(models)} model(s): {models}", "sys")
         except Exception as e:
+            self.after(0, lambda err=str(e): self._apply_models(None, silent, err))
+            return
+        self.after(0, lambda: self._apply_models(models, silent, None))
+
+    def _apply_models(self, models, silent: bool, error: Optional[str]):
+        if error is not None:
             self.model_menu.configure(values=["(no models)"])
             self.model_var.set("(no models)")
+            self._update_strategy_label()
             if not silent:
-                messagebox.showerror("Connection failed", f"Could not reach LM Studio:\n{e}")
-                self._log(f"Connection failed: {e}", "fail")
+                messagebox.showerror("Connection failed", f"Could not reach LM Studio:\n{error}")
+                self._log(f"Connection failed: {error}", "fail")
+            return
+        if not models:
+            self.model_menu.configure(values=["(no models)"])
+            self.model_var.set("(no models)")
+            self._update_strategy_label()
+            if not silent:
+                messagebox.showwarning("No models", "LM Studio returned an empty model list. Load a model in LM Studio first.")
+            return
+        self.model_menu.configure(values=models)
+        self.model_var.set(models[0])
+        # Auto-select strategy from the freshly loaded model.
+        self._update_strategy_label()
+        if not silent:
+            self._log(f"Found {len(models)} model(s): {models}", "sys")
+        self._log(f"Auto-selected strategy '{self._resolve_strategy()}' "
+                  f"for model '{models[0]}'.", "sys")
 
     def _on_test_connection(self):
         self._log(f"Testing connection to {self.url_var.get()}...", "sys")
@@ -825,11 +1002,15 @@ class App(ctk.CTk):
             iterations = int(self.iter_var.get())
             if not (1 <= iterations <= 20):
                 raise ValueError
-        except ValueError:
+        except (ValueError, TclError):
             messagebox.showerror("Invalid input", "Iterations must be 1–20.")
             return
 
-        temperature = float(self.temp_var.get())
+        try:
+            temperature = float(self.temp_var.get())
+        except (ValueError, TclError):
+            messagebox.showerror("Invalid input", "Temperature must be 0.0–1.0.")
+            return
         if not (0.0 <= temperature <= 1.0):
             messagebox.showerror("Invalid input", "Temperature must be 0.0–1.0.")
             return
@@ -838,6 +1019,8 @@ class App(ctk.CTk):
         if not model or model == "(no models)":
             messagebox.showerror("No model", "Please connect to LM Studio and select a model.")
             return
+
+        strategy = self._resolve_strategy()
 
         outdir_str = self.outdir_var.get().strip()
         outdir = Path(outdir_str).expanduser().resolve()
@@ -855,6 +1038,7 @@ class App(ctk.CTk):
         runner = TestRunner(
             base_url=self.url_var.get().strip(),
             model=model,
+            strategy=strategy,
             iterations=iterations,
             temperature=temperature,
             thinking_mode=bool(self.think_var.get()),
@@ -904,6 +1088,11 @@ class App(ctk.CTk):
             self._log("Background tasks complete. Exiting...", "sys")
             self.destroy()
 
-if __name__ == "__main__":
+
+def main():
     app = App()
     app.mainloop()
+
+
+if __name__ == "__main__":
+    main()
