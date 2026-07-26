@@ -2,35 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Interactive 3D Articulated Crowd Simulation</title>
   <style>
-    /* Reset & Base Setup */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    body, html {
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
       background-color: #0d111a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: #f0f4f8;
+      -webkit-user-select: none;
+      user-select: none;
     }
     #webgl-container {
-      width: 100%;
-      height: 100%;
       position: absolute;
-      top: 0;
-      left: 0;
+      inset: 0;
       z-index: 1;
+      touch-action: none;
     }
+    #webgl-container canvas { display: block; }
 
-    /* Glassmorphic Panel Layout */
+    /* Glassmorphic Panel */
     .glass-panel {
       position: absolute;
       top: 16px;
@@ -39,6 +40,7 @@
       width: 330px;
       max-width: calc(100vw - 32px);
       max-height: calc(100vh - 32px);
+      max-height: calc(100dvh - 32px);
       overflow-y: auto;
       background: rgba(13, 17, 26, 0.85);
       backdrop-filter: blur(16px);
@@ -47,35 +49,23 @@
       border-radius: 16px;
       padding: 14px 16px;
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
-      transition: all 0.3s ease;
+      transition: max-height 0.3s ease;
+      touch-action: auto; /* allow scroll inside panel */
+      overscroll-behavior: contain;
     }
-
-    .glass-panel::-webkit-scrollbar {
-      width: 6px;
-    }
+    .glass-panel::-webkit-scrollbar { width: 6px; }
     .glass-panel::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.2);
       border-radius: 3px;
     }
 
-    @media (max-width: 480px) {
-      .glass-panel {
-        top: 10px;
-        left: 10px;
-        width: calc(100vw - 20px);
-        padding: 12px;
-        max-height: calc(100vh - 20px);
-      }
-    }
-
-    /* Panel Header & Toggle */
     .panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       margin-bottom: 10px;
     }
-
     h1 {
       font-size: 1.05rem;
       font-weight: 700;
@@ -83,44 +73,38 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      overflow-wrap: anywhere;
     }
-
     .toggle-btn {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #cbd5e1;
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 6px 10px;
       font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-    }
+    .toggle-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+    .toggle-btn:active { transform: scale(0.96); }
 
-    /* Collapsible Body State */
     .panel-body {
       display: none;
       margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .glass-panel:not(.collapsed) .panel-body {
-      display: block;
-    }
+    .glass-panel:not(.collapsed) .panel-body { display: block; }
 
-    /* Action Buttons Grid */
     .quick-buttons, .btn-grid-secondary {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-    .btn-grid-secondary {
-      margin-top: 12px;
-    }
+    .btn-grid-secondary { margin-top: 12px; }
 
     .btn {
       min-height: 40px;
@@ -137,34 +121,30 @@
       justify-content: center;
       gap: 6px;
       transition: all 0.2s ease;
-      white-space: nowrap;
+      /* allow wrapping on narrow screens */
+      white-space: normal;
+      text-align: center;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
-    .btn:hover {
-      background: rgba(51, 65, 85, 0.95);
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-    .btn:active {
-      transform: scale(0.97);
-    }
+    .btn:hover { background: rgba(51, 65, 85, 0.95); border-color: rgba(255, 255, 255, 0.25); }
+    .btn:active { transform: scale(0.97); }
     .btn-primary {
       background: linear-gradient(135deg, #0284c7, #0369a1);
       border: none;
-      color: #ffffff;
+      color: #fff;
     }
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #0369a1, #075985);
-    }
+    .btn-primary:hover { background: linear-gradient(135deg, #0369a1, #075985); }
 
-    /* Controls & Inputs */
-    .control-group {
-      margin-bottom: 12px;
-    }
+    .control-group { margin-bottom: 12px; }
     label {
       display: block;
       font-size: 0.8rem;
       font-weight: 600;
       color: #94a3b8;
       margin-bottom: 6px;
+      overflow-wrap: anywhere;
     }
 
     textarea, input[type="text"], input[type="number"] {
@@ -177,8 +157,11 @@
       font-size: 0.85rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
-      user-select: text;
       -webkit-user-select: text;
+      user-select: text;
+      /* break long words so they never overflow horizontally */
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     textarea:focus, input:focus {
       border-color: #38bdf8;
@@ -186,9 +169,11 @@
     }
     textarea {
       resize: vertical;
-      min-height: 52px;
-      max-height: 80px;
+      min-height: 60px;
+      max-height: 90px;
       line-height: 1.35;
+      /* hard wrap so a long unbroken string can't scroll horizontally */
+      white-space: pre-wrap;
     }
 
     .char-counter {
@@ -196,9 +181,9 @@
       color: #64748b;
       text-align: right;
       margin-top: 4px;
+      overflow-wrap: anywhere;
     }
 
-    /* Crowd Size Control */
     .slider-row {
       display: flex;
       align-items: center;
@@ -211,13 +196,14 @@
       border-radius: 3px;
       background: rgba(255, 255, 255, 0.1);
       cursor: pointer;
+      min-width: 0;
     }
     .num-input {
       width: 68px;
       text-align: center;
+      flex-shrink: 0;
     }
 
-    /* Accordion Details */
     details {
       background: rgba(15, 23, 42, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -235,25 +221,24 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      overflow-wrap: anywhere;
     }
-    summary::-webkit-details-marker {
-      display: none;
-    }
+    summary::-webkit-details-marker { display: none; }
     summary::after {
       content: "►";
       font-size: 0.6rem;
       transition: transform 0.2s;
+      flex-shrink: 0;
     }
-    details[open] summary::after {
-      transform: rotate(90deg);
-    }
-    summary:hover {
-      color: #38bdf8;
-    }
+    details[open] summary::after { transform: rotate(90deg); }
+    summary:hover { color: #38bdf8; }
     .details-content {
       padding: 6px 10px 8px;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       line-height: 1.4;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .hint-box {
@@ -264,531 +249,556 @@
       background: rgba(2, 6, 23, 0.4);
       border-radius: 6px;
       border-left: 3px solid #38bdf8;
-      line-height: 1.4;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .hint-box .hint-line { display: block; }
+
+    /* Mobile tweaks */
+    @media (max-width: 480px) {
+      .glass-panel {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+        padding: 12px;
+        max-height: calc(100dvh - 20px);
+      }
+      h1 { font-size: 0.95rem; }
+      .toggle-btn {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+      }
+      .btn { font-size: 0.78rem; padding: 8px 6px; }
+      .quick-buttons, .btn-grid-secondary { gap: 6px; }
+      textarea { font-size: 0.82rem; }
+      .hint-box { font-size: 0.7rem; padding: 7px 9px; }
     }
   </style>
 
-  <!-- Three.js and OrbitControls via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <div id="webgl-container"></div>
 
-  <!-- Collapsible Glassmorphic UI Panel -->
   <div class="glass-panel collapsed" id="glassPanel">
-    
-    <!-- Compact Header -->
     <div class="panel-header">
       <h1>3D Crowd</h1>
-      <button class="toggle-btn" id="btnTogglePanel" title="Expand / Collapse Controls">⚙️ Controls ▼</button>
+      <button class="toggle-btn" id="btnTogglePanel" title="Expand / Collapse Controls">⚙️ Controls</button>
     </div>
 
-    <!-- Always Visible Buttons (Collapsed View) -->
     <div class="quick-buttons">
       <button class="btn btn-primary" id="btnFormText">✨ Form Text</button>
-      <button class="btn" id="btnScatter">🔀 Scatter Crowd</button>
+      <button class="btn" id="btnScatter">🔀 Scatter</button>
     </div>
 
-    <!-- Hidden / Expanded Body -->
     <div class="panel-body">
-      <!-- Text Input Area (Max 40 chars) -->
       <div class="control-group">
-        <label for="textInput">Formation Text (Max 3 Lines):</label>
-        <textarea id="textInput" placeholder="Enter text (1-3 lines)...">Hello there,
+        <label for="textInput">Formation Text (Max 3 lines, 15 chars/line):</label>
+        <textarea id="textInput" maxlength="40" wrap="hard"
+          placeholder="Enter text (1-3 lines)...">Hello there,
 I am Zhone</textarea>
         <div class="char-counter" id="charCount">22/40 chars (2/3 lines)</div>
       </div>
 
-      <!-- Accordion Note -->
       <details>
-        <summary>Language & Script Limits</summary>
+        <summary>Language &amp; Script Limits</summary>
         <div class="details-content">
-          Note on Language Support: Text sampling works best with standard Latin alphabets, numbers, and basic punctuation.
+          Text sampling works best with standard Latin alphabets, numbers, and basic punctuation. Very long single words will be hard-wrapped.
         </div>
       </details>
 
-      <!-- Crowd Size Control -->
       <div class="control-group" style="margin-top: 12px;">
-        <label for="crowdSlider">Crowd Count (100 - 2,000):</label>
+        <label for="crowdSlider" id="crowdLabel">Crowd Count:</label>
         <div class="slider-row">
           <input type="range" id="crowdSlider" min="100" max="2000" value="750" step="10">
           <input type="number" id="crowdNum" class="num-input" min="100" max="2000" value="750">
         </div>
       </div>
 
-      <!-- Secondary Camera Buttons -->
       <div class="btn-grid-secondary">
         <button class="btn" id="btnBirdsEye">🦅 Bird's-Eye</button>
         <button class="btn" id="btnResetView">↺ Reset View</button>
       </div>
 
       <div class="hint-box">
-        <strong>Camera Navigation:</strong><br>
-        • Desktop: Left-drag rotate | Right-drag pan | Scroll zoom<br>
-        • Mobile: 1-finger rotate | 2-finger pinch/zoom<br>
-        • Spacebar: Reset view
+        <strong>Camera Navigation</strong>
+        <span class="hint-line">• Desktop: Left-drag rotate, Right-drag pan, Scroll zoom</span>
+        <span class="hint-line">• Mobile: 1-finger rotate, 2-finger pinch zoom &amp; pan</span>
+        <span class="hint-line">• Spacebar: reset view</span>
       </div>
     </div>
   </div>
 
   <script>
-    // ----------------------------------------------------
-    // 1. SCENE SETUP & CAMERA
-    // ----------------------------------------------------
-    const container = document.getElementById('webgl-container');
+  // ----------------------------------------------------
+  // 0. MOBILE / CAPABILITY DETECTION
+  // ----------------------------------------------------
+  const IS_MOBILE = (() => {
+    const ua = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const small = window.innerWidth < 768;
+    return ua || coarse || small;
+  })();
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0d111a);
-    scene.fog = new THREE.FogExp2(0x0d111a, 0.007);
+  const MAX_CROWD       = IS_MOBILE ? 800  : 2000;
+  const DEFAULT_CROWD   = IS_MOBILE ? 300  : 750;
+  const PIXEL_RATIO_CAP = IS_MOBILE ? 1.5  : 2;
+  const SHADOW_MAP_SIZE = IS_MOBILE ? 1024 : 2048;
 
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  // ----------------------------------------------------
+  // 1. SCENE SETUP & CAMERA
+  // ----------------------------------------------------
+  const container = document.getElementById('webgl-container');
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0d111a);
+  scene.fog = new THREE.FogExp2(0x0d111a, 0.007);
+
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+  const renderer = new THREE.WebGLRenderer({
+    antialias: !IS_MOBILE,
+    powerPreference: "high-performance"
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, PIXEL_RATIO_CAP));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = IS_MOBILE ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.screenSpacePanning = !IS_MOBILE;
+  controls.maxPolarAngle = Math.PI * 0.49;
+
+  const DEFAULT_CAM_POS = new THREE.Vector3(0, 25, 75);
+  const DEFAULT_CAM_TARGET = new THREE.Vector3(0, 0, 0);
+
+  function resetCamera() {
+    camera.position.copy(DEFAULT_CAM_POS);
+    controls.target.copy(DEFAULT_CAM_TARGET);
+    controls.update();
+  }
+  resetCamera();
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.95);
+  dirLight.position.set(50, 90, 40);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width  = SHADOW_MAP_SIZE;
+  dirLight.shadow.mapSize.height = SHADOW_MAP_SIZE;
+  dirLight.shadow.camera.left = -70;
+  dirLight.shadow.camera.right = 70;
+  dirLight.shadow.camera.top = 70;
+  dirLight.shadow.camera.bottom = -70;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.far = 250;
+  scene.add(dirLight);
+
+  // Floor
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(200, 140),
+    new THREE.MeshStandardMaterial({ color: 0x161d2a, roughness: 0.9 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Simplified grid (smaller, fewer divisions -> far fewer line segments on mobile)
+  const grid = new THREE.GridHelper(160, 32, 0x3b82f6, 0x1e293b);
+  grid.position.y = 0.01;
+  grid.material.opacity = 0.55;
+  grid.material.transparent = true;
+  scene.add(grid);
+
+  // ----------------------------------------------------
+  // 2. SHARED GEOMETRIES & MATERIAL POOLS
+  // (huge perf win: instead of N materials per agent, we use ~23 total)
+  // ----------------------------------------------------
+  const shirtColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899, 0x06b6d4, 0xf97316];
+  const pantColors  = [0x1e293b, 0x334155, 0x475569, 0x27272a, 0x18181b];
+  const skinColors  = [0xffdbac, 0xf1c27d, 0xe0ac69, 0xc68642, 0x8d5524];
+  const hairColors  = [0x1a120b, 0x2c1d11, 0x8d4a20, 0xd6c280, 0x9a3324];
+
+  const shirtMats = shirtColors.map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 }));
+  const pantMats  = pantColors .map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.7 }));
+  const skinMats  = skinColors .map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.5 }));
+  const hairMats  = hairColors .map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 }));
+  const jointMat  = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.4 });
+  const shoeMat   = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
+
+  // Shared geometries
+  const G = {
+    torso:    new THREE.BoxGeometry(0.5, 0.65, 0.28),
+    pelvis:   new THREE.BoxGeometry(0.48, 0.2, 0.26),
+    head:     new THREE.SphereGeometry(0.2, 12, 12),
+    hairBox:  new THREE.BoxGeometry(0.42, 0.16, 0.44),
+    hairCap:  new THREE.SphereGeometry(0.22, 12, 12, 0, Math.PI * 2, 0, Math.PI * 0.6),
+    shoulder: new THREE.SphereGeometry(0.08, 8, 8),
+    elbow:    new THREE.SphereGeometry(0.07, 8, 8),
+    upperArm: (() => { const g = new THREE.CylinderGeometry(0.08, 0.07, 0.3, 8); g.translate(0, -0.15, 0); return g; })(),
+    lowerArm: (() => { const g = new THREE.CylinderGeometry(0.065, 0.055, 0.3, 8); g.translate(0, -0.15, 0); return g; })(),
+    hip:      new THREE.SphereGeometry(0.09, 8, 8),
+    knee:     new THREE.SphereGeometry(0.08, 8, 8),
+    upperLeg: (() => { const g = new THREE.CylinderGeometry(0.1, 0.09, 0.32, 8); g.translate(0, -0.16, 0); return g; })(),
+    lowerLeg: (() => { const g = new THREE.CylinderGeometry(0.085, 0.075, 0.32, 8); g.translate(0, -0.16, 0); return g; })(),
+    foot:     new THREE.BoxGeometry(0.12, 0.08, 0.22)
+  };
+
+  function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function createDetailedPerson() {
+    const root = new THREE.Group();
+
+    const shirtMat = rand(shirtMats);
+    const pantMat  = rand(pantMats);
+    const skinMat  = rand(skinMats);
+    const hairMat  = rand(hairMats);
+
+    const torso = new THREE.Mesh(G.torso, shirtMat);
+    torso.position.y = 1.15; torso.castShadow = true; root.add(torso);
+
+    const pelvis = new THREE.Mesh(G.pelvis, pantMat);
+    pelvis.position.y = 0.75; pelvis.castShadow = true; root.add(pelvis);
+
+    const headGroup = new THREE.Group();
+    headGroup.position.set(0, 1.6, 0);
+    const head = new THREE.Mesh(G.head, skinMat);
+    head.castShadow = true; headGroup.add(head);
+
+    if (Math.random() < 0.5) {
+      const hair = new THREE.Mesh(G.hairBox, hairMat);
+      hair.position.set(0, 0.1, -0.02);
+      headGroup.add(hair);
+    } else {
+      const hair = new THREE.Mesh(G.hairCap, hairMat);
+      hair.position.set(0, 0.02, 0);
+      headGroup.add(hair);
+    }
+    root.add(headGroup);
+
+    function createArm(isLeft) {
+      const side = isLeft ? -1 : 1;
+      const shoulderPivot = new THREE.Group();
+      shoulderPivot.position.set(side * 0.32, 1.4, 0);
+
+      const sJoint = new THREE.Mesh(G.shoulder, jointMat); shoulderPivot.add(sJoint);
+      const upperArm = new THREE.Mesh(G.upperArm, shirtMat);
+      upperArm.castShadow = true; shoulderPivot.add(upperArm);
+      const elbowMesh = new THREE.Mesh(G.elbow, jointMat);
+      elbowMesh.position.y = -0.3; shoulderPivot.add(elbowMesh);
+
+      const elbowPivot = new THREE.Group();
+      elbowPivot.position.y = -0.3;
+      const lowerArm = new THREE.Mesh(G.lowerArm, skinMat);
+      lowerArm.castShadow = true; elbowPivot.add(lowerArm);
+
+      shoulderPivot.add(elbowPivot);
+      return { shoulderPivot, elbowPivot };
+    }
+
+    function createLeg(isLeft) {
+      const side = isLeft ? -1 : 1;
+      const hipPivot = new THREE.Group();
+      hipPivot.position.set(side * 0.15, 0.68, 0);
+
+      const hipJoint = new THREE.Mesh(G.hip, jointMat); hipPivot.add(hipJoint);
+      const upperLeg = new THREE.Mesh(G.upperLeg, pantMat);
+      upperLeg.castShadow = true; hipPivot.add(upperLeg);
+      const kneeMesh = new THREE.Mesh(G.knee, jointMat);
+      kneeMesh.position.y = -0.32; hipPivot.add(kneeMesh);
+
+      const kneePivot = new THREE.Group();
+      kneePivot.position.y = -0.32;
+      const lowerLeg = new THREE.Mesh(G.lowerLeg, pantMat);
+      lowerLeg.castShadow = true; kneePivot.add(lowerLeg);
+      const foot = new THREE.Mesh(G.foot, shoeMat);
+      foot.position.set(0, -0.34, 0.05);
+      foot.castShadow = true; kneePivot.add(foot);
+
+      hipPivot.add(kneePivot);
+      return { hipPivot, kneePivot };
+    }
+
+    const leftArm = createArm(true);
+    const rightArm = createArm(false);
+    root.add(leftArm.shoulderPivot);
+    root.add(rightArm.shoulderPivot);
+
+    const leftLeg = createLeg(true);
+    const rightLeg = createLeg(false);
+    root.add(leftLeg.hipPivot);
+    root.add(rightLeg.hipPivot);
+
+    return { root, leftArm, rightArm, leftLeg, rightLeg };
+  }
+
+  // ----------------------------------------------------
+  // 3. DYNAMIC TEXT SAMPLING ENGINE
+  // ----------------------------------------------------
+  function sampleTextTargets(lines) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 900;
+    canvas.height = 350;
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+
+    const fontSize = lines.length >= 3 ? 46 : 56;
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const lineHeight = fontSize * 1.3;
+    const startY = (canvas.height / 2) - (((lines.length - 1) * lineHeight) / 2);
+
+    lines.forEach((line, index) => {
+      ctx.fillText(line, canvas.width / 2, startY + (index * lineHeight));
+    });
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const points = [];
+    const step = IS_MOBILE ? 6 : 4; // sparser on mobile -> fewer targets, less clumping
+
+    for (let y = 0; y < canvas.height; y += step) {
+      for (let x = 0; x < canvas.width; x += step) {
+        const idx = (y * canvas.width + x) * 4;
+        if (imgData.data[idx] > 150) {
+          const worldX = (x - canvas.width / 2) * 0.15;
+          const worldZ = (y - canvas.height / 2) * 0.15;
+          points.push({ x: worldX, z: worldZ });
+        }
+      }
+    }
+
+    for (let i = points.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [points[i], points[j]] = [points[j], points[i]];
+    }
+
+    return points.length > 0 ? points : [{ x: 0, z: 0 }];
+  }
+
+  // ----------------------------------------------------
+  // 4. AGENTS MANAGEMENT & STATE
+  // ----------------------------------------------------
+  let agents = [];
+  let state = 'forming';
+
+  function createAgent() {
+    const person = createDetailedPerson();
+    const startX = (Math.random() - 0.5) * 120;
+    const startZ = (Math.random() - 0.5) * 70;
+    person.root.position.set(startX, 0, startZ);
+    return {
+      person,
+      currentPos: new THREE.Vector3(startX, 0, startZ),
+      scatterTarget: new THREE.Vector3(startX, 0, startZ),
+      textTarget: new THREE.Vector3(0, 0, 0),
+      speed: 0.11 + Math.random() * 0.07,
+      phase: Math.random() * Math.PI * 2
+    };
+  }
+
+  function setCrowdCount(targetCount) {
+    targetCount = Math.max(100, Math.min(MAX_CROWD, targetCount));
+
+    while (agents.length < targetCount) {
+      const agent = createAgent();
+      scene.add(agent.person.root);
+      agents.push(agent);
+    }
+
+    while (agents.length > targetCount) {
+      const agent = agents.pop();
+      scene.remove(agent.person.root);
+      // Note: geometries & materials are shared -> do NOT dispose them here.
+    }
+  }
+
+  // ----------------------------------------------------
+  // 5. UI WIRING
+  // ----------------------------------------------------
+  const glassPanel    = document.getElementById('glassPanel');
+  const btnTogglePanel= document.getElementById('btnTogglePanel');
+  const textInput     = document.getElementById('textInput');
+  const charCount     = document.getElementById('charCount');
+  const crowdSlider   = document.getElementById('crowdSlider');
+  const crowdNum      = document.getElementById('crowdNum');
+  const crowdLabel    = document.getElementById('crowdLabel');
+
+  // Apply mobile caps to slider/number inputs and label
+  crowdSlider.max = MAX_CROWD;
+  crowdNum.max    = MAX_CROWD;
+  crowdSlider.value = DEFAULT_CROWD;
+  crowdNum.value    = DEFAULT_CROWD;
+  crowdLabel.textContent = `Crowd Count (100 - ${MAX_CROWD.toLocaleString()}):`;
+
+  btnTogglePanel.addEventListener('click', () => {
+    glassPanel.classList.toggle('collapsed');
+  });
+
+  const MAX_CHARS = 40;
+  const MAX_LINES = 3;
+  const MAX_CHARS_PER_LINE = 15;
+
+  function clampTextInput() {
+    let val = textInput.value;
+    let lines = val.split('\n');
+    if (lines.length > MAX_LINES) lines = lines.slice(0, MAX_LINES);
+    lines = lines.map(l => l.substring(0, MAX_CHARS_PER_LINE));
+    val = lines.join('\n');
+    if (val.length > MAX_CHARS) {
+      val = val.substring(0, MAX_CHARS);
+      lines = val.split('\n');
+    }
+    textInput.value = val;
+    charCount.textContent = `${val.length}/${MAX_CHARS} chars (${lines.length}/${MAX_LINES} lines)`;
+  }
+  textInput.addEventListener('input', clampTextInput);
+  clampTextInput();
+
+  function applyTextFormation() {
+    let content = textInput.value;
+    if (!content || content.trim().length === 0) {
+      content = "A";
+      textInput.value = content;
+    }
+    const lines = content.split('\n').slice(0, MAX_LINES);
+    const points = sampleTextTargets(lines);
+    agents.forEach((agent, i) => {
+      const pt = points[i % points.length];
+      agent.textTarget.set(pt.x, 0, pt.z);
+    });
+    state = 'forming';
+  }
+
+  function scatterCrowd() {
+    state = 'scattered';
+    agents.forEach(a => {
+      a.scatterTarget.set((Math.random() - 0.5) * 120, 0, (Math.random() - 0.5) * 70);
+    });
+  }
+
+  function syncCrowd(val) {
+    val = Math.max(100, Math.min(MAX_CROWD, parseInt(val) || DEFAULT_CROWD));
+    crowdSlider.value = val;
+    crowdNum.value = val;
+    setCrowdCount(val);
+    if (state === 'forming') applyTextFormation();
+    else scatterCrowd();
+  }
+
+  crowdSlider.addEventListener('input', e => syncCrowd(e.target.value));
+  crowdNum.addEventListener('change', e => syncCrowd(e.target.value));
+
+  document.getElementById('btnFormText').addEventListener('click', applyTextFormation);
+  document.getElementById('btnScatter').addEventListener('click', scatterCrowd);
+
+  document.getElementById('btnBirdsEye').addEventListener('click', () => {
+    camera.position.set(0, 105, 0.1);
+    controls.target.set(0, 0, 0);
+    controls.update();
+  });
+  document.getElementById('btnResetView').addEventListener('click', resetCamera);
+
+  window.addEventListener('keydown', (event) => {
+    if (document.activeElement === textInput) return;
+    if (event.code === 'Space') {
+      event.preventDefault();
+      resetCamera();
+    }
+  });
+
+  // Initialize crowd + formation
+  setCrowdCount(DEFAULT_CROWD);
+  applyTextFormation();
+
+  // ----------------------------------------------------
+  // 6. ANIMATION LOOP (with reused temp vector)
+  // ----------------------------------------------------
+  const clock = new THREE.Clock();
+  const _tmpDir = new THREE.Vector3();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const time = clock.getElapsedTime();
+
+    controls.update();
+
+    const strideFreq = IS_MOBILE ? 9 : 12;
+
+    for (let i = 0, n = agents.length; i < n; i++) {
+      const agent = agents[i];
+      const target = state === 'forming' ? agent.textTarget : agent.scatterTarget;
+      const dir = _tmpDir.subVectors(target, agent.currentPos);
+      const dist = dir.length();
+
+      if (dist > 0.2) {
+        dir.normalize();
+        agent.currentPos.addScaledVector(dir, agent.speed);
+        agent.person.root.position.x = agent.currentPos.x;
+        agent.person.root.position.z = agent.currentPos.z;
+
+        const angle = Math.atan2(dir.x, dir.z);
+        agent.person.root.rotation.y = angle;
+
+        const stride = Math.sin(time * strideFreq + agent.phase);
+
+        agent.person.leftLeg.hipPivot.rotation.x  =  stride * 0.55;
+        agent.person.rightLeg.hipPivot.rotation.x = -stride * 0.55;
+        agent.person.leftLeg.kneePivot.rotation.x  = stride > 0 ?  stride * 0.5 : 0;
+        agent.person.rightLeg.kneePivot.rotation.x = stride < 0 ? -stride * 0.5 : 0;
+        agent.person.leftArm.shoulderPivot.rotation.x  = -stride * 0.45;
+        agent.person.rightArm.shoulderPivot.rotation.x =  stride * 0.45;
+        agent.person.leftArm.elbowPivot.rotation.x  = -0.2 - Math.abs(stride) * 0.25;
+        agent.person.rightArm.elbowPivot.rotation.x = -0.2 - Math.abs(stride) * 0.25;
+
+        agent.person.root.position.y = Math.abs(Math.sin(time * strideFreq + agent.phase)) * 0.08;
+      } else {
+        agent.person.root.position.y = 0;
+        agent.person.leftLeg.hipPivot.rotation.x  *= 0.8;
+        agent.person.rightLeg.hipPivot.rotation.x *= 0.8;
+        agent.person.leftLeg.kneePivot.rotation.x  *= 0.8;
+        agent.person.rightLeg.kneePivot.rotation.x *= 0.8;
+        agent.person.leftArm.shoulderPivot.rotation.x  *= 0.8;
+        agent.person.rightArm.shoulderPivot.rotation.x *= 0.8;
+
+        if (state === 'scattered' && Math.random() < 0.004) {
+          agent.scatterTarget.set((Math.random() - 0.5) * 120, 0, (Math.random() - 0.5) * 70);
+        }
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // Debounced resize (mobile orientation change, browser UI show/hide)
+  let resizeTimer = null;
+  function handleResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    container.appendChild(renderer.domElement);
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = true;
-
-    const DEFAULT_CAM_POS = new THREE.Vector3(0, 25, 75);
-    const DEFAULT_CAM_TARGET = new THREE.Vector3(0, 0, 0);
-
-    function resetCamera() {
-      camera.position.copy(DEFAULT_CAM_POS);
-      controls.target.copy(DEFAULT_CAM_TARGET);
-      controls.update();
-    }
-    resetCamera();
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    dirLight.position.set(50, 90, 40);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 2048;
-    dirLight.shadow.mapSize.height = 2048;
-    dirLight.shadow.camera.left = -70;
-    dirLight.shadow.camera.right = 70;
-    dirLight.shadow.camera.top = 70;
-    dirLight.shadow.camera.bottom = -70;
-    scene.add(dirLight);
-
-    // Floor & Grid
-    const floorGeo = new THREE.PlaneGeometry(200, 140);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x161d2a, roughness: 0.85 });
-    const floor = new THREE.Mesh(floorGeo, floorMat);
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
-    const grid = new THREE.GridHelper(200, 50, 0x3b82f6, 0x1e293b);
-    grid.position.y = 0.01;
-    scene.add(grid);
-
-    // ----------------------------------------------------
-    // 2. DETAILED PERSON BUILDER
-    // ----------------------------------------------------
-    const shirtColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899, 0x06b6d4, 0xf97316];
-    const pantColors = [0x1e293b, 0x334155, 0x475569, 0x27272a, 0x18181b];
-    const skinColors = [0xffdbac, 0xf1c27d, 0xe0ac69, 0xc68642, 0x8d5524];
-    const hairColors = [0x1a120b, 0x2c1d11, 0x8d4a20, 0xd6c280, 0x9a3324];
-
-    function createDetailedPerson() {
-      const root = new THREE.Group();
-
-      const shirtColor = shirtColors[Math.floor(Math.random() * shirtColors.length)];
-      const pantColor = pantColors[Math.floor(Math.random() * pantColors.length)];
-      const skinColor = skinColors[Math.floor(Math.random() * skinColors.length)];
-      const hairColor = hairColors[Math.floor(Math.random() * hairColors.length)];
-
-      const shirtMat = new THREE.MeshStandardMaterial({ color: shirtColor, roughness: 0.6 });
-      const pantMat = new THREE.MeshStandardMaterial({ color: pantColor, roughness: 0.7 });
-      const skinMat = new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.5 });
-      const hairMat = new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.8 });
-      const jointMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.4 });
-      const shoeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
-
-      // Torso & Pelvis
-      const torso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.65, 0.28), shirtMat);
-      torso.position.y = 1.15;
-      torso.castShadow = true;
-      root.add(torso);
-
-      const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.2, 0.26), pantMat);
-      pelvis.position.y = 0.75;
-      pelvis.castShadow = true;
-      root.add(pelvis);
-
-      // Head & Hair
-      const headGroup = new THREE.Group();
-      headGroup.position.set(0, 1.6, 0);
-
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), skinMat);
-      head.castShadow = true;
-      headGroup.add(head);
-
-      const hairStyle = Math.floor(Math.random() * 2);
-      if (hairStyle === 0) {
-        const hair = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.16, 0.44), hairMat);
-        hair.position.set(0, 0.1, -0.02);
-        headGroup.add(hair);
-      } else {
-        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12, 0, Math.PI * 2, 0, Math.PI * 0.6), hairMat);
-        hair.position.set(0, 0.02, 0);
-        headGroup.add(hair);
-      }
-      root.add(headGroup);
-
-      // Arms
-      function createArm(isLeft) {
-        const side = isLeft ? -1 : 1;
-        const shoulderPivot = new THREE.Group();
-        shoulderPivot.position.set(side * 0.32, 1.4, 0);
-
-        shoulderPivot.add(new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), jointMat));
-
-        const upperArmGeo = new THREE.CylinderGeometry(0.08, 0.07, 0.3, 8);
-        upperArmGeo.translate(0, -0.15, 0);
-        const upperArm = new THREE.Mesh(upperArmGeo, shirtMat);
-        upperArm.castShadow = true;
-        shoulderPivot.add(upperArm);
-
-        const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), jointMat);
-        elbow.position.y = -0.3;
-        shoulderPivot.add(elbow);
-
-        const elbowPivot = new THREE.Group();
-        elbowPivot.position.y = -0.3;
-
-        const lowerArmGeo = new THREE.CylinderGeometry(0.065, 0.055, 0.3, 8);
-        lowerArmGeo.translate(0, -0.15, 0);
-        const lowerArm = new THREE.Mesh(lowerArmGeo, skinMat);
-        lowerArm.castShadow = true;
-        elbowPivot.add(lowerArm);
-
-        shoulderPivot.add(elbowPivot);
-        return { shoulderPivot, elbowPivot };
-      }
-
-      const leftArm = createArm(true);
-      const rightArm = createArm(false);
-      root.add(leftArm.shoulderPivot);
-      root.add(rightArm.shoulderPivot);
-
-      // Legs
-      function createLeg(isLeft) {
-        const side = isLeft ? -1 : 1;
-        const hipPivot = new THREE.Group();
-        hipPivot.position.set(side * 0.15, 0.68, 0);
-
-        hipPivot.add(new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), jointMat));
-
-        const upperLegGeo = new THREE.CylinderGeometry(0.1, 0.09, 0.32, 8);
-        upperLegGeo.translate(0, -0.16, 0);
-        const upperLeg = new THREE.Mesh(upperLegGeo, pantMat);
-        upperLeg.castShadow = true;
-        hipPivot.add(upperLeg);
-
-        const knee = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), jointMat);
-        knee.position.y = -0.32;
-        hipPivot.add(knee);
-
-        const kneePivot = new THREE.Group();
-        kneePivot.position.y = -0.32;
-
-        const lowerLegGeo = new THREE.CylinderGeometry(0.085, 0.075, 0.32, 8);
-        lowerLegGeo.translate(0, -0.16, 0);
-        const lowerLeg = new THREE.Mesh(lowerLegGeo, pantMat);
-        lowerLeg.castShadow = true;
-        kneePivot.add(lowerLeg);
-
-        const foot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), shoeMat);
-        foot.position.set(0, -0.34, 0.05);
-        foot.castShadow = true;
-        kneePivot.add(foot);
-
-        hipPivot.add(kneePivot);
-        return { hipPivot, kneePivot };
-      }
-
-      const leftLeg = createLeg(true);
-      const rightLeg = createLeg(false);
-      root.add(leftLeg.hipPivot);
-      root.add(rightLeg.hipPivot);
-
-      return { root, leftArm, rightArm, leftLeg, rightLeg };
-    }
-
-    // ----------------------------------------------------
-    // 3. DYNAMIC TEXT SAMPLING ENGINE
-    // ----------------------------------------------------
-    function sampleTextTargets(lines) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 900;
-      canvas.height = 350;
-
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-
-      const fontSize = lines.length >= 3 ? 46 : 56;
-      ctx.font = `bold ${fontSize}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      const lineHeight = fontSize * 1.3;
-      const startY = (canvas.height / 2) - (((lines.length - 1) * lineHeight) / 2);
-
-      lines.forEach((line, index) => {
-        ctx.fillText(line, canvas.width / 2, startY + (index * lineHeight));
-      });
-
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const points = [];
-      const step = 4;
-
-      for (let y = 0; y < canvas.height; y += step) {
-        for (let x = 0; x < canvas.width; x += step) {
-          const idx = (y * canvas.width + x) * 4;
-          if (imgData.data[idx] > 150) {
-            const worldX = (x - canvas.width / 2) * 0.15;
-            const worldZ = (y - canvas.height / 2) * 0.15;
-            points.push({ x: worldX, z: worldZ });
-          }
-        }
-      }
-
-      // Shuffle points for uniform distribution
-      for (let i = points.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [points[i], points[j]] = [points[j], points[i]];
-      }
-
-      return points.length > 0 ? points : [{ x: 0, z: 0 }];
-    }
-
-    // ----------------------------------------------------
-    // 4. AGENTS MANAGEMENT & STATE
-    // ----------------------------------------------------
-    let agents = [];
-    let state = 'forming';
-
-    function createAgent() {
-      const person = createDetailedPerson();
-      const startX = (Math.random() - 0.5) * 120;
-      const startZ = (Math.random() - 0.5) * 70;
-      person.root.position.set(startX, 0, startZ);
-
-      return {
-        person: person,
-        currentPos: new THREE.Vector3(startX, 0, startZ),
-        scatterTarget: new THREE.Vector3(startX, 0, startZ),
-        textTarget: new THREE.Vector3(0, 0, 0),
-        speed: 0.11 + Math.random() * 0.07,
-        phase: Math.random() * Math.PI * 2
-      };
-    }
-
-    function setCrowdCount(targetCount) {
-      targetCount = Math.max(100, Math.min(2000, targetCount));
-
-      while (agents.length < targetCount) {
-        const agent = createAgent();
-        scene.add(agent.person.root);
-        agents.push(agent);
-      }
-
-      while (agents.length > targetCount) {
-        const agent = agents.pop();
-        scene.remove(agent.person.root);
-        agent.person.root.traverse((child) => {
-          if (child.isMesh && child.material) {
-            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
-            else child.material.dispose();
-          }
-        });
-      }
-    }
-
-    setCrowdCount(750);
-
-    // ----------------------------------------------------
-    // 5. UI TOGGLE & FORMATION CONTROLS
-    // ----------------------------------------------------
-    const glassPanel = document.getElementById('glassPanel');
-    const btnTogglePanel = document.getElementById('btnTogglePanel');
-    const textInput = document.getElementById('textInput');
-    const charCount = document.getElementById('charCount');
-
-    // Panel Collapse/Expand Toggle
-    btnTogglePanel.addEventListener('click', () => {
-      glassPanel.classList.toggle('collapsed');
-      const isCollapsed = glassPanel.classList.contains('collapsed');
-      btnTogglePanel.innerHTML = isCollapsed ? '⚙️ Controls ▼' : '⚙️ Controls ▲';
-    });
-
-    function applyTextFormation() {
-      let content = textInput.value;
-      if (!content || content.trim().length === 0) {
-        content = "A";
-        textInput.value = content;
-      }
-
-      const lines = content.split('\n').slice(0, 3);
-      const points = sampleTextTargets(lines);
-
-      agents.forEach((agent, i) => {
-        const pt = points[i % points.length];
-        agent.textTarget.set(pt.x, 0, pt.z);
-      });
-
-      state = 'forming';
-    }
-
-    function scatterCrowd() {
-      state = 'scattered';
-      agents.forEach(a => {
-        a.scatterTarget.set((Math.random() - 0.5) * 120, 0, (Math.random() - 0.5) * 70);
-      });
-    }
-
-    // Input text limiter (Max 40 chars & 3 lines)
-    textInput.addEventListener('input', (e) => {
-      let val = e.target.value;
-      let lines = val.split('\n');
-
-      if (lines.length > 3) {
-        lines = lines.slice(0, 3);
-        val = lines.join('\n');
-      }
-
-      if (val.length > 40) {
-        val = val.substring(0, 40);
-      }
-
-      e.target.value = val;
-      charCount.textContent = `${val.length}/40 chars (${lines.length}/3 lines)`;
-    });
-
-    const crowdSlider = document.getElementById('crowdSlider');
-    const crowdNum = document.getElementById('crowdNum');
-
-    function syncCrowd(val) {
-      val = Math.max(100, Math.min(2000, parseInt(val) || 750));
-      crowdSlider.value = val;
-      crowdNum.value = val;
-      setCrowdCount(val);
-      if (state === 'forming') {
-        applyTextFormation();
-      } else {
-        scatterCrowd();
-      }
-    }
-
-    crowdSlider.addEventListener('input', (e) => syncCrowd(e.target.value));
-    crowdNum.addEventListener('change', (e) => syncCrowd(e.target.value));
-
-    // Button Event Listeners
-    document.getElementById('btnFormText').addEventListener('click', applyTextFormation);
-    document.getElementById('btnScatter').addEventListener('click', scatterCrowd);
-
-    document.getElementById('btnBirdsEye').addEventListener('click', () => {
-      camera.position.set(0, 105, 0.1);
-      controls.target.set(0, 0, 0);
-      controls.update();
-    });
-
-    document.getElementById('btnResetView').addEventListener('click', resetCamera);
-
-    window.addEventListener('keydown', (event) => {
-      if (document.activeElement === textInput) return;
-      if (event.code === 'Space') {
-        event.preventDefault();
-        resetCamera();
-      }
-    });
-
-    // Initial Text Formation on Startup
-    applyTextFormation();
-
-    // ----------------------------------------------------
-    // 6. ANIMATION & PATHFINDING LOOP
-    // ----------------------------------------------------
-    const clock = new THREE.Clock();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      const time = clock.getElapsedTime();
-
-      controls.update();
-
-      agents.forEach(agent => {
-        const target = state === 'forming' ? agent.textTarget : agent.scatterTarget;
-        const dir = new THREE.Vector3().subVectors(target, agent.currentPos);
-        const dist = dir.length();
-
-        if (dist > 0.2) {
-          dir.normalize();
-          agent.currentPos.addScaledVector(dir, agent.speed);
-          agent.person.root.position.x = agent.currentPos.x;
-          agent.person.root.position.z = agent.currentPos.z;
-
-          // Face direction of travel
-          const angle = Math.atan2(dir.x, dir.z);
-          agent.person.root.rotation.y = angle;
-
-          // Biomechanical Walk Animation
-          const stride = Math.sin(time * 12 + agent.phase);
-
-          agent.person.leftLeg.hipPivot.rotation.x = stride * 0.55;
-          agent.person.rightLeg.hipPivot.rotation.x = -stride * 0.55;
-
-          agent.person.leftLeg.kneePivot.rotation.x = stride > 0 ? stride * 0.5 : 0;
-          agent.person.rightLeg.kneePivot.rotation.x = stride < 0 ? -stride * 0.5 : 0;
-
-          agent.person.leftArm.shoulderPivot.rotation.x = -stride * 0.45;
-          agent.person.rightArm.shoulderPivot.rotation.x = stride * 0.45;
-
-          agent.person.leftArm.elbowPivot.rotation.x = -0.2 - Math.abs(stride) * 0.25;
-          agent.person.rightArm.elbowPivot.rotation.x = -0.2 - Math.abs(stride) * 0.25;
-
-          agent.person.root.position.y = Math.abs(Math.sin(time * 12 + agent.phase)) * 0.08;
-
-        } else {
-          // Reset to standing pose
-          agent.person.root.position.y = 0;
-          agent.person.leftLeg.hipPivot.rotation.x *= 0.8;
-          agent.person.rightLeg.hipPivot.rotation.x *= 0.8;
-          agent.person.leftLeg.kneePivot.rotation.x *= 0.8;
-          agent.person.rightLeg.kneePivot.rotation.x *= 0.8;
-          agent.person.leftArm.shoulderPivot.rotation.x *= 0.8;
-          agent.person.rightArm.shoulderPivot.rotation.x *= 0.8;
-
-          // Random idle wandering when scattered
-          if (state === 'scattered' && Math.random() < 0.004) {
-            agent.scatterTarget.set((Math.random() - 0.5) * 120, 0, (Math.random() - 0.5) * 70);
-          }
-        }
-      });
-
-      renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    animate();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, PIXEL_RATIO_CAP));
+  }
+  window.addEventListener('resize', () => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(handleResize, 120);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleResize, 200);
+  });
+
+  animate();
   </script>
 </body>
 </html>
