@@ -1,0 +1,182 @@
+Connecting to LM Studio...
+Models: ornith-1.0-9b
+
+Phase selection: both
+
+
+############################################################
+# MODEL: ornith-1.0-9b
+############################################################
+
+==================================================
+Testing with 2 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (4.792s)
+  [PASS] 'send_email' correctly called (7.343s)
+  >> Accuracy at 2 tools: 2/2 = 100%
+
+==================================================
+Testing with 3 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (4.866s)
+  [PASS] 'send_email' correctly called (6.809s)
+  [PASS] 'calculate_tip' correctly called (5.735s)
+  >> Accuracy at 3 tools: 3/3 = 100%
+
+==================================================
+Testing with 4 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (4.869s)
+  [PASS] 'send_email' correctly called (7.221s)
+  [PASS] 'calculate_tip' correctly called (5.925s)
+  [PASS] 'translate_text' correctly called (7.304s)
+  >> Accuracy at 4 tools: 4/4 = 100%
+
+==================================================
+Testing with 5 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (4.88s)
+  [PASS] 'send_email' correctly called (7.015s)
+  [PASS] 'calculate_tip' correctly called (5.469s)
+  [PASS] 'translate_text' correctly called (6.734s)
+  [PASS] 'set_timer' correctly called (6.298s)
+  >> Accuracy at 5 tools: 5/5 = 100%
+
+==================================================
+Testing with 7 tools available...
+==================================================
+  [PASS] 'search_wikipedia' correctly called (5.454s)
+  [PASS] 'get_weather' correctly called (4.822s)
+  [PASS] 'convert_currency' correctly called (6.915s)
+  [PASS] 'calculate_tip' correctly called (5.606s)
+  [PASS] 'set_timer' correctly called (6.167s)
+  >> Accuracy at 7 tools: 5/5 = 100%
+
+==================================================
+Testing with 9 tools available...
+==================================================
+  [PASS] 'translate_text' correctly called (7.32s)
+  [PASS] 'calculate_tip' correctly called (5.74s)
+  [PASS] 'search_wikipedia' correctly called (5.41s)
+  [PASS] 'get_weather' correctly called (4.774s)
+  [PASS] 'set_timer' correctly called (6.333s)
+  >> Accuracy at 9 tools: 5/5 = 100%
+
+==================================================
+Testing with 11 tools available...
+==================================================
+  [PASS] 'send_email' correctly called (7.518s)
+  [PASS] 'resize_image' correctly called (7.522s)
+  [PASS] 'convert_currency' correctly called (6.87s)
+  [PASS] 'get_weather' correctly called (4.792s)
+  [PASS] 'create_calendar_event' correctly called (9.111s)
+  >> Accuracy at 11 tools: 5/5 = 100%
+
+==================================================
+Testing with 16 tools available...
+==================================================
+  [PASS] 'calculate_tip' correctly called (5.849s)
+  [PASS] 'translate_text' correctly called (7.263s)
+  [PASS] 'generate_password' correctly called (6.763s)
+  [PASS] 'get_stock_price' correctly called (5.185s)
+  [PASS] 'resize_image' correctly called (7.782s)
+  >> Accuracy at 16 tools: 5/5 = 100%
+
+==================================================
+Testing with 21 tools available...
+==================================================
+  [PASS] 'get_weather' correctly called (5.484s)
+  [PASS] 'scan_port' correctly called (7.343s)
+  [PASS] 'convert_currency' correctly called (6.461s)
+  [PASS] 'find_restaurant' correctly called (7.215s)
+  [PASS] 'check_spelling' correctly called (6.588s)
+  >> Accuracy at 21 tools: 5/5 = 100%
+
+==================================================
+Testing with 26 tools available...
+==================================================
+  [PASS] 'create_calendar_event' correctly called (10.091s)
+  [PASS] 'generate_password' correctly called (7.195s)
+  [PASS] 'convert_units' correctly called (6.765s)
+  [PASS] 'get_stock_price' correctly called (5.247s)
+  [PASS] 'shorten_url' correctly called (5.706s)
+  >> Accuracy at 26 tools: 5/5 = 100%
+
+==================================================
+Testing with 31 tools available...
+==================================================
+  [PASS] 'create_qr_code' correctly called (7.451s)
+  [PASS] 'get_weather' correctly called (5.016s)
+  [PASS] 'analyze_sentiment' correctly called (6.237s)
+  [PASS] 'shorten_url' correctly called (5.853s)
+  [PASS] 'search_wikipedia' correctly called (5.358s)
+  >> Accuracy at 31 tools: 5/5 = 100%
+
+==================================================
+PHASE 1 SUMMARY
+==================================================
+Model: ornith-1.0-9b
+Tool pool size: 31
+Tools    Correct    Total    Accuracy
+2        2          2        100%
+3        3          3        100%
+4        4          4        100%
+5        5          5        100%
+7        5          5        100%
+9        5          5        100%
+11       5          5        100%
+16       5          5        100%
+21       5          5        100%
+26       5          5        100%
+31       5          5        100%
+
+============================================================
+PHASE 2: Adversarial Tool Recall Test
+============================================================
+Tools in pool: 25 (with semantic overlaps & decoys)
+Test cases: 28
+
+  [SEMANTIC_OVERLAP] PASS: 'search_wikipedia' (4.766s)
+  [SEMANTIC_OVERLAP] PASS: 'search_news' (5.749s)
+  [SEMANTIC_OVERLAP] PASS: 'search_academic' (6.189s)
+  [SEMANTIC_OVERLAP] PASS: 'search_local_files' (5.067s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_currency' (6.219s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_units' (5.719s)
+  [SEMANTIC_OVERLAP] PASS: 'convert_timezone' (16.378s)
+  [SEMANTIC_OVERLAP] PASS: 'send_slack_message' (5.369s)
+  [SEMANTIC_OVERLAP] PASS: 'send_sms' (6.411s)
+  [SEMANTIC_OVERLAP] PASS: 'set_alarm' (6.772s)
+  [INDIRECT_PROMPT] PASS: 'convert_timezone' (7.419s)
+  [INDIRECT_PROMPT] PASS: 'convert_currency' (6.716s)
+  [INDIRECT_PROMPT] PASS: 'get_weather_forecast' (5.31s)
+  [INDIRECT_PROMPT] PASS: 'summarize_text' (20.519s)
+  [INDIRECT_PROMPT] PASS: 'paraphrase_text' (7.617s)
+  [INDIRECT_PROMPT] PASS: 'calculate_split_bill' (7.449s)
+  [INDIRECT_PROMPT] PASS: 'search_academic' (7.015s)
+  [INDIRECT_PROMPT] PASS: 'send_slack_message' (7.808s)
+  [DECOY_TOOL] PASS: 'get_air_quality' (4.472s)
+  [DECOY_TOOL] PASS: 'get_weather' (4.595s)
+  [DECOY_TOOL] FAIL: expected 'paraphrase_text', got 'none' (7.761s)
+         Rationale: Decoy: translate_text and summarize_text are tempting, but 'rewrite to sound different same info' = paraphrase
+  [DECOY_TOOL] PASS: 'set_timer' (5.559s)
+  [DECOY_TOOL] FAIL: expected 'create_reminder', got 'set_alarm' (19.001s)
+         Rationale: Decoy: send_push_notification is tempting (buzz phone), but a scheduled note about a task = reminder
+  [DECOY_TOOL] PASS: 'create_calendar_event' (10.585s)
+  [DECOY_TOOL] PASS: 'convert_file_format' (7.145s)
+  [RANDOM_ORDER] PASS: 'search_web' (5.922s)
+  [RANDOM_ORDER] PASS: 'send_push_notification' (8.947s)
+  [RANDOM_ORDER] PASS: 'convert_units' (7.124s)
+
+============================================================
+PHASE 2 SUMMARY
+============================================================
+  SEMANTIC_OVERLAP     10/10 (100%) [PASS]
+  INDIRECT_PROMPT      8/8 (100%) [PASS]
+  DECOY_TOOL           5/7 (71%) [DEGRADED]
+    - Expected 'paraphrase_text', got 'none/no-tool-call'
+      Prompt: Rewrite this paragraph to sound different but keep the same ...
+    - Expected 'create_reminder', got 'set_alarm'
+      Prompt: Can you buzz my phone with a note about buying milk tomorrow...
+  RANDOM_ORDER         3/3 (100%) [PASS]
+
+  OVERALL: 26/28 (93%)
