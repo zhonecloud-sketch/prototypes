@@ -1149,11 +1149,14 @@
             </div>
             <div class="exp-role">System Software Development Engineer · Automation Lead</div>
             <ul class="exp-list">
+              <li><b>Brought up a GMSL2 camera subsystem on Intel's next-gen platform in 5 days</b> — identified and validated undocumented BIOS "Camera Links" settings, established the MIPI CSI-2 data path over the MAX9295A SerDes link (Sony IMX390), and confirmed kernel-space streaming via GStreamer v4l2src.</li>
+              <li><b>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash (1-in-5 boots)</b> — the crash was blocking all camera-driver validation; the patch restored full V4L2 data-path verification.</li>
+              <li><b>Drove IPU7 → IPU8 early enablement</b> — upgraded the camera HAL to the new IPU8 context and reconfigured the icamerasrc userspace pipeline, verifying end-to-end streaming.</li>
               <li><b>Architected a proprietary computer-vision engine</b> — HSV-based corruption detector that analyses a 15-minute video in <b>9 seconds</b>; dual regions of interest resolve edge cases like solid-coloured scenes.</li>
               <li><b>Engineered a high-sensitivity screen tearing artefact detector</b> via a lightweight dual-region SSIM algorithm — captures screen-tearing and subtle defects, near real-time where commercial tools hit limits.</li>
               <li><b>Built a low-level display &amp; automation tool</b> — reverse-engineered Intel Graphics Command Centre Beta to expose undocumented registry dependencies; custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on non-standard resolutions.</li>
               <li><b>Expanded automated test coverage</b> by re-engineering a Robot + Python suite for local lab environments; stabilised high-impact cases for a significant uplift in coverage.</li>
-              <li><b>Enabled swift, stable delivery cycles</b> — automated 40 Ubuntu and 45 Windows manual test cases in 2 quarters, with results formally validated through official product milestones.</li>
+              <li><b>Automated 85 manual test cases (40 Ubuntu / 45 Windows) in two quarters</b> — re-engineered the Robot Framework + Python suite for local lab environments, stabilised high-impact cases, with results formally validated at official product milestones.</li>
             </ul>
           </article>
 
