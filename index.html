@@ -4,8 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0b3d91" />
-<title>Chong Boo Chean — CV</title>
-<meta name="description" content="Mobile-first curriculum vitae of Chong Boo Chean." />
+<title>Chong Boo Chean — System Test &amp; Validation Engineering Leader</title>
+<meta name="description" content="Digital profile of Chong Boo Chean — system test and validation engineering leader · Python · Linux. Manufacturing test, functional test leadership, test automation, Linux kernel and camera bring-up." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -42,7 +42,6 @@
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.55;
     font-size: 15px;
-    /* Respect iOS safe area */
     padding-bottom: env(safe-area-inset-bottom);
   }
   a { color: var(--brand-2); text-decoration: none; -webkit-tap-highlight-color: rgba(14,165,164,.18); }
@@ -56,7 +55,6 @@
     margin: 0 auto;
     background: var(--bg);
     min-height: 100vh;
-    /* Mobile padding */
     padding: 0 0 100px;
   }
 
@@ -79,24 +77,22 @@
   .hero-row {
     display: flex; align-items: center; gap: 16px;
     position: relative; z-index: 1;
-	
-    justify-content: space-between; /* Pushes left group to the left, meta to the right */
-    flex-wrap: wrap;               /* Allows wrapping when space runs out */
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .hero-left-group {
     display: flex;
     align-items: center;
-    gap: 16px;                     /* Adjust space between avatar and text */
+    gap: 16px;
   }
   .hero-meta span {
     display: flex;
     align-items: center;
     gap: 6px;
   }
-
-.hero-meta svg {
-  width: 16px;
-  height: 16px;
+  .hero-meta svg {
+    width: 16px;
+    height: 16px;
   }
   .avatar {
     flex: 0 0 auto;
@@ -119,7 +115,6 @@
     border-radius: 50%;
     display: block;
   }
-  /* If a photo is provided, hide the initials fallback */
   .avatar:has(img.avatar-photo) .avatar-initials,
   .avatar:has(.avatar-photo) .avatar-initials { display: none; }
   .hero-name {
@@ -500,42 +495,6 @@
     margin: -6px 0 12px;
   }
 
-  /* Stat cards */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .stat {
-    background: linear-gradient(160deg, #f8fafc, #ffffff);
-    border: 1px solid var(--line-2);
-    border-radius: 12px;
-    padding: 12px 12px 10px;
-    text-align: left;
-  }
-  .stat .num {
-    font-size: 26px; font-weight: 800;
-    letter-spacing: -.02em;
-    color: var(--ink);
-    line-height: 1.1;
-    display: flex; align-items: baseline; gap: 4px;
-  }
-  .stat .num small {
-    font-size: 13px; color: var(--brand-2);
-    font-weight: 700;
-  }
-  .stat .lbl {
-    font-size: 11px; color: var(--ink-3);
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    font-weight: 600;
-    margin-top: 4px;
-  }
-  .stat.brand .num   { color: var(--brand); }
-  .stat.teal  .num   { color: #0d9488; }
-  .stat.coral .num   { color: #ef4444; }
-  .stat.amber .num   { color: #d97706; }
-
   /* Industry bars */
   .bar-row {
     display: grid; grid-template-columns: 110px 1fr 44px;
@@ -622,7 +581,7 @@
   /* Career journey */
   .journey-wrap {
     overflow-x: auto;
-	width: 100%;
+    width: 100%;
     -webkit-overflow-scrolling: touch;
     margin: 0 -16px;
     padding: 0 16px 4px;
@@ -631,10 +590,10 @@
   .journey-wrap::-webkit-scrollbar { height: 4px; }
   .journey-wrap::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
   .journey {
-	min-width: 1000px; 
-	width: 100%; 
-	height: auto; 
-	display: block
+    min-width: 1000px;
+    width: 100%;
+    height: auto;
+    display: block
   }
   @media (min-width: 720px) {
     .journey { width: 100%; }
@@ -733,31 +692,22 @@
     <!-- ============== HERO ============== -->
     <header class="hero">
       <div class="hero-row">
-		  <div class="hero-left-group">
-			<div class="avatar" aria-label="Chong Boo Chean">
-			  <!--
-				PHOTO SLOT
-				─────────────────────────────────────────────
-				To use a real photo, replace the <span> below with:
-				  <img src="photo.jpg" alt="Chong Boo Chean" class="avatar-photo">
-				• Supports .png, .jpg/.jpeg, .webp, .gif (any browser-native format)
-				• Recommended: square crop, ≥ 400×400 px
-				• The initials "CBC" act as a fallback if no image is provided
-			  -->
-			  <img src="cbc.jpg" alt="CBC" class="avatar-photo">
-			</div>
-			<div>
-			  <h1 class="hero-name">Chong Boo Chean</h1>
-			  <p class="hero-role">Engineering Leader · Software &amp; Automation</p>
-			</div>
-	      </div>
-			<div class="hero-meta">
-				<span>
-				  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-				  Penang, Malaysia
-				</span>
-			</div>
-		</div>
+          <div class="hero-left-group">
+            <div class="avatar" aria-label="Chong Boo Chean">
+              <img src="cbc.jpg" alt="CBC" class="avatar-photo">
+            </div>
+            <div>
+              <h1 class="hero-name">Chong Boo Chean</h1>
+              <p class="hero-role">System Test &amp; Validation Engineering Leader · Python · Linux</p>
+            </div>
+          </div>
+            <div class="hero-meta">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Penang, Malaysia
+                </span>
+            </div>
+        </div>
 
       <p class="hero-tagline">
         <em>Technologist at the core,</em>
@@ -776,9 +726,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
         <span>LinkedIn</span>
       </a>
-      <a href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener" aria-label="GitHub">
+      <a href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener" aria-label="Portfolio">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        <span>GitHub</span>
+        <span>Portfolio</span>
       </a>
     </nav>
 
@@ -786,24 +736,33 @@
     <section class="content">
 
       <p class="summary">
-        <b>Engineering leader</b> with 30 years across embedded software, functional test
-        and program management in semiconductor, automotive, and consumer audio industries.
-        Track record of <b>building high-performing teams</b>, <b>shipping to global OEMs</b>,
-        and <b>driving measurable quality improvements</b> — most recently leading automation,
-        media, and imaging software at Intel Penang.
+        <b>System test and validation engineering leader</b> with 30 years across semiconductor, automotive,
+        and consumer electronics — spanning manufacturing test (AOI/AXI), functional test site leadership,
+        test automation, and embedded software. Built and led test teams of up to <b>16 engineers</b>, grew a
+        test product portfolio <b>1 → 4</b>, and reduced customer-found defects by <b>up to 96%</b> through
+        root-cause debug and cross-functional yield and quality initiatives. Currently hands-on at Intel on
+        next-generation SoC platforms: authored a <b>Linux kernel patch</b> (V4L2/IPU), brought up a
+        <b>GMSL2 camera subsystem</b> end-to-end over MIPI CSI-2, and scaled <b>Python / Robot Framework</b>
+        automation from manual suites to officially validated results. Combines senior leadership with
+        current technical depth — <b>Python, C/C++, Linux</b> — and a proven record of defining qualification
+        and release processes for test and validation content.
       </p>
 
       <!-- ====== TOP SKILLS ====== -->
       <div class="section">
         <h2 class="section-title">Top Skills</h2>
         <div class="skills">
-          <span>Project Management</span>
-          <span>Project Planning</span>
+          <span>Test Strategy &amp; Qualification</span>
+          <span>Functional / Manufacturing Test</span>
+          <span>Python · Robot Framework</span>
+          <span>Linux Kernel · V4L2</span>
+          <span>Hardware Validation</span>
+          <span>Automated Diagnostics</span>
+          <span>Debug (HW/SW)</span>
+          <span>Yield &amp; Quality Improvement</span>
           <span>Program Management</span>
-          <span>Software Engineering Mgmt</span>
-          <span>Functional Test</span>
-          <span>Automation</span>
-          <span>Embedded Software</span>
+          <span>Agile / Lean Leadership</span>
+          <span>MIPI CSI-2 · GMSL2 · GStreamer</span>
         </div>
       </div>
 
@@ -816,7 +775,7 @@
           <!-- Leadership Capability Radar -->
           <div class="chart-card">
             <h3 class="chart-title"><span class="dot"></span>Leadership Capability</h3>
-            <p class="chart-sub">Calibrated for a Senior Technical Manager / Technical Director role.</p>
+            <p class="chart-sub">Calibrated for a System Test Engineering Manager mandate.</p>
             <div class="radar-wrap">
               <svg viewBox="-60 0 520 420" class="radar" role="img" aria-label="Leadership capability radar">
                 <defs>
@@ -826,7 +785,7 @@
                   </linearGradient>
                 </defs>
 
-                <!-- Grid rings (20/40/60/80/100%) -->
+                <!-- Grid rings -->
                 <g class="grid">
                   <polygon points="200,172 220,180 228,200 220,220 200,228 180,220 172,200 180,180"/>
                   <polygon points="200,144 240,160 256,200 240,240 200,256 160,240 144,200 160,160"/>
@@ -847,7 +806,7 @@
                   <line x1="200" y1="200" x2="101" y2="101"/>
                 </g>
 
-                <!-- Data polygon: 95,92,88,90,95,92,90,92 /100 -->
+                <!-- Data polygon -->
                 <polygon class="data"
                   points="200,67 271,129 283,200 279,279 200,333 109,291 74,200 109,109"/>
 
@@ -861,7 +820,7 @@
                 <circle class="point" cx="74"  cy="200" r="4"/>
                 <circle class="point" cx="109" cy="109" r="4"/>
 
-                <!-- Labels (reframed for Technical Director in Embedded Tests/SW) -->
+                <!-- Labels -->
                 <text class="label" x="200" y="48"  text-anchor="middle">Method Engineering</text>
                 <text class="label" x="312" y="92"  text-anchor="start">Test Architecture</text>
                 <text class="label" x="350" y="205" text-anchor="start">Embedded SW</text>
@@ -882,11 +841,21 @@
 
               <div class="method-card">
                 <div class="method-icon brand" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
                 </div>
                 <div>
-                  <div class="method-name">HSV Corruption Detector <span class="method-year">2025</span></div>
-                  <div class="method-impact">Proprietary CV engine — <b>9 s</b> to scan a 15-min video; dual ROIs cover solid-colour edge cases.</div>
+                  <div class="method-name">GMSL2 Camera Bring-Up <span class="method-year">2026</span></div>
+                  <div class="method-impact">End-to-end camera subsystem enablement in <b>5 days</b> — undocumented BIOS settings, MIPI CSI-2 over MAX9295A SerDes, interim <b>V4L2 kernel patch</b>.</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon amber" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">Robot + Python Test Suite <span class="method-year">2025–26</span></div>
+                  <div class="method-impact">Ported cross-site &amp; re-engineered for Linux (Ubuntu) / Windows labs — <b>85 manual cases automated in two quarters</b>, results officially verified.</div>
                 </div>
               </div>
 
@@ -895,8 +864,8 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2"/></svg>
                 </div>
                 <div>
-                  <div class="method-name">Dual-Region SSIM Engine <span class="method-year">2025</span></div>
-                  <div class="method-impact">High-sensitivity artefact detection at <b>near real-time</b> — catches what commercial tools miss.</div>
+                  <div class="method-name">Automated Visual Diagnostics <span class="method-year">2025</span></div>
+                  <div class="method-impact">HSV corruption detection (<b>9 s</b> / 15-min video) + dual-region SSIM at near real-time — catches defects commercial tools miss.</div>
                 </div>
               </div>
 
@@ -906,22 +875,22 @@
                 </div>
                 <div>
                   <div class="method-name">MIPI CSI Display &amp; Capture CLI <span class="method-year">2025</span></div>
-                  <div class="method-impact">Reverse-engineered registry deps to bypass GUI limits; <b>HDMI</b> propagation fixed for non-standard resolutions.</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon amber" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">Robot + Python Test Suite <span class="method-year">2025</span></div>
-                  <div class="method-impact">Re-engineered for local lab; <b>significant coverage uplift</b> on high-impact automated cases.</div>
+                  <div class="method-impact">Hardware debug automation — reverse-engineered registry deps; <b>HDMI</b> propagation fixed for non-standard resolutions.</div>
                 </div>
               </div>
 
               <div class="method-card">
                 <div class="method-icon coral" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">AOI / AXI Manufacturing Inspection <span class="method-year">2007–09</span></div>
+                  <div class="method-impact">Automated optical &amp; X-ray inspection analytics industrialised across MY &amp; SG for high-volume EMS lines (Nokia, Jabil).</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon brand" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                 </div>
                 <div>
@@ -936,7 +905,7 @@
           <!-- Defect Reduction Trajectory -->
           <div class="chart-card full">
             <h3 class="chart-title"><span class="dot amber"></span>Defect Reduction Trajectory</h3>
-            <p class="chart-sub">Customer-found defects, year over year. The story behind the numbers.</p>
+            <p class="chart-sub">Customer-found defects, year over year — the yield and quality story behind the numbers.</p>
 
             <svg viewBox="0 0 520 240" class="trajectory" role="img" aria-label="Customer defect reduction from 2017 to 2025">
               <defs>
@@ -950,7 +919,7 @@
                 </linearGradient>
               </defs>
 
-              <!-- Y axis grid + labels (0, 50, 100, 150) -->
+              <!-- Y axis grid + labels -->
               <g>
                 <line class="grid-line" x1="50" y1="30"  x2="500" y2="30"/>
                 <line class="grid-line" x1="50" y1="87"  x2="500" y2="87"/>
@@ -966,12 +935,10 @@
 
               <!-- Series 1 area: Continental (2017-2021) -->
               <path class="area-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194 L 265,200 L 50,200 Z"/>
-              <!-- Series 1 line -->
               <path class="series-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194"/>
 
               <!-- Series 2 area: Intel (2022-2025) -->
               <path class="area-2" d="M 319,186 L 373,190 L 426,193 L 480,195 L 480,200 L 319,200 Z"/>
-              <!-- Series 2 line -->
               <path class="series-2" d="M 319,186 L 373,190 L 426,193 L 480,195"/>
 
               <!-- Dots + values: Continental -->
@@ -1008,7 +975,7 @@
                 <text class="year-lbl" x="480" y="218" text-anchor="middle">2025</text>
               </g>
 
-              <!-- Series dividers / annotations -->
+              <!-- Series annotations -->
               <g>
                 <text class="val-lbl s1" x="158" y="90" text-anchor="middle" font-weight="600">Continental</text>
                 <text class="val-lbl s2" x="400" y="178" text-anchor="middle" font-weight="600">Intel</text>
@@ -1038,7 +1005,7 @@
                 </linearGradient>
               </defs>
 
-              <!-- Year ticks (1995, 2000, 2005, 2010, 2015, 2020, 2025) -->
+              <!-- Year ticks -->
               <g>
                 <line class="tick" x1="0"    y1="118" x2="0"    y2="128"/>
                 <line class="tick" x1="160"  y1="118" x2="160"  y2="128"/>
@@ -1059,9 +1026,9 @@
               <!-- Main axis -->
               <line class="axis" x1="0" y1="123" x2="960" y2="123"/>
 
-              <!-- Stops: 1995=0, 1997=64, 2001=192, 2002=224, 2005=320, 2007=384, 2009=448, 2010=480, 2011=512, 2017=704, 2022=864, 2026=992 -->
+              <!-- Stops -->
               <g>
-                <!-- Above the line (alternating) -->
+                <!-- Above the line -->
                 <g>
                   <circle class="stop" cx="0"   cy="123" r="6"/>
                   <text class="stop-label" x="0"   y="100" text-anchor="middle">SCS Systems</text>
@@ -1127,7 +1094,7 @@
                 <g>
                   <circle class="stop" cx="960" cy="123" r="6"/>
                   <text class="stop-label" x="960" y="160" text-anchor="middle">Now</text>
-                  <text class="stop-sub"   x="960" y="174" text-anchor="middle">Automation</text>
+                  <text class="stop-sub"   x="960" y="174" text-anchor="middle">Kernel · Automation</text>
                 </g>
               </g>
             </svg>
@@ -1147,19 +1114,30 @@
               <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
               <div class="exp-dates">Dec 2025 — Present</div>
             </div>
-            <div class="exp-role">System Software Development Engineer · Automation Lead</div>
-            <ul class="exp-list">
-              <li><b>Brought up a GMSL2 camera subsystem on Intel's next-gen platform in 5 days</b> — identified and validated undocumented BIOS "Camera Links" settings, established the MIPI CSI-2 data path over the MAX9295A SerDes link (Sony IMX390), and confirmed kernel-space streaming via GStreamer v4l2src.</li>
-              <li><b>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash (1-in-5 boots)</b> — the crash was blocking all camera-driver validation; the patch restored full V4L2 data-path verification.</li>
-              <li><b>Drove IPU7 → IPU8 early enablement</b> — upgraded the camera HAL to the new IPU8 context and reconfigured the icamerasrc userspace pipeline, verifying end-to-end streaming.</li>
-              <li><b>Architected a proprietary computer-vision engine</b> — HSV-based corruption detector that analyses a 15-minute video in <b>9 seconds</b>; dual regions of interest resolve edge cases like solid-coloured scenes.</li>
-              <li><b>Engineered a high-sensitivity screen tearing artefact detector</b> via a lightweight dual-region SSIM algorithm — captures screen-tearing and subtle defects, near real-time where commercial tools hit limits.</li>
-              <li><b>Built a low-level display &amp; automation tool</b> — reverse-engineered Intel Graphics Command Centre Beta to expose undocumented registry dependencies; custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on non-standard resolutions.</li>
-              <li><b>Expanded automated test coverage</b> by re-engineering a Robot + Python suite for local lab environments; stabilised high-impact cases for a significant uplift in coverage.</li>
-              <li><b>Automated 85 manual test cases (40 Ubuntu / 45 Windows) in two quarters</b> — re-engineered the Robot Framework + Python suite for local lab environments, stabilised high-impact cases, with results formally validated at official product milestones.</li>
-            </ul>
+            <div class="exp-role">System Software Development Engineer</div>
+
+            <div class="group">
+              <div class="group-title">Linux Device Driver Developer <small>· Jun 2026 — Present</small></div>
+              <ul class="exp-list">
+                <li><b>Brought up a GMSL2 camera subsystem on Intel's next-generation platform in 5 days</b> — identified and validated undocumented BIOS "Camera Links" settings, established the MIPI CSI-2 data path over the MAX9295A SerDes link (Sony IMX390), and confirmed kernel-space streaming via GStreamer v4l2src.</li>
+                <li><b>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash (1-in-5 boots)</b> — the crash was blocking all camera-driver validation; the patch restored full V4L2 data-path verification.</li>
+                <li><b>Drove IPU7 → IPU8 early enablement</b> — upgraded the camera HAL to the new IPU8 context and reconfigured the icamerasrc userspace pipeline, verifying end-to-end streaming.</li>
+              </ul>
+            </div>
+
+            <div class="group">
+              <div class="group-title">Automation Lead <small>· Dec 2025 — Jun 2026</small></div>
+              <ul class="exp-list">
+                <li><b>Expanded automated test coverage through cross-site collaboration</b> — ported the Robot Framework + Python automation suite from Intel's China test division into local lab environments; drove a gap analysis between their test cases and local coverage, then closed the identified gaps with new or modified cases — delivering a significant uplift in coverage.</li>
+                <li><b>Converted long-overdue manual test suites to automation in two quarters</b> — automated 85 cases (40 Ubuntu / 45 Windows, one quarter per platform), with code peer-reviewed and results formally validated in official product-milestone validation cycles.</li>
+                <li><b>Architected a proprietary computer-vision engine</b> — HSV-based corruption detector that analyses a 15-minute video in <b>9 seconds</b>; dual regions of interest resolve edge cases like solid-coloured scenes.</li>
+                <li><b>Engineered a high-sensitivity screen-tearing artefact detector</b> via a lightweight dual-region SSIM algorithm — captures screen-tearing and subtle defects, near real-time where commercial tools hit limits.</li>
+                <li><b>Built a low-level display &amp; automation tool</b> — reverse-engineered Intel Graphics Command Centre Beta to expose undocumented registry dependencies; custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on non-standard resolutions.</li>
+              </ul>
+            </div>
           </article>
 
+          <!-- Intel — manager -->
           <article class="exp">
             <div class="exp-head">
               <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
@@ -1167,11 +1145,10 @@
             </div>
             <div class="exp-role">Software Engineering Manager</div>
             <ul class="exp-list collapsed">
-              <li>Led <b>Media Software</b> (video codecs), <b>Imaging Software</b> (camera sensors), and <b>Component Validation</b> (hypervisors, codecs, sensors) teams.</li>
+              <li>Directed <b>Media Software</b> (video codecs), <b>Imaging Software</b> (camera sensors), and <b>Component Validation</b> (hypervisors, codecs, sensors) teams comprising <b>8 Software Engineers and 4 Test Engineers</b>.</li>
               <li>Owned the <b>Software Component Defect Driving</b> and <b>Software Component Release Process</b> charters.</li>
-              <li>Managed &amp; mentored <b>8 SWE + 4 TE</b>; grew engineers from zero to major contributors, and from inconsistent to consistent contributors.</li>
-              <li><b>0% unintended attrition</b> for 3 consecutive years.</li>
-              <li>Customer-found defects: <b>12+ (2022) → ~4 (2025)</b>.</li>
+              <li>Drove systematic defect reduction, cutting customer-found defects from <b>12+ (2022) to ~4 (2025)</b>.</li>
+              <li>Achieved <b>0% unintended attrition</b> across 3 consecutive years while mentoring junior talent into major technical contributors.</li>
             </ul>
             <button class="expand-btn" type="button" aria-expanded="false">
               Show more <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1185,16 +1162,11 @@
               <div class="exp-dates">Sep 2017 — Jan 2022</div>
             </div>
             <div class="exp-role">Manager — Functional Test / Functional Test Site Lead</div>
-            <ul class="exp-list collapsed">
-              <li>Led up to <b>16 Test Engineers</b> on automotive cluster projects; <b>Lean Agile Leader</b> (16 reports) and <b>Business Owner</b> for 3 variant projects.</li>
-              <li>Customers: Toyota (JP), Volkswagen Group (EU), Perodua (MY), Suzuki (IN).</li>
-              <li>Customer-found defects: <b>140+ (2017) → ~5 (2021)</b>.</li>
-              <li>Test product portfolio: <b>1 → 4</b>.</li>
-              <li>Key roles/competencies: <b>1 → 6</b>; attrition <b>~10%</b>.</li>
+            <ul class="exp-list">
+              <li>Served as <b>Site Lead and Business Owner</b> for automotive instrument cluster projects across key global OEMs (Toyota, Volkswagen Group, Perodua, Suzuki).</li>
+              <li>Managed up to <b>16 direct test engineering reports</b> under Lean Agile leadership frameworks.</li>
+              <li>Reduced customer-found defects from <b>140+ (2017) to ~5 (2021)</b> while expanding test product portfolio responsibilities from <b>1 to 4</b> key lines.</li>
             </ul>
-            <button class="expand-btn" type="button" aria-expanded="false">
-              Show more <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
           </article>
 
           <!-- Blaupunkt / PSS -->
@@ -1203,13 +1175,13 @@
               <div class="exp-company">Blaupunkt / Premium Sound Solutions <span class="exp-loc">· Malaysia</span></div>
               <div class="exp-dates">Mar 2011 — Jul 2017</div>
             </div>
-            <div class="exp-role">Section Manager → Program Manager → Software Developer</div>
+            <div class="exp-role">Software Developer → Program Manager → Section Manager</div>
 
             <div class="group">
               <div class="group-title">Section Manager — Embedded Software <small>· Jan 2014 — Jul 2017</small></div>
               <ul class="exp-list">
                 <li>Department Head of Software Engineering &amp; Deputy Head of R&amp;D.</li>
-                <li>Led HMI and firmware teams; managed vendors; presented to external customers.</li>
+                <li>Managed multi-disciplinary HMI and firmware development teams delivering to global customers.</li>
                 <li><div class="pills"><span class="pill">Honda (JP/IN)</span><span class="pill">Volvo CE (KR)</span><span class="pill">Proton (MY)</span><span class="pill">Nissan (ZA)</span><span class="pill">Rockford (US)</span><span class="pill">Agco Fendt (DE)</span></div></li>
               </ul>
             </div>
@@ -1217,18 +1189,15 @@
             <div class="group">
               <div class="group-title">Program Manager <small>· Mar 2011 — Apr 2014</small></div>
               <ul class="exp-list">
-                <li>Customer engagement, RFQ quotations, pre-sales technical presentations.</li>
-                <li>Managed R&amp;D (mechanical, electronics, firmware) and production end-to-end.</li>
-                <li><div class="pills"><span class="pill">Android on SoC</span><span class="pill">Bare metal</span><span class="pill">AM/FM</span><span class="pill">DAB+</span><span class="pill">Bluetooth</span><span class="pill">Google cert</span><span class="pill">Apple iAP</span><span class="pill">MirrorLink</span><span class="pill">Navigation</span><span class="pill">Voice recognition</span></div></li>
+                <li>Led pre-sales RFQ technical presentations and managed end-to-end R&amp;D/production cycles for Android SoC, bare-metal audio, navigation, and connectivity systems.</li>
+                <li><div class="pills"><span class="pill">Android on SoC</span><span class="pill">Bare metal</span><span class="pill">DAB+</span><span class="pill">Bluetooth</span><span class="pill">Apple iAP</span><span class="pill">MirrorLink</span><span class="pill">Navigation</span><span class="pill">Voice recognition</span></div></li>
               </ul>
             </div>
 
             <div class="group">
               <div class="group-title">Software Developer <small>· Mar 2011 — Dec 2011</small></div>
               <ul class="exp-list">
-                <li>Android GUI apps (Audio Balance/Fader, AM/FM Tuner) — Java, XML, Gimp.</li>
-                <li>Ported Irrlicht graphics library to WinCE (C++).</li>
-                <li>Interaction module on TI Jacinto2 / µITRON OS (embedded C).</li>
+                <li>Developed Android GUI apps (Java/XML) and ported C++ graphics engines to WinCE environments.</li>
               </ul>
             </div>
           </article>
@@ -1241,8 +1210,7 @@
             </div>
             <div class="exp-role">Project Manager — Software</div>
             <ul class="exp-list">
-              <li>Requirements, test scope validation, project planning, tracking, reporting.</li>
-              <li><div class="pills"><span class="pill">Linux on SoC</span></div></li>
+              <li>Managed software project schedules, scope validation, and requirements tracking for <b>Linux on SoC</b> platforms.</li>
             </ul>
           </article>
 
@@ -1254,9 +1222,9 @@
             </div>
             <div class="exp-role">Operating Manager — Software</div>
             <ul class="exp-list">
-              <li>Transferred AOI product knowledge from Ireland; AOI analytic tools from Singapore into Penang.</li>
-              <li>Managed AOI analytic projects, patches, escalations across MY &amp; SG.</li>
-              <li><div class="pills"><span class="pill">Nokia</span><span class="pill">Jabil</span><span class="pill">Rockwell (US)</span><span class="pill">AOI</span><span class="pill">AXI</span></div></li>
+              <li>Managed <b>Automated Optical Inspection (AOI)</b> and <b>Automated X-ray Inspection (AXI)</b> analytic projects, software patches, and engineering escalations across Malaysia and Singapore.</li>
+              <li>Transferred AOI product knowledge from Ireland, AXI analytics from Singapore into Penang.</li>
+              <li><div class="pills"><span class="pill">Nokia</span><span class="pill">Jabil EMS</span><span class="pill">Rockwell (US)</span><span class="pill">AOI</span><span class="pill">AXI</span></div></li>
             </ul>
           </article>
 
@@ -1268,9 +1236,7 @@
             </div>
             <div class="exp-role">Project Manager — Software</div>
             <ul class="exp-list">
-              <li>Multi-site infotainment teams; interfaced with external customers; processes aligned to <b>CMM Level 3</b>.</li>
-              <li><div class="pills"><span class="pill">GM Daewoo (KR)</span><span class="pill">Zao Volga (RU)</span><span class="pill">Nissan MMR2 (UK)</span><span class="pill">GM G8 / Holden (AU)</span></div></li>
-              <li>Re-factored Illumination &amp; Steering Wheel modules on Renesas M16C30 (embedded C).</li>
+              <li>Led multi-site infotainment software development aligned with <b>CMM Level 3</b> process framework for global automotive clients (GM Daewoo, Nissan, GM Holden).</li>
             </ul>
           </article>
         </div>
@@ -1278,42 +1244,39 @@
 
       <!-- ====== EARLY CAREER ====== -->
       <div class="section">
-        <h2 class="section-title">Early Career &amp; Technical Experience</h2>
+        <h2 class="section-title">Early Career &amp; Academia</h2>
         <div class="timeline">
 
           <article class="exp">
             <div class="exp-head">
               <div class="exp-company">INTI International College Penang</div>
-              <div class="exp-dates">Jan 2002 — Oct 2005</div>
+              <div class="exp-dates">2002 — 2005</div>
             </div>
             <div class="exp-role">Academic Coordinator</div>
             <ul class="exp-list">
-              <li>Lectured Computer Engineering, C/C++, Java, Assembly Languages, Photoshop, HSC Computing, Business IT.</li>
-              <li>Timetabling and student/staff counselling.</li>
+              <li>Lectured Computer Engineering, C/C++, Java, and Assembly Language courses.</li>
             </ul>
           </article>
 
           <article class="exp">
             <div class="exp-head">
               <div class="exp-company">Han Chiang High School</div>
-              <div class="exp-dates">Jul 1997 — Dec 2001</div>
+              <div class="exp-dates">1997 — 2001</div>
             </div>
             <div class="exp-role">Head of Computer Centre</div>
             <ul class="exp-list">
-              <li>Built the computer centre from scratch; ran extracurricular computing lessons; taught pre-university Computing (Perkomputeran).</li>
+              <li>Established campus computer infrastructure and pre-university IT programs.</li>
             </ul>
           </article>
 
           <article class="exp">
             <div class="exp-head">
               <div class="exp-company">SCS Systems and PEC Ltd. <span class="exp-loc">· New Zealand</span></div>
-              <div class="exp-dates">Apr 1995 — Jun 1997</div>
+              <div class="exp-dates">1995 — 1997</div>
             </div>
             <div class="exp-role">Application Specialist</div>
             <ul class="exp-list">
-              <li>Maintained Money Market System on Unix (PowerHouse); pre-sales demos.</li>
-              <li>Developed RS-232 module of SIRAS (automated credit-card swiping) on OS/2 in C++ — deployed across Shell &amp; Caltex, Klang Valley.</li>
-              <li><div class="pills"><span class="pill">HP-UX</span><span class="pill">SUN-SPARC</span><span class="pill">RISC6000</span><span class="pill">RHB Finance</span></div></li>
+              <li>Maintained Unix Money Market systems and developed RS-232 SIRAS swiping modules on OS/2 in C++.</li>
             </ul>
           </article>
         </div>
