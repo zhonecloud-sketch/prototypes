@@ -1,1347 +1,819 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0b3d91" />
-<title>Chong Boo Chean — System Test &amp; Validation Engineering Leader</title>
-<meta name="description" content="Digital profile of Chong Boo Chean — system test and validation engineering leader · Python · Linux. Manufacturing test, functional test leadership, test automation, Linux kernel and camera bring-up." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0d13">
+<title>Chong Boo Chean · System Test &amp; Validation Engineering Leader</title>
+<meta name="description" content="Digital profile of Chong Boo Chean — 30 years of hands-on engineering across semiconductor, automotive and consumer electronics. AI-augmented, hands-on leader based in Penang, Malaysia.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230a0d13'/><text x='32' y='41' font-family='monospace' font-size='20' fill='%235fa3ff' text-anchor='middle'>CBC</text></svg>">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
-  /* ============== Tokens ============== */
-  :root {
-    --bg: #f3f4f7;
-    --paper: #ffffff;
-    --ink: #0f172a;
-    --ink-2: #334155;
-    --ink-3: #64748b;
-    --line: #e5e7eb;
-    --line-2: #eef0f3;
-    --brand: #0b3d91;
-    --brand-2: #1e63d1;
-    --accent: #0ea5a4;
-    --accent-2: #f59e0b;
-    --soft: #eef2ff;
-    --chip: #f1f5f9;
-    --radius: 14px;
-    --shadow-sm: 0 1px 2px rgba(15,23,42,.04), 0 4px 14px rgba(15,23,42,.06);
-    --shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 28px rgba(15,23,42,.08);
-  }
+/* ============================================================
+   CHONG BOO CHEAN — DIGITAL PROFILE
+   Single-file HTML5 · three.js (true WebGL 3D) · mobile-first
+   Photograph: place "cbc.jpg" in the same folder as this file.
+   ============================================================ */
+:root{
+  --bg:#0a0d13;
+  --ink:#e9edf4;
+  --muted:#98a2b5;
+  --faint:#5c6577;
+  --line:rgba(233,237,244,.09);
+  --accent:#5fa3ff;
+  --radius:18px;
+  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(95,163,255,.32)}
+a{color:var(--accent)}
+img{display:block;max-width:100%}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#081120;
+  padding:10px 16px;border-radius:0 0 10px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
 
-  /* ============== Reset ============== */
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.55;
-    font-size: 15px;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  a { color: var(--brand-2); text-decoration: none; -webkit-tap-highlight-color: rgba(14,165,164,.18); }
-  a:hover { text-decoration: underline; }
-  img, svg { display: block; max-width: 100%; }
-  button { font: inherit; cursor: pointer; }
+/* ---------------- HERO ---------------- */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;
+  justify-content:center;padding:88px 20px 66px;overflow:hidden;touch-action:pan-y;
+  user-select:none;-webkit-user-select-select:none;-webkit-user-select:none;
+  background:radial-gradient(130% 90% at 50% 16%,#14213b 0%,#0a0d13 60%)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero.no3d #gl{display:none}
+.scrim{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 85% at 50% 32%,rgba(10,13,19,0) 0%,rgba(10,13,19,.30) 55%,rgba(10,13,19,.80) 100%),
+             linear-gradient(to bottom,rgba(10,13,19,0) 82%,#0a0d13 100%)}
+.hero-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+  padding:18px 20px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);pointer-events:none;z-index:3}
+.hero-inner{position:relative;z-index:2;text-align:center;max-width:780px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:17px}
 
-  /* ============== Mobile-first container ============== */
-  .page {
-    max-width: 720px;
-    margin: 0 auto;
-    background: var(--bg);
-    min-height: 100vh;
-    padding: 0 0 100px;
-  }
+/* Photograph slot — loads cbc.jpg from this folder; monogram shows until/unless it loads */
+.photo{position:relative;width:120px;height:120px;border-radius:50%;overflow:hidden;background:#0d1420;
+  box-shadow:0 0 0 1px rgba(233,237,244,.14),0 0 0 7px rgba(95,163,255,.07),0 0 46px rgba(95,163,255,.22)}
+.photo-fallback{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mono);font-size:24px;letter-spacing:.22em;color:var(--accent);
+  background:radial-gradient(120% 120% at 50% 20%,rgba(95,163,255,.16),#0d1420 70%)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
+.photo.loaded img{opacity:1}
+.photo.loaded .photo-fallback{display:none}
 
-  /* ============== Hero ============== */
-  .hero {
-    background:
-      radial-gradient(800px 400px at 90% -10%, rgba(14,165,164,.35), transparent 60%),
-      radial-gradient(600px 300px at -10% 110%, rgba(245,158,11,.20), transparent 60%),
-      linear-gradient(160deg, #061634 0%, #0b3d91 60%, #1e63d1 100%);
-    color: #e2e8f0;
-    padding: 32px 22px 76px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::after {
-    content: ""; position: absolute; inset: 0;
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='1' cy='1' r='1' fill='%23ffffff' opacity='0.06'/></svg>");
-    pointer-events: none;
-  }
-  .hero-row {
-    display: flex; align-items: center; gap: 16px;
-    position: relative; z-index: 1;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .hero-left-group {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .hero-meta span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .hero-meta svg {
-    width: 16px;
-    height: 16px;
-  }
-  .avatar {
-    flex: 0 0 auto;
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #1e63d1, #0ea5a4);
-    color: #fff;
-    display: grid; place-items: center;
-    font-weight: 800; font-size: 24px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 0 3px rgba(255,255,255,.15), 0 6px 20px rgba(0,0,0,.3);
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar img.avatar-photo,
-  .avatar .avatar-photo {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-  }
-  .avatar:has(img.avatar-photo) .avatar-initials,
-  .avatar:has(.avatar-photo) .avatar-initials { display: none; }
-  .hero-name {
-    margin: 0; font-size: 22px; font-weight: 800;
-    color: #fff; letter-spacing: -.01em; line-height: 1.2;
-  }
-  .hero-role {
-    margin: 4px 0 0; font-size: 13px;
-    color: #bfdbfe; font-weight: 500;
-  }
-  .hero-tagline {
-    margin: 10px 0 0;
-    font-size: 13.5px;
-    color: #e2e8f0;
-    line-height: 1.45;
-    padding: 10px 12px;
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    position: relative;
-    z-index: 1;
-  }
-  .hero-tagline em {
-    font-style: normal;
-    color: #fff;
-    font-weight: 700;
-    letter-spacing: .005em;
-  }
-  .hero-tagline .accent { color: #5eead4; }
-  .hero-meta {
-    position: relative; z-index: 1;
-    margin-top: 18px;
-    display: flex; flex-wrap: wrap; gap: 8px 14px;
-    font-size: 12.5px; color: #cbd5e1;
-  }
-  .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
-  .hero-meta svg { width: 14px; height: 14px; color: #93c5fd; }
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(2.15rem,8.5vw,3.6rem);line-height:1.05;letter-spacing:-.02em;font-weight:640}
+.tagline{font-size:14.5px;color:var(--muted);max-width:52ch}
+.meta-chips{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.meta-chips li{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:999px;
+  padding:6px 13px;font-size:12.5px;color:var(--muted)}
+.meta-chips a{color:var(--muted);text-decoration:none}
+.meta-chips a:hover{color:var(--accent)}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;padding:11px 20px;border-radius:999px;font-size:13.5px;
+  font-weight:600;text-decoration:none;border:1px solid var(--line);color:var(--ink);
+  background:rgba(255,255,255,.03);transition:transform .2s ease,border-color .2s,background .2s}
+.btn:hover{transform:translateY(-1px);border-color:rgba(95,163,255,.5)}
+.btn-solid{background:var(--accent);border-color:transparent;color:#081120}
+.btn-solid:hover{background:#7ab5ff;border-color:transparent}
+.scroll-cue{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);pointer-events:none}
+.scroll-cue span{width:1px;height:34px;background:linear-gradient(to bottom,var(--accent),transparent);
+  animation:cue 2.2s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}
+  55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.drag-hint{position:absolute;right:16px;bottom:16px;z-index:2;display:flex;gap:8px;align-items:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);pointer-events:none}
+.drag-hint i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+.hero.no3d .drag-hint{display:none}
+@media (max-height:640px){.scroll-cue{display:none}}
 
-  /* ============== Sticky contact bar ============== */
-  .contact-bar {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: saturate(180%) blur(12px);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
-    border-bottom: 1px solid var(--line);
-    margin: -50px 14px 0;
-    border-radius: 12px;
-    box-shadow: var(--shadow-sm);
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    padding: 6px;
-    gap: 4px;
-  }
-  .contact-bar a {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 4px;
-    padding: 8px 4px;
-    border-radius: 8px;
-    color: var(--ink-2);
-    font-size: 11px; font-weight: 600;
-    min-height: 48px;
-    transition: background .15s ease;
-    text-decoration: none;
-  }
-  .contact-bar a:active { background: var(--soft); }
-  .contact-bar a svg { width: 18px; height: 18px; color: var(--brand); }
-  .contact-bar a span { line-height: 1.1; }
+/* ---------------- LAYOUT ---------------- */
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+.section{padding:76px 0}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.label::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.7}
+h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em;
+  font-weight:640;margin-bottom:14px}
+.sub{color:var(--muted);font-size:15px;max-width:64ch}
 
-  /* ============== Content ============== */
-  .content { padding: 22px 18px 0; }
+/* Stats */
+.stats{padding:46px 0 6px}
+.grid-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.stat{background:var(--bg);padding:22px 18px;display:flex;flex-direction:column;gap:7px}
+.stat-num{font-family:var(--mono);font-size:clamp(1.7rem,6vw,2.4rem);color:var(--accent);
+  letter-spacing:-.02em;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);line-height:1.55}
+.stats-note{margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.05em}
 
-  .summary {
-    background: var(--paper);
-    border: 1px solid var(--line-2);
-    border-left: 3px solid var(--brand);
-    padding: 14px 16px;
-    border-radius: 12px;
-    color: var(--ink-2);
-    font-size: 14px;
-    margin: 0 0 22px;
-    box-shadow: var(--shadow-sm);
-  }
-  .summary b { color: var(--ink); }
+/* Summary + pillars */
+.lead{font-size:clamp(1.02rem,2.6vw,1.18rem);line-height:1.75;color:#c7cfdc;max-width:70ch}
+.pillars{margin-top:34px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden}
+.pillar{position:relative;background:var(--bg);padding:22px 20px 22px 26px}
+.pillar::before{content:"";position:absolute;left:0;top:24px;bottom:24px;width:2px;
+  background:linear-gradient(to bottom,var(--accent),transparent)}
+.pillar h3{font-size:15px;font-weight:620;margin-bottom:6px;letter-spacing:-.01em}
+.pillar p{color:var(--muted);font-size:13.5px;line-height:1.65}
 
-  .section { margin-bottom: 28px; }
-  .section-title {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; font-weight: 800;
-    letter-spacing: .16em; text-transform: uppercase;
-    color: var(--brand);
-    margin: 0 0 12px;
-  }
-  .section-title::after {
-    content: ""; flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--line), transparent);
-  }
+/* Cards (capabilities + signature work) */
+.cards{margin-top:30px;display:grid;gap:14px;grid-template-columns:1fr}
+.card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  transition:border-color .25s,transform .25s}
+@media (hover:hover){.card:hover{border-color:rgba(95,163,255,.45);transform:translateY(-2px)}}
+.card-idx{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.18em}
+.card h3{font-size:1.02rem;margin:10px 0 8px;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:13.5px;line-height:1.65}
+.work-num{font-family:var(--mono);font-size:1.45rem;color:var(--accent);letter-spacing:-.02em;
+  display:block;margin-bottom:10px}
+.also{margin-top:24px;padding-top:16px;border-top:1px dashed var(--line);
+  font-size:13px;color:var(--faint);line-height:1.7}
 
-  /* ============== Skills ============== */
-  .skills {
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .skills span {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    color: var(--ink-2);
-    padding: 7px 11px;
-    border-radius: 999px;
-    font-size: 12.5px; font-weight: 500;
-    box-shadow: var(--shadow-sm);
-  }
+/* Timeline */
+.timeline{list-style:none;margin-top:34px;display:grid;gap:32px;position:relative;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(to bottom,rgba(95,163,255,.6),var(--line) 28%,var(--line))}
+.t-item{position:relative}
+.t-item::before{content:"";position:absolute;left:-26px;top:7px;width:11px;height:11px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--accent);box-shadow:0 0 14px rgba(95,163,255,.45)}
+.t-when{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.05em;
+  display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:8px}
+.t-org{color:var(--faint)}
+.t-body h3{font-size:1.05rem;letter-spacing:-.01em;margin-bottom:10px}
+.t-body ul{list-style:none;display:grid;gap:7px}
+.t-body li{color:var(--muted);font-size:13.5px;line-height:1.65;padding-left:16px;position:relative}
+.t-body li::before{content:"";position:absolute;left:0;top:.66em;width:6px;height:1px;
+  background:var(--accent);opacity:.8}
 
-  /* ============== Experience cards ============== */
-  .timeline { position: relative; padding-left: 20px; }
-  .timeline::before {
-    content: ""; position: absolute;
-    left: 6px; top: 6px; bottom: 6px;
-    width: 2px;
-    background: linear-gradient(180deg, var(--brand), var(--accent));
-    border-radius: 2px;
-  }
-  .exp {
-    position: relative;
-    background: var(--paper);
-    border: 1px solid var(--line-2);
-    border-radius: 12px;
-    padding: 14px 14px 4px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-sm);
-  }
-  .exp::before {
-    content: ""; position: absolute;
-    left: -19px; top: 18px;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--paper);
-    border: 3px solid var(--brand);
-    box-shadow: 0 0 0 3px var(--bg);
-  }
-  .exp-head {
-    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
-    gap: 6px 10px;
-  }
-  .exp-company {
-    font-size: 15px; font-weight: 700;
-    color: var(--ink); letter-spacing: -.01em;
-  }
-  .exp-loc { color: var(--ink-3); font-weight: 400; font-size: 12.5px; }
-  .exp-dates {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 11px; color: var(--ink-3);
-    background: var(--chip);
-    padding: 3px 8px; border-radius: 4px;
-    white-space: nowrap;
-  }
-  .exp-role {
-    font-size: 13px; font-weight: 600;
-    color: var(--brand-2);
-    margin: 4px 0 8px;
-  }
-  .exp-list {
-    list-style: none; margin: 0 0 12px; padding: 0;
-    color: var(--ink-2);
-    font-size: 13.5px;
-  }
-  .exp-list li {
-    position: relative;
-    padding: 4px 0 4px 18px;
-    line-height: 1.5;
-  }
-  .exp-list li::before {
-    content: ""; position: absolute;
-    left: 4px; top: 13px;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-  }
-  .exp-list.collapsed li:nth-child(n+4) { display: none; }
+/* Chips */
+.chips-title{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:28px 0 4px}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips li{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:999px;
+  padding:7px 13px;font-size:12.5px;color:#b9c2d2}
 
-  .expand-btn {
-    appearance: none;
-    border: 1px solid var(--line);
-    background: var(--soft);
-    color: var(--brand);
-    font-weight: 600; font-size: 12px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 0 0 14px;
-    display: inline-flex; align-items: center; gap: 6px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .expand-btn:active { transform: scale(.98); }
-  .expand-btn .chev {
-    transition: transform .2s ease;
-  }
-  .exp.expanded .expand-btn .chev { transform: rotate(180deg); }
+/* Education */
+.edu-card{border:1px solid var(--line);border-radius:var(--radius);padding:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012))}
+.edu-card h3{font-size:1.1rem;letter-spacing:-.01em;margin-bottom:6px}
+.edu-card p{color:var(--muted);font-size:13.5px}
 
-  .group {
-    background: #fafbff;
-    border: 1px solid var(--line-2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
-  }
-  .group-title {
-    font-size: 11.5px; font-weight: 700;
-    color: var(--ink);
-    text-transform: uppercase; letter-spacing: .08em;
-    margin-bottom: 4px;
-  }
-  .group-title small { color: var(--ink-3); font-weight: 500; text-transform: none; letter-spacing: 0; }
+/* Footer / contact */
+.contact{border-top:1px solid var(--line);background:linear-gradient(180deg,#0b0f17,#0a0d13);
+  padding:84px 0 42px}
+.contact-links{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 42px}
+.foot-note{font-size:12.5px;color:var(--faint);line-height:1.7}
+.foot-fine{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:#414a5c}
 
-  .pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .pill {
-    display: inline-block;
-    font-size: 11px; font-weight: 600;
-    color: var(--brand);
-    background: var(--soft);
-    padding: 3px 9px; border-radius: 999px;
-    line-height: 1.4;
-  }
+/* Reveal on scroll */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
 
-  /* ============== Education ============== */
-  .ed-card {
-    background: var(--paper);
-    border: 1px solid var(--line-2);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: var(--shadow-sm);
-  }
-  .ed-card b { color: var(--ink); font-size: 14.5px; display: block; margin-bottom: 2px; }
-  .ed-card .degree { color: var(--brand-2); font-size: 13px; font-weight: 600; }
-  .ed-card .ed-meta {
-    margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px; color: var(--ink-3);
-  }
+/* ---------------- DESKTOP (secondary) ---------------- */
+@media (min-width:720px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:900px){
+  .hero{padding:110px 24px 84px}
+  .photo{width:148px;height:148px}
+  .section{padding:96px 0}
+  .wrap{width:min(1120px,100% - 72px)}
+  .grid-stats{grid-template-columns:repeat(4,1fr)}
+  .pillars{grid-template-columns:repeat(3,1fr)}
+  .t-item{display:grid;grid-template-columns:230px 1fr;column-gap:34px}
+  .t-when{flex-direction:column;gap:3px;margin-bottom:0;padding-top:2px}
+}
+@media (min-width:1100px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+}
 
-  /* ============== Footer ============== */
-  .footer {
-    margin: 28px 0 0;
-    padding: 18px 18px 0;
-    border-top: 1px dashed var(--line);
-    text-align: center;
-    color: var(--ink-3); font-size: 11.5px;
-  }
-  .footer .dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-right: 6px; vertical-align: middle; }
-
-  /* ============== Back to top ============== */
-  .to-top {
-    position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom));
-    width: 44px; height: 44px; border-radius: 50%;
-    background: var(--brand);
-    color: #fff; border: none;
-    display: none; place-items: center;
-    box-shadow: 0 6px 20px rgba(11,61,145,.4);
-    z-index: 40;
-  }
-  .to-top.show { display: grid; }
-  .to-top svg { width: 20px; height: 20px; }
-
-  /* ============== Methodology portfolio cards ============== */
-  .method-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .method-card {
-    background: linear-gradient(160deg, #fafbff, #ffffff);
-    border: 1px solid var(--line-2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    gap: 10px;
-    align-items: flex-start;
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .method-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-  .method-icon {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    display: grid; place-items: center;
-    flex-shrink: 0;
-  }
-  .method-icon svg { width: 18px; height: 18px; }
-  .method-icon.violet { background: #ede9fe; color: #7c3aed; }
-  .method-icon.teal   { background: #ccfbf1; color: #0d9488; }
-  .method-icon.amber  { background: #fef3c7; color: #d97706; }
-  .method-icon.coral  { background: #fee2e2; color: #dc2626; }
-  .method-icon.brand  { background: #dbeafe; color: #1d4ed8; }
-  .method-name {
-    font-size: 12px; font-weight: 700; color: var(--ink);
-    line-height: 1.25;
-    display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
-  }
-  .method-year {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px; color: var(--ink-3);
-    font-weight: 600;
-  }
-  .method-impact {
-    font-size: 11.5px; color: var(--ink-2);
-    line-height: 1.4;
-    margin-top: 2px;
-  }
-  .method-impact b { color: var(--brand); font-weight: 700; }
-
-  /* ============== Defect trajectory line chart ============== */
-  .trajectory {
-    width: 100%; height: auto; display: block;
-    margin-top: 4px;
-  }
-  .trajectory .axis-line { stroke: #e2e8f0; stroke-width: 1.5; }
-  .trajectory .grid-line { stroke: #eef0f3; stroke-width: 1; stroke-dasharray: 2 3; }
-  .trajectory .axis-lbl { font-size: 9px; fill: var(--ink-3); font-family: 'JetBrains Mono', monospace; }
-  .trajectory .year-lbl { font-size: 9px; fill: var(--ink-2); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-  .trajectory .series-1 { stroke: #7c3aed; stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
-  .trajectory .series-2 { stroke: #0d9488; stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
-  .trajectory .area-1 { fill: url(#areaGrad1); opacity: .25; }
-  .trajectory .area-2 { fill: url(#areaGrad2); opacity: .25; }
-  .trajectory .dot { stroke-width: 2; }
-  .trajectory .dot.s1 { fill: #7c3aed; stroke: #fff; }
-  .trajectory .dot.s2 { fill: #0d9488; stroke: #fff; }
-  .trajectory .val-lbl { font-size: 10px; font-weight: 700; font-family: 'Inter', sans-serif; }
-  .trajectory .val-lbl.s1 { fill: #7c3aed; }
-  .trajectory .val-lbl.s2 { fill: #0d9488; }
-  .trajectory-legend {
-    display: flex; gap: 14px; flex-wrap: wrap;
-    margin-top: 6px; font-size: 11.5px; color: var(--ink-2);
-  }
-  .trajectory-legend .item { display: inline-flex; align-items: center; gap: 6px; }
-  .trajectory-legend .swatch { width: 12px; height: 3px; border-radius: 2px; }
-  .trajectory-legend .s1 { background: #7c3aed; }
-  .trajectory-legend .s2 { background: #0d9488; }
-
-  @media (min-width: 720px) {
-    .method-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  /* ============== Visual Snapshot (charts) ============== */
-  .snapshot {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  .chart-card {
-    background: var(--paper);
-    border: 1px solid var(--line-2);
-    border-radius: 14px;
-    padding: 16px 16px 14px;
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    overflow: hidden;
-  }
-  .chart-card::before {
-    content: "";
-    position: absolute; left: 0; right: 0; top: 0; height: 3px;
-    background: linear-gradient(90deg, var(--brand), var(--accent), #f59e0b);
-    opacity: .8;
-  }
-  .chart-title {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12.5px; font-weight: 800;
-    color: var(--ink);
-    letter-spacing: .04em;
-    margin: 2px 0 10px;
-  }
-  .chart-title .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--brand);
-  }
-  .chart-title .dot.coral { background: #f87171; }
-  .chart-title .dot.teal  { background: var(--accent); }
-  .chart-title .dot.amber { background: #f59e0b; }
-  .chart-title .dot.violet{ background: #a78bfa; }
-  .chart-sub {
-    font-size: 12px; color: var(--ink-3);
-    margin: -6px 0 12px;
-  }
-
-  /* Industry bars */
-  .bar-row {
-    display: grid; grid-template-columns: 110px 1fr 44px;
-    align-items: center; gap: 10px;
-    margin: 8px 0;
-    font-size: 12.5px;
-  }
-  .bar-row .bar-track {
-    background: var(--chip);
-    border-radius: 999px; height: 10px;
-    overflow: hidden;
-    position: relative;
-  }
-  .bar-row .bar-fill {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--brand), var(--accent));
-    width: 0;
-    transition: width 1.1s cubic-bezier(.2,.7,.2,1);
-  }
-  .bar-row.coral .bar-fill { background: linear-gradient(90deg, #f87171, #fb923c); }
-  .bar-row.violet .bar-fill { background: linear-gradient(90deg, #a78bfa, #818cf8); }
-  .bar-row.amber .bar-fill { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
-  .bar-row.teal .bar-fill { background: linear-gradient(90deg, #2dd4bf, #0ea5a4); }
-  .bar-row.pink .bar-fill { background: linear-gradient(90deg, #f472b6, #ec4899); }
-  .bar-row .yrs {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px; color: var(--ink-3);
-    text-align: right;
-  }
-  .bar-row .lbl { color: var(--ink-2); font-weight: 500; }
-
-  /* Radar */
-  .radar-wrap { width: 100%; max-width: 460px; margin: 0 auto; }
-  .radar {
-    width: 100%; height: auto; display: block;
-  }
-  .radar .grid polygon {
-    fill: none; stroke: #e2e8f0; stroke-width: 1;
-  }
-  .radar .grid polygon:last-child {
-    stroke: #cbd5e1;
-  }
-  .radar .axes line {
-    stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 2 3;
-  }
-  .radar .data {
-    fill: url(#radarGrad);
-    fill-opacity: .55;
-    stroke: var(--brand);
-    stroke-width: 2;
-    stroke-linejoin: round;
-    transform-origin: 200px 200px;
-    transform: scale(0);
-    animation: radarIn 1.2s cubic-bezier(.2,.7,.2,1) .2s forwards;
-  }
-  .radar .point {
-    fill: #fff; stroke: var(--brand); stroke-width: 2;
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: popIn .4s ease-out forwards;
-  }
-  .radar .point:nth-of-type(1) { animation-delay: 1.1s; }
-  .radar .point:nth-of-type(2) { animation-delay: 1.2s; }
-  .radar .point:nth-of-type(3) { animation-delay: 1.3s; }
-  .radar .point:nth-of-type(4) { animation-delay: 1.4s; }
-  .radar .point:nth-of-type(5) { animation-delay: 1.5s; }
-  .radar .point:nth-of-type(6) { animation-delay: 1.6s; }
-  .radar .point:nth-of-type(7) { animation-delay: 1.7s; }
-  .radar .point:nth-of-type(8) { animation-delay: 1.8s; }
-  .radar .label {
-    font-size: 12px; font-weight: 600;
-    fill: var(--ink-2);
-    font-family: 'Inter', sans-serif;
-  }
-  @keyframes radarIn { to { transform: scale(1); } }
-  @keyframes popIn {
-    0%   { opacity: 0; transform: scale(0); }
-    60%  { opacity: 1; transform: scale(1.4); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-
-  /* Career journey */
-  .journey-wrap {
-    overflow-x: auto;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
-    margin: 0 -16px;
-    padding: 0 16px 4px;
-    scrollbar-width: thin;
-  }
-  .journey-wrap::-webkit-scrollbar { height: 4px; }
-  .journey-wrap::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
-  .journey {
-    min-width: 1000px;
-    width: 100%;
-    height: auto;
-    display: block
-  }
-  @media (min-width: 720px) {
-    .journey { width: 100%; }
-    .journey-wrap { margin: 0; padding: 0; }
-  }
-  .journey .axis { stroke: #e2e8f0; stroke-width: 2; }
-  .journey .tick { stroke: #cbd5e1; stroke-width: 1.5; }
-  .journey .stop {
-    fill: #fff; stroke: var(--brand); stroke-width: 2.5;
-    transition: r .2s ease, fill .2s ease;
-    cursor: pointer;
-  }
-  .journey .stop:hover { fill: var(--accent); r: 7; }
-  .journey .stop-label {
-    font-size: 12px; font-weight: 700;
-    fill: var(--ink);
-    font-family: 'Inter', sans-serif;
-  }
-  .journey .stop-sub {
-    font-size: 9.5px; font-weight: 500;
-    fill: var(--ink-3);
-    font-family: 'Inter', sans-serif;
-  }
-  .journey .year-lbl {
-    font-size: 9px; font-weight: 600;
-    fill: var(--ink-3);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* Stagger stat number appearance */
-  .stat { opacity: 0; transform: translateY(8px); animation: rise .5s ease-out forwards; }
-  .stat:nth-child(1) { animation-delay: .05s; }
-  .stat:nth-child(2) { animation-delay: .15s; }
-  .stat:nth-child(3) { animation-delay: .25s; }
-  .stat:nth-child(4) { animation-delay: .35s; }
-  .stat:nth-child(5) { animation-delay: .45s; }
-  .stat:nth-child(6) { animation-delay: .55s; }
-  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
-
-  @media (min-width: 720px) {
-    .stat-grid { grid-template-columns: repeat(3, 1fr); }
-    .chart-card { padding: 20px 20px 16px; }
-  }
-  @media (min-width: 980px) {
-    .snapshot { grid-template-columns: 1fr; }
-    .snapshot .full { grid-column: 1 / -1; }
-  }
-
-  /* ============== Tablet / Desktop ============== */
-  @media (min-width: 720px) {
-    .page { padding-bottom: 60px; }
-    .hero { padding: 56px 40px 96px; }
-    .avatar { width: 96px; height: 96px; font-size: 30px; }
-    .hero-name { font-size: 32px; }
-    .hero-role { font-size: 15px; }
-    .contact-bar { max-width: 380px; margin: -64px auto 0; }
-    .content { padding: 28px 32px 0; }
-    .summary { font-size: 15px; }
-    .exp { padding: 18px 18px 6px; }
-    .timeline { padding-left: 28px; }
-  }
-  @media (min-width: 980px) {
-    body { background: var(--bg); }
-    .page {
-      max-width: 880px;
-      margin: 32px auto;
-      background: var(--paper);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      padding-bottom: 40px;
-    }
-    .hero { border-radius: 16px 16px 0 0; }
-    .content { padding: 32px 44px 0; }
-    .contact-bar {
-      position: static;
-      grid-template-columns: repeat(3, 1fr);
-      max-width: none;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      box-shadow: none;
-      margin: -50px 44px 24px;
-    }
-  }
-
-  /* ============== Reduced motion ============== */
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; animation: none !important; }
-    html { scroll-behavior: auto; }
-  }
+/* Reduced motion & print */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .scroll-cue span,.drag-hint i{animation:none}
+}
+@media print{
+  .hero{min-height:auto;padding:24px;background:#fff}
+  #gl,.scrim,.scroll-cue,.drag-hint,.hero-top{display:none}
+  body,.stat,.pillar,.card,.edu-card{background:#fff;color:#111}
+  .reveal{opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
-  <main class="page">
+<a class="skip" href="#main">Skip to content</a>
 
-    <!-- ============== HERO ============== -->
-    <header class="hero">
-      <div class="hero-row">
-          <div class="hero-left-group">
-            <div class="avatar" aria-label="Chong Boo Chean">
-              <img src="cbc.jpg" alt="CBC" class="avatar-photo">
-            </div>
-            <div>
-              <h1 class="hero-name">Chong Boo Chean</h1>
-              <p class="hero-role">System Test &amp; Validation Engineering Leader · Python · Linux</p>
-            </div>
+<!-- ================= HERO ================= -->
+<header class="hero" id="hero">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+
+  <div class="hero-top" aria-hidden="true">
+    <span>Digital Profile · 2026</span>
+    <span>Penang · Malaysia</span>
+  </div>
+
+  <div class="hero-inner">
+    <!-- Photograph slot: expects "cbc.jpg" beside this file. Monogram shows if absent. -->
+    <div class="photo" role="img" aria-label="Portrait photograph of Chong Boo Chean">
+      <span class="photo-fallback" aria-hidden="true">CBC</span>
+      <img src="cbc.jpg" alt="Portrait of Chong Boo Chean"
+           onload="this.closest('.photo').classList.add('loaded')"
+           onerror="this.remove()">
+    </div>
+
+    <p class="eyebrow">System Test &amp; Validation Engineering Leader</p>
+    <h1>Chong&nbsp;Boo&nbsp;Chean</h1>
+    <p class="tagline">AI-Augmented · Hands-On · 30 years across semiconductor, automotive
+      &amp; consumer electronics</p>
+
+    <ul class="meta-chips">
+      <li>Penang, Malaysia</li>
+      <li><a href="mailto:gzhone@yahoo.co.uk">gzhone@yahoo.co.uk</a></li>
+      <li><a href="tel:+601126008641">+60-11 2600 8641</a></li>
+    </ul>
+
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="mailto:gzhone@yahoo.co.uk">Email ↗</a>
+      <a class="btn" href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener">Profile ↗</a>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true"><span></span>Scroll</div>
+  <div class="drag-hint" aria-hidden="true"><i></i>Live WebGL — drag to orbit</div>
+</header>
+
+<main id="main">
+
+  <!-- ================= AT A GLANCE ================= -->
+  <section class="stats" aria-label="Career at a glance">
+    <div class="wrap">
+      <div class="grid-stats">
+        <div class="stat reveal">
+          <span class="stat-num" data-count="30" data-suffix="+">0</span>
+          <span class="stat-label">Years hands-on across semiconductor · automotive · consumer electronics</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-num" data-count="96" data-suffix="%">0</span>
+          <span class="stat-label">Reduction in customer-found defects — 140+ → ~5 per year at Continental</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-num" data-count="0" data-suffix="%">0</span>
+          <span class="stat-label">Unintended attrition — three consecutive years as engineering manager</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-num" data-count="85" data-suffix="">0</span>
+          <span class="stat-label">Long-overdue manual test cases automated in just two quarters</span>
+        </div>
+      </div>
+      <p class="stats-note">Quality trajectory · Continental: 140+ → ~5 defects/yr (2017–2021) · Intel: 12+ → ~4 defects/yr (2022–2025)</p>
+    </div>
+  </section>
+
+  <!-- ================= SUMMARY ================= -->
+  <section class="section" id="summary">
+    <div class="wrap">
+      <p class="label">Executive Summary</p>
+      <h2>Objective-driven. AI-augmented. Hands-on.</h2>
+      <p class="lead">Global engineering leader with 30 years of hands-on expertise across the
+        semiconductor, automotive and consumer-electronics sectors — renowned for driving
+        objective-driven quality turnarounds, fostering zero-attrition cultures, and managing
+        high-stakes, face-to-face relationships with international customers across Korea, Japan,
+        India, Uruguay and Australia.</p>
+
+      <div class="pillars">
+        <div class="pillar reveal">
+          <h3>Objective-driven quality delivery</h3>
+          <p>Cut customer-found defects from 140+ to ~5 per year at Continental and from 12+ to ~4
+            per year at Intel — while leading multi-site and global teams.</p>
+        </div>
+        <div class="pillar reveal">
+          <h3>AI-augmented engineering</h3>
+          <p>An at-the-desk technical leader using AI as an execution partner: spec-first prototyping
+            enabled a 5-day camera-driver migration, 85 test cases automated in two quarters, and two
+            custom instruments that collapsed a 15-minute inspection to 9 seconds.</p>
+        </div>
+        <div class="pillar reveal">
+          <h3>Human-touch talent development</h3>
+          <p>0% unintended attrition over three consecutive years; grew a non-performing engineer
+            into a key contributor within a year and elevated a validation engineer into a global
+            Project Manager.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAPABILITIES ================= -->
+  <section class="section" id="capabilities">
+    <div class="wrap">
+      <p class="label">Core Capabilities</p>
+      <h2>What I bring to the bench</h2>
+      <p class="sub">Five disciplines, one operating style: measure objectively, ship reliably,
+        grow people deliberately.</p>
+
+      <div class="cards">
+        <article class="card reveal">
+          <span class="card-idx">01</span>
+          <h3>Leadership &amp; Delivery</h3>
+          <p>Cross-functional &amp; multi-site team leadership · end-to-end program management
+            (R&amp;D → production) · Lean-Agile leadership · mentoring &amp; talent development ·
+            CMM Level 3 process alignment.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">02</span>
+          <h3>Test &amp; Validation Engineering</h3>
+          <p>Test strategy &amp; qualification · functional test site leadership · post-silicon
+            platform bring-up · manufacturing test systems (AOI/AXI) · test solution release ·
+            yield &amp; quality improvement (defects ↓96%).</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">03</span>
+          <h3>Engineering Innovation</h3>
+          <p>First-of-kind detection instruments · reverse engineering of closed tools ·
+            custom CLI tooling for test hardware.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">04</span>
+          <h3>AI-Augmented Delivery</h3>
+          <p>Spec-first AI generation &amp; prototyping · objective measurement gates ·
+            AI-assisted test automation — AI treated as an execution partner, not a gimmick.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">05</span>
+          <h3>Automation &amp; Diagnostics</h3>
+          <p>Python · Robot Framework · automated test infrastructure · computer-vision diagnostics
+            (HSV · dual-region SSIM) · V4L2 · GStreamer · MIPI CSI-2 · GMSL2 · HDMI · Linux · Windows.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SIGNATURE WORK ================= -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <p class="label">Signature Work · Intel, Dec 2025 → Present</p>
+      <h2>Proof, in shipping terms</h2>
+      <p class="sub">System Software Development Engineer · Automation Lead — camera, display and
+        validation automation on Intel's next-generation platforms.</p>
+
+      <div class="cards">
+        <article class="card reveal">
+          <span class="work-num">5 days</span>
+          <h3>GMSL2 camera bring-up</h3>
+          <p>Brought up the camera subsystem on Intel's next-gen platform: identified undocumented
+            BIOS “Camera Links” settings, established the MIPI CSI-2 data path over the MAX9295A
+            SerDes link (Sony IMX390), confirmed kernel-space streaming via GStreamer v4l2src.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">9 s</span>
+          <h3>15-minute inspection, collapsed</h3>
+          <p>Architected a proprietary HSV-based computer-vision engine that analyses a 15-minute
+            video in 9 seconds; dual regions of interest resolve edge cases like solid-coloured scenes.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">1-in-5</span>
+          <h3>Unblocking the fleet</h3>
+          <p>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash
+            (1-in-5 boots) that was blocking all camera-driver validation — restored full
+            V4L2 data-path verification.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">85</span>
+          <h3>Manual → automated</h3>
+          <p>Converted long-overdue manual suites in two quarters — 40 Ubuntu + 45 Windows cases,
+            code peer-reviewed and results formally validated in official product-milestone cycles.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">SSIM</span>
+          <h3>Screen-tearing detector</h3>
+          <p>High-sensitivity artefact detector via a lightweight dual-region SSIM algorithm —
+            captures screen tearing and subtle defects near real-time where commercial tools hit limits.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">CLI</span>
+          <h3>Reverse-engineered control</h3>
+          <p>Exposed undocumented registry dependencies of Intel Graphics Command Centre Beta;
+            custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on
+            non-standard resolutions.</p>
+        </article>
+      </div>
+
+      <p class="also">Also on this tour: drove IPU7 → IPU8 early enablement (camera HAL upgrade +
+        icamerasrc userspace pipeline reconfiguration, end-to-end streaming verified) · ported the
+        Robot Framework + Python automation suite from Intel's China test division, closed the
+        gap-analysis findings with new and modified cases for a significant coverage uplift.</p>
+    </div>
+  </section>
+
+  <!-- ================= JOURNEY ================= -->
+  <section class="section" id="journey">
+    <div class="wrap">
+      <p class="label">Professional Journey</p>
+      <h2>1995 → today</h2>
+
+      <ol class="timeline">
+        <li class="t-item reveal">
+          <div class="t-when"><span>Dec 2025 — Present</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>System Software Development Engineer · Automation Lead</h3>
+            <ul>
+              <li>5-day GMSL2 camera bring-up on a next-gen platform (BIOS · MAX9295A SerDes · Sony IMX390 · MIPI CSI-2 · GStreamer v4l2src).</li>
+              <li>Kernel patch unblocked IPU7 validation; drove IPU7 → IPU8 early enablement.</li>
+              <li>Two first-of-kind CV instruments: 15-min → 9-s HSV analyser and dual-region SSIM tearing detector.</li>
+              <li>Automated 85 manual cases in two quarters; ported and extended the China-division Robot Framework suite.</li>
+            </ul>
           </div>
-            <div class="hero-meta">
-                <span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  Penang, Malaysia
-                </span>
-            </div>
-        </div>
+        </li>
 
-      <p class="hero-tagline">
-        <em>Technologist at the core,</em>
-        <em class="accent">Optimalist by design,</em>
-        <em>Strategist by nature.</em>
-      </p>
-    </header>
-
-    <!-- ============== STICKY CONTACT BAR ============== -->
-    <nav class="contact-bar" aria-label="Quick contact">
-      <a href="mailto:gzhone@yahoo.co.uk" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span>Email</span>
-      </a>
-      <a href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        <span>LinkedIn</span>
-      </a>
-      <a href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener" aria-label="Profile">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        <span>Profile</span>
-      </a>
-    </nav>
-
-    <!-- ============== CONTENT ============== -->
-    <section class="content">
-
-      <p class="summary">
-        <b>System test and validation engineering leader</b> with 30 years across semiconductor, automotive,
-        and consumer electronics — spanning manufacturing test (AOI/AXI), functional test site leadership,
-        test automation, and embedded software. Built and led test teams of up to <b>16 engineers</b>, grew a
-        test product portfolio <b>1 → 4</b>, and reduced customer-found defects by <b>up to 96%</b> through
-        root-cause debug and cross-functional yield and quality initiatives. Currently hands-on at Intel on
-        next-generation SoC platforms: authored a <b>Linux kernel patch</b> (V4L2/IPU), brought up a
-        <b>GMSL2 camera subsystem</b> end-to-end over MIPI CSI-2, and scaled <b>Python / Robot Framework</b>
-        automation from manual suites to officially validated results. Combines senior leadership with
-        current technical depth — <b>Python, C/C++, Linux</b> — and a proven record of defining qualification
-        and release processes for test and validation content.
-      </p>
-
-      <!-- ====== TOP SKILLS ====== -->
-      <div class="section">
-        <h2 class="section-title">Top Skills</h2>
-        <div class="skills">
-          <span>Test Strategy &amp; Qualification</span>
-          <span>Functional / Manufacturing Test</span>
-          <span>Python · Robot Framework</span>
-          <span>Linux Kernel · V4L2</span>
-          <span>Hardware Validation</span>
-          <span>Automated Diagnostics</span>
-          <span>Debug (HW/SW)</span>
-          <span>Yield &amp; Quality Improvement</span>
-          <span>Program Management</span>
-          <span>Agile / Lean Leadership</span>
-          <span>MIPI CSI-2 · GMSL2 · GStreamer</span>
-        </div>
-      </div>
-
-      <!-- ====== VISUAL SNAPSHOT ====== -->
-      <div class="section">
-        <h2 class="section-title">Visual Snapshot</h2>
-
-        <div class="snapshot">
-
-          <!-- Leadership Capability Radar -->
-          <div class="chart-card">
-            <h3 class="chart-title"><span class="dot"></span>Leadership Capability</h3>
-            <p class="chart-sub">Calibrated for a System Test Engineering Manager mandate.</p>
-            <div class="radar-wrap">
-              <svg viewBox="-60 0 520 420" class="radar" role="img" aria-label="Leadership capability radar">
-                <defs>
-                  <linearGradient id="radarGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%"  stop-color="#0ea5a4"/>
-                    <stop offset="100%" stop-color="#0b3d91"/>
-                  </linearGradient>
-                </defs>
-
-                <!-- Grid rings -->
-                <g class="grid">
-                  <polygon points="200,172 220,180 228,200 220,220 200,228 180,220 172,200 180,180"/>
-                  <polygon points="200,144 240,160 256,200 240,240 200,256 160,240 144,200 160,160"/>
-                  <polygon points="200,116 260,140 284,200 260,260 200,284 140,260 116,200 140,140"/>
-                  <polygon points="200,88 280,120 312,200 280,280 200,312 120,280 88,200 120,120"/>
-                  <polygon points="200,60 299,101 340,200 299,299 200,340 101,299 60,200 101,101"/>
-                </g>
-
-                <!-- Axes -->
-                <g class="axes">
-                  <line x1="200" y1="200" x2="200" y2="60"/>
-                  <line x1="200" y1="200" x2="299" y2="101"/>
-                  <line x1="200" y1="200" x2="340" y2="200"/>
-                  <line x1="200" y1="200" x2="299" y2="299"/>
-                  <line x1="200" y1="200" x2="200" y2="340"/>
-                  <line x1="200" y1="200" x2="101" y2="299"/>
-                  <line x1="200" y1="200" x2="60"  y2="200"/>
-                  <line x1="200" y1="200" x2="101" y2="101"/>
-                </g>
-
-                <!-- Data polygon -->
-                <polygon class="data"
-                  points="200,67 271,129 283,200 279,279 200,333 109,291 74,200 109,109"/>
-
-                <!-- Data points -->
-                <circle class="point" cx="200" cy="67"  r="4"/>
-                <circle class="point" cx="271" cy="129" r="4"/>
-                <circle class="point" cx="283" cy="200" r="4"/>
-                <circle class="point" cx="279" cy="279" r="4"/>
-                <circle class="point" cx="200" cy="333" r="4"/>
-                <circle class="point" cx="109" cy="291" r="4"/>
-                <circle class="point" cx="74"  cy="200" r="4"/>
-                <circle class="point" cx="109" cy="109" r="4"/>
-
-                <!-- Labels -->
-                <text class="label" x="200" y="48"  text-anchor="middle">Method Engineering</text>
-                <text class="label" x="312" y="92"  text-anchor="start">Test Architecture</text>
-                <text class="label" x="350" y="205" text-anchor="start">Embedded SW</text>
-                <text class="label" x="312" y="312" text-anchor="start">Process Design</text>
-                <text class="label" x="200" y="360" text-anchor="middle">Cross-Functional Mgmt</text>
-                <text class="label" x="88"  y="312" text-anchor="end">People Development</text>
-                <text class="label" x="50"  y="205" text-anchor="end">Site Operations</text>
-                <text class="label" x="88"  y="92"  text-anchor="end">Strategic Planning</text>
-              </svg>
-            </div>
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jan 2022 — Dec 2025</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>Software Engineering Manager</h3>
+            <ul>
+              <li>Directed Media Software (video codecs), Imaging Software (camera sensors) and Component Validation (hypervisors, codecs, sensors) — 8 software + 4 test engineers.</li>
+              <li>Owned Software Component Defect Driving and Software Component Release Process charters.</li>
+              <li>Cut customer-found defects from 12+ (2022) to ~4 (2025); 0% unintended attrition across 3 consecutive years.</li>
+            </ul>
           </div>
+        </li>
 
-          <!-- Methodology Portfolio -->
-          <div class="chart-card">
-            <h3 class="chart-title"><span class="dot teal"></span>Methods I’ve Engineered</h3>
-            <p class="chart-sub">New methodological realisations, not just methodology adoption.</p>
-            <div class="method-grid">
-
-              <div class="method-card">
-                <div class="method-icon brand" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">GMSL2 Camera Bring-Up <span class="method-year">2026</span></div>
-                  <div class="method-impact">End-to-end camera subsystem enablement in <b>5 days</b> — undocumented BIOS settings, MIPI CSI-2 over MAX9295A SerDes, interim <b>V4L2 kernel patch</b>.</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon amber" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">Robot + Python Test Suite <span class="method-year">2025–26</span></div>
-                  <div class="method-impact">Ported cross-site &amp; re-engineered for Linux (Ubuntu) / Windows labs — <b>85 manual cases automated in two quarters</b>, results officially verified.</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon violet" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">Automated Visual Diagnostics <span class="method-year">2025</span></div>
-                  <div class="method-impact">HSV corruption detection (<b>9 s</b> / 15-min video) + dual-region SSIM at near real-time — catches defects commercial tools miss.</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon teal" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">MIPI CSI Display &amp; Capture CLI <span class="method-year">2025</span></div>
-                  <div class="method-impact">Hardware debug automation — reverse-engineered registry deps; <b>HDMI</b> propagation fixed for non-standard resolutions.</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon coral" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">AOI / AXI Manufacturing Inspection <span class="method-year">2007–09</span></div>
-                  <div class="method-impact">Automated optical &amp; X-ray inspection analytics industrialised across MY &amp; SG for high-volume EMS lines (Nokia, Jabil).</div>
-                </div>
-              </div>
-
-              <div class="method-card">
-                <div class="method-icon brand" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                </div>
-                <div>
-                  <div class="method-name">CMM L3 Process Framework <span class="method-year">2007</span></div>
-                  <div class="method-impact">Aligned multi-site SW org to <b>CMM Level 3</b> for GM Daewoo, Nissan, Holden, Zao Volga.</div>
-                </div>
-              </div>
-
-            </div>
+        <li class="t-item reveal">
+          <div class="t-when"><span>Sep 2017 — Jan 2022</span><span class="t-org">Continental Automotive · Penang</span></div>
+          <div class="t-body">
+            <h3>Manager — Functional Test · Functional Test Site Lead</h3>
+            <ul>
+              <li>Site Lead and Business Owner for automotive instrument-cluster projects across Toyota, Volkswagen Group, Perodua and Suzuki.</li>
+              <li>Managed up to 16 direct test-engineering reports under Lean-Agile leadership frameworks.</li>
+              <li>Reduced customer-found defects from 140+ (2017) to ~5 (2021) while expanding the test portfolio from 1 to 4 key lines.</li>
+            </ul>
           </div>
+        </li>
 
-          <!-- Defect Reduction Trajectory -->
-          <div class="chart-card full">
-            <h3 class="chart-title"><span class="dot amber"></span>Defect Reduction Trajectory</h3>
-            <p class="chart-sub">Customer-found defects, year over year — the yield and quality story behind the numbers.</p>
-
-            <svg viewBox="0 0 520 240" class="trajectory" role="img" aria-label="Customer defect reduction from 2017 to 2025">
-              <defs>
-                <linearGradient id="areaGrad1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.5"/>
-                  <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="areaGrad2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#0d9488" stop-opacity="0.5"/>
-                  <stop offset="100%" stop-color="#0d9488" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-
-              <!-- Y axis grid + labels -->
-              <g>
-                <line class="grid-line" x1="50" y1="30"  x2="500" y2="30"/>
-                <line class="grid-line" x1="50" y1="87"  x2="500" y2="87"/>
-                <line class="grid-line" x1="50" y1="143" x2="500" y2="143"/>
-                <text class="axis-lbl" x="44" y="33"  text-anchor="end">150</text>
-                <text class="axis-lbl" x="44" y="90"  text-anchor="end">100</text>
-                <text class="axis-lbl" x="44" y="146" text-anchor="end">50</text>
-                <text class="axis-lbl" x="44" y="203" text-anchor="end">0</text>
-              </g>
-
-              <!-- X axis baseline -->
-              <line class="axis-line" x1="50" y1="200" x2="500" y2="200"/>
-
-              <!-- Series 1 area: Continental (2017-2021) -->
-              <path class="area-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194 L 265,200 L 50,200 Z"/>
-              <path class="series-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194"/>
-
-              <!-- Series 2 area: Intel (2022-2025) -->
-              <path class="area-2" d="M 319,186 L 373,190 L 426,193 L 480,195 L 480,200 L 319,200 Z"/>
-              <path class="series-2" d="M 319,186 L 373,190 L 426,193 L 480,195"/>
-
-              <!-- Dots + values: Continental -->
-              <g>
-                <circle class="dot s1" cx="50"  cy="41"  r="5"/>
-                <text class="val-lbl s1" x="60"  y="35"  text-anchor="middle">140</text>
-                <circle class="dot s1" cx="104" cy="80"  r="4"/>
-                <circle class="dot s1" cx="158" cy="118" r="4"/>
-                <circle class="dot s1" cx="211" cy="157" r="4"/>
-                <circle class="dot s1" cx="265" cy="194" r="5"/>
-                <text class="val-lbl s1" x="265" y="185" text-anchor="middle">5</text>
-              </g>
-
-              <!-- Dots + values: Intel -->
-              <g>
-                <circle class="dot s2" cx="319" cy="186" r="5"/>
-                <text class="val-lbl s2" x="319" y="175" text-anchor="middle">12</text>
-                <circle class="dot s2" cx="373" cy="190" r="4"/>
-                <circle class="dot s2" cx="426" cy="193" r="4"/>
-                <circle class="dot s2" cx="480" cy="195" r="5"/>
-                <text class="val-lbl s2" x="480" y="185" text-anchor="middle">4</text>
-              </g>
-
-              <!-- X axis year labels -->
-              <g>
-                <text class="year-lbl" x="50"  y="218" text-anchor="middle">2017</text>
-                <text class="year-lbl" x="104" y="218" text-anchor="middle">2018</text>
-                <text class="year-lbl" x="158" y="218" text-anchor="middle">2019</text>
-                <text class="year-lbl" x="211" y="218" text-anchor="middle">2020</text>
-                <text class="year-lbl" x="265" y="218" text-anchor="middle">2021</text>
-                <text class="year-lbl" x="319" y="218" text-anchor="middle">2022</text>
-                <text class="year-lbl" x="373" y="218" text-anchor="middle">2023</text>
-                <text class="year-lbl" x="426" y="218" text-anchor="middle">2024</text>
-                <text class="year-lbl" x="480" y="218" text-anchor="middle">2025</text>
-              </g>
-
-              <!-- Series annotations -->
-              <g>
-                <text class="val-lbl s1" x="158" y="90" text-anchor="middle" font-weight="600">Continental</text>
-                <text class="val-lbl s2" x="400" y="178" text-anchor="middle" font-weight="600">Intel</text>
-                <line x1="290" y1="25" x2="290" y2="200" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
-              </g>
-            </svg>
-
-            <div class="trajectory-legend">
-              <span class="item"><span class="swatch s1"></span> Continental Automotive (2017–2021)</span>
-              <span class="item"><span class="swatch s2"></span> Intel (2022–2025)</span>
-            </div>
+        <li class="t-item reveal">
+          <div class="t-when"><span>Mar 2011 — Jul 2017</span><span class="t-org">Blaupunkt / Premium Sound Solutions · Penang</span></div>
+          <div class="t-body">
+            <h3>Software Developer → Program Manager → Section Manager</h3>
+            <ul>
+              <li>Section Manager (2014–2017): Department Head of Software Engineering, Deputy Head of R&amp;D; multi-disciplinary HMI &amp; firmware teams delivering to Honda India and Proton Malaysia.</li>
+              <li>Program Manager (2011–2014): pre-sales RFQ technical presentations; end-to-end R&amp;D/production for Android SoC, bare-metal audio, navigation and connectivity. Customers: Volvo CE Korea, Renault Iran, ICL Japan, Rockford US, Iran System, Agco Fendt Germany, Belarfonte Uruguay (SKD → CKD).</li>
+              <li>Software Developer (2011): Android GUI apps (Java/XML); ported C++ graphics engines to WinCE.</li>
+            </ul>
           </div>
+        </li>
 
-          <!-- Career Journey timeline -->
-          <div class="chart-card full">
-            <h3 class="chart-title"><span class="dot violet"></span>Career Journey</h3>
-            <p class="chart-sub">1995 → present · 9 roles across 5 industries.</p>
-            <div class="journey-wrap">
-              <svg viewBox="-50 0 1050 230" class="journey" role="img" aria-label="Career journey timeline">
-              <defs>
-                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"  stop-color="#a78bfa"/>
-                  <stop offset="25%" stop-color="#0b3d91"/>
-                  <stop offset="50%" stop-color="#0ea5a4"/>
-                  <stop offset="75%" stop-color="#f59e0b"/>
-                  <stop offset="100%" stop-color="#0b3d91"/>
-                </linearGradient>
-              </defs>
-
-              <!-- Year ticks -->
-              <g>
-                <line class="tick" x1="0"    y1="118" x2="0"    y2="128"/>
-                <line class="tick" x1="160"  y1="118" x2="160"  y2="128"/>
-                <line class="tick" x1="320"  y1="118" x2="320"  y2="128"/>
-                <line class="tick" x1="480"  y1="118" x2="480"  y2="128"/>
-                <line class="tick" x1="640"  y1="118" x2="640"  y2="128"/>
-                <line class="tick" x1="800"  y1="118" x2="800"  y2="128"/>
-                <line class="tick" x1="960"  y1="118" x2="960"  y2="128"/>
-                <text class="year-lbl" x="0"   y="142" text-anchor="middle">1995</text>
-                <text class="year-lbl" x="160" y="142" text-anchor="middle">2000</text>
-                <text class="year-lbl" x="320" y="142" text-anchor="middle">2005</text>
-                <text class="year-lbl" x="480" y="142" text-anchor="middle">2010</text>
-                <text class="year-lbl" x="640" y="142" text-anchor="middle">2015</text>
-                <text class="year-lbl" x="800" y="142" text-anchor="middle">2020</text>
-                <text class="year-lbl" x="960" y="142" text-anchor="middle">2026</text>
-              </g>
-
-              <!-- Main axis -->
-              <line class="axis" x1="0" y1="123" x2="960" y2="123"/>
-
-              <!-- Stops -->
-              <g>
-                <!-- Above the line -->
-                <g>
-                  <circle class="stop" cx="0"   cy="123" r="6"/>
-                  <text class="stop-label" x="0"   y="100" text-anchor="middle">SCS Systems</text>
-                  <text class="stop-sub"   x="0"   y="86"  text-anchor="middle">NZ · FinTech</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="192" cy="123" r="6"/>
-                  <text class="stop-label" x="192" y="100" text-anchor="middle">Han Chiang</text>
-                  <text class="stop-sub"   x="192" y="86"  text-anchor="middle">High School</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="320" cy="123" r="6"/>
-                  <text class="stop-label" x="320" y="100" text-anchor="middle">Bosch</text>
-                  <text class="stop-sub"   x="320" y="86"  text-anchor="middle">Infotainment</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="448" cy="123" r="6"/>
-                  <text class="stop-label" x="448" y="100" text-anchor="middle">Agilent</text>
-                  <text class="stop-sub"   x="448" y="86"  text-anchor="middle">AOI / AXI</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="512" cy="123" r="6"/>
-                  <text class="stop-label" x="512" y="100" text-anchor="middle">Blaupunkt</text>
-                  <text class="stop-sub"   x="512" y="86"  text-anchor="middle">Consumer Audio</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="704" cy="123" r="6"/>
-                  <text class="stop-label" x="704" y="100" text-anchor="middle">Continental</text>
-                  <text class="stop-sub"   x="704" y="86"  text-anchor="middle">Automotive</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="864" cy="123" r="7" fill="#0b3d91" stroke="#0b3d91"/>
-                  <text class="stop-label" x="864" y="100" text-anchor="middle" fill="#0b3d91">Intel</text>
-                  <text class="stop-sub"   x="864" y="86"  text-anchor="middle">Imaging · Media</text>
-                </g>
-
-                <!-- Below the line -->
-                <g>
-                  <circle class="stop" cx="64"  cy="123" r="6"/>
-                  <text class="stop-label" x="64"  y="160" text-anchor="middle">Han Chiang</text>
-                  <text class="stop-sub"   x="64"  y="174" text-anchor="middle">start '97</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="224" cy="123" r="6"/>
-                  <text class="stop-label" x="224" y="160" text-anchor="middle">INTI College</text>
-                  <text class="stop-sub"   x="224" y="174" text-anchor="middle">Academia</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="384" cy="123" r="6"/>
-                  <text class="stop-label" x="384" y="160" text-anchor="middle">Bosch</text>
-                  <text class="stop-sub"   x="384" y="174" text-anchor="middle">end '07</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="480" cy="123" r="6"/>
-                  <text class="stop-label" x="480" y="160" text-anchor="middle">Intel I</text>
-                  <text class="stop-sub"   x="480" y="174" text-anchor="middle">PM · Linux SoC</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="608" cy="123" r="6"/>
-                  <text class="stop-label" x="608" y="160" text-anchor="middle">Blaupunkt</text>
-                  <text class="stop-sub"   x="608" y="174" text-anchor="middle">Section Mgr</text>
-                </g>
-                <g>
-                  <circle class="stop" cx="960" cy="123" r="6"/>
-                  <text class="stop-label" x="960" y="160" text-anchor="middle">Now</text>
-                  <text class="stop-sub"   x="960" y="174" text-anchor="middle">Kernel · Automation</text>
-                </g>
-              </g>
-            </svg>
-            </div>
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jul 2009 — Jul 2010</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>Project Manager — Software</h3>
+            <ul><li>Managed schedules, scope validation and requirements tracking for Linux on SoC platforms.</li></ul>
           </div>
-        </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jul 2007 — Mar 2009</span><span class="t-org">Agilent Technologies · Penang</span></div>
+          <div class="t-body">
+            <h3>Operating Manager — Software</h3>
+            <ul>
+              <li>Managed AOI and AXI analytics projects, software patches and engineering escalations across Malaysia and Singapore.</li>
+              <li>Transferred AOI product knowledge from Ireland and AXI analytics from Singapore into Penang; delivered to Nokia, Jabil EMS, Rockwell.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Nov 2005 — Jul 2007</span><span class="t-org">Bosch / Bosch–Blaupunkt · Penang</span></div>
+          <div class="t-body">
+            <h3>Project Manager — Software</h3>
+            <ul>
+              <li>Multi-site infotainment software development aligned with the CMM Level 3 process framework.</li>
+              <li>Projects: GMDAT VA/VE (GM Daewoo Korea), Zao Volga (Russia), Nissan MMR2 (Nissan Britain), GM G8 and GM W200 (GM Holden Australia).</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>1995 — 2005</span><span class="t-org">Early Career &amp; Academia · MY / NZ</span></div>
+          <div class="t-body">
+            <h3>Foundations in engineering &amp; education</h3>
+            <ul>
+              <li>INTI International College Penang (2002–2005): Academic Coordinator — lectured Computer Engineering, C/C++, Java and Assembly Language.</li>
+              <li>Han Chiang High School (1997–2001): Head of Computer Centre — established campus computer infrastructure and pre-university IT programs.</li>
+              <li>SCS Systems / PEC Ltd., New Zealand (1995–1997): Application Specialist — Unix Money Market systems; RS-232 SIRAS swiping modules on OS/2 in C++.</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= DOMAINS & TOOLBOX ================= -->
+  <section class="section" id="stack">
+    <div class="wrap">
+      <p class="label">Domains &amp; Toolbox</p>
+      <h2>Where the work lives</h2>
+
+      <h3 class="chips-title">Industries</h3>
+      <ul class="chips">
+        <li>Semiconductor &amp; Validation — Intel</li>
+        <li>Automotive Electronics — Continental · Bosch</li>
+        <li>Consumer Audio — Blaupunkt</li>
+        <li>Manufacturing Inspection — Agilent AOI/AXI</li>
+      </ul>
+
+      <h3 class="chips-title">Engineering toolbox</h3>
+      <ul class="chips">
+        <li>Python</li><li>Robot Framework</li><li>Test Strategy &amp; Qualification</li>
+        <li>Post-Silicon Bring-Up</li><li>Functional Test Site Leadership</li><li>AOI / AXI</li>
+        <li>HSV Vision Engines</li><li>Dual-Region SSIM</li><li>V4L2</li><li>GStreamer</li>
+        <li>MIPI CSI-2</li><li>GMSL2</li><li>HDMI</li><li>Linux Kernel Patches</li><li>Windows</li>
+        <li>C / C++</li><li>Java</li><li>Android</li><li>Reverse Engineering</li>
+        <li>Custom CLI Tooling</li><li>Lean-Agile Delivery</li><li>CMM Level 3</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section class="section" id="education">
+    <div class="wrap">
+      <p class="label">Education</p>
+      <div class="edu-card reveal">
+        <h3>Bachelor of Computer Science Engineering (Systems)</h3>
+        <p>University of Technology Malaysia · 1989 — 1995</p>
       </div>
+    </div>
+  </section>
 
-      <!-- ====== EXPERIENCE ====== -->
-      <div class="section">
-        <h2 class="section-title">Professional Experience</h2>
-        <div class="timeline">
+</main>
 
-          <!-- Intel — current -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
-              <div class="exp-dates">Dec 2025 — Present</div>
-            </div>
-            <div class="exp-role">System Software Development Engineer</div>
+<!-- ================= CONTACT / FOOTER ================= -->
+<footer class="section contact" id="contact">
+  <div class="wrap">
+    <p class="label">Contact</p>
+    <h2>Open to high-stakes, measurable work.</h2>
+    <p class="sub">Email is the fastest route. References, prototypes and detailed case studies
+      available on request.</p>
+    <div class="contact-links">
+      <a class="btn btn-solid" href="mailto:gzhone@yahoo.co.uk">gzhone@yahoo.co.uk</a>
+      <a class="btn" href="tel:+601126008641">+60-11 2600 8641</a>
+      <a class="btn" href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener">Prototypes ↗</a>
+    </div>
+    <p class="foot-note">Chong Boo Chean — family name <strong>Chong</strong>, given name
+      <strong>Boo Chean</strong> — presented in its original order throughout this profile.</p>
+    <p class="foot-fine">© 2026 Chong Boo Chean · Penang, Malaysia · Single-file HTML5 ·
+      Real-time 3D rendered with three.js (WebGL) · Photograph: cbc.jpg</p>
+  </div>
+</footer>
 
-            <div class="group">
-              <div class="group-title">Linux Device Driver Developer <small>· Jun 2026 — Present</small></div>
-              <ul class="exp-list">
-                <li><b>Brought up a GMSL2 camera subsystem on Intel's next-generation platform in 5 days</b> — identified and validated undocumented BIOS "Camera Links" settings, established the MIPI CSI-2 data path over the MAX9295A SerDes link (Sony IMX390), and confirmed kernel-space streaming via GStreamer v4l2src.</li>
-                <li><b>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash (1-in-5 boots)</b> — the crash was blocking all camera-driver validation; the patch restored full V4L2 data-path verification.</li>
-                <li><b>Drove IPU7 → IPU8 early enablement</b> — upgraded the camera HAL to the new IPU8 context and reconfigured the icamerasrc userspace pipeline, verifying end-to-end streaming.</li>
-              </ul>
-            </div>
+<script type="module">
+/* ============================================================
+   UI behaviours + true-3D three.js hero scene (WebGL)
+   ============================================================ */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            <div class="group">
-              <div class="group-title">Automation Lead <small>· Dec 2025 — Jun 2026</small></div>
-              <ul class="exp-list">
-                <li><b>Expanded automated test coverage through cross-site collaboration</b> — ported the Robot Framework + Python automation suite from Intel's China test division into local lab environments; drove a gap analysis between their test cases and local coverage, then closed the identified gaps with new or modified cases — delivering a significant uplift in coverage.</li>
-                <li><b>Converted long-overdue manual test suites to automation in two quarters</b> — automated 85 cases (40 Ubuntu / 45 Windows, one quarter per platform), with code peer-reviewed and results formally validated in official product-milestone validation cycles.</li>
-                <li><b>Architected a proprietary computer-vision engine</b> — HSV-based corruption detector that analyses a 15-minute video in <b>9 seconds</b>; dual regions of interest resolve edge cases like solid-coloured scenes.</li>
-                <li><b>Engineered a high-sensitivity screen-tearing artefact detector</b> via a lightweight dual-region SSIM algorithm — captures screen-tearing and subtle defects, near real-time where commercial tools hit limits.</li>
-                <li><b>Built a low-level display &amp; automation tool</b> — reverse-engineered Intel Graphics Command Centre Beta to expose undocumented registry dependencies; custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on non-standard resolutions.</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Intel — manager -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
-              <div class="exp-dates">Jan 2022 — Dec 2025</div>
-            </div>
-            <div class="exp-role">Software Engineering Manager</div>
-            <ul class="exp-list collapsed">
-              <li>Directed <b>Media Software</b> (video codecs), <b>Imaging Software</b> (camera sensors), and <b>Component Validation</b> (hypervisors, codecs, sensors) teams comprising <b>8 Software Engineers and 4 Test Engineers</b>.</li>
-              <li>Owned the <b>Software Component Defect Driving</b> and <b>Software Component Release Process</b> charters.</li>
-              <li>Drove systematic defect reduction, cutting customer-found defects from <b>12+ (2022) to ~4 (2025)</b>.</li>
-              <li>Achieved <b>0% unintended attrition</b> across 3 consecutive years while mentoring junior talent into major technical contributors.</li>
-            </ul>
-            <button class="expand-btn" type="button" aria-expanded="false">
-              Show more <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-          </article>
-
-          <!-- Continental -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Continental Automotive <span class="exp-loc">· Penang</span></div>
-              <div class="exp-dates">Sep 2017 — Jan 2022</div>
-            </div>
-            <div class="exp-role">Manager — Functional Test / Functional Test Site Lead</div>
-            <ul class="exp-list">
-              <li>Served as <b>Site Lead and Business Owner</b> for automotive instrument cluster projects across key global OEMs (Toyota, Volkswagen Group, Perodua, Suzuki).</li>
-              <li>Managed up to <b>16 direct test engineering reports</b> under Lean Agile leadership frameworks.</li>
-              <li>Reduced customer-found defects from <b>140+ (2017) to ~5 (2021)</b> while expanding test product portfolio responsibilities from <b>1 to 4</b> key lines.</li>
-            </ul>
-          </article>
-
-          <!-- Blaupunkt / PSS -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Blaupunkt / Premium Sound Solutions <span class="exp-loc">· Malaysia</span></div>
-              <div class="exp-dates">Mar 2011 — Jul 2017</div>
-            </div>
-            <div class="exp-role">Software Developer → Program Manager → Section Manager</div>
-
-            <div class="group">
-              <div class="group-title">Section Manager — Embedded Software <small>· Jan 2014 — Jul 2017</small></div>
-              <ul class="exp-list">
-                <li>Department Head of Software Engineering &amp; Deputy Head of R&amp;D.</li>
-                <li>Managed multi-disciplinary HMI and firmware development teams delivering to global customers.</li>
-                <li><div class="pills"><span class="pill">Honda (JP/IN)</span><span class="pill">Volvo CE (KR)</span><span class="pill">Proton (MY)</span><span class="pill">Nissan (ZA)</span><span class="pill">Rockford (US)</span><span class="pill">Agco Fendt (DE)</span></div></li>
-              </ul>
-            </div>
-
-            <div class="group">
-              <div class="group-title">Program Manager <small>· Mar 2011 — Apr 2014</small></div>
-              <ul class="exp-list">
-                <li>Led pre-sales RFQ technical presentations and managed end-to-end R&amp;D/production cycles for Android SoC, bare-metal audio, navigation, and connectivity systems.</li>
-                <li><div class="pills"><span class="pill">Android on SoC</span><span class="pill">Bare metal</span><span class="pill">DAB+</span><span class="pill">Bluetooth</span><span class="pill">Apple iAP</span><span class="pill">MirrorLink</span><span class="pill">Navigation</span><span class="pill">Voice recognition</span></div></li>
-              </ul>
-            </div>
-
-            <div class="group">
-              <div class="group-title">Software Developer <small>· Mar 2011 — Dec 2011</small></div>
-              <ul class="exp-list">
-                <li>Developed Android GUI apps (Java/XML) and ported C++ graphics engines to WinCE environments.</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Intel earlier -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Intel Corporation <span class="exp-loc">· Malaysia</span></div>
-              <div class="exp-dates">Jul 2009 — Jul 2010</div>
-            </div>
-            <div class="exp-role">Project Manager — Software</div>
-            <ul class="exp-list">
-              <li>Managed software project schedules, scope validation, and requirements tracking for <b>Linux on SoC</b> platforms.</li>
-            </ul>
-          </article>
-
-          <!-- Agilent -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Agilent Technologies <span class="exp-loc">· Malaysia</span></div>
-              <div class="exp-dates">Jul 2007 — Mar 2009</div>
-            </div>
-            <div class="exp-role">Operating Manager — Software</div>
-            <ul class="exp-list">
-              <li>Managed <b>Automated Optical Inspection (AOI)</b> and <b>Automated X-ray Inspection (AXI)</b> analytic projects, software patches, and engineering escalations across Malaysia and Singapore.</li>
-              <li>Transferred AOI product knowledge from Ireland, AXI analytics from Singapore into Penang.</li>
-              <li><div class="pills"><span class="pill">Nokia</span><span class="pill">Jabil EMS</span><span class="pill">Rockwell (US)</span><span class="pill">AOI</span><span class="pill">AXI</span></div></li>
-            </ul>
-          </article>
-
-          <!-- Bosch -->
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Bosch (Malaysia) / Bosch – Blaupunkt <span class="exp-loc">· Malaysia</span></div>
-              <div class="exp-dates">Nov 2005 — Jul 2007</div>
-            </div>
-            <div class="exp-role">Project Manager — Software</div>
-            <ul class="exp-list">
-              <li>Led multi-site infotainment software development aligned with <b>CMM Level 3</b> process framework for global automotive clients (GM Daewoo, Nissan, GM Holden).</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-
-      <!-- ====== EARLY CAREER ====== -->
-      <div class="section">
-        <h2 class="section-title">Early Career &amp; Academia</h2>
-        <div class="timeline">
-
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">INTI International College Penang</div>
-              <div class="exp-dates">2002 — 2005</div>
-            </div>
-            <div class="exp-role">Academic Coordinator</div>
-            <ul class="exp-list">
-              <li>Lectured Computer Engineering, C/C++, Java, and Assembly Language courses.</li>
-            </ul>
-          </article>
-
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">Han Chiang High School</div>
-              <div class="exp-dates">1997 — 2001</div>
-            </div>
-            <div class="exp-role">Head of Computer Centre</div>
-            <ul class="exp-list">
-              <li>Established campus computer infrastructure and pre-university IT programs.</li>
-            </ul>
-          </article>
-
-          <article class="exp">
-            <div class="exp-head">
-              <div class="exp-company">SCS Systems and PEC Ltd. <span class="exp-loc">· New Zealand</span></div>
-              <div class="exp-dates">1995 — 1997</div>
-            </div>
-            <div class="exp-role">Application Specialist</div>
-            <ul class="exp-list">
-              <li>Maintained Unix Money Market systems and developed RS-232 SIRAS swiping modules on OS/2 in C++.</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-
-      <!-- ====== EDUCATION ====== -->
-      <div class="section">
-        <h2 class="section-title">Education</h2>
-        <div class="ed-card">
-          <b>Universiti Teknologi Malaysia</b>
-          <span class="degree">Bachelor of Computer Science Engineering (Systems)</span>
-          <div class="ed-meta">1989 — 1995</div>
-        </div>
-      </div>
-
-      <div class="footer">
-        <span><span class="dot"></span>References available on request</span><br/>
-        <span>Penang, Malaysia · Updated June 2026</span>
-      </div>
-    </section>
-
-    <button class="to-top" id="toTop" aria-label="Back to top" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-  </main>
-
-<script>
-  // Expand/collapse experience bullet lists
-  document.querySelectorAll('.expand-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const exp = btn.closest('.exp');
-      const list = exp.querySelector('.exp-list');
-      const expanded = exp.classList.toggle('expanded');
-      list.classList.toggle('collapsed', !expanded);
-      btn.setAttribute('aria-expanded', expanded);
-      btn.firstChild.textContent = expanded ? ' Show less ' : ' Show more ';
+/* ---------- Reveal on scroll ---------- */
+const revealEls = [...document.querySelectorAll('.reveal')];
+if (REDUCED || !('IntersectionObserver' in window)) {
+  revealEls.forEach(el => el.classList.add('in'));
+} else {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
     });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach((el, i) => { el.style.transitionDelay = ((i % 3) * 70) + 'ms'; io.observe(el); });
+}
+
+/* ---------- Animated stat counters ---------- */
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+function countUp(el) {
+  const target = parseInt(el.dataset.count, 10) || 0;
+  const prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+  if (REDUCED) { el.textContent = prefix + target + suffix; return; }
+  const dur = 1100, start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / dur);
+    el.textContent = prefix + Math.round(easeOut(p) * target) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const statNums = [...document.querySelectorAll('.stat-num')];
+if ('IntersectionObserver' in window) {
+  const sio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { countUp(en.target); sio.unobserve(en.target); }
+    });
+  }, { threshold: 0.4 });
+  statNums.forEach(el => sio.observe(el));
+} else {
+  statNums.forEach(countUp);
+}
+
+/* ============================================================
+   THREE.JS hero — genuine 3D: perspective camera, lit meshes,
+   fog, orbital rings, satellites and a depth-attenuated
+   particle field. Drag to orbit; scroll for parallax dolly.
+   ============================================================ */
+const hero = document.getElementById('hero');
+const canvas = document.getElementById('gl');
+
+(async () => {
+  let THREE;
+  try {
+    THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+  } catch (e) { hero.classList.add('no3d'); return; }
+  try { initScene(THREE); } catch (e) { hero.classList.add('no3d'); }
+})();
+
+function initScene(THREE) {
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) { hero.classList.add('no3d'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a0d13, 0.05);
+
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  const rig = new THREE.Group();          // everything orbits inside this group
+  scene.add(rig);
+
+  /* Lights — real 3D directional lighting on the faceted core */
+  scene.add(new THREE.AmbientLight(0x2a3550, 1.4));
+  const key = new THREE.DirectionalLight(0x9dc2ff, 2.4); key.position.set(5, 6, 4);  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x35558f, 1.1); rim.position.set(-6, -4, -6); scene.add(rim);
+
+  /* Faceted "silicon" core */
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.02, 1),
+    new THREE.MeshStandardMaterial({
+      color: 0x111a2b, metalness: 0.85, roughness: 0.32,
+      emissive: 0x0b1e3d, emissiveIntensity: 0.55, flatShading: true
+    })
+  );
+  rig.add(core);
+
+  /* Wire cage around the core */
+  const cage = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.5, 1)),
+    new THREE.LineBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: 0.30 })
+  );
+  rig.add(cage);
+
+  /* Three tilted orbital rings + six satellites
+     (the global multi-site footprint: Penang · Korea · Japan · India · Uruguay · Australia) */
+  const ringDefs = [
+    { r: 2.35, tilt: [1.15,  0.35,  0.0], op: 0.22, sats: [{ speed:  0.50, phase: 0.0 }, { speed:  0.50, phase: Math.PI }] },
+    { r: 3.05, tilt: [1.75, -0.40,  0.3], op: 0.27, sats: [{ speed: -0.34, phase: 1.2 }, { speed: -0.34, phase: 4.0 }] },
+    { r: 3.85, tilt: [2.25,  0.80, -0.4], op: 0.32, sats: [{ speed:  0.22, phase: 2.1 }, { speed:  0.22, phase: 5.2 }] }
+  ];
+  const pivots = [], sats = [];
+  ringDefs.forEach(d => {
+    const pivot = new THREE.Group();
+    const ringG = new THREE.Group();
+    ringG.rotation.set(d.tilt[0], d.tilt[1], d.tilt[2]);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(d.r, 0.0045, 6, 180),
+      new THREE.MeshBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: d.op })
+    );
+    ringG.add(ring);
+    d.sats.forEach(s => {
+      const sat = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xbfd9ff }));
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: 0.22,
+          blending: THREE.AdditiveBlending, depthWrite: false }));
+      sat.add(halo);
+      ringG.add(sat);
+      sats.push({ mesh: sat, r: d.r, speed: s.speed, phase: s.phase });
+    });
+    pivot.add(ringG);
+    rig.add(pivot);
+    pivots.push(pivot);
   });
 
-  // Back to top
-  const toTop = document.getElementById('toTop');
-  const onScroll = () => {
-    if (window.scrollY > 400) toTop.classList.add('show');
-    else toTop.classList.remove('show');
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-  // Animate industry bars when they enter the viewport
-  const barFills = document.querySelectorAll('.bar-fill');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const fill = e.target;
-          const w = fill.getAttribute('data-w') || '0';
-          requestAnimationFrame(() => { fill.style.width = w + '%'; });
-          io.unobserve(fill);
-        }
-      });
-    }, { threshold: 0.4 });
-    barFills.forEach(b => io.observe(b));
-  } else {
-    barFills.forEach(b => b.style.width = (b.getAttribute('data-w') || 0) + '%');
+  /* Depth-attenuated particle field */
+  const COUNT = 460;
+  const pos = new Float32Array(COUNT * 3);
+  for (let i = 0; i < COUNT; i++) {
+    const rr = 2.6 + Math.pow(Math.random(), 0.7) * 3.2;
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i * 3]     = rr * Math.sin(ph) * Math.cos(th);
+    pos[i * 3 + 1] = rr * Math.cos(ph) * 0.75;
+    pos[i * 3 + 2] = rr * Math.sin(ph) * Math.sin(th);
   }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const stars = new THREE.Points(pGeo, new THREE.PointsMaterial({
+    color: 0x9fc4ff, size: 0.035, transparent: true, opacity: 0.7,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
+  }));
+  rig.add(stars);
+
+  /* Interaction state */
+  let targetRX = -0.14, targetRY = 0.35, curRX = targetRX, curRY = targetRY;
+  let dragging = false, lx = 0, ly = 0;
+  hero.addEventListener('pointerdown', e => {
+    if (e.target.closest('a,button')) return;
+    dragging = true; lx = e.clientX; ly = e.clientY;
+  });
+  addEventListener('pointermove', e => {
+    if (!dragging) return;
+    targetRY += (e.clientX - lx) * 0.0055;
+    targetRX += (e.clientY - ly) * 0.0035;
+    targetRX = Math.max(-1.0, Math.min(0.75, targetRX));
+    lx = e.clientX; ly = e.clientY;
+  });
+  addEventListener('pointerup', () => dragging = false);
+  addEventListener('pointercancel', () => dragging = false);
+
+  /* Scroll parallax dolly */
+  let scrollP = 0;
+  const onScroll = () => {
+    const h = hero.offsetHeight || 1;
+    scrollP = Math.min(1, Math.max(0, window.scrollY / h));
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Resize */
+  let baseZ = 9.4;
+  function resize() {
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    baseZ = w < 720 ? 9.6 : 8.6;
+    camera.updateProjectionMatrix();
+    if (REDUCED) { camera.position.set(0, 0.25, baseZ); camera.lookAt(0, 0, 0); renderer.render(scene, camera); }
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(hero);
+  addEventListener('resize', resize);
+  resize();
+
+  /* Park satellites for a clean static frame (used by reduced-motion path) */
+  sats.forEach(s => {
+    const a = s.phase;
+    s.mesh.position.set(Math.cos(a) * s.r, Math.sin(a) * s.r, 0);
+  });
+
+  if (REDUCED) {
+    rig.rotation.set(curRX, curRY, 0);
+    camera.position.set(0, 0.25, baseZ);
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  /* Render loop — pauses while hero is off-screen or tab hidden */
+  const clock = new THREE.Clock();
+  let t = 0, visible = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(en => { visible = en[0].isIntersecting; }, { threshold: 0.01 }).observe(hero);
+  }
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!visible || document.hidden) return;
+    const dt = Math.min(clock.getDelta(), 0.05);
+    t += dt;
+
+    if (!dragging) targetRY += dt * 0.10;               // slow auto-orbit
+    curRX += (targetRX - curRX) * 0.06;
+    curRY += (targetRY - curRY) * 0.06;
+    rig.rotation.x = curRX;
+    rig.rotation.y = curRY;
+
+    core.rotation.y += dt * 0.15;
+    core.rotation.x += dt * 0.05;
+    core.position.y  = Math.sin(t * 0.8) * 0.05;
+    cage.rotation.y -= dt * 0.06;
+    stars.rotation.y -= dt * 0.012;
+    pivots.forEach((p, i) => { p.rotation.y += dt * (0.018 + i * 0.012) * (i % 2 ? -1 : 1); });
+    sats.forEach(s => {
+      const a = s.phase + t * s.speed;
+      s.mesh.position.set(Math.cos(a) * s.r, Math.sin(a) * s.r, 0);
+    });
+
+    camera.position.set(0, 0.25 - scrollP * 0.9, baseZ + scrollP * 2.4);
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  frame();
+}
 </script>
 </body>
 </html>
