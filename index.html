@@ -551,14 +551,12 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
 </footer>
 
 <script>
-/* Launch the self-contained career-history.js visualisation in a new tab. */
+/* Launch the self-contained career-history.js visualisation in the same tab. */
 function launchCareerHistory(event) {
   event.preventDefault();
-  const win = window.open('', '_blank');
-  if (!win) return;
-  win.document.open();
-  win.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Career History (Graphical)</title></head><body style="margin:0;background:#0a0d13"><script src="career-history.js"><\/script></body></html>');
-  win.document.close();
+  document.open();
+  document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Career History (Graphical)</title></head><body style="margin:0;background:#0a0d13"><script src="career-history.js"><\/script></body></html>');
+  document.close();
 }
 </script>
 
