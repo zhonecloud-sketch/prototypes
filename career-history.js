@@ -276,7 +276,8 @@ STYLE.textContent = [
   '.ch-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s ease;}',
   '.ch-card.ch-open .ch-collapse{grid-template-rows:1fr;}',
   '.ch-collapse-in{overflow:hidden;min-height:0;}',
-  '.ch-card-body{padding-top:13px;transition:opacity .18s ease,transform .18s ease;}',
+  '.ch-card-body{padding-top:13px;height:242px;display:flex;flex-direction:column;',
+  '  transition:opacity .18s ease,transform .18s ease;}',
   '.ch-card.ch-hide .ch-card-body{opacity:0;transform:translateY(6px);}',
   '.ch-job{font-size:17px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#f2f6fc;margin:0 0 8px;}',
   '.ch-co{font-size:13px;color:#5fd4ff;font-weight:600;margin-bottom:3px;}',
@@ -284,7 +285,10 @@ STYLE.textContent = [
   '.ch-loc b{color:#c7d5e8;font-weight:600;}',
   '.ch-clabel{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:10px;letter-spacing:.18em;',
   '  text-transform:uppercase;color:#647b99;margin-bottom:7px;}',
-  '.ch-customers{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:5px 14px;}',
+  '.ch-customers{list-style:none;margin:0;padding:0 6px 2px 0;display:flex;flex-wrap:wrap;gap:5px 14px;',
+  '  flex:1 1 auto;min-height:0;overflow-y:auto;align-content:flex-start;}',
+  '.ch-customers::-webkit-scrollbar{width:4px;}',
+  '.ch-customers::-webkit-scrollbar-thumb{background:rgba(120,180,255,.25);border-radius:2px;}',
   '.ch-customers li{font-size:12.5px;color:#b9c8dc;display:flex;align-items:center;gap:7px;line-height:1.45;}',
   '.ch-customers li i{width:6px;height:6px;border-radius:50%;background:#5fd4ff;flex:0 0 auto;',
   '  box-shadow:0 0 8px rgba(95,212,255,.8);font-style:normal;}',
@@ -309,7 +313,7 @@ STYLE.textContent = [
   '  .ch-title{font-size:11.5px;}',
   '  .ch-card{left:10px;right:10px;bottom:52px;width:auto;padding:13px 14px;}',
   '  .ch-job{font-size:15px;}',
-  '  .ch-customers{max-height:23vh;overflow-y:auto;}',
+  '  .ch-card-body{height:212px;}',
   '  .ch-hint{bottom:12px;font-size:9.5px;padding:7px 13px;}',
   '}'
 ].join('\n');
@@ -448,7 +452,7 @@ function initScene(THREE) {
   scene.background = new THREE.Color(0x04070d);
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 700);
-  const vGlobeCam = new THREE.Vector3(0, 3.2, 26.5);
+  const vGlobeCam = new THREE.Vector3(0, 4.5, 36);
   camera.position.copy(vGlobeCam);
   camera.lookAt(0, 0, 0);
 
@@ -722,7 +726,7 @@ function initScene(THREE) {
     d = Math.max(d, 15);
     const cx = (minX + maxX) / 2;
     let cy = (minY + maxY) / 2;
-    if (aspect < 0.85) cy -= d * tanV * 0.20;   /* lift map above the card on portrait */
+    if (aspect < 0.85) cy -= d * tanV * 0.28;   /* lift map above the fixed-height pane on portrait */
     return { x: cx, y: cy, d: d };
   }
 
@@ -766,15 +770,21 @@ function initScene(THREE) {
     move(dir);
   }, { passive: false });
 
-  let touchY = null;
+  let touchX = null, touchY = null;
   root.addEventListener('touchstart', function (e) {
+    touchX = e.touches[0].clientX;
     touchY = e.touches[0].clientY;
   }, { passive: true });
   root.addEventListener('touchend', function (e) {
-    if (touchY == null) return;
-    const dy = touchY - e.changedTouches[0].clientY;
-    touchY = null;
-    if (Math.abs(dy) > 46) move(dy > 0 ? 1 : -1);
+    if (touchX == null || touchY == null) return;
+    const dx = e.changedTouches[0].clientX - touchX;   /* + : swipe right */
+    const dy = touchY - e.changedTouches[0].clientY;   /* + : swipe up    */
+    touchX = touchY = null;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (Math.abs(dx) > 46) move(dx > 0 ? 1 : -1);    /* right = scroll down, left = scroll up */
+    } else {
+      if (Math.abs(dy) > 46) move(dy > 0 ? 1 : -1);    /* swipe up = scroll down */
+    }
   }, { passive: true });
 
   window.addEventListener('keydown', function (e) {
@@ -790,7 +800,7 @@ function initScene(THREE) {
   const qTmp = new THREE.Quaternion();
   const Q_ID = new THREE.Quaternion();
   const easeIO = function (x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
-  const SPIN_TOTAL = REDUCED ? 0.15 : 0.55;
+  const SPIN_TOTAL = REDUCED ? 0.15 : 0.7;
 
   resize();
   window.addEventListener('resize', resize);
@@ -841,7 +851,7 @@ function initScene(THREE) {
         renderHeader(0);
         elCardBody.innerHTML = renderCard(0);
         elCard.classList.add('ch-show');
-        setCard(false);                      /* collapsed by default */
+        setCard(true);                      /* expanded by default */
         elHint.textContent = 'Scroll to move through career';
       }
     }
