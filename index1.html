@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b3d91" />
+<title>Chong Boo Chean — System Test &amp; Validation Engineering Leader</title>
+<meta name="description" content="Digital profile of Chong Boo Chean — system test and validation engineering leader · Python · Linux. Manufacturing test, functional test leadership, test automation, Linux kernel and camera bring-up." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ============== Tokens ============== */
+  :root {
+    --bg: #f3f4f7;
+    --paper: #ffffff;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --line: #e5e7eb;
+    --line-2: #eef0f3;
+    --brand: #0b3d91;
+    --brand-2: #1e63d1;
+    --accent: #0ea5a4;
+    --accent-2: #f59e0b;
+    --soft: #eef2ff;
+    --chip: #f1f5f9;
+    --radius: 14px;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.04), 0 4px 14px rgba(15,23,42,.06);
+    --shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 28px rgba(15,23,42,.08);
+  }
+
+  /* ============== Reset ============== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.55;
+    font-size: 15px;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  a { color: var(--brand-2); text-decoration: none; -webkit-tap-highlight-color: rgba(14,165,164,.18); }
+  a:hover { text-decoration: underline; }
+  img, svg { display: block; max-width: 100%; }
+  button { font: inherit; cursor: pointer; }
+
+  /* ============== Mobile-first container ============== */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 0 0 100px;
+  }
+
+  /* ============== Hero ============== */
+  .hero {
+    background:
+      radial-gradient(800px 400px at 90% -10%, rgba(14,165,164,.35), transparent 60%),
+      radial-gradient(600px 300px at -10% 110%, rgba(245,158,11,.20), transparent 60%),
+      linear-gradient(160deg, #061634 0%, #0b3d91 60%, #1e63d1 100%);
+    color: #e2e8f0;
+    padding: 32px 22px 76px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='1' cy='1' r='1' fill='%23ffffff' opacity='0.06'/></svg>");
+    pointer-events: none;
+  }
+  .hero-row {
+    display: flex; align-items: center; gap: 16px;
+    position: relative; z-index: 1;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .hero-left-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-meta svg {
+    width: 16px;
+    height: 16px;
+  }
+  .avatar {
+    flex: 0 0 auto;
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e63d1, #0ea5a4);
+    color: #fff;
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 24px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.15), 0 6px 20px rgba(0,0,0,.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar img.avatar-photo,
+  .avatar .avatar-photo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+  .avatar:has(img.avatar-photo) .avatar-initials,
+  .avatar:has(.avatar-photo) .avatar-initials { display: none; }
+  .hero-name {
+    margin: 0; font-size: 22px; font-weight: 800;
+    color: #fff; letter-spacing: -.01em; line-height: 1.2;
+  }
+  .hero-role {
+    margin: 4px 0 0; font-size: 13px;
+    color: #bfdbfe; font-weight: 500;
+  }
+  .hero-tagline {
+    margin: 10px 0 0;
+    font-size: 13.5px;
+    color: #e2e8f0;
+    line-height: 1.45;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-tagline em {
+    font-style: normal;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: .005em;
+  }
+  .hero-tagline .accent { color: #5eead4; }
+  .hero-meta {
+    position: relative; z-index: 1;
+    margin-top: 18px;
+    display: flex; flex-wrap: wrap; gap: 8px 14px;
+    font-size: 12.5px; color: #cbd5e1;
+  }
+  .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+  .hero-meta svg { width: 14px; height: 14px; color: #93c5fd; }
+
+  /* ============== Sticky contact bar ============== */
+  .contact-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--line);
+    margin: -50px 14px 0;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    padding: 6px;
+    gap: 4px;
+  }
+  .contact-bar a {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 4px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    color: var(--ink-2);
+    font-size: 11px; font-weight: 600;
+    min-height: 48px;
+    transition: background .15s ease;
+    text-decoration: none;
+  }
+  .contact-bar a:active { background: var(--soft); }
+  .contact-bar a svg { width: 18px; height: 18px; color: var(--brand); }
+  .contact-bar a span { line-height: 1.1; }
+
+  /* ============== Content ============== */
+  .content { padding: 22px 18px 0; }
+
+  .summary {
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--brand);
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: var(--ink-2);
+    font-size: 14px;
+    margin: 0 0 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary b { color: var(--ink); }
+
+  .section { margin-bottom: 28px; }
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 800;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--brand);
+    margin: 0 0 12px;
+  }
+  .section-title::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--line), transparent);
+  }
+
+  /* ============== Skills ============== */
+  .skills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .skills span {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 12.5px; font-weight: 500;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ============== Experience cards ============== */
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before {
+    content: ""; position: absolute;
+    left: 6px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--brand), var(--accent));
+    border-radius: 2px;
+  }
+  .exp {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-radius: 12px;
+    padding: 14px 14px 4px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .exp::before {
+    content: ""; position: absolute;
+    left: -19px; top: 18px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 3px solid var(--brand);
+    box-shadow: 0 0 0 3px var(--bg);
+  }
+  .exp-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+    gap: 6px 10px;
+  }
+  .exp-company {
+    font-size: 15px; font-weight: 700;
+    color: var(--ink); letter-spacing: -.01em;
+  }
+  .exp-loc { color: var(--ink-3); font-weight: 400; font-size: 12.5px; }
+  .exp-dates {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; color: var(--ink-3);
+    background: var(--chip);
+    padding: 3px 8px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .exp-role {
+    font-size: 13px; font-weight: 600;
+    color: var(--brand-2);
+    margin: 4px 0 8px;
+  }
+  .exp-list {
+    list-style: none; margin: 0 0 12px; padding: 0;
+    color: var(--ink-2);
+    font-size: 13.5px;
+  }
+  .exp-list li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    line-height: 1.5;
+  }
+  .exp-list li::before {
+    content: ""; position: absolute;
+    left: 4px; top: 13px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .exp-list.collapsed li:nth-child(n+4) { display: none; }
+
+  .expand-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--soft);
+    color: var(--brand);
+    font-weight: 600; font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 0 0 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .expand-btn:active { transform: scale(.98); }
+  .expand-btn .chev {
+    transition: transform .2s ease;
+  }
+  .exp.expanded .expand-btn .chev { transform: rotate(180deg); }
+
+  .group {
+    background: #fafbff;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .group-title {
+    font-size: 11.5px; font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 4px;
+  }
+  .group-title small { color: var(--ink-3); font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .pill {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    color: var(--brand);
+    background: var(--soft);
+    padding: 3px 9px; border-radius: 999px;
+    line-height: 1.4;
+  }
+
+  /* ============== Education ============== */
+  .ed-card {
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .ed-card b { color: var(--ink); font-size: 14.5px; display: block; margin-bottom: 2px; }
+  .ed-card .degree { color: var(--brand-2); font-size: 13px; font-weight: 600; }
+  .ed-card .ed-meta {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--ink-3);
+  }
+
+  /* ============== Footer ============== */
+  .footer {
+    margin: 28px 0 0;
+    padding: 18px 18px 0;
+    border-top: 1px dashed var(--line);
+    text-align: center;
+    color: var(--ink-3); font-size: 11.5px;
+  }
+  .footer .dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+  /* ============== Back to top ============== */
+  .to-top {
+    position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom));
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--brand);
+    color: #fff; border: none;
+    display: none; place-items: center;
+    box-shadow: 0 6px 20px rgba(11,61,145,.4);
+    z-index: 40;
+  }
+  .to-top.show { display: grid; }
+  .to-top svg { width: 20px; height: 20px; }
+
+  /* ============== Methodology portfolio cards ============== */
+  .method-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .method-card {
+    background: linear-gradient(160deg, #fafbff, #ffffff);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 10px;
+    align-items: flex-start;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .method-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .method-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .method-icon svg { width: 18px; height: 18px; }
+  .method-icon.violet { background: #ede9fe; color: #7c3aed; }
+  .method-icon.teal   { background: #ccfbf1; color: #0d9488; }
+  .method-icon.amber  { background: #fef3c7; color: #d97706; }
+  .method-icon.coral  { background: #fee2e2; color: #dc2626; }
+  .method-icon.brand  { background: #dbeafe; color: #1d4ed8; }
+  .method-name {
+    font-size: 12px; font-weight: 700; color: var(--ink);
+    line-height: 1.25;
+    display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  }
+  .method-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; color: var(--ink-3);
+    font-weight: 600;
+  }
+  .method-impact {
+    font-size: 11.5px; color: var(--ink-2);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .method-impact b { color: var(--brand); font-weight: 700; }
+
+  /* ============== Defect trajectory line chart ============== */
+  .trajectory {
+    width: 100%; height: auto; display: block;
+    margin-top: 4px;
+  }
+  .trajectory .axis-line { stroke: #e2e8f0; stroke-width: 1.5; }
+  .trajectory .grid-line { stroke: #eef0f3; stroke-width: 1; stroke-dasharray: 2 3; }
+  .trajectory .axis-lbl { font-size: 9px; fill: var(--ink-3); font-family: 'JetBrains Mono', monospace; }
+  .trajectory .year-lbl { font-size: 9px; fill: var(--ink-2); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+  .trajectory .series-1 { stroke: #7c3aed; stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .trajectory .series-2 { stroke: #0d9488; stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .trajectory .area-1 { fill: url(#areaGrad1); opacity: .25; }
+  .trajectory .area-2 { fill: url(#areaGrad2); opacity: .25; }
+  .trajectory .dot { stroke-width: 2; }
+  .trajectory .dot.s1 { fill: #7c3aed; stroke: #fff; }
+  .trajectory .dot.s2 { fill: #0d9488; stroke: #fff; }
+  .trajectory .val-lbl { font-size: 10px; font-weight: 700; font-family: 'Inter', sans-serif; }
+  .trajectory .val-lbl.s1 { fill: #7c3aed; }
+  .trajectory .val-lbl.s2 { fill: #0d9488; }
+  .trajectory-legend {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    margin-top: 6px; font-size: 11.5px; color: var(--ink-2);
+  }
+  .trajectory-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .trajectory-legend .swatch { width: 12px; height: 3px; border-radius: 2px; }
+  .trajectory-legend .s1 { background: #7c3aed; }
+  .trajectory-legend .s2 { background: #0d9488; }
+
+  @media (min-width: 720px) {
+    .method-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ============== Visual Snapshot (charts) ============== */
+  .snapshot {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .chart-card {
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-card::before {
+    content: "";
+    position: absolute; left: 0; right: 0; top: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--accent), #f59e0b);
+    opacity: .8;
+  }
+  .chart-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; font-weight: 800;
+    color: var(--ink);
+    letter-spacing: .04em;
+    margin: 2px 0 10px;
+  }
+  .chart-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--brand);
+  }
+  .chart-title .dot.coral { background: #f87171; }
+  .chart-title .dot.teal  { background: var(--accent); }
+  .chart-title .dot.amber { background: #f59e0b; }
+  .chart-title .dot.violet{ background: #a78bfa; }
+  .chart-sub {
+    font-size: 12px; color: var(--ink-3);
+    margin: -6px 0 12px;
+  }
+
+  /* Industry bars */
+  .bar-row {
+    display: grid; grid-template-columns: 110px 1fr 44px;
+    align-items: center; gap: 10px;
+    margin: 8px 0;
+    font-size: 12.5px;
+  }
+  .bar-row .bar-track {
+    background: var(--chip);
+    border-radius: 999px; height: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-row .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
+    width: 0;
+    transition: width 1.1s cubic-bezier(.2,.7,.2,1);
+  }
+  .bar-row.coral .bar-fill { background: linear-gradient(90deg, #f87171, #fb923c); }
+  .bar-row.violet .bar-fill { background: linear-gradient(90deg, #a78bfa, #818cf8); }
+  .bar-row.amber .bar-fill { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+  .bar-row.teal .bar-fill { background: linear-gradient(90deg, #2dd4bf, #0ea5a4); }
+  .bar-row.pink .bar-fill { background: linear-gradient(90deg, #f472b6, #ec4899); }
+  .bar-row .yrs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--ink-3);
+    text-align: right;
+  }
+  .bar-row .lbl { color: var(--ink-2); font-weight: 500; }
+
+  /* Radar */
+  .radar-wrap { width: 100%; max-width: 460px; margin: 0 auto; }
+  .radar {
+    width: 100%; height: auto; display: block;
+  }
+  .radar .grid polygon {
+    fill: none; stroke: #e2e8f0; stroke-width: 1;
+  }
+  .radar .grid polygon:last-child {
+    stroke: #cbd5e1;
+  }
+  .radar .axes line {
+    stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 2 3;
+  }
+  .radar .data {
+    fill: url(#radarGrad);
+    fill-opacity: .55;
+    stroke: var(--brand);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    transform-origin: 200px 200px;
+    transform: scale(0);
+    animation: radarIn 1.2s cubic-bezier(.2,.7,.2,1) .2s forwards;
+  }
+  .radar .point {
+    fill: #fff; stroke: var(--brand); stroke-width: 2;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: popIn .4s ease-out forwards;
+  }
+  .radar .point:nth-of-type(1) { animation-delay: 1.1s; }
+  .radar .point:nth-of-type(2) { animation-delay: 1.2s; }
+  .radar .point:nth-of-type(3) { animation-delay: 1.3s; }
+  .radar .point:nth-of-type(4) { animation-delay: 1.4s; }
+  .radar .point:nth-of-type(5) { animation-delay: 1.5s; }
+  .radar .point:nth-of-type(6) { animation-delay: 1.6s; }
+  .radar .point:nth-of-type(7) { animation-delay: 1.7s; }
+  .radar .point:nth-of-type(8) { animation-delay: 1.8s; }
+  .radar .label {
+    font-size: 12px; font-weight: 600;
+    fill: var(--ink-2);
+    font-family: 'Inter', sans-serif;
+  }
+  @keyframes radarIn { to { transform: scale(1); } }
+  @keyframes popIn {
+    0%   { opacity: 0; transform: scale(0); }
+    60%  { opacity: 1; transform: scale(1.4); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Career journey */
+  .journey-wrap {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px 4px;
+    scrollbar-width: thin;
+  }
+  .journey-wrap::-webkit-scrollbar { height: 4px; }
+  .journey-wrap::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+  .journey {
+    min-width: 1000px;
+    width: 100%;
+    height: auto;
+    display: block
+  }
+  @media (min-width: 720px) {
+    .journey { width: 100%; }
+    .journey-wrap { margin: 0; padding: 0; }
+  }
+  .journey .axis { stroke: #e2e8f0; stroke-width: 2; }
+  .journey .tick { stroke: #cbd5e1; stroke-width: 1.5; }
+  .journey .stop {
+    fill: #fff; stroke: var(--brand); stroke-width: 2.5;
+    transition: r .2s ease, fill .2s ease;
+    cursor: pointer;
+  }
+  .journey .stop:hover { fill: var(--accent); r: 7; }
+  .journey .stop-label {
+    font-size: 12px; font-weight: 700;
+    fill: var(--ink);
+    font-family: 'Inter', sans-serif;
+  }
+  .journey .stop-sub {
+    font-size: 9.5px; font-weight: 500;
+    fill: var(--ink-3);
+    font-family: 'Inter', sans-serif;
+  }
+  .journey .year-lbl {
+    font-size: 9px; font-weight: 600;
+    fill: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Stagger stat number appearance */
+  .stat { opacity: 0; transform: translateY(8px); animation: rise .5s ease-out forwards; }
+  .stat:nth-child(1) { animation-delay: .05s; }
+  .stat:nth-child(2) { animation-delay: .15s; }
+  .stat:nth-child(3) { animation-delay: .25s; }
+  .stat:nth-child(4) { animation-delay: .35s; }
+  .stat:nth-child(5) { animation-delay: .45s; }
+  .stat:nth-child(6) { animation-delay: .55s; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  @media (min-width: 720px) {
+    .stat-grid { grid-template-columns: repeat(3, 1fr); }
+    .chart-card { padding: 20px 20px 16px; }
+  }
+  @media (min-width: 980px) {
+    .snapshot { grid-template-columns: 1fr; }
+    .snapshot .full { grid-column: 1 / -1; }
+  }
+
+  /* ============== Tablet / Desktop ============== */
+  @media (min-width: 720px) {
+    .page { padding-bottom: 60px; }
+    .hero { padding: 56px 40px 96px; }
+    .avatar { width: 96px; height: 96px; font-size: 30px; }
+    .hero-name { font-size: 32px; }
+    .hero-role { font-size: 15px; }
+    .contact-bar { max-width: 380px; margin: -64px auto 0; }
+    .content { padding: 28px 32px 0; }
+    .summary { font-size: 15px; }
+    .exp { padding: 18px 18px 6px; }
+    .timeline { padding-left: 28px; }
+  }
+  @media (min-width: 980px) {
+    body { background: var(--bg); }
+    .page {
+      max-width: 880px;
+      margin: 32px auto;
+      background: var(--paper);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding-bottom: 40px;
+    }
+    .hero { border-radius: 16px 16px 0 0; }
+    .content { padding: 32px 44px 0; }
+    .contact-bar {
+      position: static;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      box-shadow: none;
+      margin: -50px 44px 24px;
+    }
+  }
+
+  /* ============== Reduced motion ============== */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ============== HERO ============== -->
+    <header class="hero">
+      <div class="hero-row">
+          <div class="hero-left-group">
+            <div class="avatar" aria-label="Chong Boo Chean">
+              <img src="cbc.jpg" alt="CBC" class="avatar-photo">
+            </div>
+            <div>
+              <h1 class="hero-name">Chong Boo Chean</h1>
+              <p class="hero-role">System Test &amp; Validation Engineering Leader · Python · Linux</p>
+            </div>
+          </div>
+            <div class="hero-meta">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Penang, Malaysia
+                </span>
+            </div>
+        </div>
+
+      <p class="hero-tagline">
+        <em>Technologist at the core,</em>
+        <em class="accent">Optimalist by design,</em>
+        <em>Strategist by nature.</em>
+      </p>
+    </header>
+
+    <!-- ============== STICKY CONTACT BAR ============== -->
+    <nav class="contact-bar" aria-label="Quick contact">
+      <a href="mailto:gzhone@yahoo.co.uk" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Email</span>
+      </a>
+      <a href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        <span>LinkedIn</span>
+      </a>
+      <a href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener" aria-label="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        <span>Profile</span>
+      </a>
+    </nav>
+
+    <!-- ============== CONTENT ============== -->
+    <section class="content">
+
+      <p class="summary">
+        <b>System test and validation engineering leader</b> with 30 years across semiconductor, automotive,
+        and consumer electronics — spanning manufacturing test (AOI/AXI), functional test site leadership,
+        test automation, and embedded software. Built and led test teams of up to <b>16 engineers</b>, grew a
+        test product portfolio <b>1 → 4</b>, and reduced customer-found defects by <b>up to 96%</b> through
+        root-cause debug and cross-functional yield and quality initiatives. Currently hands-on at Intel on
+        next-generation SoC platforms: authored a <b>Linux kernel patch</b> (V4L2/IPU), brought up a
+        <b>GMSL2 camera subsystem</b> end-to-end over MIPI CSI-2, and scaled <b>Python / Robot Framework</b>
+        automation from manual suites to officially validated results. Combines senior leadership with
+        current technical depth — <b>Python, C/C++, Linux</b> — and a proven record of defining qualification
+        and release processes for test and validation content.
+      </p>
+
+      <!-- ====== TOP SKILLS ====== -->
+      <div class="section">
+        <h2 class="section-title">Top Skills</h2>
+        <div class="skills">
+          <span>Test Strategy &amp; Qualification</span>
+          <span>Functional / Manufacturing Test</span>
+          <span>Python · Robot Framework</span>
+          <span>Linux Kernel · V4L2</span>
+          <span>Hardware Validation</span>
+          <span>Automated Diagnostics</span>
+          <span>Debug (HW/SW)</span>
+          <span>Yield &amp; Quality Improvement</span>
+          <span>Program Management</span>
+          <span>Agile / Lean Leadership</span>
+          <span>MIPI CSI-2 · GMSL2 · GStreamer</span>
+        </div>
+      </div>
+
+      <!-- ====== VISUAL SNAPSHOT ====== -->
+      <div class="section">
+        <h2 class="section-title">Visual Snapshot</h2>
+
+        <div class="snapshot">
+
+          <!-- Leadership Capability Radar -->
+          <div class="chart-card">
+            <h3 class="chart-title"><span class="dot"></span>Leadership Capability</h3>
+            <p class="chart-sub">Calibrated for a System Test Engineering Manager mandate.</p>
+            <div class="radar-wrap">
+              <svg viewBox="-60 0 520 420" class="radar" role="img" aria-label="Leadership capability radar">
+                <defs>
+                  <linearGradient id="radarGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%"  stop-color="#0ea5a4"/>
+                    <stop offset="100%" stop-color="#0b3d91"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Grid rings -->
+                <g class="grid">
+                  <polygon points="200,172 220,180 228,200 220,220 200,228 180,220 172,200 180,180"/>
+                  <polygon points="200,144 240,160 256,200 240,240 200,256 160,240 144,200 160,160"/>
+                  <polygon points="200,116 260,140 284,200 260,260 200,284 140,260 116,200 140,140"/>
+                  <polygon points="200,88 280,120 312,200 280,280 200,312 120,280 88,200 120,120"/>
+                  <polygon points="200,60 299,101 340,200 299,299 200,340 101,299 60,200 101,101"/>
+                </g>
+
+                <!-- Axes -->
+                <g class="axes">
+                  <line x1="200" y1="200" x2="200" y2="60"/>
+                  <line x1="200" y1="200" x2="299" y2="101"/>
+                  <line x1="200" y1="200" x2="340" y2="200"/>
+                  <line x1="200" y1="200" x2="299" y2="299"/>
+                  <line x1="200" y1="200" x2="200" y2="340"/>
+                  <line x1="200" y1="200" x2="101" y2="299"/>
+                  <line x1="200" y1="200" x2="60"  y2="200"/>
+                  <line x1="200" y1="200" x2="101" y2="101"/>
+                </g>
+
+                <!-- Data polygon -->
+                <polygon class="data"
+                  points="200,67 271,129 283,200 279,279 200,333 109,291 74,200 109,109"/>
+
+                <!-- Data points -->
+                <circle class="point" cx="200" cy="67"  r="4"/>
+                <circle class="point" cx="271" cy="129" r="4"/>
+                <circle class="point" cx="283" cy="200" r="4"/>
+                <circle class="point" cx="279" cy="279" r="4"/>
+                <circle class="point" cx="200" cy="333" r="4"/>
+                <circle class="point" cx="109" cy="291" r="4"/>
+                <circle class="point" cx="74"  cy="200" r="4"/>
+                <circle class="point" cx="109" cy="109" r="4"/>
+
+                <!-- Labels -->
+                <text class="label" x="200" y="48"  text-anchor="middle">Method Engineering</text>
+                <text class="label" x="312" y="92"  text-anchor="start">Test Architecture</text>
+                <text class="label" x="350" y="205" text-anchor="start">Embedded SW</text>
+                <text class="label" x="312" y="312" text-anchor="start">Process Design</text>
+                <text class="label" x="200" y="360" text-anchor="middle">Cross-Functional Mgmt</text>
+                <text class="label" x="88"  y="312" text-anchor="end">People Development</text>
+                <text class="label" x="50"  y="205" text-anchor="end">Site Operations</text>
+                <text class="label" x="88"  y="92"  text-anchor="end">Strategic Planning</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Methodology Portfolio -->
+          <div class="chart-card">
+            <h3 class="chart-title"><span class="dot teal"></span>Methods I’ve Engineered</h3>
+            <p class="chart-sub">New methodological realisations, not just methodology adoption.</p>
+            <div class="method-grid">
+
+              <div class="method-card">
+                <div class="method-icon brand" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">GMSL2 Camera Bring-Up <span class="method-year">2026</span></div>
+                  <div class="method-impact">End-to-end camera subsystem enablement in <b>5 days</b> — undocumented BIOS settings, MIPI CSI-2 over MAX9295A SerDes, interim <b>V4L2 kernel patch</b>.</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon amber" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">Robot + Python Test Suite <span class="method-year">2025–26</span></div>
+                  <div class="method-impact">Ported cross-site &amp; re-engineered for Linux (Ubuntu) / Windows labs — <b>85 manual cases automated in two quarters</b>, results officially verified.</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon violet" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">Automated Visual Diagnostics <span class="method-year">2025</span></div>
+                  <div class="method-impact">HSV corruption detection (<b>9 s</b> / 15-min video) + dual-region SSIM at near real-time — catches defects commercial tools miss.</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon teal" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">MIPI CSI Display &amp; Capture CLI <span class="method-year">2025</span></div>
+                  <div class="method-impact">Hardware debug automation — reverse-engineered registry deps; <b>HDMI</b> propagation fixed for non-standard resolutions.</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon coral" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">AOI / AXI Manufacturing Inspection <span class="method-year">2007–09</span></div>
+                  <div class="method-impact">Automated optical &amp; X-ray inspection analytics industrialised across MY &amp; SG for high-volume EMS lines (Nokia, Jabil).</div>
+                </div>
+              </div>
+
+              <div class="method-card">
+                <div class="method-icon brand" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </div>
+                <div>
+                  <div class="method-name">CMM L3 Process Framework <span class="method-year">2007</span></div>
+                  <div class="method-impact">Aligned multi-site SW org to <b>CMM Level 3</b> for GM Daewoo, Nissan, Holden, Zao Volga.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Defect Reduction Trajectory -->
+          <div class="chart-card full">
+            <h3 class="chart-title"><span class="dot amber"></span>Defect Reduction Trajectory</h3>
+            <p class="chart-sub">Customer-found defects, year over year — the yield and quality story behind the numbers.</p>
+
+            <svg viewBox="0 0 520 240" class="trajectory" role="img" aria-label="Customer defect reduction from 2017 to 2025">
+              <defs>
+                <linearGradient id="areaGrad1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="areaGrad2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0d9488" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#0d9488" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Y axis grid + labels -->
+              <g>
+                <line class="grid-line" x1="50" y1="30"  x2="500" y2="30"/>
+                <line class="grid-line" x1="50" y1="87"  x2="500" y2="87"/>
+                <line class="grid-line" x1="50" y1="143" x2="500" y2="143"/>
+                <text class="axis-lbl" x="44" y="33"  text-anchor="end">150</text>
+                <text class="axis-lbl" x="44" y="90"  text-anchor="end">100</text>
+                <text class="axis-lbl" x="44" y="146" text-anchor="end">50</text>
+                <text class="axis-lbl" x="44" y="203" text-anchor="end">0</text>
+              </g>
+
+              <!-- X axis baseline -->
+              <line class="axis-line" x1="50" y1="200" x2="500" y2="200"/>
+
+              <!-- Series 1 area: Continental (2017-2021) -->
+              <path class="area-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194 L 265,200 L 50,200 Z"/>
+              <path class="series-1" d="M 50,41 L 104,80 L 158,118 L 211,157 L 265,194"/>
+
+              <!-- Series 2 area: Intel (2022-2025) -->
+              <path class="area-2" d="M 319,186 L 373,190 L 426,193 L 480,195 L 480,200 L 319,200 Z"/>
+              <path class="series-2" d="M 319,186 L 373,190 L 426,193 L 480,195"/>
+
+              <!-- Dots + values: Continental -->
+              <g>
+                <circle class="dot s1" cx="50"  cy="41"  r="5"/>
+                <text class="val-lbl s1" x="60"  y="35"  text-anchor="middle">140</text>
+                <circle class="dot s1" cx="104" cy="80"  r="4"/>
+                <circle class="dot s1" cx="158" cy="118" r="4"/>
+                <circle class="dot s1" cx="211" cy="157" r="4"/>
+                <circle class="dot s1" cx="265" cy="194" r="5"/>
+                <text class="val-lbl s1" x="265" y="185" text-anchor="middle">5</text>
+              </g>
+
+              <!-- Dots + values: Intel -->
+              <g>
+                <circle class="dot s2" cx="319" cy="186" r="5"/>
+                <text class="val-lbl s2" x="319" y="175" text-anchor="middle">12</text>
+                <circle class="dot s2" cx="373" cy="190" r="4"/>
+                <circle class="dot s2" cx="426" cy="193" r="4"/>
+                <circle class="dot s2" cx="480" cy="195" r="5"/>
+                <text class="val-lbl s2" x="480" y="185" text-anchor="middle">4</text>
+              </g>
+
+              <!-- X axis year labels -->
+              <g>
+                <text class="year-lbl" x="50"  y="218" text-anchor="middle">2017</text>
+                <text class="year-lbl" x="104" y="218" text-anchor="middle">2018</text>
+                <text class="year-lbl" x="158" y="218" text-anchor="middle">2019</text>
+                <text class="year-lbl" x="211" y="218" text-anchor="middle">2020</text>
+                <text class="year-lbl" x="265" y="218" text-anchor="middle">2021</text>
+                <text class="year-lbl" x="319" y="218" text-anchor="middle">2022</text>
+                <text class="year-lbl" x="373" y="218" text-anchor="middle">2023</text>
+                <text class="year-lbl" x="426" y="218" text-anchor="middle">2024</text>
+                <text class="year-lbl" x="480" y="218" text-anchor="middle">2025</text>
+              </g>
+
+              <!-- Series annotations -->
+              <g>
+                <text class="val-lbl s1" x="158" y="90" text-anchor="middle" font-weight="600">Continental</text>
+                <text class="val-lbl s2" x="400" y="178" text-anchor="middle" font-weight="600">Intel</text>
+                <line x1="290" y1="25" x2="290" y2="200" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+              </g>
+            </svg>
+
+            <div class="trajectory-legend">
+              <span class="item"><span class="swatch s1"></span> Continental Automotive (2017–2021)</span>
+              <span class="item"><span class="swatch s2"></span> Intel (2022–2025)</span>
+            </div>
+          </div>
+
+          <!-- Career Journey timeline -->
+          <div class="chart-card full">
+            <h3 class="chart-title"><span class="dot violet"></span>Career Journey</h3>
+            <p class="chart-sub">1995 → present · 9 roles across 5 industries.</p>
+            <div class="journey-wrap">
+              <svg viewBox="-50 0 1050 230" class="journey" role="img" aria-label="Career journey timeline">
+              <defs>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%"  stop-color="#a78bfa"/>
+                  <stop offset="25%" stop-color="#0b3d91"/>
+                  <stop offset="50%" stop-color="#0ea5a4"/>
+                  <stop offset="75%" stop-color="#f59e0b"/>
+                  <stop offset="100%" stop-color="#0b3d91"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Year ticks -->
+              <g>
+                <line class="tick" x1="0"    y1="118" x2="0"    y2="128"/>
+                <line class="tick" x1="160"  y1="118" x2="160"  y2="128"/>
+                <line class="tick" x1="320"  y1="118" x2="320"  y2="128"/>
+                <line class="tick" x1="480"  y1="118" x2="480"  y2="128"/>
+                <line class="tick" x1="640"  y1="118" x2="640"  y2="128"/>
+                <line class="tick" x1="800"  y1="118" x2="800"  y2="128"/>
+                <line class="tick" x1="960"  y1="118" x2="960"  y2="128"/>
+                <text class="year-lbl" x="0"   y="142" text-anchor="middle">1995</text>
+                <text class="year-lbl" x="160" y="142" text-anchor="middle">2000</text>
+                <text class="year-lbl" x="320" y="142" text-anchor="middle">2005</text>
+                <text class="year-lbl" x="480" y="142" text-anchor="middle">2010</text>
+                <text class="year-lbl" x="640" y="142" text-anchor="middle">2015</text>
+                <text class="year-lbl" x="800" y="142" text-anchor="middle">2020</text>
+                <text class="year-lbl" x="960" y="142" text-anchor="middle">2026</text>
+              </g>
+
+              <!-- Main axis -->
+              <line class="axis" x1="0" y1="123" x2="960" y2="123"/>
+
+              <!-- Stops -->
+              <g>
+                <!-- Above the line -->
+                <g>
+                  <circle class="stop" cx="0"   cy="123" r="6"/>
+                  <text class="stop-label" x="0"   y="100" text-anchor="middle">SCS Systems</text>
+                  <text class="stop-sub"   x="0"   y="86"  text-anchor="middle">NZ · FinTech</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="192" cy="123" r="6"/>
+                  <text class="stop-label" x="192" y="100" text-anchor="middle">Han Chiang</text>
+                  <text class="stop-sub"   x="192" y="86"  text-anchor="middle">High School</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="320" cy="123" r="6"/>
+                  <text class="stop-label" x="320" y="100" text-anchor="middle">Bosch</text>
+                  <text class="stop-sub"   x="320" y="86"  text-anchor="middle">Infotainment</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="448" cy="123" r="6"/>
+                  <text class="stop-label" x="448" y="100" text-anchor="middle">Agilent</text>
+                  <text class="stop-sub"   x="448" y="86"  text-anchor="middle">AOI / AXI</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="512" cy="123" r="6"/>
+                  <text class="stop-label" x="512" y="100" text-anchor="middle">Blaupunkt</text>
+                  <text class="stop-sub"   x="512" y="86"  text-anchor="middle">Consumer Audio</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="704" cy="123" r="6"/>
+                  <text class="stop-label" x="704" y="100" text-anchor="middle">Continental</text>
+                  <text class="stop-sub"   x="704" y="86"  text-anchor="middle">Automotive</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="864" cy="123" r="7" fill="#0b3d91" stroke="#0b3d91"/>
+                  <text class="stop-label" x="864" y="100" text-anchor="middle" fill="#0b3d91">Intel</text>
+                  <text class="stop-sub"   x="864" y="86"  text-anchor="middle">Imaging · Media</text>
+                </g>
+
+                <!-- Below the line -->
+                <g>
+                  <circle class="stop" cx="64"  cy="123" r="6"/>
+                  <text class="stop-label" x="64"  y="160" text-anchor="middle">Han Chiang</text>
+                  <text class="stop-sub"   x="64"  y="174" text-anchor="middle">start '97</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="224" cy="123" r="6"/>
+                  <text class="stop-label" x="224" y="160" text-anchor="middle">INTI College</text>
+                  <text class="stop-sub"   x="224" y="174" text-anchor="middle">Academia</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="384" cy="123" r="6"/>
+                  <text class="stop-label" x="384" y="160" text-anchor="middle">Bosch</text>
+                  <text class="stop-sub"   x="384" y="174" text-anchor="middle">end '07</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="480" cy="123" r="6"/>
+                  <text class="stop-label" x="480" y="160" text-anchor="middle">Intel I</text>
+                  <text class="stop-sub"   x="480" y="174" text-anchor="middle">PM · Linux SoC</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="608" cy="123" r="6"/>
+                  <text class="stop-label" x="608" y="160" text-anchor="middle">Blaupunkt</text>
+                  <text class="stop-sub"   x="608" y="174" text-anchor="middle">Section Mgr</text>
+                </g>
+                <g>
+                  <circle class="stop" cx="960" cy="123" r="6"/>
+                  <text class="stop-label" x="960" y="160" text-anchor="middle">Now</text>
+                  <text class="stop-sub"   x="960" y="174" text-anchor="middle">Kernel · Automation</text>
+                </g>
+              </g>
+            </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== EXPERIENCE ====== -->
+      <div class="section">
+        <h2 class="section-title">Professional Experience</h2>
+        <div class="timeline">
+
+          <!-- Intel — current -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
+              <div class="exp-dates">Dec 2025 — Present</div>
+            </div>
+            <div class="exp-role">System Software Development Engineer</div>
+
+            <div class="group">
+              <div class="group-title">Linux Device Driver Developer <small>· Jun 2026 — Present</small></div>
+              <ul class="exp-list">
+                <li><b>Brought up a GMSL2 camera subsystem on Intel's next-generation platform in 5 days</b> — identified and validated undocumented BIOS "Camera Links" settings, established the MIPI CSI-2 data path over the MAX9295A SerDes link (Sony IMX390), and confirmed kernel-space streaming via GStreamer v4l2src.</li>
+                <li><b>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash (1-in-5 boots)</b> — the crash was blocking all camera-driver validation; the patch restored full V4L2 data-path verification.</li>
+                <li><b>Drove IPU7 → IPU8 early enablement</b> — upgraded the camera HAL to the new IPU8 context and reconfigured the icamerasrc userspace pipeline, verifying end-to-end streaming.</li>
+              </ul>
+            </div>
+
+            <div class="group">
+              <div class="group-title">Automation Lead <small>· Dec 2025 — Jun 2026</small></div>
+              <ul class="exp-list">
+                <li><b>Expanded automated test coverage through cross-site collaboration</b> — ported the Robot Framework + Python automation suite from Intel's China test division into local lab environments; drove a gap analysis between their test cases and local coverage, then closed the identified gaps with new or modified cases — delivering a significant uplift in coverage.</li>
+                <li><b>Converted long-overdue manual test suites to automation in two quarters</b> — automated 85 cases (40 Ubuntu / 45 Windows, one quarter per platform), with code peer-reviewed and results formally validated in official product-milestone validation cycles.</li>
+                <li><b>Architected a proprietary computer-vision engine</b> — HSV-based corruption detector that analyses a 15-minute video in <b>9 seconds</b>; dual regions of interest resolve edge cases like solid-coloured scenes.</li>
+                <li><b>Engineered a high-sensitivity screen-tearing artefact detector</b> via a lightweight dual-region SSIM algorithm — captures screen-tearing and subtle defects, near real-time where commercial tools hit limits.</li>
+                <li><b>Built a low-level display &amp; automation tool</b> — reverse-engineered Intel Graphics Command Centre Beta to expose undocumented registry dependencies; custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on non-standard resolutions.</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- Intel — manager -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Intel Corporation <span class="exp-loc">· Penang</span></div>
+              <div class="exp-dates">Jan 2022 — Dec 2025</div>
+            </div>
+            <div class="exp-role">Software Engineering Manager</div>
+            <ul class="exp-list collapsed">
+              <li>Directed <b>Media Software</b> (video codecs), <b>Imaging Software</b> (camera sensors), and <b>Component Validation</b> (hypervisors, codecs, sensors) teams comprising <b>8 Software Engineers and 4 Test Engineers</b>.</li>
+              <li>Owned the <b>Software Component Defect Driving</b> and <b>Software Component Release Process</b> charters.</li>
+              <li>Drove systematic defect reduction, cutting customer-found defects from <b>12+ (2022) to ~4 (2025)</b>.</li>
+              <li>Achieved <b>0% unintended attrition</b> across 3 consecutive years while mentoring junior talent into major technical contributors.</li>
+            </ul>
+            <button class="expand-btn" type="button" aria-expanded="false">
+              Show more <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </article>
+
+          <!-- Continental -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Continental Automotive <span class="exp-loc">· Penang</span></div>
+              <div class="exp-dates">Sep 2017 — Jan 2022</div>
+            </div>
+            <div class="exp-role">Manager — Functional Test / Functional Test Site Lead</div>
+            <ul class="exp-list">
+              <li>Served as <b>Site Lead and Business Owner</b> for automotive instrument cluster projects across key global OEMs (Toyota, Volkswagen Group, Perodua, Suzuki).</li>
+              <li>Managed up to <b>16 direct test engineering reports</b> under Lean Agile leadership frameworks.</li>
+              <li>Reduced customer-found defects from <b>140+ (2017) to ~5 (2021)</b> while expanding test product portfolio responsibilities from <b>1 to 4</b> key lines.</li>
+            </ul>
+          </article>
+
+          <!-- Blaupunkt / PSS -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Blaupunkt / Premium Sound Solutions <span class="exp-loc">· Malaysia</span></div>
+              <div class="exp-dates">Mar 2011 — Jul 2017</div>
+            </div>
+            <div class="exp-role">Software Developer → Program Manager → Section Manager</div>
+
+            <div class="group">
+              <div class="group-title">Section Manager — Embedded Software <small>· Jan 2014 — Jul 2017</small></div>
+              <ul class="exp-list">
+                <li>Department Head of Software Engineering &amp; Deputy Head of R&amp;D.</li>
+                <li>Managed multi-disciplinary HMI and firmware development teams delivering to global customers.</li>
+                <li><div class="pills"><span class="pill">Honda (JP/IN)</span><span class="pill">Volvo CE (KR)</span><span class="pill">Proton (MY)</span><span class="pill">Nissan (ZA)</span><span class="pill">Rockford (US)</span><span class="pill">Agco Fendt (DE)</span></div></li>
+              </ul>
+            </div>
+
+            <div class="group">
+              <div class="group-title">Program Manager <small>· Mar 2011 — Apr 2014</small></div>
+              <ul class="exp-list">
+                <li>Led pre-sales RFQ technical presentations and managed end-to-end R&amp;D/production cycles for Android SoC, bare-metal audio, navigation, and connectivity systems.</li>
+                <li><div class="pills"><span class="pill">Android on SoC</span><span class="pill">Bare metal</span><span class="pill">DAB+</span><span class="pill">Bluetooth</span><span class="pill">Apple iAP</span><span class="pill">MirrorLink</span><span class="pill">Navigation</span><span class="pill">Voice recognition</span></div></li>
+              </ul>
+            </div>
+
+            <div class="group">
+              <div class="group-title">Software Developer <small>· Mar 2011 — Dec 2011</small></div>
+              <ul class="exp-list">
+                <li>Developed Android GUI apps (Java/XML) and ported C++ graphics engines to WinCE environments.</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- Intel earlier -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Intel Corporation <span class="exp-loc">· Malaysia</span></div>
+              <div class="exp-dates">Jul 2009 — Jul 2010</div>
+            </div>
+            <div class="exp-role">Project Manager — Software</div>
+            <ul class="exp-list">
+              <li>Managed software project schedules, scope validation, and requirements tracking for <b>Linux on SoC</b> platforms.</li>
+            </ul>
+          </article>
+
+          <!-- Agilent -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Agilent Technologies <span class="exp-loc">· Malaysia</span></div>
+              <div class="exp-dates">Jul 2007 — Mar 2009</div>
+            </div>
+            <div class="exp-role">Operating Manager — Software</div>
+            <ul class="exp-list">
+              <li>Managed <b>Automated Optical Inspection (AOI)</b> and <b>Automated X-ray Inspection (AXI)</b> analytic projects, software patches, and engineering escalations across Malaysia and Singapore.</li>
+              <li>Transferred AOI product knowledge from Ireland, AXI analytics from Singapore into Penang.</li>
+              <li><div class="pills"><span class="pill">Nokia</span><span class="pill">Jabil EMS</span><span class="pill">Rockwell (US)</span><span class="pill">AOI</span><span class="pill">AXI</span></div></li>
+            </ul>
+          </article>
+
+          <!-- Bosch -->
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Bosch (Malaysia) / Bosch – Blaupunkt <span class="exp-loc">· Malaysia</span></div>
+              <div class="exp-dates">Nov 2005 — Jul 2007</div>
+            </div>
+            <div class="exp-role">Project Manager — Software</div>
+            <ul class="exp-list">
+              <li>Led multi-site infotainment software development aligned with <b>CMM Level 3</b> process framework for global automotive clients (GM Daewoo, Nissan, GM Holden).</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <!-- ====== EARLY CAREER ====== -->
+      <div class="section">
+        <h2 class="section-title">Early Career &amp; Academia</h2>
+        <div class="timeline">
+
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">INTI International College Penang</div>
+              <div class="exp-dates">2002 — 2005</div>
+            </div>
+            <div class="exp-role">Academic Coordinator</div>
+            <ul class="exp-list">
+              <li>Lectured Computer Engineering, C/C++, Java, and Assembly Language courses.</li>
+            </ul>
+          </article>
+
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">Han Chiang High School</div>
+              <div class="exp-dates">1997 — 2001</div>
+            </div>
+            <div class="exp-role">Head of Computer Centre</div>
+            <ul class="exp-list">
+              <li>Established campus computer infrastructure and pre-university IT programs.</li>
+            </ul>
+          </article>
+
+          <article class="exp">
+            <div class="exp-head">
+              <div class="exp-company">SCS Systems and PEC Ltd. <span class="exp-loc">· New Zealand</span></div>
+              <div class="exp-dates">1995 — 1997</div>
+            </div>
+            <div class="exp-role">Application Specialist</div>
+            <ul class="exp-list">
+              <li>Maintained Unix Money Market systems and developed RS-232 SIRAS swiping modules on OS/2 in C++.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <!-- ====== EDUCATION ====== -->
+      <div class="section">
+        <h2 class="section-title">Education</h2>
+        <div class="ed-card">
+          <b>Universiti Teknologi Malaysia</b>
+          <span class="degree">Bachelor of Computer Science Engineering (Systems)</span>
+          <div class="ed-meta">1989 — 1995</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span><span class="dot"></span>References available on request</span><br/>
+        <span>Penang, Malaysia · Updated June 2026</span>
+      </div>
+    </section>
+
+    <button class="to-top" id="toTop" aria-label="Back to top" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+  </main>
+
+<script>
+  // Expand/collapse experience bullet lists
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const exp = btn.closest('.exp');
+      const list = exp.querySelector('.exp-list');
+      const expanded = exp.classList.toggle('expanded');
+      list.classList.toggle('collapsed', !expanded);
+      btn.setAttribute('aria-expanded', expanded);
+      btn.firstChild.textContent = expanded ? ' Show less ' : ' Show more ';
+    });
+  });
+
+  // Back to top
+  const toTop = document.getElementById('toTop');
+  const onScroll = () => {
+    if (window.scrollY > 400) toTop.classList.add('show');
+    else toTop.classList.remove('show');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Animate industry bars when they enter the viewport
+  const barFills = document.querySelectorAll('.bar-fill');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const fill = e.target;
+          const w = fill.getAttribute('data-w') || '0';
+          requestAnimationFrame(() => { fill.style.width = w + '%'; });
+          io.unobserve(fill);
+        }
+      });
+    }, { threshold: 0.4 });
+    barFills.forEach(b => io.observe(b));
+  } else {
+    barFills.forEach(b => b.style.width = (b.getAttribute('data-w') || 0) + '%');
+  }
+</script>
+</body>
+</html>
