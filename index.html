@@ -246,7 +246,7 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
     <div class="hero-cta">
       <a class="btn btn-solid" href="mailto:gzhone@yahoo.co.uk">Email ↗</a>
       <a class="btn" href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a class="btn" href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener">Profile ↗</a>
+      <a class="btn" href="#" onclick="launchCareerHistory(event)">Career History (Graphical) ↗</a>
     </div>
   </div>
 
@@ -255,31 +255,6 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
 </header>
 
 <main id="main">
-
-  <!-- ================= AT A GLANCE ================= -->
-  <section class="stats" aria-label="Career at a glance">
-    <div class="wrap">
-      <div class="grid-stats">
-        <div class="stat reveal">
-          <span class="stat-num" data-count="30" data-suffix="+">0</span>
-          <span class="stat-label">Years hands-on across semiconductor · automotive · consumer electronics</span>
-        </div>
-        <div class="stat reveal">
-          <span class="stat-num" data-count="96" data-suffix="%">0</span>
-          <span class="stat-label">Reduction in customer-found defects — 140+ → ~5 per year at Continental</span>
-        </div>
-        <div class="stat reveal">
-          <span class="stat-num" data-count="0" data-suffix="%">0</span>
-          <span class="stat-label">Unintended attrition — three consecutive years as engineering manager</span>
-        </div>
-        <div class="stat reveal">
-          <span class="stat-num" data-count="85" data-suffix="">0</span>
-          <span class="stat-label">Long-overdue manual test cases automated in just two quarters</span>
-        </div>
-      </div>
-      <p class="stats-note">Quality trajectory · Continental: 140+ → ~5 defects/yr (2017–2021) · Intel: 12+ → ~4 defects/yr (2022–2025)</p>
-    </div>
-  </section>
 
   <!-- ================= SUMMARY ================= -->
   <section class="section" id="summary">
@@ -307,8 +282,7 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
         <div class="pillar reveal">
           <h3>Human-touch talent development</h3>
           <p>0% unintended attrition over three consecutive years; grew a non-performing engineer
-            into a key contributor within a year and elevated a validation engineer into a global
-            Project Manager.</p>
+            into a key contributor within a year and elevated a validation engineer into a global project manager in 3 years.</p>
         </div>
       </div>
     </div>
@@ -352,7 +326,7 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
         <article class="card reveal">
           <span class="card-idx">05</span>
           <h3>Automation &amp; Diagnostics</h3>
-          <p>Python · Robot Framework · automated test infrastructure · computer-vision diagnostics
+          <p>Python · C# · Robot Framework · automated test infrastructure · computer-vision diagnostics
             (HSV · dual-region SSIM) · V4L2 · GStreamer · MIPI CSI-2 · GMSL2 · HDMI · Linux · Windows.</p>
         </article>
       </div>
@@ -373,7 +347,7 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
           <h3>GMSL2 camera bring-up</h3>
           <p>Brought up the camera subsystem on Intel's next-gen platform: identified undocumented
             BIOS “Camera Links” settings, established the MIPI CSI-2 data path over the MAX9295A
-            SerDes link (Sony IMX390), confirmed kernel-space streaming via GStreamer v4l2src.</p>
+            SerDes link (Sony IMX390), confirmed kernel-space streaming via GStreamer v4l2src → icamerasrc.</p>
         </article>
         <article class="card reveal">
           <span class="work-num">9 s</span>
@@ -428,7 +402,7 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
           <div class="t-body">
             <h3>System Software Development Engineer · Automation Lead</h3>
             <ul>
-              <li>5-day GMSL2 camera bring-up on a next-gen platform (BIOS · MAX9295A SerDes · Sony IMX390 · MIPI CSI-2 · GStreamer v4l2src).</li>
+              <li>5-day GMSL2 camera bring-up on a next-gen platform (BIOS · MAX9295A SerDes · Sony IMX390 · MIPI CSI-2 · GStreamer v4l2src → icamerasrc).</li>
               <li>Kernel patch unblocked IPU7 validation; drove IPU7 → IPU8 early enablement.</li>
               <li>Two first-of-kind CV instruments: 15-min → 9-s HSV analyser and dual-region SSIM tearing detector.</li>
               <li>Automated 85 manual cases in two quarters; ported and extended the China-division Robot Framework suite.</li>
@@ -575,6 +549,18 @@ h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em
       Real-time 3D rendered with three.js (WebGL) · Photograph: cbc.jpg</p>
   </div>
 </footer>
+
+<script>
+/* Launch the self-contained career-history.js visualisation in a new tab. */
+function launchCareerHistory(event) {
+  event.preventDefault();
+  const win = window.open('', '_blank');
+  if (!win) return;
+  win.document.open();
+  win.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Career History (Graphical)</title></head><body style="margin:0;background:#0a0d13"><script src="career-history.js"><\/script></body></html>');
+  win.document.close();
+}
+</script>
 
 <script type="module">
 /* ============================================================
