@@ -1,9 +1,13 @@
 /* ============================================================
-   CAREER HISTORY (GRAPHICAL) — Chong Boo Chean
+   CAREER HISTORY (GRAPHICAL) — Chong Boo Chean   (v1.1)
    Self-contained Three.js visualisation.
    Hexagonal-tile Earth globe → unfolds into a hexagonal world
    map → career timeline (most recent → older) with company /
    customer markers and curved connection arcs.
+   v1.1 corrections:
+     · Intel Dec 2025 & Jan 2022: no external customers plotted.
+     · Intel Jul 2009: whereabouts text aligned with the above.
+     · Info pane collapsed by default; user expands/collapses.
    No external map data. No dependency on the parent page.
    ============================================================ */
 (function () {
@@ -11,33 +15,17 @@
 if (window.__CH_LOADED__) return;
 window.__CH_LOADED__ = true;
 
-/* ------------------------------------------------------------
-   0. Boot guard — wait for <body>
------------------------------------------------------------- */
 if (!document.body) {
-  document.addEventListener('DOMContentLoaded', function () { boot(); });
+  document.addEventListener('DOMContentLoaded', function () { main(); });
 } else {
-  boot();
+  main();
 }
-function boot() { main(); }
 
 function main() {
 
 /* ------------------------------------------------------------
    1. Career data (most recent → older). [lat, lon] pairs.
 ------------------------------------------------------------ */
-const GLOBAL_HUBS = [
-  { name: 'Intel hub · Hillsboro, USA',      lat: 45.52,  lon: -122.68 },
-  { name: 'Intel hub · Austin, USA',         lat: 30.27,  lon: -97.74  },
-  { name: 'Intel hub · Dublin, Ireland',     lat: 53.35,  lon: -6.26   },
-  { name: 'Intel hub · Munich, Germany',     lat: 48.14,  lon: 11.58   },
-  { name: 'Intel hub · Bangalore, India',    lat: 12.97,  lon: 77.59   },
-  { name: 'Intel hub · Shanghai, China',     lat: 31.23,  lon: 121.47  },
-  { name: 'Intel hub · Tokyo, Japan',        lat: 35.68,  lon: 139.69  },
-  { name: 'Intel hub · Singapore',           lat: 1.35,   lon: 103.82  },
-  { name: 'Intel hub · São Paulo, Brazil',   lat: -23.55, lon: -46.63  }
-];
-
 const CAREER = [
   {
     period: 'Dec 2025 → Present',
@@ -45,7 +33,7 @@ const CAREER = [
     company: 'Intel Corporation',
     location: 'Penang, Malaysia',
     base: [5.42, 100.27],
-    global: true,
+    noMarkers: true,
     customers: [{ name: 'Global Intel customers · multiple locations' }]
   },
   {
@@ -54,7 +42,7 @@ const CAREER = [
     company: 'Intel Corporation',
     location: 'Penang, Malaysia',
     base: [5.42, 100.27],
-    global: true,
+    noMarkers: true,
     customers: [{ name: 'Global Intel customers · multiple locations' }]
   },
   {
@@ -94,7 +82,7 @@ const CAREER = [
     company: 'Intel Corporation',
     location: 'Penang, Malaysia',
     base: [5.42, 100.27],
-    customers: [{ name: 'SoC / Linux programmes · Penang, Malaysia', same: true }]
+    customers: [{ name: 'Global Intel customers · multiple locations', same: true }]
   },
   {
     period: 'Jul 2007 → Mar 2009',
@@ -216,7 +204,6 @@ const FOV     = 45;
 
 function ll2xy(lat, lon) { return { x: lon * K, y: lat * K }; }
 
-/* Build the flat-map hex grid (identity of every tile is kept for the morph). */
 const tiles = [];
 (function buildGrid() {
   const qMax = Math.ceil((MAP_W / 2) / COL_W);
@@ -269,19 +256,28 @@ STYLE.textContent = [
   '  text-transform:uppercase;color:#7f93ad;background:rgba(8,13,22,.55);border:1px solid rgba(120,180,255,.14);',
   '  border-radius:999px;padding:8px 16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);',
   '  pointer-events:none;white-space:nowrap;transition:opacity .5s;}',
+
+  /* ---- collapsible info pane ---- */
   '.ch-card{position:absolute;left:22px;bottom:52px;z-index:6;width:min(400px,calc(100vw - 44px));',
   '  background:rgba(7,12,20,.8);border:1px solid rgba(120,180,255,.18);border-radius:16px;',
-  '  padding:18px 20px 16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);',
+  '  padding:15px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);',
   '  box-shadow:0 18px 50px rgba(0,0,0,.5);opacity:0;transform:translateY(16px);',
   '  transition:opacity .5s ease,transform .5s ease;pointer-events:auto;}',
   '.ch-card.ch-show{opacity:1;transform:translateY(0);}',
-  '.ch-card-body{transition:opacity .18s ease,transform .18s ease;}',
+  '.ch-card-head{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;',
+  '  padding:2px 0;cursor:pointer;font-family:inherit;color:inherit;text-align:left;}',
+  '.ch-count{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11px;color:#5fd4ff;',
+  '  letter-spacing:.12em;flex:0 0 auto;}',
+  '.ch-period-inline{flex:1 1 auto;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;',
+  '  font-size:11px;color:#8fa7c4;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
+  '.ch-period-inline b{color:#ffd08a;font-weight:600;}',
+  '.ch-chev{flex:0 0 auto;color:#5fd4ff;font-size:12px;transition:transform .3s ease;}',
+  '.ch-card.ch-open .ch-chev{transform:rotate(180deg);}',
+  '.ch-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s ease;}',
+  '.ch-card.ch-open .ch-collapse{grid-template-rows:1fr;}',
+  '.ch-collapse-in{overflow:hidden;min-height:0;}',
+  '.ch-card-body{padding-top:13px;transition:opacity .18s ease,transform .18s ease;}',
   '.ch-card.ch-hide .ch-card-body{opacity:0;transform:translateY(6px);}',
-  '.ch-count{position:absolute;top:16px;right:18px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;',
-  '  font-size:11px;color:#5fd4ff;letter-spacing:.12em;}',
-  '.ch-period{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11px;color:#8fa7c4;',
-  '  letter-spacing:.05em;margin-bottom:8px;padding-right:64px;}',
-  '.ch-period b{color:#ffd08a;font-weight:600;}',
   '.ch-job{font-size:17px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#f2f6fc;margin:0 0 8px;}',
   '.ch-co{font-size:13px;color:#5fd4ff;font-weight:600;margin-bottom:3px;}',
   '.ch-loc{font-size:12px;color:#93a7c0;margin-bottom:12px;}',
@@ -293,10 +289,10 @@ STYLE.textContent = [
   '.ch-customers li i{width:6px;height:6px;border-radius:50%;background:#5fd4ff;flex:0 0 auto;',
   '  box-shadow:0 0 8px rgba(95,212,255,.8);font-style:normal;}',
   '.ch-customers li.ch-base i{background:#ffb454;box-shadow:0 0 8px rgba(255,180,84,.8);}',
-  '.ch-note{margin-top:9px;font-size:11px;color:#647b99;font-style:italic;}',
   '.ch-bar{margin-top:14px;height:3px;border-radius:2px;background:rgba(120,180,255,.14);overflow:hidden;}',
   '.ch-bar div{height:100%;background:linear-gradient(90deg,#5fd4ff,#8fe3ff);border-radius:2px;',
   '  transition:width .5s ease;}',
+
   '.ch-end{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;',
   '  justify-content:center;gap:10px;background:rgba(4,7,13,.82);backdrop-filter:blur(10px);',
   '  -webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .6s;}',
@@ -311,7 +307,7 @@ STYLE.textContent = [
   '@media (max-width:680px){',
   '  .ch-top{padding:14px 14px;}',
   '  .ch-title{font-size:11.5px;}',
-  '  .ch-card{left:10px;right:10px;bottom:52px;width:auto;padding:15px 16px 13px;}',
+  '  .ch-card{left:10px;right:10px;bottom:52px;width:auto;padding:13px 14px;}',
   '  .ch-job{font-size:15px;}',
   '  .ch-customers{max-height:23vh;overflow-y:auto;}',
   '  .ch-hint{bottom:12px;font-size:9.5px;padding:7px 13px;}',
@@ -329,13 +325,25 @@ root.innerHTML =
     '<button class="ch-home" type="button">← Profile</button>' +
   '</header>' +
   '<div class="ch-hint" id="chHint">Assembling hexagonal Earth…</div>' +
-  '<aside class="ch-card" id="chCard" aria-live="polite"><div class="ch-card-body" id="chCardBody"></div></aside>' +
+  '<aside class="ch-card" id="chCard" aria-live="polite">' +
+    '<button class="ch-card-head" id="chCardHead" type="button" aria-expanded="false">' +
+      '<span class="ch-count" id="chCount">01 / 08</span>' +
+      '<span class="ch-period-inline" id="chPeriod"></span>' +
+      '<span class="ch-chev" aria-hidden="true">▾</span>' +
+    '</button>' +
+    '<div class="ch-collapse"><div class="ch-collapse-in">' +
+      '<div class="ch-card-body" id="chCardBody"></div>' +
+    '</div></div>' +
+  '</aside>' +
   '<div class="ch-end" id="chEnd"><h3>Career tour complete</h3><p>Returning to profile…</p></div>' +
   '<div class="ch-load" id="chLoad">Loading 3D engine…</div>';
 document.body.appendChild(root);
 
 const elHint = root.querySelector('#chHint');
 const elCard = root.querySelector('#chCard');
+const elCardHead = root.querySelector('#chCardHead');
+const elCount = root.querySelector('#chCount');
+const elPeriod = root.querySelector('#chPeriod');
 const elCardBody = root.querySelector('#chCardBody');
 const elEnd = root.querySelector('#chEnd');
 const elLoad = root.querySelector('#chLoad');
@@ -346,11 +354,23 @@ function esc(s) {
 }
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
+/* ---- collapsible pane ---- */
+let cardOpen = false;
+function setCard(open) {
+  cardOpen = open;
+  elCard.classList.toggle('ch-open', open);
+  elCardHead.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+elCardHead.addEventListener('click', function () { setCard(!cardOpen); });
+
+function renderHeader(i) {
+  elCount.textContent = pad2(i + 1) + ' / ' + pad2(CAREER.length);
+  elPeriod.innerHTML = 'Service period: <b>' + esc(CAREER[i].period) + '</b>';
+}
+
 function renderCard(i) {
   const j = CAREER[i];
   let html = '';
-  html += '<div class="ch-count">' + pad2(i + 1) + ' / ' + pad2(CAREER.length) + '</div>';
-  html += '<div class="ch-period">Service period: <b>' + esc(j.period) + '</b></div>';
   html += '<h2 class="ch-job">' + esc(j.job) + '</h2>';
   html += '<div class="ch-co">◆ ' + esc(j.company) + '</div>';
   html += '<div class="ch-loc">Company location · <b>' + esc(j.location) + '</b></div>';
@@ -366,12 +386,12 @@ function renderCard(i) {
     }
   }
   html += '</ul>';
-  if (j.global) html += '<div class="ch-note">Global spread shown on map</div>';
   html += '<div class="ch-bar"><div style="width:' + (((i + 1) / CAREER.length) * 100) + '%"></div></div>';
   return html;
 }
 
 function swapCard(i) {
+  renderHeader(i);
   elCard.classList.add('ch-hide');
   setTimeout(function () {
     elCardBody.innerHTML = renderCard(i);
@@ -432,13 +452,11 @@ function initScene(THREE) {
   camera.position.copy(vGlobeCam);
   camera.lookAt(0, 0, 0);
 
-  /* Lights — keep land/ocean hues vivid; no fog (contrast safety). */
   scene.add(new THREE.HemisphereLight(0x8fb8e8, 0x0a1220, 1.0));
   const sun = new THREE.DirectionalLight(0xffffff, 0.75);
   sun.position.set(12, 18, 26);
   scene.add(sun);
 
-  /* Starfield backdrop */
   (function stars() {
     const SN = 380, arr = new Float32Array(SN * 3);
     for (let i = 0; i < SN; i++) {
@@ -456,7 +474,6 @@ function initScene(THREE) {
     scene.add(new THREE.Points(g, m));
   })();
 
-  /* Ocean bases: globe core sphere + flat map plane (crossfaded) */
   const baseGlobe = new THREE.Mesh(
     new THREE.SphereGeometry(R_GLOBE - 0.14, 48, 32),
     new THREE.MeshBasicMaterial({ color: 0x06121f, transparent: true, opacity: 1 })
@@ -473,22 +490,19 @@ function initScene(THREE) {
 
   /* ---------- Hex tile instanced mesh ---------- */
   const tileGeo = new THREE.CylinderGeometry(HEX * 0.9, HEX * 0.9, 0.3, 6);
-  tileGeo.rotateX(Math.PI / 2);                 /* hexagon face in XY, depth along Z */
+  tileGeo.rotateX(Math.PI / 2);
   const tileMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
   const mesh = new THREE.InstancedMesh(tileGeo, tileMat, N);
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   scene.add(mesh);
 
-  /* Per-tile state */
-  const gp = new Array(N);      /* globe position */
-  const gq = new Array(N);      /* globe orientation */
-  const mp = new Array(N);      /* flat-map position */
+  const gp = new Array(N);
+  const gq = new Array(N);
+  const mp = new Array(N);
   const dummy = new THREE.Object3D();
   const UP = new THREE.Vector3(0, 1, 0);
   const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
-  /* Fibonacci sphere slots, then pair to tiles by sorted (lat, lon)
-     so continents stay aligned between globe and map. */
   const slots = new Array(N);
   const GOLDEN = 2.399963229728653;
   for (let i = 0; i < N; i++) {
@@ -516,7 +530,6 @@ function initScene(THREE) {
     const ti = tileOrder[k], si = slotOrder[k];
     const T = tiles[ti], S = slots[si];
 
-    /* Globe transform */
     const n = S.n;
     gp[ti] = n.clone().multiplyScalar(R_GLOBE + (T.land ? 0.16 : 0));
     east.crossVectors(UP, n);
@@ -526,10 +539,8 @@ function initScene(THREE) {
     basis.makeBasis(east, north, n);
     gq[ti] = new THREE.Quaternion().setFromRotationMatrix(basis);
 
-    /* Flat-map transform */
     mp[ti] = new THREE.Vector3(T.x, T.y, T.land ? 0.16 : 0);
 
-    /* Colour: green/teal land vs blue ocean, slight per-tile variance */
     if (T.land) {
       colLand.setHSL(0.40 + Math.random() * 0.04, 0.58, 0.36 + Math.random() * 0.08);
       mesh.setColorAt(ti, colLand);
@@ -538,7 +549,6 @@ function initScene(THREE) {
       mesh.setColorAt(ti, colOcean);
     }
 
-    /* Initial matrix (globe) */
     dummy.position.copy(gp[ti]);
     dummy.quaternion.copy(gq[ti]);
     dummy.updateMatrix();
@@ -652,11 +662,13 @@ function initScene(THREE) {
     makeBaseMarker(base.x, base.y);
     framePts.push(base);
 
-    const list = j.global ? GLOBAL_HUBS : j.customers;
-    for (let c = 0; c < list.length; c++) {
-      const cust = list[c];
+    /* No external customers to plot (e.g. internal Intel roles) */
+    if (j.noMarkers) return framePts;
+
+    for (let c = 0; c < j.customers.length; c++) {
+      const cust = j.customers[c];
       if (cust.same) {
-        /* On-site programme: orbit ring around the company pin */
+        /* On-site / internal programme: orbit ring around the company pin */
         fxOrbit = {
           cx: base.x, cy: base.y, r: 1.7,
           dot: (function () {
@@ -700,8 +712,11 @@ function initScene(THREE) {
       minX = Math.min(minX, pts[i].x); maxX = Math.max(maxX, pts[i].x);
       minY = Math.min(minY, pts[i].y); maxY = Math.max(maxY, pts[i].y);
     }
-    const sx = Math.max(14, maxX - minX + 18);
-    const sy = Math.max(10, maxY - minY + 14);
+    /* Single-marker jobs get a wider, comfortable view */
+    const spanX = pts.length === 1 ? 46 : (maxX - minX);
+    const spanY = pts.length === 1 ? 30 : (maxY - minY);
+    const sx = Math.max(14, spanX + 18);
+    const sy = Math.max(10, spanY + 14);
     let d = Math.max(sx / 2 / (tanV * aspect), sy / 2 / tanV) * 1.22;
     d = Math.min(d, dAll);
     d = Math.max(d, 15);
@@ -776,11 +791,9 @@ function initScene(THREE) {
   const Q_ID = new THREE.Quaternion();
   const easeIO = function (x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
   const SPIN_TOTAL = REDUCED ? 0.15 : 0.55;
-  let started = false;
 
   resize();
   window.addEventListener('resize', resize);
-
   elLoad.classList.add('ch-gone');
 
   function tick() {
@@ -811,7 +824,6 @@ function initScene(THREE) {
       basePlane.material.opacity = g;
       baseGlobe.visible = g < 0.999;
 
-      /* Camera: globe view → full-map view */
       const vMapAll = framePoints([{ x: -MAP_W / 2, y: LAT_MIN * K }, { x: MAP_W / 2, y: LAT_MAX * K }]);
       camera.position.set(
         vGlobeCam.x + (vMapAll.x - vGlobeCam.x) * g,
@@ -826,8 +838,10 @@ function initScene(THREE) {
         navEnabled = true;
         currentJob = 0;
         frameJob(0, false);
+        renderHeader(0);
         elCardBody.innerHTML = renderCard(0);
         elCard.classList.add('ch-show');
+        setCard(false);                      /* collapsed by default */
         elHint.textContent = 'Scroll to move through career';
       }
     }
@@ -843,7 +857,6 @@ function initScene(THREE) {
       camera.position.set(camX + swx, camY + swy, camD);
       camera.lookAt(camX + swx * 0.4, camY + swy * 0.4, 0);
 
-      /* FX scale compensation so markers stay readable at any zoom */
       const m = THREE.MathUtils.clamp(camD / 30, 1, 4.6);
       for (let i = 0; i < fxPivots.length; i++) fxPivots[i].scale.setScalar(m);
       for (let i = 0; i < fxPulses.length; i++) {
