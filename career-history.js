@@ -1,13 +1,15 @@
 /* ============================================================
-   CAREER HISTORY (GRAPHICAL) — Chong Boo Chean   (v1.1)
+   CAREER HISTORY (GRAPHICAL) — Chong Boo Chean   (v1.3)
    Self-contained Three.js visualisation.
    Hexagonal-tile Earth globe → unfolds into a hexagonal world
-   map → career timeline (most recent → older) with company /
+   map → career timeline (most recent → older) with work-location /
    customer markers and curved connection arcs.
-   v1.1 corrections:
-     · Intel Dec 2025 & Jan 2022: no external customers plotted.
-     · Intel Jul 2009: whereabouts text aligned with the above.
-     · Info pane collapsed by default; user expands/collapses.
+   v1.3:
+     · "Work Location" label.
+     · Blaupunkt: Penang (linked to customers) + Hildesheim, Germany.
+     · Robust mobile swipe: right = scroll down, left = scroll up.
+     · Globe launched from farther away; pane expanded by default;
+       fixed-height pane with scrollable Customer Whereabouts.
    No external map data. No dependency on the parent page.
    ============================================================ */
 (function () {
@@ -24,7 +26,7 @@ if (!document.body) {
 function main() {
 
 /* ------------------------------------------------------------
-   1. Career data (most recent → older). [lat, lon] pairs.
+   1. Career data (most recent → older).
 ------------------------------------------------------------ */
 const CAREER = [
   {
@@ -62,8 +64,11 @@ const CAREER = [
     period: 'Mar 2011 → Jul 2017',
     job: 'Software Developer → Program Manager → Section Manager',
     company: 'Blaupunkt / Premium Sound Solutions',
-    location: 'Penang, Malaysia',
-    base: [5.42, 100.27],
+    location: 'Penang, Malaysia · Hildesheim, Germany',
+    bases: [
+      { lat: 5.42,  lon: 100.27, link: true },
+      { lat: 52.15, lon: 9.95,   link: false }
+    ],
     customers: [
       { name: 'Honda · New Delhi, India',                     lat: 28.61,  lon: 77.21  },
       { name: 'Proton · Kuala Lumpur, Malaysia',              lat: 3.14,   lon: 101.69 },
@@ -114,7 +119,10 @@ const CAREER = [
     job: 'Foundations in engineering & education',
     company: 'Early Career & Academia',
     location: 'Malaysia / New Zealand',
-    bases: [[3.14, 101.69], [-41.29, 174.78]],
+    bases: [
+      { lat: 3.14,   lon: 101.69, link: false },
+      { lat: -41.29, lon: 174.78, link: false }
+    ],
     customers: [
       { name: 'Malaysia · Kuala Lumpur' },
       { name: 'New Zealand · Wellington' }
@@ -279,12 +287,13 @@ STYLE.textContent = [
   '.ch-card-body{padding-top:13px;height:242px;display:flex;flex-direction:column;',
   '  transition:opacity .18s ease,transform .18s ease;}',
   '.ch-card.ch-hide .ch-card-body{opacity:0;transform:translateY(6px);}',
-  '.ch-job{font-size:17px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#f2f6fc;margin:0 0 8px;}',
-  '.ch-co{font-size:13px;color:#5fd4ff;font-weight:600;margin-bottom:3px;}',
-  '.ch-loc{font-size:12px;color:#93a7c0;margin-bottom:12px;}',
+  '.ch-job{font-size:17px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#f2f6fc;margin:0 0 8px;',
+  '  flex:0 0 auto;}',
+  '.ch-co{font-size:13px;color:#5fd4ff;font-weight:600;margin-bottom:3px;flex:0 0 auto;}',
+  '.ch-loc{font-size:12px;color:#93a7c0;margin-bottom:12px;flex:0 0 auto;}',
   '.ch-loc b{color:#c7d5e8;font-weight:600;}',
   '.ch-clabel{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:10px;letter-spacing:.18em;',
-  '  text-transform:uppercase;color:#647b99;margin-bottom:7px;}',
+  '  text-transform:uppercase;color:#647b99;margin-bottom:7px;flex:0 0 auto;}',
   '.ch-customers{list-style:none;margin:0;padding:0 6px 2px 0;display:flex;flex-wrap:wrap;gap:5px 14px;',
   '  flex:1 1 auto;min-height:0;overflow-y:auto;align-content:flex-start;}',
   '.ch-customers::-webkit-scrollbar{width:4px;}',
@@ -293,7 +302,8 @@ STYLE.textContent = [
   '.ch-customers li i{width:6px;height:6px;border-radius:50%;background:#5fd4ff;flex:0 0 auto;',
   '  box-shadow:0 0 8px rgba(95,212,255,.8);font-style:normal;}',
   '.ch-customers li.ch-base i{background:#ffb454;box-shadow:0 0 8px rgba(255,180,84,.8);}',
-  '.ch-bar{margin-top:14px;height:3px;border-radius:2px;background:rgba(120,180,255,.14);overflow:hidden;}',
+  '.ch-bar{margin-top:14px;height:3px;border-radius:2px;background:rgba(120,180,255,.14);overflow:hidden;',
+  '  flex:0 0 auto;}',
   '.ch-bar div{height:100%;background:linear-gradient(90deg,#5fd4ff,#8fe3ff);border-radius:2px;',
   '  transition:width .5s ease;}',
 
@@ -377,14 +387,10 @@ function renderCard(i) {
   let html = '';
   html += '<h2 class="ch-job">' + esc(j.job) + '</h2>';
   html += '<div class="ch-co">◆ ' + esc(j.company) + '</div>';
-  html += '<div class="ch-loc">Company location · <b>' + esc(j.location) + '</b></div>';
+  html += '<div class="ch-loc">Work Location · <b>' + esc(j.location) + '</b></div>';
   html += '<div class="ch-clabel">Customer whereabouts</div>';
   html += '<ul class="ch-customers">';
-  if (j.bases) {
-    for (let b = 0; b < j.bases.length; b++) {
-      html += '<li class="ch-base"><i></i>' + esc(j.customers[b] ? j.customers[b].name : 'Base') + '</li>';
-    }
-  } else {
+  if (j.customers && j.customers.length > 0) {
     for (let c = 0; c < j.customers.length; c++) {
       html += '<li><i></i>' + esc(j.customers[c].name) + '</li>';
     }
@@ -452,7 +458,7 @@ function initScene(THREE) {
   scene.background = new THREE.Color(0x04070d);
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 700);
-  const vGlobeCam = new THREE.Vector3(0, 4.5, 36);
+  const vGlobeCam = new THREE.Vector3(0, 4.5, 36);   /* pulled back so the unfolding reads clearly */
   camera.position.copy(vGlobeCam);
   camera.lookAt(0, 0, 0);
 
@@ -650,15 +656,47 @@ function initScene(THREE) {
     const framePts = [];
 
     if (j.bases) {
-      /* Early career: two base locations linked together */
+      /* Multiple work locations. Each base carries a `link` flag:
+         link:true  → this base connects to the customers.
+         link:false → standalone marker (or bases link to each other
+                      when no base is designated, e.g. Early Career). */
+      const basePoints = [];
       for (let b = 0; b < j.bases.length; b++) {
-        const p = ll2xy(j.bases[b][0], j.bases[b][1]);
+        const base = j.bases[b];
+        const p = ll2xy(base.lat, base.lon);
         makeBaseMarker(p.x, p.y);
         framePts.push(p);
+        basePoints.push({ pt: p, link: base.link });
       }
-      const a = ll2xy(j.bases[0][0], j.bases[0][1]);
-      const b = ll2xy(j.bases[1][0], j.bases[1][1]);
-      makeArc(a, b, AMBER);
+
+      const hasLinkingBase = basePoints.some(function (b) { return b.link; });
+      if (!hasLinkingBase && basePoints.length === 2) {
+        makeArc(basePoints[0].pt, basePoints[1].pt, AMBER);
+      }
+
+      const linkingBase = basePoints.find(function (b) { return b.link; });
+      if (linkingBase && j.customers) {
+        for (let c = 0; c < j.customers.length; c++) {
+          const cust = j.customers[c];
+          if (cust.same) {
+            fxOrbit = {
+              cx: linkingBase.pt.x, cy: linkingBase.pt.y, r: 1.7,
+              dot: (function () {
+                const d = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8),
+                  new THREE.MeshBasicMaterial({ color: 0xffd08a, transparent: true, opacity: 0.95,
+                    blending: THREE.AdditiveBlending, depthWrite: false }));
+                fxRoot.add(d);
+                return d;
+              })()
+            };
+            continue;
+          }
+          const cp = ll2xy(cust.lat, cust.lon);
+          makeCustomerMarker(cp.x, cp.y);
+          makeArc(linkingBase.pt, cp, CYAN);
+          framePts.push(cp);
+        }
+      }
       return framePts;
     }
 
@@ -672,7 +710,7 @@ function initScene(THREE) {
     for (let c = 0; c < j.customers.length; c++) {
       const cust = j.customers[c];
       if (cust.same) {
-        /* On-site / internal programme: orbit ring around the company pin */
+        /* On-site / internal programme: orbit ring around the work-location pin */
         fxOrbit = {
           cx: base.x, cy: base.y, r: 1.7,
           dot: (function () {
@@ -696,7 +734,7 @@ function initScene(THREE) {
   /* ---------- Camera framing ---------- */
   let W = 1, H = 1, aspect = 1, dAll = 60;
   const camGoal = { x: 0, y: MAP_CY, d: 60 };
-  let camX = 0, camY = MAP_CY, camD = 26.5;
+  let camX = 0, camY = MAP_CY, camD = 36;
   const tanV = Math.tan(FOV * Math.PI / 360);
 
   function resize() {
@@ -770,21 +808,36 @@ function initScene(THREE) {
     move(dir);
   }, { passive: false });
 
-  let touchX = null, touchY = null;
+  /* Touch: swipe up = scroll down · swipe down = scroll up ·
+     swipe right = scroll down · swipe left = scroll up.
+     Tracked in touchmove for reliable mobile behaviour. */
+  let touchStartX = null, touchStartY = null, touchLocked = false;
   root.addEventListener('touchstart', function (e) {
-    touchX = e.touches[0].clientX;
-    touchY = e.touches[0].clientY;
+    if (touchLocked) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
   }, { passive: true });
-  root.addEventListener('touchend', function (e) {
-    if (touchX == null || touchY == null) return;
-    const dx = e.changedTouches[0].clientX - touchX;   /* + : swipe right */
-    const dy = touchY - e.changedTouches[0].clientY;   /* + : swipe up    */
-    touchX = touchY = null;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      if (Math.abs(dx) > 46) move(dx > 0 ? 1 : -1);    /* right = scroll down, left = scroll up */
-    } else {
-      if (Math.abs(dy) > 46) move(dy > 0 ? 1 : -1);    /* swipe up = scroll down */
+
+  root.addEventListener('touchmove', function (e) {
+    if (touchLocked || touchStartX === null) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = touchStartY - e.touches[0].clientY;   /* + : swipe up */
+    if (Math.abs(dx) > 40 || Math.abs(dy) > 40) {
+      touchLocked = true;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        move(dx > 0 ? 1 : -1);   /* right = scroll down, left = scroll up */
+      } else {
+        move(dy > 0 ? 1 : -1);   /* up = scroll down, down = scroll up */
+      }
     }
+  }, { passive: true });
+
+  root.addEventListener('touchend', function () {
+    touchStartX = null; touchStartY = null; touchLocked = false;
+  }, { passive: true });
+
+  root.addEventListener('touchcancel', function () {
+    touchStartX = null; touchStartY = null; touchLocked = false;
   }, { passive: true });
 
   window.addEventListener('keydown', function (e) {
@@ -851,7 +904,7 @@ function initScene(THREE) {
         renderHeader(0);
         elCardBody.innerHTML = renderCard(0);
         elCard.classList.add('ch-show');
-        setCard(true);                      /* expanded by default */
+        setCard(true);                       /* expanded by default */
         elHint.textContent = 'Scroll to move through career';
       }
     }
