@@ -1145,7 +1145,10 @@ const chEnd=document.getElementById('chEnd');
 const chLoad=document.getElementById('chLoad');
 let cardOpen=true;
 function setCard(open){cardOpen=open;chCard.classList.toggle('ch-open',open);
-  chCardHead.setAttribute('aria-expanded',open?'true':'false');}
+  chCardHead.setAttribute('aria-expanded',open?'true':'false');
+  /* pane height changes → re-place the map after the collapse animation ends */
+  setTimeout(()=>{if(CS.phase>=2&&careerOK)frameJob(CS.job,false);},420);
+}
 chCardHead.addEventListener('click',()=>setCard(!cardOpen));
 function renderHeader(i){
   chCount.textContent=pad2(i+1)+' / '+pad2(CAREER.length);
@@ -1278,29 +1281,34 @@ function chResize(){
   if(chCanvas.width!==W||chCanvas.height!==H){chCanvas.width=W;chCanvas.height=H;}
   cgl.viewport(0,0,W,H);
   chAspect=w/h;
-  const sx=MAP_W+16, sy=MAP_HH+16;
-  dAll=Math.max(sx/2/(tanVC*chAspect), sy/2/tanVC)*1.10;
+  dAll=Math.max(MAP_W/2/(tanVC*chAspect), MAP_HH/(2*tanVC*1.02), 30);
   if(!isFinite(dAll))dAll=120;
-  dAll=Math.max(40,Math.min(420,dAll));
+  dAll=Math.min(420,dAll);
   if(CS.phase>=2)frameJob(CS.job,false);
 }
-function framePoints(pts){
+function mapCamY(d){
+  /* Vertical placement: centre the map in the screen area above the info pane.
+     If the map is taller than that area (wide viewports at exact width-fit),
+     anchor it to the screen top — nothing is cropped; the only overlap is the
+     bottom-left fringe behind the translucent pane. */
+  const H=Math.max(1,chRoot.clientHeight);
+  if(!isFinite(d)||d<=0)return MAP_CY;
+  const s=H/(2*d*tanVC);                              /* px per world unit at z=0 */
+  const cardTopPx=Math.min(H*0.62,chCard.offsetHeight+64);
+  const bandPx=Math.max(60,H-cardTopPx);
+  const mapPx=MAP_HH*s;
+  const bottomPx=(mapPx<=bandPx)?cardTopPx+(bandPx-mapPx)*0.5
+                                :Math.min(cardTopPx,H-8-mapPx);
+  return MAP_CY-MAP_HH/2-(bottomPx-H/2)/s;
+}
+function framePoints(){
   const aspect=(isFinite(chAspect)&&chAspect>0.05)?chAspect:1;
-  let cx=0, cy=MAP_CY;
-  if(pts && pts.length){
-    let ax=0, ay=0;
-    for(const p of pts){ax+=p.x; ay+=p.y;}
-    cx=ax/pts.length; cy=ay/pts.length;
-  }
-  /* gentle bias toward the job's region — the full map must always stay in view */
-  const offX=Math.max(-6,Math.min(6,cx));
-  const offY=Math.max(-4,Math.min(4,cy-MAP_CY));
-  const lift=(aspect<0.85)?0.18:0;                    /* keep map above the pane on portrait */
-  let d=dAll*(lift>0?1.15:1.03);
-  d=Math.max(d,(Math.abs(offX)+MAP_W/2+5)/(tanVC*aspect));
-  d=Math.max(d,(MAP_HH/2+5+Math.abs(offY))/(tanVC*(1-lift)));
+  /* exact edge-to-edge width: map always spans the full viewport width */
+  let d=MAP_W/2/(tanVC*aspect);
+  d=Math.max(d,MAP_HH/(2*tanVC*1.02),30);   /* never crop more than ~2% vertically */
   if(!isFinite(d))d=120;
-  return {x:offX, y:MAP_CY+offY-d*tanVC*lift, d:Math.max(30,Math.min(420,d))};
+  d=Math.min(420,d);
+  return {x:0, y:mapCamY(d), d:d};
 }
 let mBases=[],mCusts=[],mArcs=[],mHalos=[],mOrbit=null;
 function clearFX(){
@@ -1457,7 +1465,7 @@ function careerRender(dt){
     return [camX+(ax-camX)*s, camY2+(ay-camY2)*s];
   };
   const gBase=(CS.phase<2)?easeIO(clamp01((CS.T-SPIN_END)/MORPH_DUR)):1;
-  fxHex(0,MAP_CY,-0.34,38,38,0.18, 0.027,0.075,0.12, gBase);
+  /* fxHex(0,MAP_CY,-0.34,38,38,0.18, 0.027,0.075,0.12, gBase); */
   if(gBase<0.999) fxSph(0,0,0,R_GLOBE-0.14, 0.024,0.07,0.12, 1-gBase);
   for(const b of mBases){
     fxHex(b.x,b.y,0.30*m,0.66*m,0.66*m,0.14*m, 1,0.706,0.33, 0.35);
