@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#7ec8e8" />
+<title>Paradise Island</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: #7ec8e8;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  #app { position: fixed; inset: 0; touch-action: none; cursor: grab; }
+  #app:active { cursor: grabbing; }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  #ui-layer {
+    position: absolute; inset: 0; pointer-events: none;
+    color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    transition: opacity 0.28s ease;
+    z-index: 10;
+  }
+  #ui-layer.hidden-ui { opacity: 0; }
+  #ui-layer.hidden-ui .bottom-left-panel { pointer-events: none; }
+
+  /* Cinematic letterbox bars */
+  .cinematic-bars {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .cinematic-bars::before,
+  .cinematic-bars::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    height: 11%; background: #000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  }
+  .cinematic-bars::before { top: 0; }
+  .cinematic-bars::after { bottom: 0; }
+  .cinematic-bars.active { opacity: 1; }
+
+  .top-left { position: absolute; top: 20px; left: 24px; }
+  .title { font-size: 28px; font-weight: 300; letter-spacing: 1px; margin: 0; line-height: 1.2; }
+  .subtitle { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.85; margin: 6px 0 0 0; line-height: 1.4; }
+
+  .top-right {
+    position: absolute; top: 24px; right: 24px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+    opacity: 0.85; text-align: right; line-height: 1.5;
+  }
+  .top-right span { display: inline; margin-left: 8px; }
+
+  .bottom-left-panel {
+    position: absolute; bottom: 24px; left: 24px;
+    background: rgba(20, 30, 40, 0.65);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-radius: 8px; padding: 12px;
+    pointer-events: auto;
+    width: 220px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .panel-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .btn {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px; color: #fff; font-size: 10px;
+    padding: 6px 0; text-align: center; cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    user-select: none; -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .btn:hover { background: rgba(255,255,255,0.2); }
+  .btn.active { background: #f2c14e; color: #222; border-color: #f2c14e; font-weight: 600; }
+
+  .slider-group { margin-bottom: 2px; }
+  .slider-label {
+    display: flex; justify-content: space-between;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.7; margin-bottom: 2px;
+  }
+  .slider-hit { padding: 8px 0 6px; cursor: pointer; touch-action: none; }
+  .slider-track { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; }
+  .slider-fill { height: 100%; background: #f2c14e; border-radius: 2px; width: 50%; }
+  .slider-knob {
+    width: 12px; height: 12px; background: #fff; border-radius: 50%;
+    position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5); pointer-events: none;
+  }
+
+  .bottom-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .bottom-actions .btn { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+
+  .subtitle-overlay {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 4px;
+    font-size: 16px; font-weight: 400; text-align: center;
+    max-width: 80%; pointer-events: none; line-height: 1.4;
+  }
+
+  #ui-toggle {
+    position: absolute; right: 16px; bottom: 16px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(20,30,40,0.65);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; display: none; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer; pointer-events: auto; z-index: 20;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    user-select: none; -webkit-user-select: none;
+  }
+  #ui-layer.hidden-ui ~ #ui-toggle { display: flex; }
+
+  @media (max-width: 768px) {
+    .title { font-size: 18px; }
+    .subtitle { font-size: 8px; letter-spacing: 1px; margin-top: 4px; }
+    .top-right {
+      font-size: 8px; top: 12px; right: 12px;
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 2px; line-height: 1.2;
+    }
+    .top-right span { margin-left: 0; }
+    .bottom-left-panel { width: 168px; padding: 8px; bottom: 12px; left: 12px; }
+    .panel-row { gap: 3px; margin-bottom: 6px; }
+    .btn { font-size: 7px; padding: 4px 0; border-radius: 3px; }
+    .slider-label { font-size: 7px; margin-bottom: 2px; }
+    .slider-track { height: 3px; }
+    .slider-knob { width: 9px; height: 9px; top: -3px; }
+    .slider-hit { padding: 6px 0 4px; }
+    .subtitle-overlay { font-size: 11px; padding: 4px 8px; bottom: 12px; max-width: 90%; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="cinematic-bars" id="cine-bars"></div>
+
+<div id="ui-layer">
+  <div class="top-left">
+    <h1 class="title">Paradise Island</h1>
+    <p class="subtitle">Warm wind, rolling surf, and not a care in the world</p>
+  </div>
+  <div class="top-right" id="stats-panel">
+    <span><span id="stat-palms">0</span> PALMS</span>
+    <span><span id="stat-huts">0</span> HUTS</span>
+    <span><span id="stat-people">0</span> PEOPLE</span>
+    <span><span id="stat-chickens">0</span> CHICKENS</span>
+  </div>
+
+  <div class="bottom-left-panel">
+    <div class="panel-row" id="mode-row">
+      <div class="btn" data-mode="cinematic">Cinematic</div>
+      <div class="btn active" data-mode="fly">Fly around</div>
+      <div class="btn" data-mode="beach">On the beach</div>
+      <div class="btn" data-mode="drone">Drone</div>
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Wind</span><span id="wind-val">1.00</span></div>
+      <div class="slider-hit" id="wind-slider">
+        <div class="slider-track"><div class="slider-fill"></div><div class="slider-knob"></div></div>
+      </div>
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Time</span><span id="time-val">16:22</span></div>
+      <div class="slider-hit" id="time-slider">
+        <div class="slider-track"><div class="slider-fill"></div><div class="slider-knob"></div></div>
+      </div>
+    </div>
+    <div class="bottom-actions">
+      <div class="btn active" id="btn-orbit">Auto-orbit</div>
+      <div class="btn" id="btn-pause">Pause</div>
+      <div class="btn" id="btn-hide">Hide UI</div>
+    </div>
+  </div>
+
+  <div class="subtitle-overlay">
+    appearance. The chickens are also really good.
+  </div>
+</div>
+<div id="ui-toggle" title="Show UI">☰</div>
+
+<script type="importmap">
+{ "imports": { "three": "../lib/three.module.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+const DEG = Math.PI / 180;
+const rand = (a, b) => a + Math.random() * (b - a);
+const randInt = (a, b) => Math.floor(rand(a, b + 1));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const smoothstep = (x, a, b) => {
+  const t = clamp((x - a) / (b - a), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+
+/* ---------------- Renderer / Scene ---------------- */
+const container = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xd4eaf5, 200, 800);
+
+const camera = new THREE.PerspectiveCamera(48, 1, 0.5, 3000);
+
+const sunDir = new THREE.Vector3(-0.45, 0.85, 0.40).normalize();
+
+/* ---------------- Lights ---------------- */
+const hemi = new THREE.HemisphereLight(0xcfeeff, 0x88a86a, 1.15);
+scene.add(hemi);
+const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xfff3dc, 2.2);
+sun.position.copy(sunDir).multiplyScalar(400);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -100, right: 100, top: 100, bottom: -100, near: 50, far: 400 });
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.035;
+scene.add(sun, sun.target);
+
+/* ---------------- Sky ---------------- */
+const skyUniforms = {
+  uSun:     { value: new THREE.Vector3(0, 1, 0) },
+  uTop:     { value: new THREE.Color(0.22, 0.55, 0.92) },
+  uHor:     { value: new THREE.Color(0.86, 0.94, 0.99) },
+  uSunTint: { value: new THREE.Color(1.00, 0.93, 0.82) },
+  uSunGlow: { value: 1.0 },
+  uStars:   { value: 0.0 }
+};
+
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false,
+  uniforms: skyUniforms,
+  vertexShader: `
+    varying vec3 vDir;
+    void main() {
+      vDir = normalize(position);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }`,
+  fragmentShader: `
+    varying vec3 vDir;
+    uniform vec3 uSun;
+    uniform vec3 uTop;
+    uniform vec3 uHor;
+    uniform vec3 uSunTint;
+    uniform float uSunGlow;
+    uniform float uStars;
+
+    vec3 toLin(vec3 c){ return pow(c, vec3(2.2)); }
+
+    float hash31(vec3 p){
+      p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+      p *= 17.0;
+      return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+    }
+
+    void main() {
+      vec3 d = normalize(vDir);
+      vec3 top = toLin(uTop);
+      vec3 hor = toLin(uHor);
+
+      float h = clamp(d.y, 0.0, 1.0);
+      vec3 col = mix(hor, top, pow(h, 0.72));
+
+      vec3 s = normalize(uSun);
+      float sd = max(dot(d, s), 0.0);
+      col += toLin(uSunTint) * pow(sd, 8.0) * 0.45 * uSunGlow;
+      col += vec3(1.0, 0.95, 0.85) * pow(sd, 240.0) * 5.0 * uSunGlow;
+
+      if (uStars > 0.001) {
+        vec3 g = floor(d * 260.0);
+        float st = hash31(g);
+        float star = smoothstep(0.9985, 1.0, st);
+        col += vec3(0.85, 0.92, 1.0) * star * uStars * 2.0 * smoothstep(0.0, 0.25, d.y);
+      }
+
+      col = mix(hor, col, smoothstep(-0.10, 0.10, d.y));
+      gl_FragColor = vec4(col, 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }`
+});
+const sky = new THREE.Mesh(new THREE.SphereGeometry(2000, 32, 24), skyMat);
+sky.renderOrder = -10;
+scene.add(sky);
+
+/* ---------------- Ocean ---------------- */
+const R0 = 0.25, R1 = 2000, RINGS = 150, SEGS = 180;
+function buildOcean() {
+  const pos = [], uv = [], idx = [];
+  const ratio = Math.pow(R1 / R0, 1 / RINGS);
+  for (let i = 0; i <= RINGS; i++) {
+    const r = R0 * Math.pow(ratio, i);
+    for (let j = 0; j <= SEGS; j++) {
+      const a = (j / SEGS) * Math.PI * 2;
+      pos.push(Math.cos(a) * r, 0, Math.sin(a) * r);
+      uv.push(j / SEGS, i / RINGS);
+    }
+  }
+  const stride = SEGS + 1;
+  for (let i = 0; i < RINGS; i++) {
+    for (let j = 0; j < SEGS; j++) {
+      const a = i * stride + j, b = a + 1, c = a + stride, d = c + 1;
+      idx.push(a, b, c, b, d, c);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeBoundingSphere();
+  return g;
+}
+
+const oceanUniforms = {
+  uTime: { value: 0 },
+  uSun:  { value: sunDir.clone() },
+  uFog:  { value: new THREE.Color(0xd4eaf5) },
+  uWind: { value: 1.0 },
+  uDay:  { value: 1.0 }
+};
+
+const oceanMat = new THREE.ShaderMaterial({
+  uniforms: oceanUniforms,
+  vertexShader: `
+    uniform float uTime;
+    uniform float uWind;
+    varying vec3 vWorld; varying vec3 vNrm; varying float vR; varying float vH;
+
+    float angPhase(float a) {
+      return 0.75 * sin(a * 3.0 + 0.6)
+           + 0.45 * sin(a * 5.0 - 1.4)
+           + 0.25 * sin(a * 8.0 + 2.1);
+    }
+
+    float waveH(vec2 p) {
+      float t = uTime;
+      float r = length(p);
+      float a = atan(p.y, p.x);
+      float on = smoothstep(9.0, 15.0, r) * (1.0 - smoothstep(60.0, 120.0, r));
+      float rr = r + angPhase(a) * 2.2;
+
+      float w = 0.0;
+      w += sin(rr * 0.40 - t * 0.95) * 0.48;
+      w += sin(rr * 0.82 - t * 1.55) * 0.18;
+      w += sin(p.x * 0.30 + t * 0.80) * 0.14;
+      w += sin(p.y * 0.36 - t * 0.62) * 0.13;
+      w += sin((p.x + p.y) * 0.95 + t * 2.10) * 0.05;
+      return w * on * (0.10 + 0.90 * uWind);
+    }
+
+    void main() {
+      vec2 q = position.xz;
+      float h  = waveH(q);
+      float e  = 0.55;
+      float hx = waveH(q + vec2(e, 0.0));
+      float hz = waveH(q + vec2(0.0, e));
+      vNrm = normalize(vec3(-(hx - h) / e, 1.0, -(hz - h) / e));
+      vR = length(q); vH = h;
+      vec4 wp = modelMatrix * vec4(position.x, h, position.z, 1.0);
+      vWorld = wp.xyz;
+      gl_Position = projectionMatrix * viewMatrix * wp;
+    }`,
+  fragmentShader: `
+    uniform float uTime; uniform vec3 uSun; uniform vec3 uFog; uniform float uDay;
+    varying vec3 vWorld; varying vec3 vNrm; varying float vR; varying float vH;
+
+    void main() {
+      vec3 N = normalize(vNrm);
+      vec3 V = normalize(cameraPosition - vWorld);
+      vec3 L = normalize(uSun);
+
+      float diff = clamp(dot(N, L) * 0.55 + 0.55, 0.0, 1.15);
+      float spec = pow(max(dot(reflect(-L, N), V), 0.0), 80.0);
+
+      vec3 lagoon  = vec3(0.40, 0.84, 0.82);
+      vec3 shallow = vec3(0.09, 0.53, 0.68);
+      vec3 mid     = vec3(0.03, 0.28, 0.54);
+      vec3 deep    = vec3(0.01, 0.10, 0.34);
+
+      vec3 col = mix(lagoon,  shallow, smoothstep(10.0, 15.0, vR));
+      col      = mix(col,     mid,     smoothstep(15.0, 45.0, vR));
+      col      = mix(col,     deep,    smoothstep(45.0, 180.0, vR));
+
+      col = mix(col, vec3(0.60, 0.82, 0.96), 0.10);
+      col *= 0.72 + 0.48 * diff;
+      col *= mix(0.12, 1.0, uDay);
+      col += vec3(1.0, 0.97, 0.88) * spec * 1.9 * uDay;
+
+      float band = smoothstep(15.0, 10.5, vR);
+      float rip  = sin(vR * 1.5 - uTime * 1.9) * 0.5 + 0.5;
+      float shore = band * pow(rip, 2.4);
+
+      float edge = smoothstep(10.8, 9.5, vR);
+      float crest = smoothstep(0.42, 0.90, vH) * smoothstep(11.5, 22.0, vR) * 0.30;
+
+      float foam = clamp(shore + edge * 0.95 + crest, 0.0, 1.0) * 0.92;
+      col = mix(col, vec3(mix(0.35, 1.0, uDay)), foam);
+
+      float dist = length(cameraPosition - vWorld);
+      col = mix(col, uFog, smoothstep(140.0, 400.0, dist));
+
+      gl_FragColor = vec4(col, 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }`
+});
+const ocean = new THREE.Mesh(buildOcean(), oceanMat);
+ocean.frustumCulled = false;
+scene.add(ocean);
+
+/* ---------------- Island ---------------- */
+const ISLAND_R = 70.0;
+
+function islandY(t) {
+  const hillHeight = 14.0;
+  const beachHeight = 0.2;
+  return beachHeight + (hillHeight - beachHeight) * Math.pow(1.0 - t, 1.5);
+}
+
+function terrainNoise(t, ang) {
+  return 0.8 * Math.sin(ang * 4.0 + 1.5) * Math.sin(t * 6.0)
+       + 0.5 * Math.sin(ang * 7.0 - 0.8) * Math.sin(t * 10.0)
+       + 0.3 * Math.sin(ang * 12.0 + 2.5) * Math.sin(t * 15.0);
+}
+
+function islandWob(a) {
+  return 1 + 0.075 * Math.sin(3 * a + 0.9)
+           + 0.050 * Math.sin(5 * a - 1.7)
+           + 0.030 * Math.sin(7 * a + 2.4);
+}
+
+function islandSurface(t, ang, out) {
+  const w = islandWob(ang);
+  const r = t * ISLAND_R * w;
+  const v = out || new THREE.Vector3();
+  const noise = terrainNoise(t, ang) * (1 - t * t);
+  return v.set(Math.cos(ang) * r, islandY(t) + noise, Math.sin(ang) * r);
+}
+
+function islandHeightAt(x, z) {
+  const ang = Math.atan2(z, x);
+  const r = Math.hypot(x, z);
+  const t = clamp(r / (ISLAND_R * islandWob(ang)), 0, 1);
+  return islandY(t) + terrainNoise(t, ang) * (1 - t * t);
+}
+
+function buildIsland() {
+  const SIZE = ISLAND_R * 2.2;
+  const SEGMENTS = 256;
+  const geo = new THREE.PlaneGeometry(SIZE, SIZE, SEGMENTS, SEGMENTS);
+  geo.rotateX(-Math.PI / 2);
+
+  const pos = geo.attributes.position;
+  const colors = [];
+  const cWet   = new THREE.Color(0xa98a5d);
+  const cSand  = new THREE.Color(0xf1e0b3);
+  const cDry   = new THREE.Color(0xe8d29a);
+  const cGrassA = new THREE.Color(0x6bbf4f);
+  const cGrassB = new THREE.Color(0x4f9b3a);
+
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    const r = Math.sqrt(x * x + z * z);
+    const ang = Math.atan2(z, x);
+    const w = islandWob(ang);
+    const maxR = ISLAND_R * w;
+
+    let y = -5.0;
+    let t = 0;
+
+    if (r < maxR) {
+      t = r / maxR;
+      y = islandY(t) + terrainNoise(t, ang) * (1 - t * t);
+    } else {
+      const edgeT = clamp((r - maxR) / 10.0, 0, 1);
+      y = islandY(1.0) - edgeT * 5.0;
+    }
+    pos.setY(i, y);
+
+    let c;
+    if (y < 0.5) {
+      c = cWet.clone().lerp(cSand, smoothstep(y, -2.0, 0.5));
+    } else if (y < 2.5) {
+      c = cSand.clone().lerp(cDry, smoothstep(y, 0.5, 2.5));
+    } else {
+      const g = smoothstep(y, 2.5, 6.0);
+      c = cDry.clone().lerp(cGrassA.clone().lerp(cGrassB,
+          0.5 + 0.5 * Math.sin(ang * 4.7 + t * 9.0)), g);
+    }
+    const v = 1 + 0.045 * Math.sin(ang * 7.3) * Math.sin(t * 13.0)
+                + 0.025 * Math.sin(ang * 13.1 + 2.0);
+    c.multiplyScalar(v);
+    colors.push(c.r, c.g, c.b);
+  }
+
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+const island = new THREE.Mesh(buildIsland(), new THREE.MeshStandardMaterial({
+  vertexColors: true, roughness: 1.0, metalness: 0.0
+}));
+island.receiveShadow = true;
+island.castShadow = true;
+scene.add(island);
+
+/* ============================================================
+   PALM FROND ALPHA TEXTURE
+   ============================================================ */
+function makeFrondAlphaTexture() {
+  const W = 512, H = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const midY = H / 2;
+
+  for (let x = 0; x < W; x++) {
+    const t = x / W;
+    const fade = 1 - smoothstep(t, 0.94, 1.0);
+    const halfThick = (5.0 - 2.0 * t) * fade;
+    if (halfThick <= 0.05) continue;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x, midY - halfThick, 1, halfThick * 2);
+  }
+
+  const N = 32;
+  const ANGLE = 42 * Math.PI / 180;
+  const LEN = 80;
+  const THICK = 9;
+
+  ctx.strokeStyle = 'white';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = THICK;
+
+  for (let i = 0; i < N; i++) {
+    const t = i / (N - 1);
+    const x = t * (W - 10) + 5;
+
+    const rampUp = smoothstep(t, 0.0, 0.12);
+    const taper  = 1 - smoothstep(t, 0.88, 1.0);
+    const len = LEN * rampUp * taper;
+    if (len < 4) continue;
+
+    const dx = Math.cos(ANGLE) * len;
+    const dy = Math.sin(ANGLE) * len;
+
+    for (const dir of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(x, midY);
+      ctx.lineTo(x + dx, midY + dir * dy);
+      ctx.stroke();
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.anisotropy = 4;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = true;
+  tex.needsUpdate = true;
+  return tex;
+}
+/* ---------------- Palm trees ---------------- */
+const frondTex = makeFrondAlphaTexture();
+
+const frondMat = new THREE.MeshStandardMaterial({
+  vertexColors: true,
+  map: frondTex,
+  transparent: false,
+  alphaTest: 0.35,
+  alphaToCoverage: true,
+  side: THREE.DoubleSide,
+  roughness: 0.85,
+  metalness: 0,
+  depthWrite: true
+});
+
+const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8b6f4e, roughness: 0.95, flatShading: true });
+const coconutMat = new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.9 });
+
+function makeFrondGeometry(len) {
+  const segs = 24;
+  const pos = [], col = [], idx = [], uvs = [];
+  const cBase = new THREE.Color(0x2f7d2a);
+  const cTip  = new THREE.Color(0x9edb52);
+
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs;
+    const x = t * len;
+
+    const y = Math.sin(t * Math.PI) * 0.35 * len
+            - Math.pow(t, 1.8) * 1.3 * len;
+
+    const w = (0.10 * Math.sin(Math.pow(t, 0.55) * Math.PI) + 0.005) * len;
+    const ridge = 0.05 * len * (1 - t * 0.8);
+
+    pos.push(x, y, -w);
+    pos.push(x, y + ridge, 0);
+    pos.push(x, y,  w);
+
+    uvs.push(t, 0.0);
+    uvs.push(t, 0.5);
+    uvs.push(t, 1.0);
+
+    const c = cBase.clone().lerp(cTip, Math.pow(t, 0.85));
+    for (let k = 0; k < 3; k++) col.push(c.r, c.g, c.b);
+  }
+
+  for (let i = 0; i < segs; i++) {
+    const a = i * 3, b = (i + 1) * 3;
+    idx.push(a, a + 1, b, b, a + 1, b + 1);
+    idx.push(a + 1, a + 2, b + 1, b + 1, a + 2, b + 2);
+  }
+
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color',    new THREE.Float32BufferAttribute(col, 3));
+  g.setAttribute('uv',       new THREE.Float32BufferAttribute(uvs, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+function makePalm() {
+  const group = new THREE.Group();
+  const H = rand(3.5, 5.0);
+  const leanX = rand(0.35, 0.95) * (Math.random() < 0.5 ? -1 : 1);
+  const leanZ = rand(-0.55, 0.55);
+
+  const geo = new THREE.CylinderGeometry(0.14, 0.30, H, 8, 18, false);
+  geo.translate(0, H / 2, 0);
+
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const y = p.getY(i);
+    const t = clamp(y / H, 0, 1);
+    const b = t * t;
+    p.setX(i, p.getX(i) + leanX * b);
+    p.setZ(i, p.getZ(i) + leanZ * b);
+  }
+  geo.computeVertexNormals();
+
+  const trunk = new THREE.Mesh(geo, trunkMat);
+  trunk.castShadow = trunk.receiveShadow = true;
+  group.add(trunk);
+
+  const crown = new THREE.Group();
+  crown.position.set(leanX, H, leanZ);
+
+  const n = randInt(14, 18);
+  const fronds = [];
+  for (let i = 0; i < n; i++) {
+    let pitch;
+    if (i < 2)             pitch = rand(0.55, 0.95);
+    else if (i > n - 4)    pitch = rand(-0.85, -0.45);
+    else                   pitch = rand(-0.30, 0.35);
+
+    const len = rand(2.0, 3.2);
+    const f = new THREE.Mesh(makeFrondGeometry(len), frondMat);
+    f.rotation.y = (i / n) * Math.PI * 2 + rand(-0.30, 0.30);
+    f.rotation.z = pitch;
+    f.rotation.x = rand(-0.15, 0.15);
+    f.castShadow = true;
+    crown.add(f);
+    fronds.push({
+      mesh: f, baseZ: f.rotation.z, baseY: f.rotation.y,
+      phase: Math.random() * Math.PI * 2, speed: rand(0.8, 1.4)
+    });
+  }
+
+  for (let i = 0; i < 4; i++) {
+    const c = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 5), coconutMat);
+    const a = Math.random() * Math.PI * 2;
+    c.position.set(Math.cos(a) * 0.17, -0.08, Math.sin(a) * 0.17);
+    crown.add(c);
+  }
+
+  group.add(crown);
+  group.userData = { crown, fronds, phase: Math.random() * Math.PI * 2 };
+  return group;
+}
+
+/* ---------------- Huts ---------------- */
+const wallMat  = new THREE.MeshStandardMaterial({ color: 0xc9a778, roughness: 1.0, flatShading: true });
+const roofMat  = new THREE.MeshStandardMaterial({ color: 0xa8763f, roughness: 1.0, flatShading: true });
+const doorMat  = new THREE.MeshStandardMaterial({ color: 0x3a2412, roughness: 1.0 });
+
+function makeHut() {
+  const g = new THREE.Group();
+  const wall = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.28, 1.45, 10, 1), wallMat);
+  wall.position.y = 0.725; wall.castShadow = wall.receiveShadow = true; g.add(wall);
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(2.00, 1.65, 10, 1), roofMat);
+  roof.position.y = 1.45 + 0.825; roof.castShadow = true; g.add(roof);
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.82, 1.08, 0.09), doorMat);
+  door.position.set(0, 0.54, 1.22); g.add(door);
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.98, 1.24, 0.06), roofMat);
+  frame.position.set(0, 0.56, 1.17); g.add(frame);
+  return g;
+}
+
+/* ---------------- People ---------------- */
+const skinCache = {};
+const skinMat = (hex) => skinCache[hex] || (skinCache[hex] =
+  new THREE.MeshStandardMaterial({ color: hex, roughness: 0.82 }));
+
+const SKIN_TONES = [0xc98b63, 0x8d5a3b, 0xe0b08a, 0x6b4327, 0xf1c27d, 0x5a3a22, 0xd2b48c, 0xa67c52, 0x4a2c17];
+const SHIRT_COLORS = [0xe8503a, 0xf2c14e, 0x3fb3a0, 0xf5f2ea, 0x9b59b6, 0x3498db, 0xe67e22, 0x1abc9c, 0x2ecc71, 0xe74c3c, 0xecf0f1, 0x95a5a6];
+const PANTS_COLORS = [0x2f4a7a, 0x3d6b4a, 0x8a5a3a, 0xc9663f, 0x2c3e50, 0x7f8c8d, 0x34495e, 0x1a252f, 0x4a3b32];
+const HAIR_COLORS = [0x2b1b12, 0x1a1a1a, 0x5c3a21, 0x8b6f4e, 0xc9a778, 0xd4af37, 0x8b0000];
+
+function makePerson() {
+  const g = new THREE.Group();
+
+  const skinHex = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)];
+  const shirtHex = SHIRT_COLORS[Math.floor(Math.random() * SHIRT_COLORS.length)];
+  const pantsHex = PANTS_COLORS[Math.floor(Math.random() * PANTS_COLORS.length)];
+  const hairHex = HAIR_COLORS[Math.floor(Math.random() * HAIR_COLORS.length)];
+
+  const mShirt = new THREE.MeshStandardMaterial({ color: shirtHex, roughness: 0.9 });
+  const mPants = new THREE.MeshStandardMaterial({ color: pantsHex, roughness: 0.92 });
+  const mSkin  = skinMat(skinHex);
+  const mHair  = new THREE.MeshStandardMaterial({ color: hairHex, roughness: 0.95 });
+
+  const heightScale = rand(0.85, 1.15);
+  const widthScale = rand(0.9, 1.1);
+
+  const hipY = 0.85 * heightScale, shoulderY = 1.38 * heightScale;
+  const legLen = 0.6 * heightScale;
+  const armLen = 0.55 * heightScale;
+  const legRadius = 0.072 * widthScale;
+  const armRadius = 0.052 * widthScale;
+  const torsoRadius = 0.165 * widthScale;
+
+  const makeLeg = (side) => {
+    const hipPivot = new THREE.Group();
+    hipPivot.position.set(side * 0.115 * widthScale, hipY, 0);
+
+    const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(legRadius * 1.1, legLen * 0.4, 3, 6), mPants);
+    thigh.position.y = -legLen * 0.2;
+    thigh.castShadow = true;
+    hipPivot.add(thigh);
+
+    const kneePivot = new THREE.Group();
+    kneePivot.position.set(0, -legLen * 0.45, 0);
+
+    const calf = new THREE.Mesh(new THREE.CapsuleGeometry(legRadius * 0.9, legLen * 0.4, 3, 6), mPants);
+    calf.position.y = -legLen * 0.2;
+    calf.castShadow = true;
+    kneePivot.add(calf);
+
+    hipPivot.add(kneePivot);
+    g.add(hipPivot);
+    return { hipPivot, kneePivot };
+  };
+  const legL = makeLeg(1), legR = makeLeg(-1);
+
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(torsoRadius, 0.26 * heightScale, 4, 8), mShirt);
+  torso.position.y = (hipY + shoulderY) / 2 + 0.02;
+  torso.castShadow = true; g.add(torso);
+
+  const makeArm = (side) => {
+    const shoulderPivot = new THREE.Group();
+    shoulderPivot.position.set(side * 0.205 * widthScale, shoulderY - 0.04, 0);
+
+    const upperArm = new THREE.Mesh(new THREE.CapsuleGeometry(armRadius, armLen * 0.35, 3, 6), mSkin);
+    upperArm.position.y = -armLen * 0.175;
+    upperArm.castShadow = true;
+    shoulderPivot.add(upperArm);
+
+    const sleeve = new THREE.Mesh(new THREE.CapsuleGeometry(armRadius * 1.3, 0.14 * heightScale, 3, 6), mShirt);
+    sleeve.position.y = -armLen * 0.1;
+    shoulderPivot.add(sleeve);
+
+    const elbowPivot = new THREE.Group();
+    elbowPivot.position.set(0, -armLen * 0.35, 0);
+
+    const forearm = new THREE.Mesh(new THREE.CapsuleGeometry(armRadius * 0.9, armLen * 0.35, 3, 6), mSkin);
+    forearm.position.y = -armLen * 0.175;
+    forearm.castShadow = true;
+    elbowPivot.add(forearm);
+
+    shoulderPivot.add(elbowPivot);
+    g.add(shoulderPivot);
+    return { shoulderPivot, elbowPivot };
+  };
+  const armL = makeArm(1), armR = makeArm(-1);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.115 * heightScale, 12, 10), mSkin);
+  head.position.y = 1.55 * heightScale; head.castShadow = true; g.add(head);
+
+  const hairStyle = Math.random();
+  let hairMesh;
+  if (hairStyle < 0.3) {
+    hairMesh = new THREE.Mesh(new THREE.SphereGeometry(0.122 * heightScale, 12, 10), mHair);
+    hairMesh.scale.set(1.0, 0.85, 1.0);
+  } else if (hairStyle < 0.7) {
+    hairMesh = new THREE.Mesh(new THREE.SphereGeometry(0.13 * heightScale, 12, 10), mHair);
+    hairMesh.scale.set(1.0, 1.3, 1.0);
+  } else {
+    hairMesh = new THREE.Mesh(new THREE.SphereGeometry(0.125 * heightScale, 12, 10), mHair);
+    hairMesh.scale.set(1.0, 0.5, 1.0);
+    hairMesh.position.z = -0.02;
+  }
+  hairMesh.position.y = 1.575 * heightScale;
+  hairMesh.castShadow = true;
+  g.add(hairMesh);
+
+  g.userData = { hipL: legL.hipPivot, hipR: legR.hipPivot, kneeL: legL.kneePivot, kneeR: legR.kneePivot,
+                 shoulderL: armL.shoulderPivot, shoulderR: armR.shoulderPivot, elbowL: armL.elbowPivot, elbowR: armR.elbowPivot };
+  return g;
+}
+
+/* ---------------- Chickens ---------------- */
+const combMat = new THREE.MeshStandardMaterial({ color: 0xd63b2a, roughness: 0.8 });
+const beakMat = new THREE.MeshStandardMaterial({ color: 0xe8a13a, roughness: 0.8 });
+
+function makeChicken(bodyHex) {
+  const g = new THREE.Group();
+  const mBody = new THREE.MeshStandardMaterial({ color: bodyHex, roughness: 0.92, flatShading: true });
+
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.20, 10, 8), mBody);
+  body.scale.set(1.0, 0.9, 1.3);
+  body.position.y = 0.28; body.castShadow = true; g.add(body);
+
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.10, 0.22, 5), mBody);
+  tail.position.set(0, 0.38, -0.23);
+  tail.rotation.x = -2.2; tail.scale.set(1, 1, 0.55); g.add(tail);
+
+  const headG = new THREE.Group();
+  headG.position.set(0, 0.42, 0.12);
+
+  const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.10, 3, 6), mBody);
+  neck.position.set(0, 0.05, 0.02); headG.add(neck);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.095, 9, 8), mBody);
+  head.position.set(0, 0.15, 0.05); head.castShadow = true; headG.add(head);
+
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.038, 0.09, 5), beakMat);
+  beak.position.set(0, 0.14, 0.155); beak.rotation.x = Math.PI / 2; headG.add(beak);
+
+  const comb = new THREE.Mesh(new THREE.SphereGeometry(0.036, 6, 5), combMat);
+  comb.position.set(0, 0.235, 0.05); comb.scale.set(1, 1.5, 0.7); headG.add(comb);
+
+  const wattle = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 5), combMat);
+  wattle.position.set(0, 0.08, 0.14); headG.add(wattle);
+
+  g.add(headG);
+
+  const legGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.16, 5);
+  for (const s of [-1, 1]) {
+    const leg = new THREE.Mesh(legGeo, beakMat);
+    leg.position.set(s * 0.06, 0.085, 0.02); g.add(leg);
+  }
+  g.userData = { head: headG, body };
+  return g;
+}
+
+/* ---------------- Rocks ---------------- */
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x8b8b86, roughness: 1.0, flatShading: true });
+
+/* ---------------- Populate ---------------- */
+const palms = [], walkers = [], chickens = [], occupied = [];
+const isFree = (x, z, r) => {
+  for (const o of occupied) {
+    const dx = x - o.x, dz = z - o.z;
+    if (dx * dx + dz * dz < (r + o.r) * (r + o.r)) return false;
+  }
+  return true;
+};
+
+// Huts
+const hutSpots = [];
+for (let i = 0; i < 25; i++) {
+  const t = rand(0.10, 0.30);
+  const ang = Math.random() * Math.PI * 2;
+  const p = islandSurface(t, ang);
+  if (isFree(p.x, p.z, 2.5)) {
+    hutSpots.push({ pos: p.clone(), ang: ang });
+    occupied.push({ x: p.x, z: p.z, r: 2.5 });
+  }
+}
+for (const s of hutSpots) {
+  const hut = makeHut();
+  hut.position.set(s.pos.x, s.pos.y - 0.15, s.pos.z);
+  hut.rotation.y = Math.atan2(-s.pos.x, -s.pos.z) + rand(-0.35, 0.35);
+  scene.add(hut);
+}
+
+// Palms
+const palmSpots = [];
+for (let i = 0; i < 2000 && palmSpots.length < 150; i++) {
+  const ang = Math.random() * Math.PI * 2;
+  const t = rand(0.30, 0.75);
+  const p = islandSurface(t, ang);
+  if (!isFree(p.x, p.z, 1.2)) continue;
+  palmSpots.push({ pos: p.clone() });
+  occupied.push({ x: p.x, z: p.z, r: 1.2 });
+}
+for (const s of palmSpots) {
+  const palm = makePalm();
+  palm.position.copy(s.pos);
+  palm.position.y -= 0.10;
+  palm.rotation.y = Math.random() * Math.PI * 2;
+  palm.scale.setScalar(rand(0.95, 1.15));
+  scene.add(palm);
+  palms.push(palm);
+}
+
+for (let i = 0; i < 25; i++) {
+  const ang = Math.random() * Math.PI * 2;
+  const p = islandSurface(0.75, ang);
+  const palm = makePalm();
+  palm.position.set(p.x, p.y - 0.15, p.z);
+  palm.rotation.y = Math.random() * Math.PI * 2;
+  palm.scale.setScalar(rand(0.7, 0.9));
+  scene.add(palm);
+  palms.push(palm);
+}
+
+// Rocks
+for (let i = 0; i < 60; i++) {
+  const ang = Math.random() * Math.PI * 2;
+  const t = rand(0.70, 0.95);
+  const p = islandSurface(t, ang);
+  const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(rand(0.20, 0.46), 0), rockMat);
+  rock.position.set(p.x, p.y + 0.05, p.z);
+  rock.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
+  rock.scale.set(rand(0.8, 1.4), rand(0.6, 1.0), rand(0.8, 1.4));
+  rock.castShadow = rock.receiveShadow = true;
+  scene.add(rock);
+}
+
+// People
+for (let i = 0; i < 30; i++) {
+  const person = makePerson();
+  scene.add(person);
+  const radius = rand(3.0, 12.0);
+  walkers.push({
+    group: person,
+    hipL: person.userData.hipL, hipR: person.userData.hipR,
+    kneeL: person.userData.kneeL, kneeR: person.userData.kneeR,
+    shoulderL: person.userData.shoulderL, shoulderR: person.userData.shoulderR,
+    elbowL: person.userData.elbowL, elbowR: person.userData.elbowR,
+    cx: rand(-15, 15), cz: rand(-15, 15), rx: radius, rz: radius * rand(0.7, 1.3),
+    speed: rand(0.3, 0.7) * (Math.random() < 0.5 ? -1 : 1),
+    angle: Math.random() * Math.PI * 2, step: Math.random() * 10
+  });
+}
+
+for (let i = 0; i < 30; i++) {
+  const p = islandSurface(rand(0.05, 0.35), Math.random() * Math.PI * 2);
+  const person = makePerson();
+  person.position.set(p.x, p.y, p.z);
+  person.rotation.y = Math.random() * Math.PI * 2;
+  person.userData.baseY = p.y;
+  person.userData.phase = Math.random() * Math.PI * 2;
+  scene.add(person);
+  walkers.push({
+    group: person,
+    hipL: person.userData.hipL, hipR: person.userData.hipR,
+    kneeL: person.userData.kneeL, kneeR: person.userData.kneeR,
+    shoulderL: person.userData.shoulderL, shoulderR: person.userData.shoulderR,
+    elbowL: person.userData.elbowL, elbowR: person.userData.elbowR,
+    idle: true
+  });
+}
+
+// Chickens
+const CHICKEN_COLORS = [0xf7f2e6, 0xe0d3b8, 0xb8763c, 0xf7f2e6, 0x8d5a34, 0xd9c9a5, 0x2c3e50, 0xc0392b, 0xf39c12];
+for (let i = 0; i < 40; i++) {
+  const c = makeChicken(CHICKEN_COLORS[i % CHICKEN_COLORS.length]);
+  scene.add(c);
+  chickens.push({
+    group: c, head: c.userData.head, body: c.userData.body,
+    cx: rand(-20, 20), cz: rand(-20, 20), r: rand(0.5, 2.0), speed: rand(0.3, 0.7) * (Math.random() < 0.5 ? -1 : 1),
+    angle: Math.random() * Math.PI * 2, phase: Math.random() * Math.PI * 2
+  });
+}
+
+/* ---------------- Clouds ---------------- */
+function makeCloudTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0.0, 'rgba(255,255,255,0.98)');
+  grad.addColorStop(0.42, 'rgba(255,255,255,0.55)');
+  grad.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+const cloudTex = makeCloudTexture();
+const cloudMat = new THREE.SpriteMaterial({
+  map: cloudTex, transparent: true, depthWrite: false, opacity: 0.75, fog: false
+});
+const clouds = [];
+for (let i = 0; i < 15; i++) {
+  const cloud = new THREE.Group();
+  const puffs = randInt(4, 7);
+  for (let j = 0; j < puffs; j++) {
+    const s = new THREE.Sprite(cloudMat);
+    s.position.set(rand(-40, 40), rand(-10, 10), rand(-12, 12));
+    const sc = rand(60, 120);
+    s.scale.set(sc, sc * rand(0.45, 0.65), 1);
+    cloud.add(s);
+  }
+  const a = Math.random() * Math.PI * 2;
+  const dist = rand(500, 1000);
+  cloud.position.set(Math.cos(a) * dist, rand(150, 300), Math.sin(a) * dist);
+  cloud.userData.speed = rand(0.8, 2.0);
+  scene.add(cloud); clouds.push(cloud);
+}
+
+/* ============================================================
+   ENVIRONMENT / TIME OF DAY
+   ============================================================ */
+const C_DAY_TOP    = new THREE.Color(0.22, 0.55, 0.92);
+const C_NIGHT_TOP  = new THREE.Color(0.012, 0.020, 0.055);
+const C_DAY_HOR    = new THREE.Color(0.86, 0.94, 0.99);
+const C_NIGHT_HOR  = new THREE.Color(0.035, 0.050, 0.110);
+const C_SUNSET     = new THREE.Color(1.00, 0.42, 0.16);
+const C_SUNSET_TOP = new THREE.Color(0.35, 0.22, 0.45);
+const C_FOG_DAY    = new THREE.Color(0.62, 0.78, 0.92);
+
+const _top = new THREE.Color();
+const _hor = new THREE.Color();
+const _tint = new THREE.Color();
+const _fog = new THREE.Color();
+
+function updateEnvironment(hour) {
+  const ha = (hour - 12) / 12 * Math.PI;
+  sunDir.set(-Math.sin(ha), Math.cos(ha), 0.35).normalize();
+
+  const e = sunDir.y;
+  const day = smoothstep(e, -0.10, 0.20);
+  const sunsetAmt = Math.pow(clamp(1 - Math.abs(e) / 0.32, 0, 1), 1.6);
+
+  _top.copy(C_NIGHT_TOP).lerp(C_DAY_TOP, day).lerp(C_SUNSET_TOP, sunsetAmt * 0.45);
+  _hor.copy(C_NIGHT_HOR).lerp(C_DAY_HOR, day).lerp(C_SUNSET, sunsetAmt * 0.75);
+  _tint.setRGB(1.0, 0.93, 0.82).lerp(C_SUNSET, sunsetAmt * 0.9);
+
+  skyUniforms.uSun.value.copy(sunDir);
+  skyUniforms.uTop.value.copy(_top);
+  skyUniforms.uHor.value.copy(_hor);
+  skyUniforms.uSunTint.value.copy(_tint);
+  skyUniforms.uSunGlow.value = 0.15 + 0.85 * day;
+  skyUniforms.uStars.value = clamp(1 - day * 2.2, 0, 1);
+
+  sun.position.copy(sunDir).multiplyScalar(400);
+  sun.intensity = 2.4 * day;
+  sun.color.copy(_tint);
+  sun.castShadow = day > 0.02;
+
+  hemi.intensity = 0.25 + 1.0 * day;
+  hemi.color.copy(_hor);
+  hemi.groundColor.setRGB(0.30 + 0.24 * day, 0.38 + 0.28 * day, 0.22 + 0.24 * day);
+
+  ambient.intensity = 0.14 + 0.24 * day;
+
+  _fog.copy(_hor).lerp(C_FOG_DAY, day * 0.35);
+  scene.fog.color.copy(_fog);
+  oceanUniforms.uFog.value.copy(_fog);
+  oceanUniforms.uSun.value.copy(sunDir);
+  oceanUniforms.uDay.value = day;
+
+  const cc = 0.16 + 0.84 * day;
+  cloudMat.color.setRGB(cc, cc, Math.min(1, cc * 1.05));
+}
+
+/* ============================================================
+   CINEMATIC SHOT LIST
+   Each shot is a function that writes to pos/look given t ∈ [0,1].
+   Shots cut hard between each other for a film-like feel.
+   ============================================================ */
+const CINE_SHOTS = [
+  // 1. Establishing: slow dolly-in from over the sea
+  {
+    dur: 11,
+    label: 'establishing',
+    update(t, pos, look) {
+      const a = -0.9;
+      const r = 200 - t * 95;
+      const y = 42 + Math.sin(t * 0.4) * 6 + t * 6;
+      pos.set(Math.cos(a) * r, y, Math.sin(a) * r);
+      look.set(0, 5 + t * 4, 0);
+    }
+  },
+  // 2. Low shoreline sweep — waves in the foreground
+  {
+    dur: 10,
+    label: 'shoreline',
+    update(t, pos, look) {
+      const a = 0.35 + t * 0.75;
+      const r = 72;
+      const x = Math.cos(a) * r;
+      const z = Math.sin(a) * r;
+      pos.set(x, 2.2 + Math.sin(t * 3.0) * 0.15, z);
+      const la = a + 1.15;
+      look.set(Math.cos(la) * 35, 2.6, Math.sin(la) * 35);
+    }
+  },
+  // 3. Village flyover — huts and people from above
+  {
+    dur: 10,
+    label: 'village',
+    update(t, pos, look) {
+      const a = -0.3 + t * 1.5;
+      const r = 30 + Math.sin(t * 2.1) * 4;
+      pos.set(Math.cos(a) * r, 13 + Math.sin(t * 1.4) * 2.5, Math.sin(a) * r);
+      const la = a + 0.25;
+      look.set(Math.cos(la) * 16, 4.5, Math.sin(la) * 16);
+    }
+  },
+  // 4. Palm canopy close-up — up through the fronds
+  {
+    dur: 9,
+    label: 'palms',
+    update(t, pos, look) {
+      const base = islandSurface(0.45, 0.7);
+      const orbit = t * 0.9;
+      pos.set(
+        base.x + Math.cos(orbit) * 9,
+        base.y + 3.5 + Math.sin(t * 2.0) * 0.5,
+        base.z + Math.sin(orbit) * 9
+      );
+      look.set(
+        base.x + Math.cos(orbit + 1.5) * 2,
+        base.y + 1.8,
+        base.z + Math.sin(orbit + 1.5) * 2
+      );
+    }
+  },
+  // 5. Person / chicken vignette — low over the grass
+  {
+    dur: 9,
+    label: 'closeup',
+    update(t, pos, look) {
+      const a = 0.55 + t * 0.35;
+      const r = 24;
+      const gx = Math.cos(a) * r;
+      const gz = Math.sin(a) * r;
+      const gy = islandHeightAt(gx, gz);
+      pos.set(gx, Math.max(gy + 3.2, 3.2), gz);
+      const la = a + 0.9;
+      const lx = Math.cos(la) * 12, lz = Math.sin(la) * 12;
+      look.set(lx, islandHeightAt(lx, lz) + 1.4, lz);
+    }
+  },
+  // 6. Sunset silhouette — wide from the west
+  {
+    dur: 12,
+    label: 'silhouette',
+    update(t, pos, look) {
+      const r = 140 - t * 40;
+      const y = 18 + Math.sin(t * 0.8) * 3;
+      pos.set(-r, y, 8 + t * 12);
+      look.set(0, 7, 0);
+    }
+  },
+  // 7. High pull-away reveal
+  {
+    dur: 12,
+    label: 'reveal',
+    update(t, pos, look) {
+      const a = 0.5;
+      const r = 80 + t * 160;
+      const y = 35 + t * 80;
+      pos.set(Math.cos(a) * r, y, Math.sin(a) * r);
+      look.set(0, 10 - t * 4, 0);
+    }
+  }
+];
+
+/* ============================================================
+   CAMERA CONTROLLER
+   ============================================================ */
+const cam = {
+  mode: 'fly',
+  target: new THREE.Vector3(0, 18, 0),
+  azimuth: 0.8,
+  polar: 75 * DEG,
+  radius: 160,
+  minRadius: 25,
+  maxRadius: 520,
+  minPolar: 8 * DEG,
+  maxPolar: 89 * DEG,
+  autoRotate: true,
+  beach: { yaw: 0, pitch: 0, pos: new THREE.Vector3() },
+  drone: { angle: Math.random() * Math.PI * 2, alt: 16 },
+  cine: { t: 0, shotIndex: 0, justChanged: true }
+};
+
+const desiredPos = new THREE.Vector3(0, 60, 160);
+const desiredLook = new THREE.Vector3(0, 18, 0);
+const smoothPos = new THREE.Vector3();
+const smoothLook = new THREE.Vector3();
+let camReady = false;
+let camRoll = 0;
+
+function orbitDesired() {
+  const r = cam.radius, p = cam.polar, a = cam.azimuth;
+  desiredPos.set(
+    cam.target.x + r * Math.sin(p) * Math.sin(a),
+    cam.target.y + r * Math.cos(p),
+    cam.target.z + r * Math.sin(p) * Math.cos(a)
+  );
+  desiredLook.copy(cam.target);
+}
+
+function updateCamera(dt, time) {
+  camRoll = 0;
+
+  if (cam.mode === 'fly') {
+    if (cam.autoRotate) cam.azimuth += dt * 0.055;
+    orbitDesired();
+
+  } else if (cam.mode === 'cinematic') {
+    cam.cine.t += dt;
+    let shot = CINE_SHOTS[cam.cine.shotIndex];
+    if (cam.cine.t >= shot.dur) {
+      cam.cine.t -= shot.dur;
+      cam.cine.shotIndex = (cam.cine.shotIndex + 1) % CINE_SHOTS.length;
+      cam.cine.justChanged = true;
+      shot = CINE_SHOTS[cam.cine.shotIndex];
+    }
+    const tt = clamp(cam.cine.t / shot.dur, 0, 1);
+    shot.update(tt, desiredPos, desiredLook);
+
+    if (cam.cine.justChanged) {
+      // Hard cut to the new shot
+      smoothPos.copy(desiredPos);
+      smoothLook.copy(desiredLook);
+      cam.cine.justChanged = false;
+      camReady = true;
+      camera.position.copy(smoothPos);
+      camera.lookAt(smoothLook);
+      return;
+    }
+
+  } else if (cam.mode === 'beach') {
+    // A quiet moment on the sand, watching the sea
+    const bob  = Math.sin(time * 0.9) * 0.045 + Math.sin(time * 2.3) * 0.012;
+    const sway = Math.sin(time * 0.5) * 0.006;
+    const sideX = Math.cos(cam.beach.yaw + Math.PI / 2);
+    const sideZ = Math.sin(cam.beach.yaw + Math.PI / 2);
+    desiredPos.set(
+      cam.beach.pos.x + sideX * sway,
+      cam.beach.pos.y + bob,
+      cam.beach.pos.z + sideZ * sway
+    );
+    const cp = Math.cos(cam.beach.pitch);
+    const sp = Math.sin(cam.beach.pitch);
+    desiredLook.set(
+      desiredPos.x + Math.cos(cam.beach.yaw) * cp,
+      desiredPos.y + sp,
+      desiredPos.z + Math.sin(cam.beach.yaw) * cp
+    );
+
+  } else if (cam.mode === 'drone') {
+    cam.drone.angle += dt * 0.16;
+    const a = cam.drone.angle;
+
+    const r = 42 + Math.sin(a * 1.7) * 14;
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r;
+    const groundY = Math.max(islandHeightAt(x, z), 0.5);
+    const y = groundY + cam.drone.alt + Math.sin(a * 2.3) * 3.5;
+    desiredPos.set(x, y, z);
+
+    const la = a + 1.25;
+    const lr = 18 + Math.sin(a * 0.7) * 12;
+    const lx = Math.cos(la) * lr;
+    const lz = Math.sin(la) * lr;
+    const ly = Math.max(islandHeightAt(lx, lz), 1.0) + 4;
+    desiredLook.set(lx, ly, lz);
+
+    camRoll = -Math.cos(a * 2.1) * 0.035;
+  }
+
+  if (!camReady) {
+    smoothPos.copy(desiredPos);
+    smoothLook.copy(desiredLook);
+    camReady = true;
+  }
+  const k = 1 - Math.exp(-Math.max(dt, 0.0001) * 12);
+  smoothPos.lerp(desiredPos, k);
+  smoothLook.lerp(desiredLook, k);
+
+  camera.position.copy(smoothPos);
+  camera.lookAt(smoothLook);
+  if (camRoll) camera.rotateZ(camRoll);
+}
+
+const cineBars = document.getElementById('cine-bars');
+
+function setMode(mode) {
+  cam.mode = mode;
+  camRoll = 0;
+
+  cineBars.classList.toggle('active', mode === 'cinematic');
+
+  if (mode === 'beach') {
+    // Stand on the sand, look outward across the sea
+    const ang = Math.random() * Math.PI * 2;
+    const p = islandSurface(0.9, ang);
+    cam.beach.pos.set(p.x, Math.max(p.y, 0.5) + 1.35, p.z);
+    // Look outward from the island, slightly angled to graze the coastline
+    cam.beach.yaw = ang + rand(-0.35, 0.35);
+    cam.beach.pitch = -0.02;
+
+  } else if (mode === 'drone') {
+    cam.drone.angle = Math.random() * Math.PI * 2;
+    cam.drone.alt = 16;
+
+  } else if (mode === 'cinematic') {
+    cam.cine.t = 0;
+    cam.cine.shotIndex = 0;
+    cam.cine.justChanged = true;
+
+  } else {
+    cam.target.set(0, 18, 0);
+  }
+}
+
+/* ---------------- Pointer input ---------------- */
+const pointers = new Map();
+let pinchDist = 0;
+
+container.addEventListener('pointerdown', (e) => {
+  if (e.target.closest && e.target.closest('.bottom-left-panel')) return;
+  try { container.setPointerCapture(e.pointerId); } catch (_) {}
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
+  }
+});
+
+function handleDrag(dx, dy) {
+  if (cam.mode === 'fly') {
+    cam.azimuth -= dx * 0.008;
+    cam.polar = clamp(cam.polar - dy * 0.006, cam.minPolar, cam.maxPolar);
+    if (cam.autoRotate) setAutoRotate(false);
+  } else if (cam.mode === 'beach') {
+    cam.beach.yaw -= dx * 0.0045;
+    cam.beach.pitch = clamp(cam.beach.pitch - dy * 0.004, -0.55, 0.85);
+  } else if (cam.mode === 'drone') {
+    cam.drone.alt = clamp(cam.drone.alt + dy * 0.16, 5, 55);
+    cam.drone.angle -= dx * 0.006;
+  }
+  // cinematic mode intentionally ignores dragging
+}
+
+window.addEventListener('pointermove', (e) => {
+  const prev = pointers.get(e.pointerId);
+  if (!prev) return;
+
+  const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+  prev.x = e.clientX; prev.y = e.clientY;
+
+  if (pointers.size === 1) {
+    if (dx !== 0 || dy !== 0) handleDrag(dx, dy);
+  } else if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinchDist > 0 && cam.mode === 'fly') {
+      cam.radius = clamp(cam.radius * (pinchDist / d), cam.minRadius, cam.maxRadius);
+      if (cam.autoRotate) setAutoRotate(false);
+    }
+    pinchDist = d;
+  }
+});
+
+const endPointer = (e) => {
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinchDist = 0;
+};
+window.addEventListener('pointerup', endPointer);
+window.addEventListener('pointercancel', endPointer);
+
+container.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (cam.mode !== 'fly') return;
+  cam.radius = clamp(cam.radius * (1 + Math.sign(e.deltaY) * 0.09), cam.minRadius, cam.maxRadius);
+  if (cam.autoRotate) setAutoRotate(false);
+}, { passive: false });
+
+/* ============================================================
+   UI WIRING
+   ============================================================ */
+const uiLayer = document.getElementById('ui-layer');
+const btnOrbit = document.getElementById('btn-orbit');
+const btnPause = document.getElementById('btn-pause');
+const btnHide = document.getElementById('btn-hide');
+const uiToggle = document.getElementById('ui-toggle');
+const windValEl = document.getElementById('wind-val');
+const timeValEl = document.getElementById('time-val');
+
+let windStrength = 1.0;   // middle = mildly windy (1.0), left = 0, right = 2.0
+let paused = false;
+
+/* --- Generic slider factory (returns set/get, fires onChange) --- */
+function createSlider(rootId, initial, onChange) {
+  const root = document.getElementById(rootId);
+  const track = root.querySelector('.slider-track');
+  const fill = root.querySelector('.slider-fill');
+  const knob = root.querySelector('.slider-knob');
+  let value = clamp(initial, 0, 1);
+  let dragging = false;
+
+  function render() {
+    fill.style.width = (value * 100) + '%';
+    knob.style.left = (value * 100) + '%';
+  }
+  function set(v, fire) {
+    value = clamp(v, 0, 1);
+    render();
+    if (fire !== false) onChange(value);
+  }
+  function fromEvent(e) {
+    const r = track.getBoundingClientRect();
+    set((e.clientX - r.left) / Math.max(1, r.width));
+  }
+
+  root.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragging = true;
+    try { root.setPointerCapture(e.pointerId); } catch (_) {}
+    fromEvent(e);
+  });
+  root.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+    fromEvent(e);
+  });
+  const release = (e) => {
+    dragging = false;
+    try { root.releasePointerCapture(e.pointerId); } catch (_) {}
+  };
+  root.addEventListener('pointerup', release);
+  root.addEventListener('pointercancel', release);
+  root.addEventListener('lostpointercapture', () => { dragging = false; });
+
+  render();
+  onChange(value);
+  return { set, get: () => value };
+}
+
+/* --- Wind slider: 0 → no wind, 0.5 → 1.0 (mild), 1 → 2.0 (strong) --- */
+const windSlider = createSlider('wind-slider', 0.5, (v) => {
+  windStrength = v * 2.0;
+  windValEl.textContent = windStrength.toFixed(2);
+});
+windValEl.textContent = windStrength.toFixed(2);
+
+/* --- Time slider: always progresses; slider only changes speed ---
+   left  -> 0.25x (slow)
+   mid   -> 1.00x (normal)
+   right -> 4.00x (fast)
+*/
+function formatHour(h) {
+  h = ((h % 24) + 24) % 24;
+  const hh = Math.floor(h);
+  const mm = Math.floor((h - hh) * 60);
+  return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+}
+let currentHour = 16 + 22 / 60;
+let timeSpeed = 1.0;
+const HOURS_PER_SECOND_AT_1X = 0.1;
+
+const timeSlider = createSlider('time-slider', 0.5, (v) => {
+  timeSpeed = Math.pow(16, v * 2 - 1);
+});
+timeValEl.textContent = formatHour(currentHour);
+updateEnvironment(currentHour);
+
+/* --- Mode buttons --- */
+const modeButtons = [...document.querySelectorAll('#mode-row .btn')];
+modeButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    modeButtons.forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    setMode(btn.dataset.mode);
+  });
+});
+
+/* --- Auto-orbit toggle --- */
+function setAutoRotate(v) {
+  cam.autoRotate = v;
+  btnOrbit.classList.toggle('active', v);
+}
+btnOrbit.addEventListener('click', () => setAutoRotate(!cam.autoRotate));
+
+/* --- Pause toggle --- */
+btnPause.addEventListener('click', () => {
+  paused = !paused;
+  btnPause.classList.toggle('active', paused);
+  btnPause.textContent = paused ? 'Resume' : 'Pause';
+});
+
+/* --- Hide / show UI --- */
+btnHide.addEventListener('click', () => uiLayer.classList.add('hidden-ui'));
+uiToggle.addEventListener('click', () => uiLayer.classList.remove('hidden-ui'));
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'h' || e.key === 'H') uiLayer.classList.toggle('hidden-ui');
+  if (e.key === ' ') { e.preventDefault(); btnPause.click(); }
+});
+
+/* ---------------- Resize ---------------- */
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  const aspect = w / h;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(w, h);
+
+  const targetHFov = 58 * DEG;
+  let vFov = 2 * Math.atan(Math.tan(targetHFov / 2) / aspect);
+  vFov = clamp(vFov, 34 * DEG, 78 * DEG);
+  camera.aspect = aspect;
+  camera.fov = vFov / DEG;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+resize();
+
+/* ---------------- HUD Update ---------------- */
+function updateHUD() {
+  document.getElementById('stat-palms').textContent = palms.length;
+  document.getElementById('stat-huts').textContent = hutSpots.length;
+  document.getElementById('stat-people').textContent = walkers.length;
+  document.getElementById('stat-chickens').textContent = chickens.length;
+}
+updateHUD();
+
+/* ---------------- Animate ---------------- */
+const clock = new THREE.Clock();
+let simTime = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const rawDt = Math.min(clock.getDelta(), 0.05);
+  const dt = paused ? 0 : rawDt;
+
+  // Time ALWAYS progresses (unless paused). Slider only changes the speed.
+  if (!paused) {
+    currentHour += dt * timeSpeed * HOURS_PER_SECOND_AT_1X;
+    currentHour = ((currentHour % 24) + 24) % 24;
+    timeValEl.textContent = formatHour(currentHour);
+    updateEnvironment(currentHour);
+  }
+
+  simTime += dt;
+  const time = simTime;
+
+  const wind = windStrength * (0.65 + 0.35 * Math.sin(time * 0.23) + 0.18 * Math.sin(time * 0.71));
+
+  oceanUniforms.uTime.value = time;
+  oceanUniforms.uWind.value = windStrength;
+  sky.position.copy(camera.position);
+
+  for (const p of palms) {
+    const { crown, fronds, phase } = p.userData;
+    crown.rotation.z = Math.sin(time * 1.15 + phase) * wind * 0.072;
+    crown.rotation.x = Math.sin(time * 1.9 + phase * 1.7) * wind * 0.064;
+    for (const f of fronds) {
+      f.mesh.rotation.z = f.baseZ
+        + Math.sin(time * f.speed * 1.6 + f.phase) * 0.10 * wind
+        + Math.sin(time * f.speed * 3.1 + f.phase * 2.0) * 0.040 * wind;
+      f.mesh.rotation.y = f.baseY
+        + Math.sin(time * f.speed * 1.1 + f.phase * 1.4) * 0.072 * wind;
+    }
+  }
+
+  for (const w of walkers) {
+    if (w.idle) {
+      const ph = w.group.userData.phase;
+      w.group.position.y = w.group.userData.baseY + Math.sin(time * 1.6 + ph) * 0.012;
+      w.group.rotation.y += Math.sin(time * 0.4 + ph) * 0.0015;
+      const b = Math.sin(time * 1.5 + ph) * 0.06;
+      w.shoulderL.rotation.x = b;
+      w.shoulderR.rotation.x = -b;
+      w.elbowL.rotation.x = Math.max(0, b) * 0.5;
+      w.elbowR.rotation.x = Math.max(0, -b) * 0.5;
+      w.hipL.rotation.x = 0; w.hipR.rotation.x = 0;
+      w.kneeL.rotation.x = 0; w.kneeR.rotation.x = 0;
+      continue;
+    }
+
+    w.angle += w.speed * dt;
+    const x = w.cx + Math.cos(w.angle) * w.rx;
+    const z = w.cz + Math.sin(w.angle) * w.rz;
+    const y = islandHeightAt(x, z);
+    w.group.position.set(x, y + Math.abs(Math.sin(w.step)) * 0.025, z);
+
+    const tx = -Math.sin(w.angle) * w.rx * Math.sign(w.speed);
+    const tz =  Math.cos(w.angle) * w.rz * Math.sign(w.speed);
+    w.group.rotation.y = Math.atan2(tx, tz);
+
+    w.step += dt * 8.5;
+    const sw = Math.sin(w.step);
+
+    w.hipL.rotation.x = sw * 0.5;
+    w.hipR.rotation.x = -sw * 0.5;
+    w.kneeL.rotation.x = Math.max(0, Math.sin(w.step)) * 0.6;
+    w.kneeR.rotation.x = Math.max(0, Math.sin(w.step + Math.PI)) * 0.6;
+
+    w.shoulderL.rotation.x = -sw * 0.4;
+    w.shoulderR.rotation.x = sw * 0.4;
+    w.elbowL.rotation.x = Math.max(0, Math.sin(w.step + Math.PI)) * 0.3;
+    w.elbowR.rotation.x = Math.max(0, Math.sin(w.step)) * 0.3;
+  }
+
+  for (const c of chickens) {
+    c.angle += c.speed * dt;
+    const x = c.cx + Math.cos(c.angle) * c.r;
+    const z = c.cz + Math.sin(c.angle) * c.r;
+    const y = islandHeightAt(x, z);
+    const peck = Math.max(0, Math.sin(time * 2.1 + c.phase));
+    const bob  = Math.sin(time * 7.0 + c.phase) * 0.012;
+    c.group.position.set(x, y + bob, z);
+    const tx = -Math.sin(c.angle) * Math.sign(c.speed);
+    const tz =  Math.cos(c.angle) * Math.sign(c.speed);
+    c.group.rotation.y = Math.atan2(tx, tz);
+    c.head.rotation.x = -peck * 1.15;
+    c.body.rotation.x = Math.sin(time * 7.0 + c.phase) * 0.04;
+  }
+
+  for (const cl of clouds) {
+    cl.position.x += cl.userData.speed * dt * 1.6;
+    if (cl.position.x > 1200) cl.position.x = -1200;
+  }
+
+  updateCamera(dt, time);
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
