@@ -118,16 +118,15 @@
   /* Mobile Responsiveness & Overlap Fixes */
   @media (max-width: 768px) {
     /* 1. Prevent top-left subtitle from reaching the top-right stats */
-    .top-left { width: 60%; }
+    .top-left { width: 70%; } /* Increased from 60% to fit the full subtitle */
     .title { font-size: 18px; }
     .subtitle {
       font-size: 8px;
       letter-spacing: 0.5px;
       margin-top: 4px;
-      /* Truncate with ellipsis if it gets too long */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      /* Allow text to wrap naturally instead of truncating */
+      white-space: normal;
+      word-wrap: break-word;
     }
 
     /* 2. Push top-right stats down to clear the title/subtitle area */
@@ -204,8 +203,9 @@
     </div>
   </div>
 
+  <!-- Fixed the hanging sentence fragment here -->
   <div class="subtitle-overlay">
-    appearance. The chickens are also really good.
+    A charming appearance. The chickens are also really good.
   </div>
 </div>
 <div id="ui-toggle" title="Show UI">☰</div>
