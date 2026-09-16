@@ -1,0 +1,1254 @@
+# ============================================================
+# profile.yaml — single source of truth
+# ============================================================
+# This file contains the complete content/data model for the
+# digital profile. The HTML renderer should load this file at
+# runtime using js-yaml.
+#
+# Style rules:
+#   • Plain strings need no quotes
+#   • Quote dates and values that could be interpreted as numbers
+#   • Lists may use "- item" or [a, b]
+#   • null means no end date / currently active
+# ============================================================
+
+meta:
+  schema: profile-v2
+  basedOn: jsonresume.org/schema
+  lastUpdated: "2025-12-01"
+  defaultView: chrono
+
+# ============================================================
+# PERSONAL PROFILE
+# ============================================================
+
+basics:
+  name: Chong Boo Chean
+  label: Software & Test Engineering Leader
+  tagline: Hands-On · AI-Augmented
+
+  email: gzhone@yahoo.co.uk
+  phone: "+60-11 2600 8641"
+
+  location:
+    city: Penang
+    country: Malaysia
+    countryCode: MY
+
+  summary: >
+    Accomplished software engineering leader with over two decades of experience
+    across the semiconductor, automotive, and test-and-measurement industries,
+    holding engineering, program management, and site leadership roles.
+
+  coreCompetencies:
+    - sw-management
+    - test-automation
+    - driver-bring-up
+    - program-mgmt
+    - agile-leadership
+    - people-development
+    - media-imaging
+    - embedded-systems
+    - customer-engagement
+    - ai-prototyping
+
+  profiles:
+    - network: LinkedIn
+      handle: chongboochean
+      url: https://www.linkedin.com/in/chongboochean
+
+    - network: Profile
+      handle: zhonecloud-sketch
+      url: https://zhonecloud-sketch.github.io/prototypes/
+
+# ============================================================
+# COMPETENCY REGISTRY
+#
+# Competencies are referenced by id throughout the document.
+# The renderer should resolve labels from this registry.
+#
+# Optional metadata:
+#   level
+#   featured
+#   aliases
+#   evidence
+#   years
+#
+# "years" is deliberately not supplied where the source data
+# does not establish a defensible duration.
+# ============================================================
+
+competencies:
+
+  - id: sw-management
+    label: Software Engineering Management
+    group: Leadership
+    level: expert
+    featured: true
+    aliases:
+      - Software Management
+      - Engineering Management
+    evidence:
+      - intel-2022
+      - blaupunkt-2014
+      - agilent-2007
+
+  - id: people-development
+    label: People Development
+    group: Leadership
+    level: expert
+    featured: true
+    aliases:
+      - People Management
+      - Talent Development
+    evidence:
+      - intel-2022
+      - continental-2017
+      - blaupunkt-2014
+      - agilent-2007
+
+  - id: site-leadership
+    label: Site Leadership
+    group: Leadership
+    level: advanced
+    featured: true
+    aliases:
+      - Site Lead
+    evidence:
+      - continental-2017
+
+  - id: program-mgmt
+    label: Program & Project Management
+    group: Delivery
+    level: expert
+    featured: true
+    aliases:
+      - Project Management
+      - Program Management
+    evidence:
+      - intel-2022
+      - intel-2009
+      - blaupunkt-2014
+      - blaupunkt-2012
+      - agilent-2007
+      - bosch-2005
+
+  - id: agile-leadership
+    label: Agile Leadership
+    group: Delivery
+    level: advanced
+    featured: true
+    aliases:
+      - AGILE
+      - SCRUM
+      - Kanban
+    evidence:
+      - continental-2017
+      - blaupunkt-2014
+
+  - id: customer-engagement
+    label: Global Customer Engagement
+    group: Delivery
+    level: advanced
+    featured: true
+    aliases:
+      - Customer Engagement
+      - Technical Presentations
+    evidence:
+      - blaupunkt-2014
+      - blaupunkt-2012
+      - blaupunkt-2011
+      - bosch-2005
+
+  - id: test-automation
+    label: Test Automation
+    group: Engineering
+    level: expert
+    featured: true
+    aliases:
+      - Automation
+      - Automated Testing
+    evidence:
+      - intel-2025
+      - continental-2017
+
+  - id: post-silicon-validation
+    label: Post-Silicon Validation
+    group: Engineering
+    level: advanced
+    featured: true
+    aliases:
+      - Post-Silicon
+      - Validation
+    evidence:
+      - intel-2025
+
+  - id: driver-bring-up
+    label: Driver Bring-Up
+    group: Engineering
+    level: advanced
+    featured: true
+    aliases:
+      - Driver Development
+    evidence:
+      - intel-2025
+
+  - id: ai-prototyping
+    label: AI-Prototyping Development
+    group: Engineering
+    level: advanced
+    featured: true
+    aliases:
+      - AI Prototyping
+      - AI-Augmented Development
+    evidence:
+      - intel-2025
+
+  - id: media-imaging
+    label: Media & Imaging Software
+    group: Domain
+    level: advanced
+    featured: true
+    aliases:
+      - Media
+      - Imaging
+    evidence:
+      - intel-2025
+      - intel-2022
+
+  - id: embedded-systems
+    label: Embedded Systems
+    group: Domain
+    level: advanced
+    featured: true
+    aliases:
+      - Embedded Software
+    evidence:
+      - blaupunkt-2011
+      - bosch-2005
+      - scs-pec-1995
+
+  - id: automotive
+    label: Automotive Products
+    group: Domain
+    level: advanced
+    featured: true
+    aliases:
+      - Automotive
+      - Infotainment
+    evidence:
+      - continental-2017
+      - blaupunkt-2014
+      - blaupunkt-2012
+      - blaupunkt-2011
+      - bosch-2005
+
+  - id: teaching
+    label: Lecturing & Academia
+    group: Academia
+    level: advanced
+    featured: true
+    aliases:
+      - Teaching
+      - Academia
+      - Lecturing
+    evidence:
+      - inti-2002
+      - hanchiang-1997
+
+# ============================================================
+# WORK HISTORY
+#
+# Newest first.
+# ============================================================
+
+work:
+
+  - id: intel-2025
+    company: Intel Corporation
+    position: System Software Development Engineer · Automation Lead
+    kind: semiconductor
+    location: Penang, Malaysia
+    start: "2025-12"
+    end: null
+    current: true
+
+    highlights:
+      - Post-silicon test automation
+      - Post-silicon validation
+      - Post-silicon driver bring-up
+      - Built video colour-corruption and video-tearing detection tools
+
+    attributes:
+      Languages:
+        - Python
+        - C#
+        - C
+        - C++
+        - Bash
+        - PowerShell
+      Process:
+        - JIRA
+        - Git
+      AI:
+        - Claude Opus
+
+    tags:
+      - test-automation
+      - post-silicon-validation
+      - driver-bring-up
+      - ai-prototyping
+
+  - id: intel-2022
+    company: Intel Corporation
+    position: Software Engineering Manager
+    kind: semiconductor
+    location: Penang, Malaysia
+    start: "2022-01"
+    end: "2025-12"
+
+    highlights:
+      - People management
+      - Post-silicon software project management
+
+    attributes:
+      Component:
+        - Media
+        - Imaging
+      Process:
+        - Intel SW QRC
+        - JIRA
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+      - media-imaging
+
+  - id: continental-2017
+    company: Continental Automotive
+    position: Manager — Functional Test / Functional Test Site Lead
+    kind: automotive
+    location: Penang, Malaysia
+    start: "2017-09"
+    end: "2022-01"
+
+    highlights:
+      - Site Lead
+      - AGILE Business Owner
+
+    attributes:
+      Products:
+        - Instrument cluster
+      Process:
+        - AGILE
+        - Functional testing
+        - JIRA
+
+    tags:
+      - site-leadership
+      - agile-leadership
+      - test-automation
+      - automotive
+
+  - id: blaupunkt-2014
+    company: Blaupunkt / Premium Sound Solutions
+    position: Software Section Manager
+    kind: automotive
+    location: Penang, Malaysia
+    start: "2014-01"
+    end: "2017-07"
+
+    highlights:
+      - People management
+      - Software project management
+      - SCRUM Master
+      - Technical presentations to global customers
+
+    attributes:
+      Process:
+        - Kanban
+        - SCRUM
+        - JIRA
+        - Vendor management
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+      - agile-leadership
+      - customer-engagement
+
+  - id: blaupunkt-2012
+    company: Blaupunkt / Premium Sound Solutions
+    position: Program Manager
+    kind: automotive
+    location: Penang, Malaysia
+    start: "2012-01"
+    end: "2013-12"
+
+    highlights:
+      - End-to-end program management across R&D, finance, procurement, PCBA assembly, supermarket, product assembly and reliability tests
+      - Pre-sale RFQ technical presentations to customers
+
+    attributes:
+      Products:
+        - Android infotainment system
+        - Bare-metal infotainment system
+      Process:
+        - Vendor management
+
+    tags:
+      - program-mgmt
+      - customer-engagement
+      - automotive
+
+  - id: blaupunkt-2011
+    company: Blaupunkt / Premium Sound Solutions
+    position: Software Developer
+    kind: automotive
+    location: Penang, Malaysia
+    start: "2011-03"
+    end: "2011-12"
+
+    highlights:
+      - Proof-of-concept project development
+      - Technical presentation to external customer
+
+    attributes:
+      OS:
+        - WinCE
+      Languages:
+        - C++
+
+    tags:
+      - embedded-systems
+      - customer-engagement
+
+  - id: intel-2009
+    company: Intel Corporation
+    position: Project Manager — Software
+    kind: semiconductor
+    location: Penang, Malaysia
+    start: "2009-07"
+    end: "2010-07"
+
+    highlights:
+      - Software project management
+
+    tags:
+      - program-mgmt
+
+  - id: agilent-2007
+    company: Agilent Technologies
+    position: Operating Manager — Software
+    kind: vision measurement
+    location: Penang, Malaysia
+    start: "2007-07"
+    end: "2009-03"
+
+    highlights:
+      - People management
+      - Software project management
+      - AOI product knowledge transfer from Ireland
+      - AOI/AXI analytics product knowledge transfer from Singapore
+
+    attributes:
+      Process:
+        - Agilent PLC
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+
+  - id: bosch-2005
+    company: Bosch / Bosch–Blaupunkt
+    position: Project Manager — Software
+    kind: automotive
+    location: Penang, Malaysia
+    start: "2005-11"
+    end: "2007-07"
+
+    highlights:
+      - Global customer requirements and project progress
+      - Infotainment software development
+
+    attributes:
+      Process:
+        - PLC
+        - CMM L3
+      Languages:
+        - C
+
+    tags:
+      - program-mgmt
+      - customer-engagement
+      - embedded-systems
+      - automotive
+
+  - id: inti-2002
+    company: INTI International College Penang
+    position: Academic Coordinator — Lecturer
+    kind: academia
+    location: Penang, Malaysia
+    start: "2002-01"
+    end: "2005-01"
+
+    highlights:
+      - Lectured Computer Engineering, C/C++, Java and Assembly Language
+
+    attributes:
+      Languages:
+        - C
+        - C++
+        - Java
+        - Assembly
+
+    tags:
+      - teaching
+
+  - id: hanchiang-1997
+    company: Han Chiang High School
+    position: Head of Computer Centre
+    kind: academia
+    location: Penang, Malaysia
+    start: "1997-01"
+    end: "2001-12"
+
+    highlights:
+      - Established campus computer infrastructure and pre-university IT programmes
+
+    tags:
+      - teaching
+
+  - id: scs-pec-1995
+    company: SCS Systems / PEC Ltd.
+    position: Application Specialist
+    kind: information technology
+    location: New Zealand
+    start: "1995-01"
+    end: "1997-12"
+
+    highlights:
+      - Maintained Unix money-market systems
+      - Developed RS-232 SIRAS swiping modules on OS/2
+
+    attributes:
+      OS:
+        - Unix
+        - OS/2
+      Languages:
+        - C++
+
+    tags:
+      - embedded-systems
+
+# ============================================================
+# EDUCATION
+# ============================================================
+
+education:
+
+  - institution: University of Technology Malaysia
+    area: Computer Science Engineering (Systems/Industry)
+    studyType: Bachelor
+    start: "1989"
+    end: "1995"
+
+# ============================================================
+# SIGNATURE IMPACT
+# ============================================================
+
+impact:
+
+  - id: quality-delivery
+
+    title: Objective-Driven Quality Delivery
+
+    stats:
+      - value: "140+ → ~5"
+        label: "defects in 3 years · Continental"
+
+      - value: "12+ → ~4"
+        label: "defects in 3 years · Intel"
+
+    points:
+      - Cut customer-found defects from 140+ to ~5 per year at Continental, and from 12+ to ~4 per year at Intel
+
+    evidence:
+      - continental-2017
+      - intel-2022
+      - intel-2025
+
+  - id: ai-prototyping
+
+    title: AI-Augmented Prototyping
+
+    stats:
+      - value: "5 days"
+        label: "camera-driver migration"
+
+      - value: "85"
+        label: "test cases · two quarters"
+
+      - value: "15 min → 9 s"
+        label: "inspection · custom instruments"
+
+    points:
+      - At-the-desk technical leader using AI as an execution partner
+      - Spec-first prototyping as the core workflow
+      - Two custom video-inspection instruments collapsed a 15-minute manual check to 9 seconds
+
+    evidence:
+      - intel-2025
+
+  - id: talent-development
+
+    title: Human-Touch Talent Development
+
+    stats:
+      - value: "0%"
+        label: "unintended attrition · 3 consecutive years"
+
+    points:
+      - Intel — grew a non-performing engineer into a key contributor within a year
+      - Continental — elevated a validation engineer into a global Project Manager
+
+    evidence:
+      - intel-2022
+      - continental-2017
+
+# ============================================================
+# SELECTED PROJECTS
+#
+# These are structured from the existing work and impact data.
+# They give the 3D renderer meaningful objects to visualize
+# without inventing additional projects.
+# ============================================================
+
+projects:
+
+  - id: video-inspection
+    title: Video Inspection Automation
+
+    summary: >
+      Built video colour-corruption and video-tearing detection tools
+      for post-silicon validation.
+
+    role: intel-2025
+
+    competencies:
+      - test-automation
+      - post-silicon-validation
+      - ai-prototyping
+
+    technology:
+      - Python
+      - C#
+      - C++
+      - Bash
+      - PowerShell
+
+    outcomes:
+      - label: Inspection time
+        value: "15 min → 9 s"
+
+      - label: Validation scope
+        value: "85 test cases"
+
+    featured: true
+
+  - id: camera-driver-migration
+    title: Camera Driver Migration
+
+    summary: >
+      AI-assisted technical prototyping and driver migration work.
+
+    role: intel-2025
+
+    competencies:
+      - driver-bring-up
+      - ai-prototyping
+
+    technology:
+      - C++
+      - Python
+
+    outcomes:
+      - label: Migration time
+        value: "5 days"
+
+    featured: true
+
+  - id: post-silicon-automation
+    title: Post-Silicon Test Automation
+
+    summary: >
+      Post-silicon test automation and validation activities supporting
+      software development and driver bring-up.
+
+    role: intel-2025
+
+    competencies:
+      - test-automation
+      - post-silicon-validation
+      - driver-bring-up
+
+    technology:
+      - Python
+      - C#
+      - C
+      - C++
+      - Bash
+      - PowerShell
+
+    featured: true
+
+  - id: functional-test-leadership
+    title: Functional Test Site Leadership
+
+    summary: >
+      Functional test leadership and AGILE business ownership within
+      automotive product development.
+
+    role: continental-2017
+
+    competencies:
+      - site-leadership
+      - agile-leadership
+      - test-automation
+      - automotive
+
+    technology:
+      - AGILE
+      - Functional testing
+      - JIRA
+
+    outcomes:
+      - label: Customer-found defects
+        value: "140+ → ~5"
+
+    featured: true
+
+  - id: infotainment-program
+    title: Infotainment Program Management
+
+    summary: >
+      End-to-end program management spanning R&D, finance, procurement,
+      PCBA assembly, product assembly and reliability testing.
+
+    role: blaupunkt-2012
+
+    competencies:
+      - program-mgmt
+      - customer-engagement
+      - automotive
+
+    technology:
+      - Android
+      - Bare-metal systems
+      - Vendor management
+
+    featured: false
+
+  - id: embedded-infotainment
+    title: Embedded Infotainment Software
+
+    summary: >
+      Proof-of-concept and software development activities involving
+      embedded infotainment systems and external customer presentations.
+
+    role: blaupunkt-2011
+
+    competencies:
+      - embedded-systems
+      - customer-engagement
+      - automotive
+
+    technology:
+      - C++
+      - WinCE
+
+    featured: false
+
+  - id: aoi-analytics
+    title: AOI / AXI Analytics Knowledge Transfer
+
+    summary: >
+      Product knowledge transfer activities involving AOI products and
+      AOI/AXI analytics across international teams.
+
+    role: agilent-2007
+
+    competencies:
+      - sw-management
+      - people-development
+      - program-mgmt
+
+    technology:
+      - Agilent PLC
+      - AOI
+      - AXI
+
+    featured: false
+
+# ============================================================
+# CAREER MILESTONES
+#
+# Timeline nodes used by the 3D scene and career storytelling.
+# These describe transitions already represented in work history.
+# ============================================================
+
+milestones:
+
+  - id: career-start
+    year: "1995"
+    title: Software Engineering Career
+    role: scs-pec-1995
+    type: career
+
+  - id: academia-start
+    year: "1997"
+    title: Head of Computer Centre
+    role: hanchiang-1997
+    type: leadership
+
+  - id: lecturing
+    year: "2002"
+    title: Academic Coordinator — Lecturer
+    role: inti-2002
+    type: academia
+
+  - id: software-program-management
+    year: "2005"
+    title: Project Management & Embedded Software
+    role: bosch-2005
+    type: delivery
+
+  - id: management
+    year: "2007"
+    title: Software Management
+    role: agilent-2007
+    type: leadership
+
+  - id: program-management
+    year: "2009"
+    title: Software Project Management
+    role: intel-2009
+    type: delivery
+
+  - id: automotive-development
+    year: "2011"
+    title: Automotive Software Development
+    role: blaupunkt-2011
+    type: engineering
+
+  - id: program-leadership
+    year: "2012"
+    title: Program Management
+    role: blaupunkt-2012
+    type: delivery
+
+  - id: software-section-management
+    year: "2014"
+    title: Software Section Management
+    role: blaupunkt-2014
+    type: leadership
+
+  - id: site-leadership
+    year: "2017"
+    title: Functional Test Site Leadership
+    role: continental-2017
+    type: leadership
+
+  - id: engineering-management
+    year: "2022"
+    title: Software Engineering Management
+    role: intel-2022
+    type: leadership
+
+  - id: automation-lead
+    year: "2025"
+    title: System Software Development · Automation Lead
+    role: intel-2025
+    type: engineering
+
+# ============================================================
+# LEADERSHIP DIMENSIONS
+#
+# These create another useful visual grouping without changing
+# the underlying employment history.
+# ============================================================
+
+leadership:
+
+  dimensions:
+
+    - id: people
+      label: People Development
+      competencies:
+        - people-development
+        - sw-management
+        - site-leadership
+      evidence:
+        - intel-2022
+        - continental-2017
+        - blaupunkt-2014
+        - agilent-2007
+
+    - id: delivery
+      label: Program & Delivery
+      competencies:
+        - program-mgmt
+        - agile-leadership
+        - customer-engagement
+      evidence:
+        - intel-2022
+        - intel-2009
+        - blaupunkt-2014
+        - blaupunkt-2012
+        - agilent-2007
+        - bosch-2005
+
+    - id: technical
+      label: Technical Execution
+      competencies:
+        - test-automation
+        - post-silicon-validation
+        - driver-bring-up
+        - ai-prototyping
+      evidence:
+        - intel-2025
+        - blaupunkt-2011
+        - bosch-2005
+        - scs-pec-1995
+
+    - id: customer
+      label: Customer Engagement
+      competencies:
+        - customer-engagement
+      evidence:
+        - blaupunkt-2014
+        - blaupunkt-2012
+        - blaupunkt-2011
+        - bosch-2005
+
+    - id: domain
+      label: Domain Experience
+      competencies:
+        - media-imaging
+        - embedded-systems
+        - automotive
+      evidence:
+        - intel-2025
+        - intel-2022
+        - blaupunkt-2011
+        - bosch-2005
+        - continental-2017
+
+    - id: academia
+      label: Academia
+      competencies:
+        - teaching
+      evidence:
+        - inti-2002
+        - hanchiang-1997
+
+# ============================================================
+# DISPLAY
+# ============================================================
+
+display:
+
+  # ----------------------------------------------------------
+  # Portrait
+  # ----------------------------------------------------------
+
+  photo: cbc.jpg
+
+  # ----------------------------------------------------------
+  # Theme
+  # ----------------------------------------------------------
+
+  theme:
+    accent1: "#6366f1"
+    accent2: "#22d3ee"
+    background: "#070b16"
+
+  # ----------------------------------------------------------
+  # 3D Visualization
+  #
+  # The renderer must treat this as progressive enhancement.
+  # If WebGL is unavailable, the rest of the profile still works.
+  # ----------------------------------------------------------
+
+  visual3d:
+
+    enabled: true
+
+    intensity: 0.85
+
+    particleCount: 80
+
+    nodeScale: 1
+
+    connectionOpacity: 0.28
+
+    cameraParallax: 0.12
+
+    autoRotate: true
+
+    showCareerOrbit: true
+
+    showCompetencyNetwork: true
+
+    showImpactNodes: true
+
+    showMilestones: true
+
+    showProjectNodes: true
+
+    showLeadershipDimensions: true
+
+    # Mobile render complexity
+    mobile:
+
+      particleCount: 24
+
+      nodeScale: 0.9
+
+      connectionOpacity: 0.20
+
+      cameraParallax: 0.05
+
+      autoRotate: false
+
+  # ----------------------------------------------------------
+  # Hero
+  # ----------------------------------------------------------
+
+  hero:
+
+    showStats: true
+
+    stats:
+
+      - value: "{years}+"
+        label: Years Experience
+
+      - value: "{companies}"
+        label: Companies
+
+      - value: "{roles}"
+        label: Roles
+
+      - value: "{competencies}"
+        label: Competencies
+
+    showCoreCompetencies: true
+
+    showTagline: true
+
+    showSummary: true
+
+    showLocation: true
+
+    showProfiles: true
+
+  # ----------------------------------------------------------
+  # Chronology
+  # ----------------------------------------------------------
+
+  chrono:
+
+    sections:
+
+      - title: Industry
+        kinds:
+          - semiconductor
+          - automotive
+          - vision measurement
+          - information technology
+
+      - title: Academia
+        kinds:
+          - academia
+
+    otherTitle: Other
+
+    educationTitle: Education
+
+    showTimeline: true
+
+    showHighlights: true
+
+    showAttributes: true
+
+    showTags: true
+
+    showLocation: true
+
+  # ----------------------------------------------------------
+  # Functional / capability view
+  # ----------------------------------------------------------
+
+  functional:
+
+    impactTitle: Signature Impact
+
+    evidenceLabel: Evidence
+
+    skillsMapTitle: Competency Network
+
+    showSkillsMap: true
+
+    groupOrder:
+      - Leadership
+      - Delivery
+      - Engineering
+      - Domain
+      - Academia
+
+    showProjects: true
+
+    projectsTitle: Selected Projects
+
+    showLeadership: true
+
+    leadershipTitle: Leadership Dimensions
+
+    showMilestones: true
+
+    milestonesTitle: Career Milestones
+
+    showEvidenceConnections: true
+
+  # ----------------------------------------------------------
+  # Toolbox
+  # ----------------------------------------------------------
+
+  toolbox:
+
+    enabled: true
+
+    title: Career Toolbox
+
+    order:
+      - Languages
+      - OS
+      - Process
+      - Component
+      - Products
+      - AI
+
+  # ----------------------------------------------------------
+  # Footer
+  # ----------------------------------------------------------
+
+  footer: |
+    Last updated {lastUpdated} · {years}+ years · {companies} companies · {roles} roles
+
+# ============================================================
+# 3D VISUAL SEMANTICS
+#
+# These settings tell the renderer how data should relate
+# visually. They contain no personal facts.
+# ============================================================
+
+visualMapping:
+
+  career:
+    source: work
+    nodeType: role
+    color: accent1
+
+  competencies:
+    source: competencies
+    nodeType: competency
+    color: accent2
+
+  projects:
+    source: projects
+    nodeType: project
+    color: accent1
+
+  impact:
+    source: impact
+    nodeType: impact
+    color: accent2
+
+  milestones:
+    source: milestones
+    nodeType: milestone
+    color: accent1
+
+  leadership:
+    source: leadership.dimensions
+    nodeType: dimension
+    color: accent2
+
+# ============================================================
+# SORT / PRESENTATION RULES
+# ============================================================
+
+presentation:
+
+  workSort:
+    field: start
+    direction: desc
+
+  milestoneSort:
+    field: year
+    direction: asc
+
+  competencyGroupOrder:
+    - Leadership
+    - Delivery
+    - Engineering
+    - Domain
+    - Academia
+
+  projectFeaturedFirst: true
+
+  attributes:
+
+    remainingKeys:
+      sort: frequency-desc
+
+    values:
+      sort: alphabetical
+
+# ============================================================
+# TOKENS
+#
+# The HTML renderer may expand these anywhere configured by
+# the display section.
+# ============================================================
+
+tokens:
+
+  years:
+    source: calculated
+    calculation: full-years-from-earliest-work-start-to-present
+
+  roles:
+    source: work.length
+
+  companies:
+    source: distinct-work-company-count
+
+  competencies:
+    source: competencies.length
+
+  education:
+    source: education.length
+
+  projects:
+    source: projects.length
+
+  milestones:
+    source: milestones.length
+
+  lastUpdated:
+    source: meta.lastUpdated
