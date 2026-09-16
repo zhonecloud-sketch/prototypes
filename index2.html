@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0d13">
+<title>Chong Boo Chean · System Test &amp; Validation Engineering Leader</title>
+<meta name="description" content="Digital profile of Chong Boo Chean — 30 years of hands-on engineering across semiconductor, automotive and consumer electronics. AI-augmented, hands-on leader based in Penang, Malaysia.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230a0d13'/><text x='32' y='41' font-family='monospace' font-size='20' fill='%235fa3ff' text-anchor='middle'>CBC</text></svg>">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<style>
+/* ============================================================
+   CHONG BOO CHEAN — DIGITAL PROFILE
+   Single-file HTML5 · three.js (true WebGL 3D) · mobile-first
+   Photograph: place "cbc.jpg" in the same folder as this file.
+   ============================================================ */
+:root{
+  --bg:#0a0d13;
+  --ink:#e9edf4;
+  --muted:#98a2b5;
+  --faint:#5c6577;
+  --line:rgba(233,237,244,.09);
+  --accent:#5fa3ff;
+  --radius:18px;
+  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(95,163,255,.32)}
+a{color:var(--accent)}
+img{display:block;max-width:100%}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#081120;
+  padding:10px 16px;border-radius:0 0 10px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+
+/* ---------------- HERO ---------------- */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;
+  justify-content:center;padding:88px 20px 66px;overflow:hidden;touch-action:pan-y;
+  user-select:none;-webkit-user-select-select:none;-webkit-user-select:none;
+  background:radial-gradient(130% 90% at 50% 16%,#14213b 0%,#0a0d13 60%)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero.no3d #gl{display:none}
+.scrim{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 85% at 50% 32%,rgba(10,13,19,0) 0%,rgba(10,13,19,.30) 55%,rgba(10,13,19,.80) 100%),
+             linear-gradient(to bottom,rgba(10,13,19,0) 82%,#0a0d13 100%)}
+.hero-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+  padding:18px 20px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);pointer-events:none;z-index:3}
+.hero-inner{position:relative;z-index:2;text-align:center;max-width:780px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:17px}
+
+/* Photograph slot — loads cbc.jpg from this folder; monogram shows until/unless it loads */
+.photo{position:relative;width:120px;height:120px;border-radius:50%;overflow:hidden;background:#0d1420;
+  box-shadow:0 0 0 1px rgba(233,237,244,.14),0 0 0 7px rgba(95,163,255,.07),0 0 46px rgba(95,163,255,.22)}
+.photo-fallback{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mono);font-size:24px;letter-spacing:.22em;color:var(--accent);
+  background:radial-gradient(120% 120% at 50% 20%,rgba(95,163,255,.16),#0d1420 70%)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
+.photo.loaded img{opacity:1}
+.photo.loaded .photo-fallback{display:none}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(2.15rem,8.5vw,3.6rem);line-height:1.05;letter-spacing:-.02em;font-weight:640}
+.tagline{font-size:14.5px;color:var(--muted);max-width:52ch}
+.meta-chips{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.meta-chips li{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:999px;
+  padding:6px 13px;font-size:12.5px;color:var(--muted)}
+.meta-chips a{color:var(--muted);text-decoration:none}
+.meta-chips a:hover{color:var(--accent)}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;padding:11px 20px;border-radius:999px;font-size:13.5px;
+  font-weight:600;text-decoration:none;border:1px solid var(--line);color:var(--ink);
+  background:rgba(255,255,255,.03);transition:transform .2s ease,border-color .2s,background .2s}
+.btn:hover{transform:translateY(-1px);border-color:rgba(95,163,255,.5)}
+.btn-solid{background:var(--accent);border-color:transparent;color:#081120}
+.btn-solid:hover{background:#7ab5ff;border-color:transparent}
+.scroll-cue{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);pointer-events:none}
+.scroll-cue span{width:1px;height:34px;background:linear-gradient(to bottom,var(--accent),transparent);
+  animation:cue 2.2s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}
+  55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.drag-hint{position:absolute;right:16px;bottom:16px;z-index:2;display:flex;gap:8px;align-items:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);pointer-events:none}
+.drag-hint i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+.hero.no3d .drag-hint{display:none}
+@media (max-height:640px){.scroll-cue{display:none}}
+
+/* ---------------- LAYOUT ---------------- */
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+.section{padding:76px 0}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.label::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.7}
+h2{font-size:clamp(1.55rem,4.6vw,2.35rem);line-height:1.15;letter-spacing:-.02em;
+  font-weight:640;margin-bottom:14px}
+.sub{color:var(--muted);font-size:15px;max-width:64ch}
+
+/* Stats */
+.stats{padding:46px 0 6px}
+.grid-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.stat{background:var(--bg);padding:22px 18px;display:flex;flex-direction:column;gap:7px}
+.stat-num{font-family:var(--mono);font-size:clamp(1.7rem,6vw,2.4rem);color:var(--accent);
+  letter-spacing:-.02em;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);line-height:1.55}
+.stats-note{margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.05em}
+
+/* Summary + pillars */
+.lead{font-size:clamp(1.02rem,2.6vw,1.18rem);line-height:1.75;color:#c7cfdc;max-width:70ch}
+.pillars{margin-top:34px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden}
+.pillar{position:relative;background:var(--bg);padding:22px 20px 22px 26px}
+.pillar::before{content:"";position:absolute;left:0;top:24px;bottom:24px;width:2px;
+  background:linear-gradient(to bottom,var(--accent),transparent)}
+.pillar h3{font-size:15px;font-weight:620;margin-bottom:6px;letter-spacing:-.01em}
+.pillar p{color:var(--muted);font-size:13.5px;line-height:1.65}
+
+/* Cards (capabilities + signature work) */
+.cards{margin-top:30px;display:grid;gap:14px;grid-template-columns:1fr}
+.card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  transition:border-color .25s,transform .25s}
+@media (hover:hover){.card:hover{border-color:rgba(95,163,255,.45);transform:translateY(-2px)}}
+.card-idx{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.18em}
+.card h3{font-size:1.02rem;margin:10px 0 8px;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:13.5px;line-height:1.65}
+.work-num{font-family:var(--mono);font-size:1.45rem;color:var(--accent);letter-spacing:-.02em;
+  display:block;margin-bottom:10px}
+.also{margin-top:24px;padding-top:16px;border-top:1px dashed var(--line);
+  font-size:13px;color:var(--faint);line-height:1.7}
+
+/* Timeline */
+.timeline{list-style:none;margin-top:34px;display:grid;gap:32px;position:relative;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(to bottom,rgba(95,163,255,.6),var(--line) 28%,var(--line))}
+.t-item{position:relative}
+.t-item::before{content:"";position:absolute;left:-26px;top:7px;width:11px;height:11px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--accent);box-shadow:0 0 14px rgba(95,163,255,.45)}
+.t-when{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.05em;
+  display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:8px}
+.t-org{color:var(--faint)}
+.t-body h3{font-size:1.05rem;letter-spacing:-.01em;margin-bottom:10px}
+.t-body ul{list-style:none;display:grid;gap:7px}
+.t-body li{color:var(--muted);font-size:13.5px;line-height:1.65;padding-left:16px;position:relative}
+.t-body li::before{content:"";position:absolute;left:0;top:.66em;width:6px;height:1px;
+  background:var(--accent);opacity:.8}
+
+/* Chips */
+.chips-title{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:28px 0 4px}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips li{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:999px;
+  padding:7px 13px;font-size:12.5px;color:#b9c2d2}
+
+/* Education */
+.edu-card{border:1px solid var(--line);border-radius:var(--radius);padding:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012))}
+.edu-card h3{font-size:1.1rem;letter-spacing:-.01em;margin-bottom:6px}
+.edu-card p{color:var(--muted);font-size:13.5px}
+
+/* Footer / contact */
+.contact{border-top:1px solid var(--line);background:linear-gradient(180deg,#0b0f17,#0a0d13);
+  padding:84px 0 42px}
+.contact-links{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 42px}
+.foot-note{font-size:12.5px;color:var(--faint);line-height:1.7}
+.foot-fine{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:#414a5c}
+
+/* Reveal on scroll */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------------- DESKTOP (secondary) ---------------- */
+@media (min-width:720px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:900px){
+  .hero{padding:110px 24px 84px}
+  .photo{width:148px;height:148px}
+  .section{padding:96px 0}
+  .wrap{width:min(1120px,100% - 72px)}
+  .grid-stats{grid-template-columns:repeat(4,1fr)}
+  .pillars{grid-template-columns:repeat(3,1fr)}
+  .t-item{display:grid;grid-template-columns:230px 1fr;column-gap:34px}
+  .t-when{flex-direction:column;gap:3px;margin-bottom:0;padding-top:2px}
+}
+@media (min-width:1100px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+}
+
+/* Reduced motion & print */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .scroll-cue span,.drag-hint i{animation:none}
+}
+@media print{
+  .hero{min-height:auto;padding:24px;background:#fff}
+  #gl,.scrim,.scroll-cue,.drag-hint,.hero-top{display:none}
+  body,.stat,.pillar,.card,.edu-card{background:#fff;color:#111}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="hero">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+
+  <div class="hero-top" aria-hidden="true">
+    <span>Digital Profile · 2026</span>
+    <span>Penang · Malaysia</span>
+  </div>
+
+  <div class="hero-inner">
+    <!-- Photograph slot: expects "cbc.jpg" beside this file. Monogram shows if absent. -->
+    <div class="photo" role="img" aria-label="Portrait photograph of Chong Boo Chean">
+      <span class="photo-fallback" aria-hidden="true">CBC</span>
+      <img src="cbc.jpg" alt="Portrait of Chong Boo Chean"
+           onload="this.closest('.photo').classList.add('loaded')"
+           onerror="this.remove()">
+    </div>
+
+    <p class="eyebrow">System Test &amp; Validation Engineering Leader</p>
+    <h1>Chong&nbsp;Boo&nbsp;Chean</h1>
+    <p class="tagline">AI-Augmented · Hands-On · 30 years across semiconductor, automotive
+      &amp; consumer electronics</p>
+
+    <ul class="meta-chips">
+      <li>Penang, Malaysia</li>
+      <li><a href="mailto:gzhone@yahoo.co.uk">gzhone@yahoo.co.uk</a></li>
+      <li><a href="tel:+601126008641">+60-11 2600 8641</a></li>
+    </ul>
+
+    <div class="hero-cta">
+      <a class="btn" href="mailto:gzhone@yahoo.co.uk">Email ↗</a>
+      <a class="btn" href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn btn-solid" href="#" onclick="launchCareerHistory(event)">Work & Customer Locations ↗</a>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true"><span></span>Scroll</div>
+  <div class="drag-hint" aria-hidden="true"><i></i>Live WebGL — drag to orbit</div>
+</header>
+
+<main id="main">
+
+  <!-- ================= SUMMARY ================= -->
+  <section class="section" id="summary">
+    <div class="wrap">
+      <p class="label">Executive Summary</p>
+      <h2>Objective-driven. AI-augmented. Hands-on.</h2>
+      <p class="lead">Global engineering leader with 30 years of hands-on expertise across the
+        semiconductor, automotive and consumer-electronics sectors — renowned for driving
+        objective-driven quality turnarounds, fostering zero-attrition cultures, and managing
+        high-stakes, face-to-face relationships with international customers across Korea, Japan,
+        India, Uruguay and Australia.</p>
+
+      <div class="pillars">
+        <div class="pillar reveal">
+          <h3>Objective-driven quality delivery</h3>
+          <p>Cut customer-found defects from 140+ to ~5 per year at Continental and from 12+ to ~4
+            per year at Intel — while leading multi-site and global teams.</p>
+        </div>
+        <div class="pillar reveal">
+          <h3>AI-augmented engineering</h3>
+          <p>An at-the-desk technical leader using AI as an execution partner: spec-first prototyping
+            enabled a 5-day camera-driver migration, 85 test cases automated in two quarters, and two
+            custom instruments that collapsed a 15-minute inspection to 9 seconds.</p>
+        </div>
+        <div class="pillar reveal">
+          <h3>Human-touch talent development</h3>
+          <p>0% unintended attrition over three consecutive years; grew a non-performing engineer
+            into a key contributor within a year and elevated a validation engineer into a global project manager in 3 years.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAPABILITIES ================= -->
+  <section class="section" id="capabilities">
+    <div class="wrap">
+      <p class="label">Core Capabilities</p>
+      <h2>What I bring to the bench</h2>
+      <p class="sub">Five disciplines, one operating style: measure objectively, ship reliably,
+        grow people deliberately.</p>
+
+      <div class="cards">
+        <article class="card reveal">
+          <span class="card-idx">01</span>
+          <h3>Leadership &amp; Delivery</h3>
+          <p>Cross-functional &amp; multi-site team leadership · end-to-end program management
+            (R&amp;D → production) · Lean-Agile leadership · mentoring &amp; talent development ·
+            CMM Level 3 process alignment.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">02</span>
+          <h3>Test &amp; Validation Engineering</h3>
+          <p>Test strategy &amp; qualification · functional test site leadership · post-silicon
+            platform bring-up · manufacturing test systems (AOI/AXI) · test solution release ·
+            yield &amp; quality improvement (defects ↓96%).</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">03</span>
+          <h3>Engineering Innovation</h3>
+          <p>First-of-kind detection instruments · reverse engineering of closed tools ·
+            custom CLI tooling for test hardware.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">04</span>
+          <h3>AI-Augmented Delivery</h3>
+          <p>Spec-first AI generation &amp; prototyping · objective measurement gates ·
+            AI-assisted test automation — AI treated as an execution partner, not a gimmick.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card-idx">05</span>
+          <h3>Automation &amp; Diagnostics</h3>
+          <p>Python · C# · Robot Framework · automated test infrastructure · computer-vision diagnostics
+            (HSV · dual-region SSIM) · V4L2 · GStreamer · MIPI CSI-2 · GMSL2 · HDMI · Linux · Windows.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SIGNATURE WORK ================= -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <p class="label">Signature Work · Intel, Dec 2025 → Present</p>
+      <h2>Proof, in shipping terms</h2>
+      <p class="sub">System Software Development Engineer · Automation Lead — camera, display and
+        validation automation on Intel's next-generation platforms.</p>
+
+      <div class="cards">
+        <article class="card reveal">
+          <span class="work-num">5 days</span>
+          <h3>GMSL2 camera bring-up</h3>
+          <p>Brought up the camera subsystem on Intel's next-gen platform: identified undocumented
+            BIOS “Camera Links” settings, established the MIPI CSI-2 data path over the MAX9295A
+            SerDes link (Sony IMX390), confirmed kernel-space streaming via GStreamer v4l2src → icamerasrc.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">9 s</span>
+          <h3>15-minute inspection, collapsed</h3>
+          <p>Architected a proprietary HSV-based computer-vision engine that analyses a 15-minute
+            video in 9 seconds; dual regions of interest resolve edge cases like solid-coloured scenes.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">1-in-5</span>
+          <h3>Unblocking the fleet</h3>
+          <p>Authored an interim Linux kernel patch for an intermittent IPU7 probe crash
+            (1-in-5 boots) that was blocking all camera-driver validation — restored full
+            V4L2 data-path verification.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">85</span>
+          <h3>Manual → automated</h3>
+          <p>Converted long-overdue manual suites in two quarters — 40 Ubuntu + 45 Windows cases,
+            code peer-reviewed and results formally validated in official product-milestone cycles.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">SSIM</span>
+          <h3>Screen-tearing detector</h3>
+          <p>High-sensitivity artefact detector via a lightweight dual-region SSIM algorithm —
+            captures screen tearing and subtle defects near real-time where commercial tools hit limits.</p>
+        </article>
+        <article class="card reveal">
+          <span class="work-num">CLI</span>
+          <h3>Reverse-engineered control</h3>
+          <p>Exposed undocumented registry dependencies of Intel Graphics Command Centre Beta;
+            custom CLI automates MIPI CSI capture hardware, fixing HDMI propagation on
+            non-standard resolutions.</p>
+        </article>
+      </div>
+
+      <p class="also">Also on this tour: drove IPU7 → IPU8 early enablement (camera HAL upgrade +
+        icamerasrc userspace pipeline reconfiguration, end-to-end streaming verified) · ported the
+        Robot Framework + Python automation suite from Intel's China test division, closed the
+        gap-analysis findings with new and modified cases for a significant coverage uplift.</p>
+    </div>
+  </section>
+
+  <!-- ================= JOURNEY ================= -->
+  <section class="section" id="journey">
+    <div class="wrap">
+      <p class="label">Professional Journey</p>
+      <h2>1995 → today</h2>
+
+      <ol class="timeline">
+        <li class="t-item reveal">
+          <div class="t-when"><span>Dec 2025 — Present</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>System Software Development Engineer · Automation Lead</h3>
+            <ul>
+              <li>5-day GMSL2 camera bring-up on a next-gen platform (BIOS · MAX9295A SerDes · Sony IMX390 · MIPI CSI-2 · GStreamer v4l2src → icamerasrc).</li>
+              <li>Kernel patch unblocked IPU7 validation; drove IPU7 → IPU8 early enablement.</li>
+              <li>Two first-of-kind CV instruments: 15-min → 9-s HSV analyser and dual-region SSIM tearing detector.</li>
+              <li>Automated 85 manual cases in two quarters; ported and extended the China-division Robot Framework suite.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jan 2022 — Dec 2025</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>Software Engineering Manager</h3>
+            <ul>
+              <li>Directed Media Software (video codecs), Imaging Software (camera sensors) and Component Validation (hypervisors, codecs, sensors) — 8 software + 4 test engineers.</li>
+              <li>Owned Software Component Defect Driving and Software Component Release Process charters.</li>
+              <li>Cut customer-found defects from 12+ (2022) to ~4 (2025); 0% unintended attrition across 3 consecutive years.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Sep 2017 — Jan 2022</span><span class="t-org">Continental Automotive · Penang</span></div>
+          <div class="t-body">
+            <h3>Manager — Functional Test · Functional Test Site Lead</h3>
+            <ul>
+              <li>Site Lead and Business Owner for automotive instrument-cluster projects across Toyota, Volkswagen Group, Perodua and Suzuki.</li>
+              <li>Managed up to 16 direct test-engineering reports under Lean-Agile leadership frameworks.</li>
+              <li>Reduced customer-found defects from 140+ (2017) to ~5 (2021) while expanding the test portfolio from 1 to 4 key lines.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Mar 2011 — Jul 2017</span><span class="t-org">Blaupunkt / Premium Sound Solutions · Penang</span></div>
+          <div class="t-body">
+            <h3>Software Developer → Program Manager → Section Manager</h3>
+            <ul>
+              <li>Section Manager (2014–2017): Department Head of Software Engineering, Deputy Head of R&amp;D; multi-disciplinary HMI &amp; firmware teams delivering to Honda India and Proton Malaysia.</li>
+              <li>Program Manager (2011–2014): pre-sales RFQ technical presentations; end-to-end R&amp;D/production for Android SoC, bare-metal audio, navigation and connectivity. Customers: Volvo CE Korea, Renault Iran, ICL Japan, Rockford US, Iran System, Agco Fendt Germany, Belarfonte Uruguay (SKD → CKD).</li>
+              <li>Software Developer (2011): Android GUI apps (Java/XML); ported C++ graphics engines to WinCE.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jul 2009 — Jul 2010</span><span class="t-org">Intel Corporation · Penang</span></div>
+          <div class="t-body">
+            <h3>Project Manager — Software</h3>
+            <ul><li>Managed schedules, scope validation and requirements tracking for Linux on SoC platforms.</li></ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Jul 2007 — Mar 2009</span><span class="t-org">Agilent Technologies · Penang</span></div>
+          <div class="t-body">
+            <h3>Operating Manager — Software</h3>
+            <ul>
+              <li>Managed AOI and AXI analytics projects, software patches and engineering escalations across Malaysia and Singapore.</li>
+              <li>Transferred AOI product knowledge from Ireland and AXI analytics from Singapore into Penang; delivered to Nokia, Jabil EMS, Rockwell.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>Nov 2005 — Jul 2007</span><span class="t-org">Bosch / Bosch–Blaupunkt · Penang</span></div>
+          <div class="t-body">
+            <h3>Project Manager — Software</h3>
+            <ul>
+              <li>Multi-site infotainment software development aligned with the CMM Level 3 process framework.</li>
+              <li>Projects: GMDAT VA/VE (GM Daewoo Korea), Zao Volga (Russia), Nissan MMR2 (Nissan Britain), GM G8 and GM W200 (GM Holden Australia).</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="t-item reveal">
+          <div class="t-when"><span>1995 — 2005</span><span class="t-org">Early Career &amp; Academia · MY / NZ</span></div>
+          <div class="t-body">
+            <h3>Foundations in engineering &amp; education</h3>
+            <ul>
+              <li>INTI International College Penang (2002–2005): Academic Coordinator — lectured Computer Engineering, C/C++, Java and Assembly Language.</li>
+              <li>Han Chiang High School (1997–2001): Head of Computer Centre — established campus computer infrastructure and pre-university IT programs.</li>
+              <li>SCS Systems / PEC Ltd., New Zealand (1995–1997): Application Specialist — Unix Money Market systems; RS-232 SIRAS swiping modules on OS/2 in C++.</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= DOMAINS & TOOLBOX ================= -->
+  <section class="section" id="stack">
+    <div class="wrap">
+      <p class="label">Domains &amp; Toolbox</p>
+      <h2>Where the work lives</h2>
+
+      <h3 class="chips-title">Industries</h3>
+      <ul class="chips">
+        <li>Semiconductor &amp; Validation — Intel</li>
+        <li>Automotive Electronics — Continental · Bosch</li>
+        <li>Consumer Audio — Blaupunkt</li>
+        <li>Manufacturing Inspection — Agilent AOI/AXI</li>
+      </ul>
+
+      <h3 class="chips-title">Engineering toolbox</h3>
+      <ul class="chips">
+        <li>Python</li><li>Robot Framework</li><li>Test Strategy &amp; Qualification</li>
+        <li>Post-Silicon Bring-Up</li><li>Functional Test Site Leadership</li><li>AOI / AXI</li>
+        <li>HSV Vision Engines</li><li>Dual-Region SSIM</li><li>V4L2</li><li>GStreamer</li>
+        <li>MIPI CSI-2</li><li>GMSL2</li><li>HDMI</li><li>Linux Kernel Patches</li><li>Windows</li>
+        <li>C / C++</li><li>Java</li><li>Android</li><li>Reverse Engineering</li>
+        <li>Custom CLI Tooling</li><li>Lean-Agile Delivery</li><li>CMM Level 3</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section class="section" id="education">
+    <div class="wrap">
+      <p class="label">Education</p>
+      <div class="edu-card reveal">
+        <h3>Bachelor of Computer Science Engineering (Systems)</h3>
+        <p>University of Technology Malaysia · 1989 — 1995</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= CONTACT / FOOTER ================= -->
+<footer class="section contact" id="contact">
+  <div class="wrap">
+    <p class="label">Contact</p>
+    <h2>Open to high-stakes, measurable work.</h2>
+    <p class="sub">Email is the fastest route. References, prototypes and detailed case studies
+      available on request.</p>
+    <div class="contact-links">
+      <a class="btn btn-solid" href="mailto:gzhone@yahoo.co.uk">gzhone@yahoo.co.uk</a>
+      <a class="btn" href="tel:+601126008641">+60-11 2600 8641</a>
+      <a class="btn" href="https://www.linkedin.com/in/chongboochean" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="https://zhonecloud-sketch.github.io/prototypes/" target="_blank" rel="noopener">Prototypes ↗</a>
+    </div>
+    <p class="foot-note">Chong Boo Chean — family name <strong>Chong</strong>, given name
+      <strong>Boo Chean</strong> — presented in its original order throughout this profile.</p>
+    <p class="foot-fine">© 2026 Chong Boo Chean · Penang, Malaysia · Single-file HTML5 ·
+      Real-time 3D rendered with three.js (WebGL) · Photograph: cbc.jpg</p>
+  </div>
+</footer>
+
+<script>
+/* Launch the self-contained career-history.js visualisation in the same tab. */
+function launchCareerHistory(event) {
+  event.preventDefault();
+  document.open();
+  document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Career History (Graphical)</title></head><body style="margin:0;background:#0a0d13"><script src="career-history.js"><\/script></body></html>');
+  document.close();
+}
+</script>
+
+<script type="module">
+/* ============================================================
+   UI behaviours + true-3D three.js hero scene (WebGL)
+   ============================================================ */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Reveal on scroll ---------- */
+const revealEls = [...document.querySelectorAll('.reveal')];
+if (REDUCED || !('IntersectionObserver' in window)) {
+  revealEls.forEach(el => el.classList.add('in'));
+} else {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach((el, i) => { el.style.transitionDelay = ((i % 3) * 70) + 'ms'; io.observe(el); });
+}
+
+/* ---------- Animated stat counters ---------- */
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+function countUp(el) {
+  const target = parseInt(el.dataset.count, 10) || 0;
+  const prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+  if (REDUCED) { el.textContent = prefix + target + suffix; return; }
+  const dur = 1100, start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / dur);
+    el.textContent = prefix + Math.round(easeOut(p) * target) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const statNums = [...document.querySelectorAll('.stat-num')];
+if ('IntersectionObserver' in window) {
+  const sio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { countUp(en.target); sio.unobserve(en.target); }
+    });
+  }, { threshold: 0.4 });
+  statNums.forEach(el => sio.observe(el));
+} else {
+  statNums.forEach(countUp);
+}
+
+/* ============================================================
+   THREE.JS hero — genuine 3D: perspective camera, lit meshes,
+   fog, orbital rings, satellites and a depth-attenuated
+   particle field. Drag to orbit; scroll for parallax dolly.
+   ============================================================ */
+const hero = document.getElementById('hero');
+const canvas = document.getElementById('gl');
+
+(async () => {
+  let THREE;
+  try {
+    THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+  } catch (e) { hero.classList.add('no3d'); return; }
+  try { initScene(THREE); } catch (e) { hero.classList.add('no3d'); }
+})();
+
+function initScene(THREE) {
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) { hero.classList.add('no3d'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a0d13, 0.05);
+
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  const rig = new THREE.Group();          // everything orbits inside this group
+  scene.add(rig);
+
+  /* Lights — real 3D directional lighting on the faceted core */
+  scene.add(new THREE.AmbientLight(0x2a3550, 1.4));
+  const key = new THREE.DirectionalLight(0x9dc2ff, 2.4); key.position.set(5, 6, 4);  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x35558f, 1.1); rim.position.set(-6, -4, -6); scene.add(rim);
+
+  /* Faceted "silicon" core */
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.02, 1),
+    new THREE.MeshStandardMaterial({
+      color: 0x111a2b, metalness: 0.85, roughness: 0.32,
+      emissive: 0x0b1e3d, emissiveIntensity: 0.55, flatShading: true
+    })
+  );
+  rig.add(core);
+
+  /* Wire cage around the core */
+  const cage = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.5, 1)),
+    new THREE.LineBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: 0.30 })
+  );
+  rig.add(cage);
+
+  /* Three tilted orbital rings + six satellites
+     (the global multi-site footprint: Penang · Korea · Japan · India · Uruguay · Australia) */
+  const ringDefs = [
+    { r: 2.35, tilt: [1.15,  0.35,  0.0], op: 0.22, sats: [{ speed:  0.50, phase: 0.0 }, { speed:  0.50, phase: Math.PI }] },
+    { r: 3.05, tilt: [1.75, -0.40,  0.3], op: 0.27, sats: [{ speed: -0.34, phase: 1.2 }, { speed: -0.34, phase: 4.0 }] },
+    { r: 3.85, tilt: [2.25,  0.80, -0.4], op: 0.32, sats: [{ speed:  0.22, phase: 2.1 }, { speed:  0.22, phase: 5.2 }] }
+  ];
+  const pivots = [], sats = [];
+  ringDefs.forEach(d => {
+    const pivot = new THREE.Group();
+    const ringG = new THREE.Group();
+    ringG.rotation.set(d.tilt[0], d.tilt[1], d.tilt[2]);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(d.r, 0.0045, 6, 180),
+      new THREE.MeshBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: d.op })
+    );
+    ringG.add(ring);
+    d.sats.forEach(s => {
+      const sat = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xbfd9ff }));
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x5fa3ff, transparent: true, opacity: 0.22,
+          blending: THREE.AdditiveBlending, depthWrite: false }));
+      sat.add(halo);
+      ringG.add(sat);
+      sats.push({ mesh: sat, r: d.r, speed: s.speed, phase: s.phase });
+    });
+    pivot.add(ringG);
+    rig.add(pivot);
+    pivots.push(pivot);
+  });
+
+  /* Depth-attenuated particle field */
+  const COUNT = 460;
+  const pos = new Float32Array(COUNT * 3);
+  for (let i = 0; i < COUNT; i++) {
+    const rr = 2.6 + Math.pow(Math.random(), 0.7) * 3.2;
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i * 3]     = rr * Math.sin(ph) * Math.cos(th);
+    pos[i * 3 + 1] = rr * Math.cos(ph) * 0.75;
+    pos[i * 3 + 2] = rr * Math.sin(ph) * Math.sin(th);
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const stars = new THREE.Points(pGeo, new THREE.PointsMaterial({
+    color: 0x9fc4ff, size: 0.035, transparent: true, opacity: 0.7,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
+  }));
+  rig.add(stars);
+
+  /* Interaction state */
+  let targetRX = -0.14, targetRY = 0.35, curRX = targetRX, curRY = targetRY;
+  let dragging = false, lx = 0, ly = 0;
+  hero.addEventListener('pointerdown', e => {
+    if (e.target.closest('a,button')) return;
+    dragging = true; lx = e.clientX; ly = e.clientY;
+  });
+  addEventListener('pointermove', e => {
+    if (!dragging) return;
+    targetRY += (e.clientX - lx) * 0.0055;
+    targetRX += (e.clientY - ly) * 0.0035;
+    targetRX = Math.max(-1.0, Math.min(0.75, targetRX));
+    lx = e.clientX; ly = e.clientY;
+  });
+  addEventListener('pointerup', () => dragging = false);
+  addEventListener('pointercancel', () => dragging = false);
+
+  /* Scroll parallax dolly */
+  let scrollP = 0;
+  const onScroll = () => {
+    const h = hero.offsetHeight || 1;
+    scrollP = Math.min(1, Math.max(0, window.scrollY / h));
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Resize */
+  let baseZ = 9.4;
+  function resize() {
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    baseZ = w < 720 ? 9.6 : 8.6;
+    camera.updateProjectionMatrix();
+    if (REDUCED) { camera.position.set(0, 0.25, baseZ); camera.lookAt(0, 0, 0); renderer.render(scene, camera); }
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(hero);
+  addEventListener('resize', resize);
+  resize();
+
+  /* Park satellites for a clean static frame (used by reduced-motion path) */
+  sats.forEach(s => {
+    const a = s.phase;
+    s.mesh.position.set(Math.cos(a) * s.r, Math.sin(a) * s.r, 0);
+  });
+
+  if (REDUCED) {
+    rig.rotation.set(curRX, curRY, 0);
+    camera.position.set(0, 0.25, baseZ);
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  /* Render loop — pauses while hero is off-screen or tab hidden */
+  const clock = new THREE.Clock();
+  let t = 0, visible = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(en => { visible = en[0].isIntersecting; }, { threshold: 0.01 }).observe(hero);
+  }
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!visible || document.hidden) return;
+    const dt = Math.min(clock.getDelta(), 0.05);
+    t += dt;
+
+    if (!dragging) targetRY += dt * 0.10;               // slow auto-orbit
+    curRX += (targetRX - curRX) * 0.06;
+    curRY += (targetRY - curRY) * 0.06;
+    rig.rotation.x = curRX;
+    rig.rotation.y = curRY;
+
+    core.rotation.y += dt * 0.15;
+    core.rotation.x += dt * 0.05;
+    core.position.y  = Math.sin(t * 0.8) * 0.05;
+    cage.rotation.y -= dt * 0.06;
+    stars.rotation.y -= dt * 0.012;
+    pivots.forEach((p, i) => { p.rotation.y += dt * (0.018 + i * 0.012) * (i % 2 ? -1 : 1); });
+    sats.forEach(s => {
+      const a = s.phase + t * s.speed;
+      s.mesh.position.set(Math.cos(a) * s.r, Math.sin(a) * s.r, 0);
+    });
+
+    camera.position.set(0, 0.25 - scrollP * 0.9, baseZ + scrollP * 2.4);
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  frame();
+}
+</script>
+</body>
+</html>
