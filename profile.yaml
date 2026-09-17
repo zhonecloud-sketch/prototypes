@@ -363,49 +363,6 @@ work:
           lat: 3.14
           lon: 101.69
 
-        - name: Volvo CE Korea · Seoul, South Korea
-          city: Seoul
-          country: South Korea
-          lat: 37.57
-          lon: 126.98
-
-        - name: Renault Iran · Tehran, Iran
-          city: Tehran
-          country: Iran
-          lat: 35.69
-          lon: 51.39
-
-        - name: ICL Japan · Tokyo, Japan
-          city: Tokyo
-          country: Japan
-          lat: 35.68
-          lon: 139.69
-
-        - name: Rockford US · Rockford, Illinois, USA
-          city: Rockford
-          country: USA
-          region: Illinois
-          lat: 42.27
-          lon: -89.10
-
-        - name: Iran System · Tehran, Iran
-          city: Tehran
-          country: Iran
-          lat: 35.69
-          lon: 51.39
-
-        - name: Agco Fendt Germany · Marktoberdorf, Germany
-          city: Marktoberdorf
-          country: Germany
-          lat: 47.78
-          lon: 10.62
-
-        - name: Belarfonte Uruguay · Montevideo, Uruguay
-          city: Montevideo
-          country: Uruguay
-          lat: -34.90
-          lon: -56.16
-
     start: "2014-01"
     end: "2017-07"
 
@@ -455,12 +412,6 @@ work:
           link: false
 
       customers:
-        - name: Honda · New Delhi, India
-          city: New Delhi
-          country: India
-          lat: 28.61
-          lon: 77.21
-
         - name: Proton · Kuala Lumpur, Malaysia
           city: Kuala Lumpur
           country: Malaysia
@@ -484,13 +435,6 @@ work:
           country: Japan
           lat: 35.68
           lon: 139.69
-
-        - name: Rockford US · Rockford, Illinois, USA
-          city: Rockford
-          country: USA
-          region: Illinois
-          lat: 42.27
-          lon: -89.10
 
         - name: Iran System · Tehran, Iran
           city: Tehran
@@ -556,60 +500,7 @@ work:
           link: false
 
       customers:
-        - name: Honda · New Delhi, India
-          city: New Delhi
-          country: India
-          lat: 28.61
-          lon: 77.21
-
-        - name: Proton · Kuala Lumpur, Malaysia
-          city: Kuala Lumpur
-          country: Malaysia
-          lat: 3.14
-          lon: 101.69
-
-        - name: Volvo CE Korea · Seoul, South Korea
-          city: Seoul
-          country: South Korea
-          lat: 37.57
-          lon: 126.98
-
-        - name: Renault Iran · Tehran, Iran
-          city: Tehran
-          country: Iran
-          lat: 35.69
-          lon: 51.39
-
-        - name: ICL Japan · Tokyo, Japan
-          city: Tokyo
-          country: Japan
-          lat: 35.68
-          lon: 139.69
-
-        - name: Rockford US · Rockford, Illinois, USA
-          city: Rockford
-          country: USA
-          region: Illinois
-          lat: 42.27
-          lon: -89.10
-
-        - name: Iran System · Tehran, Iran
-          city: Tehran
-          country: Iran
-          lat: 35.69
-          lon: 51.39
-
-        - name: Agco Fendt Germany · Marktoberdorf, Germany
-          city: Marktoberdorf
-          country: Germany
-          lat: 47.78
-          lon: 10.62
-
-        - name: Belarfonte Uruguay · Montevideo, Uruguay
-          city: Montevideo
-          country: Uruguay
-          lat: -34.90
-          lon: -56.16
+        - name: Global Intel customers · multiple locations
 
     start: "2011-03"
     end: "2011-12"
