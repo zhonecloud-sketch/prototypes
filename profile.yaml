@@ -1,21 +1,25 @@
 # ============================================================
 # profile.yaml — single source of truth
 # ============================================================
-# This file contains the complete content/data model for the
-# digital profile. The HTML renderer should load this file at
-# runtime using js-yaml.
+# Digital profile content and presentation configuration.
 #
-# Style rules:
-#   • Plain strings need no quotes
-#   • Quote dates and values that could be interpreted as numbers
-#   • Lists may use "- item" or [a, b]
-#   • null means no end date / currently active
+# Information hierarchy:
+#   HERO
+#     ↓
+#   SIGNATURE VALUES
+#     ↓
+#   PROFESSIONAL EXPERIENCE
+#     ↓
+#   EDUCATION
+#
+# The renderer must treat this file as the only source of
+# personal/profile facts.
 # ============================================================
 
 meta:
-  schema: profile-v2
+  schema: profile-v3
   basedOn: jsonresume.org/schema
-  lastUpdated: "2025-12-01"
+  lastUpdated: "2026-09-17"
   defaultView: chrono
 
 # ============================================================
@@ -36,21 +40,9 @@ basics:
     countryCode: MY
 
   summary: >
-    Accomplished software engineering leader with over two decades of experience
-    across the semiconductor, automotive, and test-and-measurement industries,
-    holding engineering, program management, and site leadership roles.
-
-  coreCompetencies:
-    - sw-management
-    - test-automation
-    - driver-bring-up
-    - program-mgmt
-    - agile-leadership
-    - people-development
-    - media-imaging
-    - embedded-systems
-    - customer-engagement
-    - ai-prototyping
+    20+ years in software engineering across semiconductor, automotive, and
+    test & measurement. Hands-on leader combining engineering depth, people
+    development, measurable delivery, and AI-augmented prototyping.
 
   profiles:
     - network: LinkedIn
@@ -62,204 +54,118 @@ basics:
       url: https://zhonecloud-sketch.github.io/prototypes/
 
 # ============================================================
-# COMPETENCY REGISTRY
-#
-# Competencies are referenced by id throughout the document.
-# The renderer should resolve labels from this registry.
-#
-# Optional metadata:
-#   level
-#   featured
-#   aliases
-#   evidence
-#   years
-#
-# "years" is deliberately not supplied where the source data
-# does not establish a defensible duration.
+# SIGNATURE VALUES
 # ============================================================
 
-competencies:
+signatureValues:
 
-  - id: sw-management
-    label: Software Engineering Management
-    group: Leadership
-    level: expert
-    featured: true
-    aliases:
-      - Software Management
-      - Engineering Management
+  - id: outcome-driven-delivery
+    number: "01"
+    label: Outcome-Driven Engineering Delivery
+    shortLabel: Outcome-Driven Delivery
+    statement: >
+      Turns engineering effort into measurable results through disciplined
+      execution, quality improvement, and practical delivery.
+    components: [execution, quality, validation, delivery]
     evidence:
-      - intel-2022
-      - blaupunkt-2014
-      - agilent-2007
+      - Continental — Customer-found defect reduction, 140+ to 5 within three years
+      - Intel — Logged defect reduction, 12 to 4 per week within two years
 
-  - id: people-development
-    label: People Development
-    group: Leadership
-    level: expert
-    featured: true
-    aliases:
-      - People Management
-      - Talent Development
+  - id: human-centered-talent
+    number: "02"
+    label: Human-Centered Talent Development
+    shortLabel: Talent Development
+    statement: >
+      Develops people through practical leadership, coaching, ownership, and
+      opportunities to grow into stronger technical and organizational roles.
+    components: [people, coaching, ownership, organization]
     evidence:
-      - intel-2022
-      - continental-2017
-      - blaupunkt-2014
-      - agilent-2007
+      - Intel — Engineer capability development, from non-performing to key
+        contributor within one year
+      - Continental — Engineer career development, from validation engineer to
+        global Project Manager within three years
 
-  - id: site-leadership
-    label: Site Leadership
-    group: Leadership
-    level: advanced
-    featured: true
-    aliases:
-      - Site Lead
+  - id: ai-augmented-engineering
+    number: "03"
+    label: AI-Augmented Engineering & Rapid Prototyping
+    shortLabel: AI-Augmented Prototyping
+    statement: >
+      Uses AI as an engineering accelerator to prototype solutions, test
+      hypotheses, and validate results.
+    components: [ai, prototyping, hypotheses, validation]
     evidence:
-      - continental-2017
+      - Intel — GMSL2 camera driver enablement for next-generation platform
+        within five days
+      - Intel — Video colour-corruption detection algorithm innovation within
+        a quarter
+      - Intel — Video-tearing detection algorithm innovation within a quarter
+      - Intel — Automation of 85 manual test cases validated in product
+        milestones within two quarters
 
-  - id: program-mgmt
-    label: Program & Project Management
-    group: Delivery
-    level: expert
-    featured: true
-    aliases:
-      - Project Management
-      - Program Management
+  - id: cross-functional-leadership
+    number: "04"
+    label: Cross-Functional Technical Leadership
+    shortLabel: Technical Leadership
+    statement: >
+      Connects engineering, programs, customers, validation, and organizational
+      priorities to move complex technical work toward delivery.
+    components: [engineering, programs, customers, validation, organization]
     evidence:
-      - intel-2022
-      - intel-2009
-      - blaupunkt-2014
-      - blaupunkt-2012
-      - agilent-2007
-      - bosch-2005
+      - Continental — Functional Test Site Lead and Business Owner for Penang
+      - Blaupunkt — Cross-functional delivery across customer, R&D, procurement,
+        manufacturing, and validation
+      - Intel — Software team leadership across Media and Imaging
+      - Intel — Validation team leadership across Media, Imaging, and SR-IOV
 
-  - id: agile-leadership
-    label: Agile Leadership
-    group: Delivery
-    level: advanced
-    featured: true
-    aliases:
-      - AGILE
-      - SCRUM
-      - Kanban
-    evidence:
-      - continental-2017
-      - blaupunkt-2014
+# ============================================================
+# BUSINESS COMPONENTS (presentation)
+#
+# Tiles shown in the Signature Values scene. Each value's
+# `components` list refers to these ids: those tiles are pulled
+# into focus while the rest fade into the background.
+# Order here = order tiles muster into the grid.
+# ============================================================
 
-  - id: customer-engagement
-    label: Global Customer Engagement
-    group: Delivery
-    level: advanced
-    featured: true
-    aliases:
-      - Customer Engagement
-      - Technical Presentations
-    evidence:
-      - blaupunkt-2014
-      - blaupunkt-2012
-      - blaupunkt-2011
-      - bosch-2005
-
-  - id: test-automation
-    label: Test Automation
-    group: Engineering
-    level: expert
-    featured: true
-    aliases:
-      - Automation
-      - Automated Testing
-    evidence:
-      - intel-2025
-      - continental-2017
-
-  - id: post-silicon-validation
-    label: Post-Silicon Validation
-    group: Engineering
-    level: advanced
-    featured: true
-    aliases:
-      - Post-Silicon
-      - Validation
-    evidence:
-      - intel-2025
-
-  - id: driver-bring-up
-    label: Driver Bring-Up
-    group: Engineering
-    level: advanced
-    featured: true
-    aliases:
-      - Driver Development
-    evidence:
-      - intel-2025
-
-  - id: ai-prototyping
-    label: AI-Prototyping Development
-    group: Engineering
-    level: advanced
-    featured: true
-    aliases:
-      - AI Prototyping
-      - AI-Augmented Development
-    evidence:
-      - intel-2025
-
-  - id: media-imaging
-    label: Media & Imaging Software
-    group: Domain
-    level: advanced
-    featured: true
-    aliases:
-      - Media
-      - Imaging
-    evidence:
-      - intel-2025
-      - intel-2022
-
-  - id: embedded-systems
-    label: Embedded Systems
-    group: Domain
-    level: advanced
-    featured: true
-    aliases:
-      - Embedded Software
-    evidence:
-      - blaupunkt-2011
-      - bosch-2005
-      - scs-pec-1995
-
-  - id: automotive
-    label: Automotive Products
-    group: Domain
-    level: advanced
-    featured: true
-    aliases:
-      - Automotive
-      - Infotainment
-    evidence:
-      - continental-2017
-      - blaupunkt-2014
-      - blaupunkt-2012
-      - blaupunkt-2011
-      - bosch-2005
-
-  - id: teaching
-    label: Lecturing & Academia
-    group: Academia
-    level: advanced
-    featured: true
-    aliases:
-      - Teaching
-      - Academia
-      - Lecturing
-    evidence:
-      - inti-2002
-      - hanchiang-1997
+businessComponents:
+  - { id: customers,    label: Customers }
+  - { id: programs,     label: Programs }
+  - { id: engineering,  label: Engineering }
+  - { id: validation,   label: Validation }
+  - { id: quality,      label: Quality }
+  - { id: execution,    label: Execution }
+  - { id: delivery,     label: Delivery }
+  - { id: people,       label: People }
+  - { id: coaching,     label: Coaching }
+  - { id: ownership,    label: Ownership }
+  - { id: organization, label: Organization }
+  - { id: ai,           label: AI }
+  - { id: prototyping,  label: Prototyping }
+  - { id: hypotheses,   label: Hypotheses }
 
 # ============================================================
 # WORK HISTORY
 #
 # Newest first.
+#
+# Geographic structure:
+#
+# locations:
+#   work:
+#     One or more actual engineering/work locations.
+#
+#   customers:
+#     One or more named customer locations.
+#
+# Customer entries may contain:
+#   name   - display name
+#   city   - city name
+#   country
+#   lat
+#   lon
+#   same   - customer shares work/base location
+#
+# Work entries may contain:
+#   link   - visual relationship between work locations
 # ============================================================
 
 work:
@@ -268,7 +174,22 @@ work:
     company: Intel Corporation
     position: System Software Development Engineer · Automation Lead
     kind: semiconductor
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+
     start: "2025-12"
     end: null
     current: true
@@ -277,7 +198,8 @@ work:
       - Post-silicon test automation
       - Post-silicon validation
       - Post-silicon driver bring-up
-      - Built video colour-corruption and video-tearing detection tools
+      - Innovation: video colour-corruption detection
+      - Innovation: video tearing detection
 
     attributes:
       Languages:
@@ -303,7 +225,22 @@ work:
     company: Intel Corporation
     position: Software Engineering Manager
     kind: semiconductor
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+
     start: "2022-01"
     end: "2025-12"
 
@@ -327,9 +264,46 @@ work:
 
   - id: continental-2017
     company: Continental Automotive
-    position: Manager — Functional Test / Functional Test Site Lead
+    position: Manager — Functional Test · Functional Test Site Lead
     kind: automotive
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Toyota · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Volkswagen Group · Wolfsburg, Germany
+          city: Wolfsburg
+          country: Germany
+          lat: 52.42
+          lon: 10.78
+
+        - name: Perodua · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Suzuki · Hamamatsu, Japan
+          city: Hamamatsu
+          country: Japan
+          lat: 34.71
+          lon: 137.73
+
     start: "2017-09"
     end: "2022-01"
 
@@ -355,7 +329,83 @@ work:
     company: Blaupunkt / Premium Sound Solutions
     position: Software Section Manager
     kind: automotive
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Honda · New Delhi, India
+          city: New Delhi
+          country: India
+          lat: 28.61
+          lon: 77.21
+
+        - name: Proton · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Volvo CE Korea · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Renault Iran · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: ICL Japan · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Rockford US · Rockford, Illinois, USA
+          city: Rockford
+          country: USA
+          region: Illinois
+          lat: 42.27
+          lon: -89.10
+
+        - name: Iran System · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: Agco Fendt Germany · Marktoberdorf, Germany
+          city: Marktoberdorf
+          country: Germany
+          lat: 47.78
+          lon: 10.62
+
+        - name: Belarfonte Uruguay · Montevideo, Uruguay
+          city: Montevideo
+          country: Uruguay
+          lat: -34.90
+          lon: -56.16
+
     start: "2014-01"
     end: "2017-07"
 
@@ -383,13 +433,90 @@ work:
     company: Blaupunkt / Premium Sound Solutions
     position: Program Manager
     kind: automotive
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Honda · New Delhi, India
+          city: New Delhi
+          country: India
+          lat: 28.61
+          lon: 77.21
+
+        - name: Proton · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Volvo CE Korea · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Renault Iran · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: ICL Japan · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Rockford US · Rockford, Illinois, USA
+          city: Rockford
+          country: USA
+          region: Illinois
+          lat: 42.27
+          lon: -89.10
+
+        - name: Iran System · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: Agco Fendt Germany · Marktoberdorf, Germany
+          city: Marktoberdorf
+          country: Germany
+          lat: 47.78
+          lon: 10.62
+
+        - name: Belarfonte Uruguay · Montevideo, Uruguay
+          city: Montevideo
+          country: Uruguay
+          lat: -34.90
+          lon: -56.16
+
     start: "2012-01"
     end: "2013-12"
 
     highlights:
       - End-to-end program management across R&D, finance, procurement, PCBA assembly, supermarket, product assembly and reliability tests
       - Pre-sale RFQ technical presentations to customers
+      - Global customers: product specifications, R&D requirements, project status
 
     attributes:
       Products:
@@ -407,13 +534,89 @@ work:
     company: Blaupunkt / Premium Sound Solutions
     position: Software Developer
     kind: automotive
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Honda · New Delhi, India
+          city: New Delhi
+          country: India
+          lat: 28.61
+          lon: 77.21
+
+        - name: Proton · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Volvo CE Korea · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Renault Iran · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: ICL Japan · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Rockford US · Rockford, Illinois, USA
+          city: Rockford
+          country: USA
+          region: Illinois
+          lat: 42.27
+          lon: -89.10
+
+        - name: Iran System · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: Agco Fendt Germany · Marktoberdorf, Germany
+          city: Marktoberdorf
+          country: Germany
+          lat: 47.78
+          lon: 10.62
+
+        - name: Belarfonte Uruguay · Montevideo, Uruguay
+          city: Montevideo
+          country: Uruguay
+          lat: -34.90
+          lon: -56.16
+
     start: "2011-03"
     end: "2011-12"
 
     highlights:
       - Proof-of-concept project development
-      - Technical presentation to external customer
+      - External customer: technical presentation
 
     attributes:
       OS:
@@ -429,7 +632,23 @@ work:
     company: Intel Corporation
     position: Project Manager — Software
     kind: semiconductor
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+          same: true
+
     start: "2009-07"
     end: "2010-07"
 
@@ -443,7 +662,40 @@ work:
     company: Agilent Technologies
     position: Operating Manager — Software
     kind: vision measurement
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Nokia · Helsinki, Finland
+          city: Helsinki
+          country: Finland
+          lat: 60.17
+          lon: 24.94
+
+        - name: Jabil EMS · Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          same: true
+
+        - name: Rockwell · Milwaukee, Wisconsin, USA
+          city: Milwaukee
+          country: USA
+          region: Wisconsin
+          lat: 43.04
+          lon: -87.91
+
     start: "2007-07"
     end: "2009-03"
 
@@ -466,12 +718,49 @@ work:
     company: Bosch / Bosch–Blaupunkt
     position: Project Manager — Software
     kind: automotive
-    location: Penang, Malaysia
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: GM Daewoo · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Zao Volga · Moscow, Russia
+          city: Moscow
+          country: Russia
+          lat: 55.76
+          lon: 37.62
+
+        - name: Nissan Britain · London, United Kingdom
+          city: London
+          country: United Kingdom
+          lat: 51.51
+          lon: -0.13
+
+        - name: GM Holden · Melbourne, Australia
+          city: Melbourne
+          country: Australia
+          lat: -37.81
+          lon: 144.96
+
     start: "2005-11"
     end: "2007-07"
 
     highlights:
-      - Global customer requirements and project progress
+      - Global customers: requirements and project progress
       - Infotainment software development
 
     attributes:
@@ -487,15 +776,51 @@ work:
       - embedded-systems
       - automotive
 
-  - id: inti-2002
-    company: INTI International College Penang
-    position: Academic Coordinator — Lecturer
+  - id: early-career-1995-2005
+    company: Early Career & Academia
+    position: Foundations in engineering & education
     kind: academia
-    location: Penang, Malaysia
-    start: "2002-01"
-    end: "2005-01"
+
+    location:
+      city: Malaysia
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+          link: false
+
+        - name: Wellington, New Zealand
+          city: Wellington
+          country: New Zealand
+          lat: -41.29
+          lon: 174.78
+          link: false
+
+      customers:
+        - name: Malaysia · Kuala Lumpur
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: New Zealand · Wellington
+          city: Wellington
+          country: New Zealand
+          lat: -41.29
+          lon: 174.78
+
+    start: "1995"
+    end: "2005"
 
     highlights:
+      - Maintained Unix money-market systems
+      - Developed RS-232 SIRAS swiping modules on OS/2 in C++
+      - Established campus computer infrastructure and pre-university IT programmes
       - Lectured Computer Engineering, C/C++, Java and Assembly Language
 
     attributes:
@@ -504,45 +829,16 @@ work:
         - C++
         - Java
         - Assembly
-
-    tags:
-      - teaching
-
-  - id: hanchiang-1997
-    company: Han Chiang High School
-    position: Head of Computer Centre
-    kind: academia
-    location: Penang, Malaysia
-    start: "1997-01"
-    end: "2001-12"
-
-    highlights:
-      - Established campus computer infrastructure and pre-university IT programmes
-
-    tags:
-      - teaching
-
-  - id: scs-pec-1995
-    company: SCS Systems / PEC Ltd.
-    position: Application Specialist
-    kind: information technology
-    location: New Zealand
-    start: "1995-01"
-    end: "1997-12"
-
-    highlights:
-      - Maintained Unix money-market systems
-      - Developed RS-232 SIRAS swiping modules on OS/2
-
-    attributes:
       OS:
         - Unix
         - OS/2
-      Languages:
-        - C++
 
     tags:
       - embedded-systems
+      - teaching
+      - IT operations
+      - infrastructure
+      - administration
 
 # ============================================================
 # EDUCATION
@@ -555,700 +851,3 @@ education:
     studyType: Bachelor
     start: "1989"
     end: "1995"
-
-# ============================================================
-# SIGNATURE IMPACT
-# ============================================================
-
-impact:
-
-  - id: quality-delivery
-
-    title: Objective-Driven Quality Delivery
-
-    stats:
-      - value: "140+ → ~5"
-        label: "defects in 3 years · Continental"
-
-      - value: "12+ → ~4"
-        label: "defects in 3 years · Intel"
-
-    points:
-      - Cut customer-found defects from 140+ to ~5 per year at Continental, and from 12+ to ~4 per year at Intel
-
-    evidence:
-      - continental-2017
-      - intel-2022
-      - intel-2025
-
-  - id: ai-prototyping
-
-    title: AI-Augmented Prototyping
-
-    stats:
-      - value: "5 days"
-        label: "camera-driver migration"
-
-      - value: "85"
-        label: "test cases · two quarters"
-
-      - value: "15 min → 9 s"
-        label: "inspection · custom instruments"
-
-    points:
-      - At-the-desk technical leader using AI as an execution partner
-      - Spec-first prototyping as the core workflow
-      - Two custom video-inspection instruments collapsed a 15-minute manual check to 9 seconds
-
-    evidence:
-      - intel-2025
-
-  - id: talent-development
-
-    title: Human-Touch Talent Development
-
-    stats:
-      - value: "0%"
-        label: "unintended attrition · 3 consecutive years"
-
-    points:
-      - Intel — grew a non-performing engineer into a key contributor within a year
-      - Continental — elevated a validation engineer into a global Project Manager
-
-    evidence:
-      - intel-2022
-      - continental-2017
-
-# ============================================================
-# SELECTED PROJECTS
-#
-# These are structured from the existing work and impact data.
-# They give the 3D renderer meaningful objects to visualize
-# without inventing additional projects.
-# ============================================================
-
-projects:
-
-  - id: video-inspection
-    title: Video Inspection Automation
-
-    summary: >
-      Built video colour-corruption and video-tearing detection tools
-      for post-silicon validation.
-
-    role: intel-2025
-
-    competencies:
-      - test-automation
-      - post-silicon-validation
-      - ai-prototyping
-
-    technology:
-      - Python
-      - C#
-      - C++
-      - Bash
-      - PowerShell
-
-    outcomes:
-      - label: Inspection time
-        value: "15 min → 9 s"
-
-      - label: Validation scope
-        value: "85 test cases"
-
-    featured: true
-
-  - id: camera-driver-migration
-    title: Camera Driver Migration
-
-    summary: >
-      AI-assisted technical prototyping and driver migration work.
-
-    role: intel-2025
-
-    competencies:
-      - driver-bring-up
-      - ai-prototyping
-
-    technology:
-      - C++
-      - Python
-
-    outcomes:
-      - label: Migration time
-        value: "5 days"
-
-    featured: true
-
-  - id: post-silicon-automation
-    title: Post-Silicon Test Automation
-
-    summary: >
-      Post-silicon test automation and validation activities supporting
-      software development and driver bring-up.
-
-    role: intel-2025
-
-    competencies:
-      - test-automation
-      - post-silicon-validation
-      - driver-bring-up
-
-    technology:
-      - Python
-      - C#
-      - C
-      - C++
-      - Bash
-      - PowerShell
-
-    featured: true
-
-  - id: functional-test-leadership
-    title: Functional Test Site Leadership
-
-    summary: >
-      Functional test leadership and AGILE business ownership within
-      automotive product development.
-
-    role: continental-2017
-
-    competencies:
-      - site-leadership
-      - agile-leadership
-      - test-automation
-      - automotive
-
-    technology:
-      - AGILE
-      - Functional testing
-      - JIRA
-
-    outcomes:
-      - label: Customer-found defects
-        value: "140+ → ~5"
-
-    featured: true
-
-  - id: infotainment-program
-    title: Infotainment Program Management
-
-    summary: >
-      End-to-end program management spanning R&D, finance, procurement,
-      PCBA assembly, product assembly and reliability testing.
-
-    role: blaupunkt-2012
-
-    competencies:
-      - program-mgmt
-      - customer-engagement
-      - automotive
-
-    technology:
-      - Android
-      - Bare-metal systems
-      - Vendor management
-
-    featured: false
-
-  - id: embedded-infotainment
-    title: Embedded Infotainment Software
-
-    summary: >
-      Proof-of-concept and software development activities involving
-      embedded infotainment systems and external customer presentations.
-
-    role: blaupunkt-2011
-
-    competencies:
-      - embedded-systems
-      - customer-engagement
-      - automotive
-
-    technology:
-      - C++
-      - WinCE
-
-    featured: false
-
-  - id: aoi-analytics
-    title: AOI / AXI Analytics Knowledge Transfer
-
-    summary: >
-      Product knowledge transfer activities involving AOI products and
-      AOI/AXI analytics across international teams.
-
-    role: agilent-2007
-
-    competencies:
-      - sw-management
-      - people-development
-      - program-mgmt
-
-    technology:
-      - Agilent PLC
-      - AOI
-      - AXI
-
-    featured: false
-
-# ============================================================
-# CAREER MILESTONES
-#
-# Timeline nodes used by the 3D scene and career storytelling.
-# These describe transitions already represented in work history.
-# ============================================================
-
-milestones:
-
-  - id: career-start
-    year: "1995"
-    title: Software Engineering Career
-    role: scs-pec-1995
-    type: career
-
-  - id: academia-start
-    year: "1997"
-    title: Head of Computer Centre
-    role: hanchiang-1997
-    type: leadership
-
-  - id: lecturing
-    year: "2002"
-    title: Academic Coordinator — Lecturer
-    role: inti-2002
-    type: academia
-
-  - id: software-program-management
-    year: "2005"
-    title: Project Management & Embedded Software
-    role: bosch-2005
-    type: delivery
-
-  - id: management
-    year: "2007"
-    title: Software Management
-    role: agilent-2007
-    type: leadership
-
-  - id: program-management
-    year: "2009"
-    title: Software Project Management
-    role: intel-2009
-    type: delivery
-
-  - id: automotive-development
-    year: "2011"
-    title: Automotive Software Development
-    role: blaupunkt-2011
-    type: engineering
-
-  - id: program-leadership
-    year: "2012"
-    title: Program Management
-    role: blaupunkt-2012
-    type: delivery
-
-  - id: software-section-management
-    year: "2014"
-    title: Software Section Management
-    role: blaupunkt-2014
-    type: leadership
-
-  - id: site-leadership
-    year: "2017"
-    title: Functional Test Site Leadership
-    role: continental-2017
-    type: leadership
-
-  - id: engineering-management
-    year: "2022"
-    title: Software Engineering Management
-    role: intel-2022
-    type: leadership
-
-  - id: automation-lead
-    year: "2025"
-    title: System Software Development · Automation Lead
-    role: intel-2025
-    type: engineering
-
-# ============================================================
-# LEADERSHIP DIMENSIONS
-#
-# These create another useful visual grouping without changing
-# the underlying employment history.
-# ============================================================
-
-leadership:
-
-  dimensions:
-
-    - id: people
-      label: People Development
-      competencies:
-        - people-development
-        - sw-management
-        - site-leadership
-      evidence:
-        - intel-2022
-        - continental-2017
-        - blaupunkt-2014
-        - agilent-2007
-
-    - id: delivery
-      label: Program & Delivery
-      competencies:
-        - program-mgmt
-        - agile-leadership
-        - customer-engagement
-      evidence:
-        - intel-2022
-        - intel-2009
-        - blaupunkt-2014
-        - blaupunkt-2012
-        - agilent-2007
-        - bosch-2005
-
-    - id: technical
-      label: Technical Execution
-      competencies:
-        - test-automation
-        - post-silicon-validation
-        - driver-bring-up
-        - ai-prototyping
-      evidence:
-        - intel-2025
-        - blaupunkt-2011
-        - bosch-2005
-        - scs-pec-1995
-
-    - id: customer
-      label: Customer Engagement
-      competencies:
-        - customer-engagement
-      evidence:
-        - blaupunkt-2014
-        - blaupunkt-2012
-        - blaupunkt-2011
-        - bosch-2005
-
-    - id: domain
-      label: Domain Experience
-      competencies:
-        - media-imaging
-        - embedded-systems
-        - automotive
-      evidence:
-        - intel-2025
-        - intel-2022
-        - blaupunkt-2011
-        - bosch-2005
-        - continental-2017
-
-    - id: academia
-      label: Academia
-      competencies:
-        - teaching
-      evidence:
-        - inti-2002
-        - hanchiang-1997
-
-# ============================================================
-# DISPLAY
-# ============================================================
-
-display:
-
-  # ----------------------------------------------------------
-  # Portrait
-  # ----------------------------------------------------------
-
-  photo: cbc.jpg
-
-  # ----------------------------------------------------------
-  # Theme
-  # ----------------------------------------------------------
-
-  theme:
-    accent1: "#6366f1"
-    accent2: "#22d3ee"
-    background: "#070b16"
-
-  # ----------------------------------------------------------
-  # 3D Visualization
-  #
-  # The renderer must treat this as progressive enhancement.
-  # If WebGL is unavailable, the rest of the profile still works.
-  # ----------------------------------------------------------
-
-  visual3d:
-
-    enabled: true
-
-    intensity: 0.85
-
-    particleCount: 80
-
-    nodeScale: 1
-
-    connectionOpacity: 0.28
-
-    cameraParallax: 0.12
-
-    autoRotate: true
-
-    showCareerOrbit: true
-
-    showCompetencyNetwork: true
-
-    showImpactNodes: true
-
-    showMilestones: true
-
-    showProjectNodes: true
-
-    showLeadershipDimensions: true
-
-    # Mobile render complexity
-    mobile:
-
-      particleCount: 24
-
-      nodeScale: 0.9
-
-      connectionOpacity: 0.20
-
-      cameraParallax: 0.05
-
-      autoRotate: false
-
-  # ----------------------------------------------------------
-  # Hero
-  # ----------------------------------------------------------
-
-  hero:
-
-    showStats: true
-
-    stats:
-
-      - value: "{years}+"
-        label: Years Experience
-
-      - value: "{companies}"
-        label: Companies
-
-      - value: "{roles}"
-        label: Roles
-
-      - value: "{competencies}"
-        label: Competencies
-
-    showCoreCompetencies: true
-
-    showTagline: true
-
-    showSummary: true
-
-    showLocation: true
-
-    showProfiles: true
-
-  # ----------------------------------------------------------
-  # Chronology
-  # ----------------------------------------------------------
-
-  chrono:
-
-    sections:
-
-      - title: Industry
-        kinds:
-          - semiconductor
-          - automotive
-          - vision measurement
-          - information technology
-
-      - title: Academia
-        kinds:
-          - academia
-
-    otherTitle: Other
-
-    educationTitle: Education
-
-    showTimeline: true
-
-    showHighlights: true
-
-    showAttributes: true
-
-    showTags: true
-
-    showLocation: true
-
-  # ----------------------------------------------------------
-  # Functional / capability view
-  # ----------------------------------------------------------
-
-  functional:
-
-    impactTitle: Signature Impact
-
-    evidenceLabel: Evidence
-
-    skillsMapTitle: Competency Network
-
-    showSkillsMap: true
-
-    groupOrder:
-      - Leadership
-      - Delivery
-      - Engineering
-      - Domain
-      - Academia
-
-    showProjects: true
-
-    projectsTitle: Selected Projects
-
-    showLeadership: true
-
-    leadershipTitle: Leadership Dimensions
-
-    showMilestones: true
-
-    milestonesTitle: Career Milestones
-
-    showEvidenceConnections: true
-
-  # ----------------------------------------------------------
-  # Toolbox
-  # ----------------------------------------------------------
-
-  toolbox:
-
-    enabled: true
-
-    title: Career Toolbox
-
-    order:
-      - Languages
-      - OS
-      - Process
-      - Component
-      - Products
-      - AI
-
-  # ----------------------------------------------------------
-  # Footer
-  # ----------------------------------------------------------
-
-  footer: |
-    Last updated {lastUpdated} · {years}+ years · {companies} companies · {roles} roles
-
-# ============================================================
-# 3D VISUAL SEMANTICS
-#
-# These settings tell the renderer how data should relate
-# visually. They contain no personal facts.
-# ============================================================
-
-visualMapping:
-
-  career:
-    source: work
-    nodeType: role
-    color: accent1
-
-  competencies:
-    source: competencies
-    nodeType: competency
-    color: accent2
-
-  projects:
-    source: projects
-    nodeType: project
-    color: accent1
-
-  impact:
-    source: impact
-    nodeType: impact
-    color: accent2
-
-  milestones:
-    source: milestones
-    nodeType: milestone
-    color: accent1
-
-  leadership:
-    source: leadership.dimensions
-    nodeType: dimension
-    color: accent2
-
-# ============================================================
-# SORT / PRESENTATION RULES
-# ============================================================
-
-presentation:
-
-  workSort:
-    field: start
-    direction: desc
-
-  milestoneSort:
-    field: year
-    direction: asc
-
-  competencyGroupOrder:
-    - Leadership
-    - Delivery
-    - Engineering
-    - Domain
-    - Academia
-
-  projectFeaturedFirst: true
-
-  attributes:
-
-    remainingKeys:
-      sort: frequency-desc
-
-    values:
-      sort: alphabetical
-
-# ============================================================
-# TOKENS
-#
-# The HTML renderer may expand these anywhere configured by
-# the display section.
-# ============================================================
-
-tokens:
-
-  years:
-    source: calculated
-    calculation: full-years-from-earliest-work-start-to-present
-
-  roles:
-    source: work.length
-
-  companies:
-    source: distinct-work-company-count
-
-  competencies:
-    source: competencies.length
-
-  education:
-    source: education.length
-
-  projects:
-    source: projects.length
-
-  milestones:
-    source: milestones.length
-
-  lastUpdated:
-    source: meta.lastUpdated
