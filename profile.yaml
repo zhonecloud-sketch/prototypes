@@ -442,13 +442,13 @@ work:
           lat: 35.69
           lon: 51.39
 
-        - name: Agco Fendt Germany · Marktoberdorf, Germany
+        - name: Agco Fendt · Marktoberdorf, Germany
           city: Marktoberdorf
           country: Germany
           lat: 47.78
           lon: 10.62
 
-        - name: Belarfonte Uruguay · Montevideo, Uruguay
+        - name: Belarfonte · Montevideo, Uruguay
           city: Montevideo
           country: Uruguay
           lat: -34.90
