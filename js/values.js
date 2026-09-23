@@ -1,10 +1,39 @@
-// Signature Values: business-component tiles muster into a grid, then each
-// value pulls its components into an orbit around the value number while the
-// rest shrink and fade into the background. Driven by scroll progress.
+// Signature Values: signal beacons assemble over a permanent compass chart;
+// each value connects its relevant beacons to a central hub on scroll.
 import * as THREE from '../lib/three.module.js';
 import { clamp, damp, lerp, easeOutCubic, mulberry32, drawLabelCanvas, radialGlowCanvas } from './util.js';
 
-const INTRO_WEIGHT = 0.6; // scroll weight of the muster phase relative to one value
+export const VALUES_INTRO_WEIGHT = 0.16; // the muster begins during entry, not after the stage sticks
+
+function drawSignalCanvas(text) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 768; canvas.height = 192;
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(255,255,255,.65)';
+  ctx.beginPath(); ctx.arc(62, 96, 28, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(62, 77); ctx.lineTo(81, 96); ctx.lineTo(62, 115); ctx.lineTo(43, 96);
+  ctx.closePath(); ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(62, 96, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.4)';
+  ctx.beginPath(); ctx.moveTo(92, 96); ctx.lineTo(122, 96); ctx.stroke();
+
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  let size = 60;
+  do {
+    ctx.font = `600 ${size}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+    if (ctx.measureText(text).width <= 610 || size <= 36) break;
+    size -= 2;
+  } while (true);
+  ctx.fillText(text, 138, 91);
+  ctx.fillStyle = 'rgba(255,255,255,.35)';
+  ctx.fillRect(138, 149, 590, 2);
+  ctx.fillStyle = 'rgba(255,255,255,.8)';
+  ctx.fillRect(728, 145, 4, 10);
+  return canvas;
+}
 
 export function createValues({ canvas, host, copyEl, components, values, reduced = false, onActive }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
@@ -20,9 +49,9 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
   const colDim = new THREE.Color('#55627a');
   const accents = values.map((v) => new THREE.Color(v.accent || '#37d1ff'));
 
-  // --- tiles
+  // --- transparent beacons, rather than boxed cards
   const tiles = components.map((c, i) => {
-    const tex = new THREE.CanvasTexture(drawLabelCanvas({ text: c.label, font: '600 58px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' }));
+    const tex = new THREE.CanvasTexture(drawSignalCanvas(c.label));
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0, color: colBase.clone() });
@@ -30,7 +59,7 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
     scene.add(mesh);
     return {
       id: c.id, mesh, mat,
-      cur: { x: 0, y: 0, z: -6, s: 0.5, o: 0 },
+      cur: { x: 0, y: 0, z: -6, s: 0.5, o: 0, w: 0, h: 0 },
       grid: { x: 0, y: 0 },
       scatter: { x: 0, y: 0, z: -3 - rnd() * 4, seedX: rnd() * 2 - 1, seedY: rnd() * 2 - 1 },
       phase: rnd(),
@@ -75,7 +104,8 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
   }
 
   // --- layout
-  let W = 1, H = 1, halfW = 1, halfH = 1, tileW = 0.7, tileH = 0.35;
+  let W = 1, H = 1, halfW = 1, halfH = 1, tileW = 0.7, tileH = 0.35, focusW = 0.7, focusH = 0.35;
+  const chartPos = { x: 0, y: 0 };
   const hubPos = { x: 0, y: 0.9, z: 1.2 };
   const orbit = { rx: 0.5, ry: 0.8, rz: 0.35 };
 
@@ -83,41 +113,44 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
     const aspect = W / H;
     halfH = camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     halfW = halfH * aspect;
-    const landscape = aspect > 1;
-    // Portrait: tiles sit between the header strip and the copy panel, whose
-    // pixel height (not a viewport fraction) decides how much room is left.
-    const topF = Math.max(0.1, 84 / H);
-    const botF = copyEl ? clamp(1 - copyEl.offsetHeight / H + 0.03, 0.42, 0.62) : 0.56;
+    const landscape = aspect > 1 && H <= 520; // match the two-column CSS layout on short landscape screens
+    const chartShare = landscape && H <= 380 ? 0.4 : 0.5;
+    // Keep beacons inside the chart between the hint and the measured copy panel.
+    const topF = Math.max(0.1, 100 / H);
+    const botF = copyEl ? clamp(1 - copyEl.offsetHeight / H - 0.015, topF + 0.12, 0.7) : 0.55;
     const region = landscape
-      ? { cx: -halfW * 0.5, cy: 0, hw: halfW * 0.46, hh: halfH * 0.8 }
+      ? { cx: -halfW * (1 - chartShare), cy: -halfH * 0.1, hw: halfW * chartShare * 0.92, hh: halfH * 0.7 }
       : { cx: 0, cy: halfH * (1 - topF - botF), hw: halfW * 0.92, hh: halfH * (botF - topF) };
     const n = tiles.length;
-    const cols = landscape ? 4 : 3;
+    // A short phone has room for five rows, not seven; focused labels grow separately.
+    const cols = !landscape && (botF - topF) * H < 260 ? 3 : 2;
     const rows = Math.ceil(n / cols);
-    const gap = 0.08;
-    tileW = Math.min(0.74, (2 * region.hw - (cols - 1) * gap) / cols);
-    tileH = tileW * 0.5;
-    const maxH = (2 * region.hh - (rows - 1) * gap) / rows;
-    if (tileH > maxH) { tileH = maxH; tileW = tileH * 2; }
-    const gridW = cols * tileW + (cols - 1) * gap;
-    const gridH = rows * tileH + (rows - 1) * gap;
+    const gapX = cols === 3 ? 0.07 : 0.1, gapY = 0.075;
+    tileW = Math.min(landscape ? 2.2 : 1.08, (2 * region.hw - (cols - 1) * gapX) / cols);
+    tileH = Math.min(tileW * 0.28, Math.max(0.09, (2 * region.hh - (rows - 1) * gapY) / rows));
+    focusW = landscape ? tileW : Math.max(tileW, Math.min(1.03, (2 * region.hw - 0.1) / 2));
+    focusH = Math.max(tileH, Math.min(focusW * 0.29, region.hh * 0.48));
+    const gridW = cols * tileW + (cols - 1) * gapX;
+    const gridH = rows * tileH + (rows - 1) * gapY;
     const lastCount = n - (rows - 1) * cols;
     tiles.forEach((tile, i) => {
       const c = i % cols, r = Math.floor(i / cols);
-      const offset = r === rows - 1 ? ((cols - lastCount) * (tileW + gap)) / 2 : 0;
-      tile.grid.x = region.cx - gridW / 2 + tileW / 2 + c * (tileW + gap) + offset;
-      tile.grid.y = region.cy + gridH / 2 - tileH / 2 - r * (tileH + gap);
+      const offset = r === rows - 1 ? ((cols - lastCount) * (tileW + gapX)) / 2 : 0;
+      tile.grid.x = region.cx - gridW / 2 + tileW / 2 + c * (tileW + gapX) + offset;
+      tile.grid.y = region.cy + gridH / 2 - tileH / 2 - r * (tileH + gapY);
       tile.scatter.x = region.cx + tile.scatter.seedX * halfW * 1.6;
       tile.scatter.y = region.cy + tile.scatter.seedY * halfH * 1.1;
     });
-    hubPos.x = region.cx; hubPos.y = region.cy;
-    // Tall ellipse around the hub: wide tiles separate best vertically on phones.
-    const visHalfW = (camera.position.z - hubPos.z) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * aspect;
-    const roomX = landscape ? region.hw : visHalfW;
-    orbit.rx = clamp(roomX - tileW * 0.5 - 0.05, 0.3, 0.9);
-    orbit.ry = clamp(region.hh - tileH * 0.6, 0.45, 0.7);
-    orbit.rz = 0.35;
-    hub.scale.setScalar(Math.min(0.6, tileH * 1.7));
+    chartPos.x = region.cx; chartPos.y = region.cy;
+    // The hub is closer to the camera; compensate its X for perspective so
+    // it still projects onto the centre of the compass in landscape.
+    hubPos.x = chartPos.x * (camera.position.z - hubPos.z) / camera.position.z;
+    hubPos.y = chartPos.y;
+    // A broad orbit keeps long labels apart while the number sits above them.
+    orbit.rx = clamp(region.hw - focusW * 0.52 - 0.03, 0.24, landscape ? 1.25 : 0.65);
+    orbit.ry = clamp(region.hh - focusH * 0.65, 0.3, landscape ? 1.3 : 0.9);
+    orbit.rz = 0.12;
+    hub.scale.setScalar(Math.min(0.6, focusH * 1.7));
     glow.scale.setScalar(hub.scale.x * 3.2);
   }
 
@@ -135,19 +168,17 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
   let hubFlash = 0;
   const tmpCol = new THREE.Color();
 
-  function render(dt, t, progress, visibleTime) {
+  function render(dt, t, progress, entry) {
     const N = values.length;
-    const total = INTRO_WEIGHT + N;
+    const total = VALUES_INTRO_WEIGHT + N;
     const p = progress * total;
     let active = -1, introQ = 1;
-    if (p < INTRO_WEIGHT) introQ = p / INTRO_WEIGHT;
-    else active = Math.min(N - 1, Math.floor(p - INTRO_WEIGHT));
-    // Guarantee the muster plays even if the user lands mid-section.
-    introQ = Math.min(introQ, clamp(visibleTime / 1.5, 0, 1));
+    if (p < VALUES_INTRO_WEIGHT) introQ = Math.max(p / VALUES_INTRO_WEIGHT, clamp((entry - 0.04) / 0.86, 0, 1));
+    else active = Math.min(N - 1, Math.floor(p - VALUES_INTRO_WEIGHT));
 
     if (active !== lastActive) {
       lastActive = active;
-      hubFlash = 1;
+      hubFlash = reduced ? 0 : 1;
       if (active >= 0) hubMat.map = hubTextures[active];
       onActive?.(active);
     }
@@ -159,20 +190,21 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
     if (focusSet) for (const tile of tiles) if (focusSet.has(tile.id)) M++;
     let m = 0;
     const n = tiles.length;
-    const spin = reduced ? 0 : t * 0.32;
-    const kFocus = damp(4.5, dt), kIntro = damp(12, dt);
+    const spin = reduced ? 0 : t * 0.08 + progress * 0.45;
+    const kFocus = reduced ? 1 : damp(5.5, dt);
+    const kIntro = 1; // entry and muster follow the scroll, never a timer
 
     for (let i = 0; i < n; i++) {
       const tile = tiles[i];
       let tx, ty, tz, ts, to, col, k;
       if (focusSet && focusSet.has(tile.id)) {
         const phi = spin + (Math.PI * 2 * m) / M + Math.PI / 2; m++;
-        tx = hubPos.x + orbit.rx * Math.cos(phi);
-        ty = hubPos.y + orbit.ry * Math.sin(phi);
-        tz = hubPos.z - orbit.rz * Math.sin(phi);
+        tx = chartPos.x + orbit.rx * Math.cos(phi);
+        ty = chartPos.y + orbit.ry * Math.sin(phi);
+        tz = 0.2 - orbit.rz * Math.sin(phi);
         ts = 0.94; to = 1; col = accent; k = kFocus;
       } else if (focusSet) {
-        tx = tile.grid.x; ty = tile.grid.y; tz = -1.5; ts = 0.76; to = 0.12; col = colDim; k = kFocus;
+        tx = tile.grid.x; ty = tile.grid.y; tz = -1.5; ts = 0.76; to = 0.2; col = colDim; k = kFocus;
       } else {
         const li = clamp((introQ - (0.55 * i) / n) / 0.45, 0, 1);
         const e = easeOutCubic(li);
@@ -184,8 +216,11 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
       const c = tile.cur;
       c.x += (tx - c.x) * k; c.y += (ty - c.y) * k; c.z += (tz - c.z) * k;
       c.s += (ts - c.s) * k; c.o += (to - c.o) * k;
+      const focused = focusSet?.has(tile.id);
+      c.w += ((focused ? focusW : tileW) - c.w) * k;
+      c.h += ((focused ? focusH : tileH) - c.h) * k;
       tile.mesh.position.set(c.x, c.y, c.z);
-      tile.mesh.scale.set((tileW / 2) * c.s, tileH * c.s, 1);
+      tile.mesh.scale.set((c.w / 2) * c.s, c.h * c.s, 1);
       tile.mesh.quaternion.copy(camera.quaternion);
       tile.mat.opacity = c.o;
       tile.mat.color.lerp(col, k);
@@ -199,7 +234,7 @@ export function createValues({ canvas, host, copyEl, components, values, reduced
     hub.quaternion.copy(camera.quaternion);
     glow.position.set(hubPos.x, hubPos.y, hubPos.z - 0.05);
     glowMat.color.copy(hubMat.color);
-    glowMat.opacity = hubMat.opacity * (0.22 + 0.1 * Math.sin(t * 2.1) + hubFlash * 0.5);
+    glowMat.opacity = hubMat.opacity * (0.22 + (reduced ? 0 : 0.1 * Math.sin(t * 2.1)) + hubFlash * 0.5);
     let seg = 0;
     if (focusSet) {
       for (const tile of tiles) {

@@ -1,6 +1,6 @@
 // Entry point: load profile.yaml, build the DOM, wire the three scenes to scroll.
 import { createHero } from './hero.js';
-import { createValues } from './values.js';
+import { createValues, VALUES_INTRO_WEIGHT } from './values.js?v=20260923c';
 import { createWorldMap } from './worldmap.js';
 import { LANDMASK } from './landmask.js';
 import { el, fmtDate, fmtDuration, telHref, clamp, prefersReducedMotion } from './util.js';
@@ -86,7 +86,7 @@ function buildValues(values) {
   const intro = el('div', { class: 'value-panel is-active' }, [
     el('div', { class: 'value-num', text: `${String(values.length).padStart(2, '0')} values` }),
     el('h3', { class: 'value-label', text: 'How the work gets done' }),
-    el('p', { class: 'value-statement', text: 'Every part of the business — customers, programs, engineering, validation, people — is a tile. Keep scrolling: each value pulls the parts it moves into focus.' }),
+    el('p', { class: 'value-statement', text: 'Each signal is a part of the work. Scroll to see the connections behind every value light up.' }),
   ]);
   const panels = values.map((v, i) => el('div', { class: 'value-panel', style: `--accent:${v.accent}` }, [
     el('div', { class: 'value-num', text: v.number || String(i + 1).padStart(2, '0') }),
@@ -94,19 +94,20 @@ function buildValues(values) {
     el('p', { class: 'value-statement', text: String(v.statement || '').trim() }),
     v.evidence?.length ? el('ul', { class: 'value-evidence' }, v.evidence.map((e) => evidenceItem(asText(e)))) : null,
   ]));
-  const hint = el('p', { class: 'values-hint', text: 'Scroll to bring each value into focus' });
+  const hint = el('p', { class: 'values-hint', text: 'Scroll to connect the signals' });
   const head = el('div', { class: 'values-head' }, [
     el('span', { class: 'eyebrow', text: 'Signature Values' }),
     el('div', { class: 'values-progress', 'aria-hidden': 'true' }, progress),
   ]);
   const copy = el('div', { class: 'values-copy' }, [intro, ...panels]);
   const stage = el('div', { class: 'values-stage' }, [
+    el('div', { class: 'values-graphic', 'aria-hidden': 'true' }),
     el('div', { class: 'values-canvas', 'aria-hidden': 'true' }, canvas),
     head, hint,
     copy,
   ]);
   const section = el('section', { class: 'values', 'aria-label': 'Signature values' }, stage);
-  const scrollUnits = (0.6 + values.length) * 90;
+  const scrollUnits = (VALUES_INTRO_WEIGHT + values.length) * 90;
   section.style.height = `calc(100vh + ${scrollUnits}vh)`;
   section.style.height = `calc(100svh + ${scrollUnits}svh)`;
 
@@ -114,6 +115,8 @@ function buildValues(values) {
   const setActive = (i) => {
     if (i === current) return;
     current = i;
+    stage.classList.toggle('is-focused', i >= 0);
+    stage.style.setProperty('--accent', i >= 0 ? values[i].accent : '');
     intro.classList.toggle('is-active', i < 0);
     panels.forEach((p, k) => p.classList.toggle('is-active', k === i));
     progress.forEach((b, k) => { b.classList.toggle('is-active', k === i); b.style.setProperty('--accent', values[Math.max(0, i)]?.accent || ''); });
@@ -314,7 +317,6 @@ async function main() {
 
   // --- frame loop (each scene renders only while its section is near the viewport)
   let last = performance.now();
-  let valuesTime = 0;
   const nearViewport = (r, vh) => r.bottom > -vh * 0.15 && r.top < vh * 1.15;
   function frame(now) {
     requestAnimationFrame(frame);
@@ -333,10 +335,10 @@ async function main() {
       const sr = vals.stage.getBoundingClientRect();
       const range = Math.max(1, valsR.height - sr.height);
       const progress = clamp(-valsR.top / range, 0, 1);
-      const visible = (Math.min(sr.bottom, vh) - Math.max(sr.top, 0)) / Math.max(1, sr.height);
-      if (visible > 0.45) valuesTime += dt; else if (visible <= 0) valuesTime = 0;
-      valuesScene.render(dt, t, progress, valuesTime);
-    } else valuesTime = 0;
+      // Reveal the beacons as the stage enters the viewport, before it sticks.
+      const entry = clamp((vh - valsR.top) / vh, 0, 1);
+      valuesScene.render(dt, t, progress, entry);
+    }
     const expR = exp.section.getBoundingClientRect();
     if (nearViewport(expR, vh)) {
       if (scrollDirty) { updateActiveJob(); scrollDirty = false; }
