@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bias Monitor — Sequential Fairness Testing</title>
+<style>
+  :root {
+    --bg: #f5f5f7; --panel: #fff; --border: #d2d2d7; --text: #1d1d1f;
+    --muted: #6e6e73; --accent: #0071e3; --accent-hover: #0077ed;
+    --ok: #34c759; --warn: #ff9500; --danger: #ff3b30;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55;
+  }
+  header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 16px 24px; }
+  header h1 { margin: 0 0 4px 0; font-size: 20px; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .panel h2 { margin: 0 0 12px 0; font-size: 15px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button {
+    font: inherit; border: 1px solid var(--border); background: var(--panel);
+    color: var(--text); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  button:hover { background: #f0f0f2; }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.primary:hover { background: var(--accent-hover); }
+  button.danger { color: var(--danger); border-color: #ffd0cd; }
+  button.danger:hover { background: #fff0ef; }
+  input[type="number"], input[type="text"] {
+    font: inherit; border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; background: var(--panel); color: var(--text); width: 100px;
+  }
+  input[type="text"].quick { width: 220px; }
+  label { color: var(--muted); font-size: 13px; }
+  .status-bar { display: flex; flex-wrap: wrap; gap: 24px; align-items: baseline; }
+  .status-bar .stat { display: flex; flex-direction: column; }
+  .status-bar .stat .k { font-size: 12px; color: var(--muted); }
+  .status-bar .stat .v { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-wrap: wrap; }
+  .tabs button {
+    border: none; background: none; padding: 10px 16px; border-radius: 0;
+    border-bottom: 2px solid transparent; color: var(--muted); font-weight: 500;
+  }
+  .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tabs button:hover { background: #f0f0f2; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .grid-params { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .param { display: flex; flex-direction: column; gap: 4px; }
+  .result-box { border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fafafa; }
+  .result-box .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #e5e5e5; gap: 12px; }
+  .result-box .row:last-child { border-bottom: none; }
+  .result-box .row .label { color: var(--muted); }
+  .result-box .row .value { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+  .verdict { display: inline-block; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 13px; }
+  .verdict.ok { background: #e5f8ea; color: #1a7f37; }
+  .verdict.warn { background: #fff5e0; color: #9a5b00; }
+  .verdict.neutral { background: #eef0f3; color: #444; }
+  details { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; background: #fafafa; margin-top: 8px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details[open] summary { margin-bottom: 8px; }
+  details p, details ul { margin: 8px 0; }
+  details ul { padding-left: 20px; }
+  details code { background: #eef0f3; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  details .example {
+    background: #f0f8ff; border-left: 3px solid var(--accent);
+    padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 13px;
+  }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid #ececef; text-align: center; font-size: 13px; }
+  th { background: #f5f5f7; color: var(--muted); font-weight: 600; position: sticky; top: 0; z-index: 1; }
+  .table-wrap { max-height: 480px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .w { color: var(--ok); font-weight: 600; }
+  .l { color: var(--danger); font-weight: 600; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .pvalue { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  tr.selected { background: #fff8e1; }
+  tr { cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bias Monitor</h1>
+  <p>Three ways to check whether a game is fair: a one-time review, a live monitor, or a probability estimate.</p>
+</header>
+<main>
+
+  <!-- Records controls -->
+  <div class="panel">
+    <h2>Records</h2>
+    <div class="controls">
+      <button class="primary" id="addW">+ Add Win (W)</button>
+      <button class="primary" id="addL">+ Add Loss (L)</button>
+      <input type="text" class="quick" id="quickInput" placeholder="e.g. WWLLW or 11010">
+      <button id="quickAdd">Add Batch</button>
+      <button id="editBtn">Edit Selected</button>
+      <button id="deleteBtn">Delete Selected</button>
+      <button class="danger" id="resetBtn">Reset All</button>
+      <button id="importBtn">Import</button>
+      <button id="exportBtn">Export</button>
+    </div>
+  </div>
+
+  <!-- Status bar + global p0 -->
+  <div class="panel">
+    <div class="status-bar">
+      <div class="stat"><span class="k">N</span><span class="v" id="nDisplay">0</span></div>
+      <div class="stat"><span class="k">Wins</span><span class="v" id="wDisplay">0</span></div>
+      <div class="stat"><span class="k">Losses</span><span class="v" id="lDisplay">0</span></div>
+      <div class="stat"><span class="k">Observed</span><span class="v" id="obsDisplay">—</span></div>
+      <div class="stat"><span class="k">Deviation d</span><span class="v" id="dDisplay">—</span></div>
+    </div>
+    <div style="margin-top:12px; display:flex; gap:10px; align-items: center; flex-wrap: wrap;">
+      <label for="p0Input">Expected chance if the game is fair (p₀):</label>
+      <input type="number" id="p0Input" value="0.5" min="0.0001" max="0.9999" step="0.001">
+    </div>
+    <p class="note">
+      For a coin or a 50-50 game, use 0.5. For a single number on a 37-slot roulette wheel, use 0.027 (1 in 37).
+      For a single ticket in a 1,000-ticket lottery, use 0.001. This is your benchmark for "nothing is wrong".
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button data-tab="freq" class="active">One-time review</button>
+    <button data-tab="seq">Live monitor</button>
+    <button data-tab="bayes">Probability estimate</button>
+    <button data-tab="records">Records table</button>
+  </nav>
+
+  <!-- Frequentist -->
+  <section class="tab-panel active" id="tab-freq">
+    <div class="panel">
+      <h2>Parameters</h2>
+      <div class="grid-params">
+        <div class="param"><label>False-alarm tolerance (α)</label><input type="number" id="freqAlpha" value="0.05" min="0.0001" max="0.5" step="0.001"></div>
+        <div class="param"><label>Chance of catching a real problem (power)</label><input type="number" id="freqPower" value="0.80" min="0.01" max="0.99" step="0.01"></div>
+      </div>
+      <div class="result-box" id="freqResult"></div>
+
+      <details open>
+        <summary>When to use this method</summary>
+        <p><b>Use it when</b> you decide the number of games to watch <i>in advance</i>, you do not peek at the results, and you make one decision at the end.</p>
+        <div class="example">
+          <b>Real-life example:</b> A casino regulator announces on Monday: "We will watch exactly 10,000 spins of this wheel, then decide if it is fair." They do not look at the results until all 10,000 spins are done. This is the cleanest way to test fairness.
+        </div>
+        <p><b>Do not use it</b> if you plan to stop early when the results look suspicious. Peeking makes the false-alarm rate higher than you think.</p>
+      </details>
+
+      <details>
+        <summary>How to use the parameters</summary>
+
+        <p><b>Expected chance if the game is fair (p₀)</b> — the number you'd see if nothing were wrong.</p>
+        <ul>
+          <li>A fair coin: <code>0.5</code></li>
+          <li>One number on a 37-slot roulette wheel: <code>0.027</code> (1 in 37)</li>
+          <li>One ticket in a 1,000-ticket lottery: <code>0.001</code></li>
+          <li>A basketball player who normally makes 75% of free throws: <code>0.75</code></li>
+        </ul>
+
+        <p><b>False-alarm tolerance (α)</b> — how often you are willing to cry "bias!" when the game is actually fair.</p>
+        <ul>
+          <li><code>0.05</code> means: out of 20 fair games you test, on average 1 will look biased just by luck.</li>
+          <li><code>0.01</code> means: out of 100 fair games, 1 will look biased. Stricter, but you need more records to spot real bias.</li>
+        </ul>
+        <div class="example">
+          <b>Real-life analogy:</b> a smoke alarm with a 5% false-alarm rate goes off once every 20 times you cook toast. You accept the occasional nuisance because you want it to catch real fires. Lower α = fewer nuisance alarms but slower to react.
+        </div>
+
+        <p><b>Chance of catching a real problem (power)</b> — if the game truly is biased by the amount you care about, how often will your test notice?</p>
+        <ul>
+          <li><code>0.80</code>: you'll catch it 80% of the time, miss it 20%.</li>
+          <li><code>0.90</code>: you'll catch it 90% of the time, but you need about 30% more records.</li>
+        </ul>
+        <div class="example">
+          <b>Real-life analogy:</b> a smoke detector with 80% sensitivity catches 4 out of 5 real fires. If you want it to catch 9 out of 10, you need a better (more expensive) detector — or in our case, more samples.
+        </div>
+      </details>
+
+      <details>
+        <summary>What the output means</summary>
+        <ul>
+          <li><b>p-value:</b> "If the game were truly fair, how often would we see something this lopsided just by luck?" Small p-value = surprising result = evidence of bias.</li>
+          <li><b>Verdict:</b> if the p-value is below your α, you say "we reject fairness" (there is evidence of bias). Otherwise, "we cannot rule out fairness".</li>
+          <li><b>Required total N:</b> how many records you would need to reliably detect a bias as large as the one you observed, given your α and power.</li>
+          <li><b>More records needed:</b> the difference between the required N and your current N. Zero means you already have enough.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- Sequential -->
+  <section class="tab-panel" id="tab-seq">
+    <div class="panel">
+      <h2>Parameters</h2>
+      <div class="grid-params">
+        <div class="param"><label>Per-check alert threshold</label><input type="number" id="seqAlpha" value="0.001" min="0.000001" max="0.5" step="0.0001"></div>
+        <div class="param"><label>Overall false-alarm goal (reference only)</label><input type="number" id="seqOverallAlpha" value="0.05" min="0.001" max="0.5" step="0.001"></div>
+      </div>
+      <div class="result-box" id="seqResult"></div>
+
+      <details open>
+        <summary>When to use this method</summary>
+        <p><b>Use it when</b> you are watching results arrive one at a time and you want to stop as soon as possible — either because you found bias or because you are satisfied it is fair.</p>
+        <div class="example">
+          <b>Real-life example:</b> A live dashboard monitors an online game's random number generator. After every draw, it recomputes the statistics. If something looks very wrong, it raises an alert. This is like a doctor continuously watching a patient's heartbeat rather than waiting for a weekly test.
+        </div>
+      </details>
+
+      <details>
+        <summary>How to use the parameters</summary>
+
+        <p><b>Why the per-check threshold must be strict</b></p>
+        <p>If you check after every record and shout "bias!" whenever the p-value is below 0.05, you will be wrong a lot. Here is why in plain terms:</p>
+        <div class="example">
+          <b>Analogy:</b> Roll a fair die 100 times. You will see some suspicious-looking runs — maybe five 6s in a row, or no 1s for 20 rolls. If you declare "the die is rigged!" every time you see a run like that, you will be wrong most of the time. The more often you check, the more chances you give random luck to fool you.
+        </div>
+
+        <p><b>Per-check alert threshold</b> — how strict each individual check should be.</p>
+        <ul>
+          <li>If you want the overall false-alarm rate to be 5% and you check after every record, use <code>0.001</code> (not 0.05).</li>
+          <li>Rule of thumb: divide your target overall false-alarm rate by 20 to 50.</li>
+          <li>If you check less often (say, every 100 records), you can use a less strict per-check threshold.</li>
+        </ul>
+
+        <p><b>Overall false-alarm goal</b> — informational. The app displays it so you can see what you are aiming for. It does not change the calculations.</p>
+      </details>
+
+      <details>
+        <summary>What the output means</summary>
+        <ul>
+          <li><b>Current p-value:</b> same calculation as the one-time review, but compared against your per-check threshold.</li>
+          <li><b>Verdict:</b> "Alert" if the p-value is below your per-check threshold. Otherwise, "continue monitoring".</li>
+          <li><b>Required total N:</b> with the stricter per-check threshold, how many records you would need to reliably detect a bias this large. This number is bigger than the one-time review because the threshold is stricter.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- Bayesian -->
+  <section class="tab-panel" id="tab-bayes">
+    <div class="panel">
+      <h2>Parameters</h2>
+      <div class="grid-params">
+        <div class="param"><label>Prior — imaginary wins</label><input type="number" id="priorA" value="1" min="0.01" step="0.1"></div>
+        <div class="param"><label>Prior — imaginary losses</label><input type="number" id="priorB" value="1" min="0.01" step="0.1"></div>
+        <div class="param"><label>Confidence needed to stop</label><input type="number" id="bayesThreshold" value="0.99" min="0.5" max="0.9999" step="0.01"></div>
+      </div>
+      <div class="result-box" id="bayesResult"></div>
+
+      <details open>
+        <summary>When to use this method</summary>
+        <p><b>Use it when</b> you want a straightforward answer to "What is the probability this game is biased?" and you want that answer to be valid at any time, without worrying about peeking.</p>
+        <div class="example">
+          <b>Real-life example:</b> A weather forecaster says "there is an 85% chance of rain today." That is more useful than a yes/no answer, and it can be updated continuously as new data arrives. The Bayesian method works the same way: it updates the probability that the game is biased after every record.
+        </div>
+      </details>
+
+      <details>
+        <summary>How to use the parameters</summary>
+
+        <p><b>Prior — imaginary wins and losses</b></p>
+        <p>Think of this as the "head start" you give yourself before looking at any data. It represents your previous belief about the game.</p>
+        <ul>
+          <li><b>1 and 1</b> (default): "I have no opinion. The game could be anything." This is the most neutral starting point.</li>
+          <li><b>10 and 10</b>: "I strongly believe the game is fair, as if I had already seen 10 wins and 10 losses." Use this if you have prior experience with this exact game.</li>
+          <li><b>1 and 5</b>: "I already suspect it leans toward losses." Use this if you have a reason to be suspicious.</li>
+        </ul>
+        <div class="example">
+          <b>Analogy:</b> Imagine you are about to taste a new dish. If you have never had it before, you start with no expectation (1 and 1). If your friend told you it is delicious, you start with a positive expectation (10 and 10). The dish still needs to prove itself with real taste, but your starting point shifts.
+        </div>
+
+        <p><b>Confidence needed to stop</b> — how sure you want to be before you act.</p>
+        <ul>
+          <li><code>0.95</code>: "95% sure before I call it biased." Like "beyond reasonable doubt" in a civil court.</li>
+          <li><code>0.99</code>: "99% sure before I call it biased." Like "beyond reasonable doubt" in a criminal court. Slower but safer.</li>
+          <li><code>0.90</code>: "90% sure." Faster decision, but more likely to be wrong.</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>What the output means</summary>
+        <ul>
+          <li><b>Posterior:</b> your updated belief after seeing the data. It combines your prior with the real wins and losses.</li>
+          <li><b>Posterior mean:</b> the best single estimate of the true probability.</li>
+          <li><b>95% credible interval:</b> the range where the true probability most likely sits. If the interval does not contain your p₀, that is strong evidence of bias.</li>
+          <li><b>P(bias toward W):</b> the probability that the true chance of a win is above p₀.</li>
+          <li><b>P(bias toward L):</b> the probability that the true chance of a win is below p₀.</li>
+          <li><b>Verdict:</b> "Stop" if either probability exceeds your confidence threshold.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- Records table -->
+  <section class="tab-panel" id="tab-records">
+    <div class="panel">
+      <h2>Recorded sequence</h2>
+      <div class="table-wrap">
+        <table id="recordsTable">
+          <thead>
+            <tr><th>#</th><th>Result</th><th>Cum W</th><th>Cum L</th><th>N</th><th>Obs %</th><th>p-value vs p₀</th></tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
+      </div>
+      <p class="note" id="recordsNote"></p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ---------------- math ---------------- */
+function logGamma(x) {
+  const g = 7;
+  const C = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+    771.32342877765313, -176.61502916214059, 12.507343278686905,
+    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
+  ];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  x -= 1;
+  let a = C[0];
+  const t = x + g + 0.5;
+  for (let i = 1; i < g + 2; i++) a += C[i] / (x + i);
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+
+function betacf(a, b, x) {
+  const MAXIT = 300, EPS = 3e-12, FPMIN = 1e-300;
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1;
+  let d = 1 - qab * x / qap;
+  if (Math.abs(d) < FPMIN) d = FPMIN;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m <= MAXIT; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d;
+    const del = d * c;
+    h *= del;
+    if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+
+function incBeta(a, b, x) {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  const logBt = logGamma(a + b) - logGamma(a) - logGamma(b)
+              + a * Math.log(x) + b * Math.log(1 - x);
+  const bt = Math.exp(logBt);
+  if (x < (a + 1) / (a + b + 2)) return bt * betacf(a, b, x) / a;
+  return 1 - bt * betacf(b, a, 1 - x) / b;
+}
+
+function binomCDF(k, n, p) {
+  if (k < 0) return 0;
+  if (k >= n) return 1;
+  if (p <= 0) return 1;
+  if (p >= 1) return k >= n ? 1 : 0;
+  return incBeta(n - k, k + 1, 1 - p);
+}
+function binomSF(k, n, p) {
+  if (k <= 0) return 1;
+  if (k > n) return 0;
+  if (p <= 0) return 0;
+  if (p >= 1) return 1;
+  return incBeta(k, n - k + 1, p);
+}
+function twoSidedP(k, n, p0) {
+  if (n === 0) return 1;
+  const lower = binomCDF(k, n, p0);
+  const upper = binomSF(k, n, p0);
+  return Math.min(1, 2 * Math.min(lower, upper));
+}
+
+function criticalRegion(n, p0, alpha) {
+  const target = alpha / 2;
+  let cLow = -1;
+  if (binomCDF(0, n, p0) <= target) {
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = Math.floor((lo + hi + 1) / 2);
+      if (binomCDF(mid, n, p0) <= target) lo = mid; else hi = mid - 1;
+    }
+    cLow = lo;
+  }
+  let cHigh = n + 1;
+  if (binomSF(n, n, p0) <= target) {
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (binomSF(mid, n, p0) <= target) hi = mid; else lo = mid + 1;
+    }
+    cHigh = lo;
+  }
+  return [cLow, cHigh];
+}
+
+function exactPower(n, p1, p0, alpha) {
+  const [cLow, cHigh] = criticalRegion(n, p0, alpha);
+  let power = 0;
+  if (cLow >= 0) power += binomCDF(cLow, n, p1);
+  if (cHigh <= n) power += binomSF(cHigh, n, p1);
+  return Math.min(1, power);
+}
+
+function requiredN(p1, p0, alpha, power) {
+  if (Math.abs(p1 - p0) < 1e-12) return Infinity;
+  const zA = 1.959963984540054, zB = 0.8416212335729143;
+  const est = Math.pow(zA * Math.sqrt(p0 * (1 - p0)) + zB * Math.sqrt(p1 * (1 - p1)), 2) / Math.pow(p1 - p0, 2);
+  let lo = Math.max(1, Math.floor(est * 0.3));
+  let hi = Math.max(lo + 1, Math.ceil(est * 3));
+  let guard = 0;
+  while (exactPower(hi, p1, p0, alpha) < power && guard < 40) {
+    hi *= 2; guard++;
+    if (hi > 1e8) return Infinity;
+  }
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (exactPower(mid, p1, p0, alpha) >= power) hi = mid; else lo = mid + 1;
+  }
+  return lo;
+}
+
+function betaQuantile(p, a, b) {
+  if (p <= 0) return 0;
+  if (p >= 1) return 1;
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (incBeta(a, b, mid) < p) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+/* ---------------- state ---------------- */
+const state = {
+  records: [],
+  p0: 0.5,
+  freqAlpha: 0.05,
+  freqPower: 0.80,
+  seqAlpha: 0.001,
+  seqOverallAlpha: 0.05,
+  priorA: 1,
+  priorB: 1,
+  bayesThreshold: 0.99
+};
+let selectedRecordIndex = -1;
+
+/* ---------------- rendering ---------------- */
+function render() {
+  const n = state.records.length;
+  const w = state.records.filter(r => r === 'W').length;
+  const l = n - w;
+  const obs = n > 0 ? w / n : 0;
+  const d = Math.abs(obs - state.p0);
+
+  document.getElementById('nDisplay').textContent = n;
+  document.getElementById('wDisplay').textContent = w;
+  document.getElementById('lDisplay').textContent = l;
+  document.getElementById('obsDisplay').textContent = n > 0 ? (obs * 100).toFixed(2) + '%' : '—';
+  document.getElementById('dDisplay').textContent = n > 0 ? d.toFixed(4) : '—';
+
+  renderFrequentist(w, n, obs, d);
+  renderSequential(w, n, obs, d);
+  renderBayesian(w, n);
+  renderRecordsTable();
+}
+
+function renderFrequentist(w, n, obs, d) {
+  const box = document.getElementById('freqResult');
+  if (n === 0) {
+    box.innerHTML = '<p class="note">Add records to see results.</p>';
+    return;
+  }
+  const pval = twoSidedP(w, n, state.p0);
+  const reject = pval < state.freqAlpha;
+  const verdict = reject
+    ? '<span class="verdict warn">Reject fairness — evidence of bias</span>'
+    : '<span class="verdict neutral">Cannot rule out fairness</span>';
+
+  let requiredHtml = '';
+  if (d < 1e-12) {
+    requiredHtml = '<div class="row"><span class="label">Required total records</span><span class="value">— (no bias observed)</span></div>';
+  } else {
+    const nReq = requiredN(obs, state.p0, state.freqAlpha, state.freqPower);
+    const nReqTxt = nReq === Infinity ? '∞' : nReq;
+    const moreTxt = nReq === Infinity ? '∞' : (n >= nReq ? '0 (already enough)' : (nReq - n));
+    requiredHtml = `
+      <div class="row"><span class="label">Required total records</span><span class="value">${nReqTxt}</span></div>
+      <div class="row"><span class="label">More records needed</span><span class="value">${moreTxt}</span></div>
+    `;
+  }
+
+  box.innerHTML = `
+    <div class="row"><span class="label">Records collected</span><span class="value">${n}</span></div>
+    <div class="row"><span class="label">Observed win rate</span><span class="value">${(obs * 100).toFixed(4)}%</span></div>
+    <div class="row"><span class="label">p-value vs expected ${state.p0}</span><span class="value pvalue">${pval.toExponential(4)}</span></div>
+    <div class="row"><span class="label">Verdict at α=${state.freqAlpha}</span><span class="value">${verdict}</span></div>
+    ${requiredHtml}
+  `;
+}
+
+function renderSequential(w, n, obs, d) {
+  const box = document.getElementById('seqResult');
+  if (n === 0) {
+    box.innerHTML = '<p class="note">Add records to see results.</p>';
+    return;
+  }
+  const pval = twoSidedP(w, n, state.p0);
+  const alert = pval < state.seqAlpha;
+  const verdict = alert
+    ? '<span class="verdict warn">Alert — evidence of bias</span>'
+    : '<span class="verdict neutral">Continue monitoring</span>';
+
+  let requiredHtml = '';
+  if (d < 1e-12) {
+    requiredHtml = '<div class="row"><span class="label">Required total records</span><span class="value">— (no bias observed)</span></div>';
+  } else {
+    const nReq = requiredN(obs, state.p0, state.seqAlpha, state.freqPower);
+    const nReqTxt = nReq === Infinity ? '∞' : nReq;
+    const moreTxt = nReq === Infinity ? '∞' : (n >= nReq ? '0 (already enough)' : (nReq - n));
+    requiredHtml = `
+      <div class="row"><span class="label">Required total records (strict threshold)</span><span class="value">${nReqTxt}</span></div>
+      <div class="row"><span class="label">More records needed</span><span class="value">${moreTxt}</span></div>
+    `;
+  }
+
+  box.innerHTML = `
+    <div class="row"><span class="label">Records collected</span><span class="value">${n}</span></div>
+    <div class="row"><span class="label">Observed win rate</span><span class="value">${(obs * 100).toFixed(4)}%</span></div>
+    <div class="row"><span class="label">p-value vs expected ${state.p0}</span><span class="value pvalue">${pval.toExponential(4)}</span></div>
+    <div class="row"><span class="label">Per-check alert threshold</span><span class="value">${state.seqAlpha}</span></div>
+    <div class="row"><span class="label">Verdict</span><span class="value">${verdict}</span></div>
+    <div class="row"><span class="label">Overall false-alarm goal</span><span class="value">${state.seqOverallAlpha}</span></div>
+    ${requiredHtml}
+  `;
+}
+
+function renderBayesian(w, n) {
+  const box = document.getElementById('bayesResult');
+  if (n === 0) {
+    box.innerHTML = '<p class="note">Add records to see results.</p>';
+    return;
+  }
+  const a = state.priorA + w;
+  const b = state.priorB + (n - w);
+  const pBiasW = 1 - incBeta(a, b, state.p0);
+  const pBiasL = incBeta(a, b, state.p0);
+  const maxP = Math.max(pBiasW, pBiasL);
+  const stop = maxP > state.bayesThreshold;
+  const ciLow = betaQuantile(0.025, a, b);
+  const ciHigh = betaQuantile(0.975, a, b);
+
+  const verdict = stop
+    ? '<span class="verdict warn">Stop — confident enough about bias</span>'
+    : '<span class="verdict neutral">Keep going — not confident enough yet</span>';
+
+  box.innerHTML = `
+    <div class="row"><span class="label">Updated belief (posterior mean)</span><span class="value">${(a / (a + b)).toFixed(4)}</span></div>
+    <div class="row"><span class="label">95% range for true win rate</span><span class="value">[${ciLow.toFixed(4)}, ${ciHigh.toFixed(4)}]</span></div>
+    <div class="row"><span class="label">Probability the game leans toward Wins</span><span class="value">${(pBiasW * 100).toFixed(3)}%</span></div>
+    <div class="row"><span class="label">Probability the game leans toward Losses</span><span class="value">${(pBiasL * 100).toFixed(3)}%</span></div>
+    <div class="row"><span class="label">Verdict at confidence ${state.bayesThreshold}</span><span class="value">${verdict}</span></div>
+  `;
+}
+
+function renderRecordsTable() {
+  const tbody = document.getElementById('recordsBody');
+  tbody.innerHTML = '';
+  const total = state.records.length;
+  const MAX_ROWS = 500;
+  const start = Math.max(0, total - MAX_ROWS);
+
+  let cumW = 0, cumL = 0;
+  for (let i = 0; i < start; i++) {
+    if (state.records[i] === 'W') cumW++; else cumL++;
+  }
+
+  const frag = document.createDocumentFragment();
+  for (let i = start; i < total; i++) {
+    const r = state.records[i];
+    if (r === 'W') cumW++; else cumL++;
+    const n = cumW + cumL;
+    const obs = cumW / n;
+    const pval = twoSidedP(cumW, n, state.p0);
+    const tr = document.createElement('tr');
+    tr.dataset.idx = i;
+    if (i === selectedRecordIndex) tr.classList.add('selected');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td class="${r === 'W' ? 'w' : 'l'}">${r}</td>
+      <td>${cumW}</td>
+      <td>${cumL}</td>
+      <td>${n}</td>
+      <td>${(obs * 100).toFixed(2)}%</td>
+      <td class="pvalue">${pval.toExponential(3)}</td>
+    `;
+    tr.addEventListener('click', () => {
+      selectedRecordIndex = i;
+      document.querySelectorAll('#recordsBody tr').forEach(x => x.classList.remove('selected'));
+      tr.classList.add('selected');
+    });
+    frag.appendChild(tr);
+  }
+  tbody.appendChild(frag);
+
+  const note = document.getElementById('recordsNote');
+  note.textContent = total > MAX_ROWS
+    ? `Showing last ${MAX_ROWS} of ${total} records (older records not rendered for performance).`
+    : `${total} record(s).`;
+}
+
+/* ---------------- event handlers ---------------- */
+document.getElementById('addW').addEventListener('click', () => { state.records.push('W'); render(); });
+document.getElementById('addL').addEventListener('click', () => { state.records.push('L'); render(); });
+
+document.getElementById('quickAdd').addEventListener('click', () => {
+  const text = document.getElementById('quickInput').value;
+  let added = 0;
+  for (const ch of text) {
+    const c = ch.toUpperCase();
+    if (c === 'W' || c === '1') { state.records.push('W'); added++; }
+    else if (c === 'L' || c === '0') { state.records.push('L'); added++; }
+  }
+  document.getElementById('quickInput').value = '';
+  if (added) render();
+});
+
+document.getElementById('quickInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('quickAdd').click();
+});
+
+document.getElementById('editBtn').addEventListener('click', () => {
+  if (selectedRecordIndex < 0) { alert('Select a record in the Records table first.'); return; }
+  const cur = state.records[selectedRecordIndex];
+  const newVal = prompt(`Edit record ${selectedRecordIndex + 1} (currently ${cur}). Enter W or L:`, cur);
+  if (newVal === null) return;
+  const c = newVal.trim().toUpperCase().charAt(0);
+  if (c === 'W' || c === 'L') {
+    state.records[selectedRecordIndex] = c;
+    render();
+  } else {
+    alert('Please enter W or L.');
+  }
+});
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  if (selectedRecordIndex < 0) { alert('Select a record in the Records table first.'); return; }
+  state.records.splice(selectedRecordIndex, 1);
+  selectedRecordIndex = -1;
+  render();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Delete all records?')) {
+    state.records = [];
+    selectedRecordIndex = -1;
+    render();
+  }
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.csv,text/plain';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      for (const ch of ev.target.result) {
+        const c = ch.toUpperCase();
+        if (c === 'W' || c === '1') state.records.push('W');
+        else if (c === 'L' || c === '0') state.records.push('L');
+      }
+      render();
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([state.records.join('')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'records.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* parameter bindings */
+function bindNum(id, key, min, max) {
+  const el = document.getElementById(id);
+  el.value = state[key];
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    if (!isNaN(v) && v >= min && v <= max) {
+      state[key] = v;
+      render();
+    }
+  });
+}
+bindNum('freqAlpha', 'freqAlpha', 0.0001, 0.5);
+bindNum('freqPower', 'freqPower', 0.01, 0.99);
+bindNum('seqAlpha', 'seqAlpha', 0.000001, 0.5);
+bindNum('seqOverallAlpha', 'seqOverallAlpha', 0.001, 0.5);
+bindNum('priorA', 'priorA', 0.01, 1e6);
+bindNum('priorB', 'priorB', 0.01, 1e6);
+bindNum('bayesThreshold', 'bayesThreshold', 0.5, 0.9999);
+
+const p0Input = document.getElementById('p0Input');
+p0Input.value = state.p0;
+p0Input.addEventListener('input', () => {
+  const v = parseFloat(p0Input.value);
+  if (!isNaN(v) && v > 0 && v < 1) {
+    state.p0 = v;
+    render();
+  }
+});
+
+/* tabs */
+document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* init */
+render();
+</script>
+</body>
+</html>
