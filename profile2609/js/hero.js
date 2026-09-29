@@ -1,6 +1,6 @@
 // Hero: constellation of drifting nodes + proximity links.
 // Nodes are kept out of an exclusion disc so the graph frames the photo.
-import * as THREE from '../lib/three.module.js';
+import * as THREE from '../../lib/three.module.js';
 import { clamp, damp, mulberry32 } from './util.js';
 
 const POINT_VERT = /* glsl */`

@@ -1,6 +1,6 @@
 // Signature Values: signal beacons assemble over a permanent compass chart;
 // each value connects its relevant beacons to a central hub on scroll.
-import * as THREE from '../lib/three.module.js';
+import * as THREE from '../../lib/three.module.js';
 import { clamp, damp, lerp, easeOutCubic, mulberry32, drawLabelCanvas, radialGlowCanvas } from './util.js';
 
 export const VALUES_INTRO_WEIGHT = 0.16; // the muster begins during entry, not after the stage sticks

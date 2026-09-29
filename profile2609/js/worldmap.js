@@ -1,7 +1,7 @@
 // Experience: dotted world map with work locations (amber), customer
 // locations (cyan) and pulsing signal arcs between them. One instance is
 // shared by all jobs; setJob() re-targets it and the camera flies over.
-import * as THREE from '../lib/three.module.js';
+import * as THREE from '../../lib/three.module.js';
 import { clamp, damp, easeOutBack, easeOutCubic } from './util.js';
 
 const DEG = 0.1;                       // world units per degree

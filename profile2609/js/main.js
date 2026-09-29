@@ -36,7 +36,12 @@ async function loadProfile() {
 
 function buildHero(basics) {
   const canvas = el('canvas');
-  const photo = el('div', { class: 'hero-photo' }, el('img', { src: 'cbc.jpg', alt: basics.name, width: 600, height: 600, decoding: 'async' }));
+  const photo = el('div', { class: 'hero-photo' }, [
+    el('img', { class: 'ring', src: 'assets/portrait-ring.svg', alt: '', width: 240, height: 240, 'aria-hidden': 'true' }),
+    el('span', { class: 'sweep', 'aria-hidden': 'true' }),
+    el('img', { class: 'photo', src: 'assets/cbc.jpg', alt: basics.name, width: 600, height: 600, decoding: 'async' }),
+    el('span', { class: 'scan', 'aria-hidden': 'true' }),
+  ]);
   const tags = String(basics.tagline || '').split('·').map((s) => s.trim()).filter(Boolean);
   const summary = String(basics.summary || '').trim();
   const m = summary.match(/^(\d+\+?\s+years)/i);
@@ -233,8 +238,9 @@ function showNotice(err) {
   app.replaceChildren(el('div', { class: 'notice' }, [
     el('h2', { text: 'Could not load profile.yaml' }),
     el('p', { text: `${err?.message || err}` }),
-    el('p', {}, ['This page fetches its content and ES modules, so it must be served over http(s). From this folder run ',
-      el('code', { text: 'python -m http.server 8000' }), ' and open ', el('code', { text: 'http://localhost:8000/' }), '.']),
+    el('p', {}, ['This page fetches its content and ES modules, so it must be served over http(s). It loads ' +
+      el('code', { text: 'lib/' }), ' from the parent folder, so serve the repository root with ',
+      el('code', { text: 'python -m http.server 8000' }), ' and open ', el('code', { text: 'http://localhost:8000/profile2609/' }), '.']),
   ]));
 }
 
