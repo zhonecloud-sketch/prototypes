@@ -1,0 +1,20 @@
+{
+  "name": "rou",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Roulette draw server: broadcasts one provably fair number every 30s over WebSocket",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test --test-force-exit 'test/**/*.test.js'",
+    "demo": "node demo/clients.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

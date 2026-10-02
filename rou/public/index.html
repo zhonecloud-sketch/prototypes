@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b14">
+  <meta name="color-scheme" content="dark">
+  <title>Roulette Feed</title>
+  <style>
+    :root {
+      --bg: #070b14; --panel: #0c1322; --ink: #e9eef7; --ink-2: #b7c2d4;
+      --muted: #8592a8; --cyan: #37d1ff; --line: rgba(233,238,247,.12);
+      --red: #e5484d; --black: #1c2434; --green: #30a46c;
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid; place-items: center; padding: 24px;
+      background: var(--bg); color: var(--ink);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { width: 100%; max-width: 460px; display: grid; gap: 18px; }
+    header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+    .status { display: inline-flex; align-items: center; gap: 7px; font: 11px var(--mono); color: var(--muted); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background .2s; }
+    .status[data-state="live"] .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status[data-state="connecting"] .dot { background: var(--cyan); animation: pulse 1s infinite; }
+    .status[data-state="offline"] .dot { background: var(--red); }
+
+    .board { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 26px; text-align: center; }
+    .phase { font: 600 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .number {
+      font: 700 clamp(64px, 22vw, 96px)/1 var(--mono); margin: 10px 0 6px;
+      transition: color .3s;
+    }
+    .number[data-color="red"] { color: var(--red); }
+    .number[data-color="black"] { color: var(--ink); }
+    .number[data-color="green"] { color: var(--green); }
+    .countdown { font: 11px var(--mono); color: var(--muted); }
+    .bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,.08); overflow: hidden; margin-top: 16px; }
+    .bar i { display: block; height: 100%; background: var(--cyan); transform-origin: left; transition: transform .25s linear; }
+
+    .meta { display: flex; justify-content: space-between; gap: 10px; font: 11px var(--mono); color: var(--muted); }
+    .meta b { color: var(--ink-2); font-weight: 500; }
+
+    /* ---- betting table ------------------------------------------------- */
+    .betting { display: grid; gap: 10px; }
+    .betting[data-open="0"] { opacity: .45; pointer-events: none; }
+
+    .bank { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .bank label { font: 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .bank b { font: 600 15px var(--mono); color: var(--cyan); }
+
+    .chips { display: flex; gap: 6px; }
+    .chip-btn {
+      flex: 1; padding: 9px 0; border-radius: 9px; cursor: pointer;
+      font: 600 12px var(--mono); color: var(--ink);
+      background: var(--panel); border: 1px solid var(--line);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip-btn[aria-pressed="true"] { background: var(--cyan); border-color: var(--cyan); color: #04121c; }
+
+    .felt { display: grid; grid-template-columns: 34px repeat(12, 1fr); gap: 3px; }
+    .cell {
+      position: relative; aspect-ratio: 1; border-radius: 6px; cursor: pointer;
+      display: grid; place-items: center;
+      font: 600 12px var(--mono); color: var(--ink);
+      background: var(--black); border: 1px solid var(--line);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cell[data-color="red"] { background: var(--red); border-color: transparent; }
+    .cell[data-color="green"] { background: var(--green); border-color: transparent; }
+    .cell[data-hit="1"] { box-shadow: inset 0 0 0 2px var(--cyan); }
+    .cell[data-win="1"] { box-shadow: inset 0 0 0 3px var(--green); }
+    .zero { grid-row: 1 / span 12; aspect-ratio: auto; }
+
+    .outside { display: grid; gap: 4px; }
+    .row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .row-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .ob {
+      padding: 11px 0; border-radius: 6px; cursor: pointer; text-align: center;
+      font: 600 10.5px var(--mono); color: var(--ink);
+      background: var(--panel); border: 1px solid var(--line);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ob small { display: block; font-weight: 400; opacity: .6; font-size: 9px; margin-top: 2px; }
+    .ob[data-hit="1"] { box-shadow: inset 0 0 0 2px var(--cyan); }
+    .ob[data-win="1"] { box-shadow: inset 0 0 0 3px var(--green); }
+    .ob[data-color="red"] { background: var(--red); border-color: transparent; }
+    .ob[data-color="black"] { background: var(--black); }
+
+    .note { font: 11px var(--mono); text-align: center; min-height: 15px; color: var(--muted); }
+    .note.ok { color: var(--green); }
+    .note.bad { color: var(--red); }
+
+    .strip { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      min-width: 30px; padding: 6px 0; text-align: center; border-radius: 7px;
+      font: 600 12.5px var(--mono); background: var(--black); color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .chip[data-color="red"] { background: var(--red); border-color: transparent; }
+    .chip[data-color="green"] { background: var(--green); border-color: transparent; }
+    .verify { font: 11px var(--mono); color: var(--muted); text-align: center; min-height: 16px; }
+    .verify.ok { color: var(--green); }
+    .verify.bad { color: var(--red); }
+
+    @keyframes pulse { 50% { opacity: .3; } }
+    @media (prefers-reduced-motion: reduce) {
+      .dot, .bar i, .number { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>Roulette Feed</h1>
+      <span class="status" id="status" data-state="connecting"><i class="dot"></i><span id="statusText">connecting</span></span>
+    </header>
+
+    <section class="board">
+      <div class="phase" id="phase">waiting</div>
+      <div class="number" id="number" data-color="black">--</div>
+      <div class="countdown" id="countdown">--</div>
+      <div class="bar"><i id="bar" style="transform:scaleX(0)"></i></div>
+    </section>
+
+    <div class="meta">
+      <span>round <b id="round">-</b></span>
+      <span>commit <b id="hash">-</b></span>
+    </div>
+
+    <section class="betting" id="betting" data-open="0">
+      <div class="bank">
+        <label for="stakeView">bankroll</label>
+        <b id="bank">1000</b>
+      </div>
+
+      <div class="chips" id="chips" role="group" aria-label="Chip value">
+        <button class="chip-btn" type="button" data-stake="1" aria-pressed="false">1</button>
+        <button class="chip-btn" type="button" data-stake="5" aria-pressed="true">5</button>
+        <button class="chip-btn" type="button" data-stake="25" aria-pressed="false">25</button>
+        <button class="chip-btn" type="button" data-stake="100" aria-pressed="false">100</button>
+      </div>
+
+      <div class="felt" id="felt" role="group" aria-label="Number grid"></div>
+
+      <div class="outside">
+        <div class="row-3" id="dozens"></div>
+        <div class="row-2" id="halves"></div>
+        <div class="row-3" id="columns"></div>
+        <div class="row-2" id="evenMoney"></div>
+      </div>
+
+      <div class="note" id="note"></div>
+    </section>
+
+    <div class="strip" id="strip"></div>
+    <div class="verify" id="verify"></div>
+  </main>
+  <script src="app.js" type="module"></script>
+</body>
+</html>
