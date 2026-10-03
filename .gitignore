@@ -1,0 +1,94 @@
+# OS-generated files. These are auto-created by the desktop/file managers and
+# contain no project data, so they should never enter version control.
+
+# ---------------------------------------------------------------------------
+# macOS (Finder / macOS)
+# ---------------------------------------------------------------------------
+# General folder metadata, regenerated constantly by Finder.
+.DS_Store
+# Per-directory Finder metadata variants.
+.DS_Store?
+._*
+# macOS resource fork / extended attribute sidecar files.
+# Note: `._*` files must NOT be named `.AppleDouble` here without care, since
+# some archives genuinely use that name.
+.AppleDouble
+.LSOverride
+# Spotlight index and Finder trash.
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+# Time Machine / versioned-document backups.
+.DocumentRevisions-V100
+.TemporaryItems
+# Disk/network volume noise.
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+# Network Trash Folders.
+.Network Trash Folder
+Temporary Items
+.$*
+
+# ---------------------------------------------------------------------------
+# Linux (Ubuntu / Debian) and other X11 desktops
+# ---------------------------------------------------------------------------
+# Nautilus / Nemo / Caja directory metadata.
+.directory
+.Trash-*
+# Thunar/Nautilus trash folders.
+.Trash-*
+# KDE / GNOME stream temp files.
+.goutputstream-*
+*.goutputstream-*
+# XDG user directories (harmless if created inside a checkout).
+.xsession
+# KDE file-manager lock leftovers.
+.kate-swp
+# Debian/Ubuntu dpkg build artifacts that can land in source trees.
+*.deb
+*.dsc
+*.debhelper
+# Core dumps from crashed processes.
+core
+core.*
+# NOTE: deliberately NOT ignoring `*.log`. This repo tracks real experiment
+# output under ai_tool_calling/ (e.g. lms_tool_recall_*.log). Ignore them
+# locally via .git/info/exclude if they ever become noisy.
+
+# ---------------------------------------------------------------------------
+# Windows
+# ---------------------------------------------------------------------------
+# Explorer thumbnail cache.
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+# Windows folder customisation metadata, generated on every drive/folder.
+desktop.ini
+desktop.ini.bak
+# Shortcuts.
+*.lnk
+# Crash dumps.
+*.dmp
+*.stackdump
+# Recycle Bin / system volume folders.
+$RECYCLE.BIN/
+RECYCLER/
+System Volume Information/
+# Windows swap/memory and update files.
+hiberfil.sys
+pagefile.sys
+swapfile.sys
+# Windows installer leftovers.
+*.lnk
+
+# ---------------------------------------------------------------------------
+# Editors (bonus - avoids the same class of noise on every platform)
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+AGENTS.md
