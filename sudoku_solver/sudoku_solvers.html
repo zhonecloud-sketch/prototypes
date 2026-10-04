@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Sudoku Solver | CSP · DLX · SAT</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: #0a1a22;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            background: #1e2f3a;
+            border-radius: 28px;
+            padding: 16px 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid #3a5a6a;
+        }
+        h1 {
+            font-size: 1.6rem;
+            text-align: center;
+            margin: 0 0 4px;
+            background: linear-gradient(135deg, #f9e0a0, #c0d0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .sub {
+            text-align: center;
+            color: #b0d0e0;
+            font-size: 0.7rem;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2e4a5a;
+            display: inline-block;
+            width: 100%;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        button, select {
+            background: #2c4452;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.8rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border: 1px solid #4e6e80;
+            touch-action: manipulation;
+        }
+        button:active { transform: scale(0.97); background: #3e6070; }
+        .solver-select, .puzzle-select { background: #375a6e; }
+        .board-wrapper {
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0;
+            background: #0f1a20;
+            border-radius: 20px;
+            padding: 8px;
+            max-height: 70vh;
+        }
+        .sudoku-grid {
+            border-collapse: collapse;
+            background: #fef9e8;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        td { border: 1px solid #9ab0c0; padding: 0; }
+        input {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            border: none;
+            background: #fffdf5;
+            color: #1e3a4a;
+            transition: 0.02s linear;
+            outline: none;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: 0;
+        }
+        .size-9 input { width: 44px; height: 44px; font-size: 1.4rem; }
+        .size-16 input { width: 36px; height: 36px; font-size: 1rem; }
+        .size-25 input { width: 28px; height: 28px; font-size: 0.85rem; }
+        .block-border-right { border-right: 3px solid #2a6a7e !important; }
+        .block-border-bottom { border-bottom: 3px solid #2a6a7e !important; }
+        input:focus {
+            background: #ffe6b3;
+            box-shadow: inset 0 0 0 2px #ffaa44;
+            z-index: 1;
+            position: relative;
+        }
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #0b1920;
+            padding: 8px 16px;
+            border-radius: 48px;
+            margin-top: 12px;
+        }
+        .status { font-weight: bold; color: #b5e6dd; font-size: 0.85rem; }
+        .timer {
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #00000055;
+            padding: 4px 12px;
+            border-radius: 32px;
+            color: #ffdd99;
+        }
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #ffdd99;
+            animation: spin 0.6s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        footer {
+            font-size: 0.6rem;
+            text-align: center;
+            color: #7c9aac;
+            margin-top: 12px;
+        }
+        @media (max-width: 550px) {
+            .size-9 input { width: 36px; height: 36px; font-size: 1.2rem; }
+            .size-16 input { width: 28px; height: 28px; font-size: 0.85rem; }
+            .size-25 input { width: 24px; height: 24px; font-size: 0.7rem; }
+        }
+        @media (max-width: 450px) {
+            .size-9 input { width: 32px; height: 32px; font-size: 1rem; }
+            .size-16 input { width: 24px; height: 24px; font-size: 0.75rem; }
+            .size-25 input { width: 22px; height: 22px; font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚡ Sudoku Solver</h1>
+    <div class="sub">CSP · DLX · SAT — random puzzles + hardest benchmarks</div>
+
+    <div class="controls">
+        <select id="sizeSelect">
+            <option value="9">9x9</option>
+            <option value="16">16x16</option>
+            <option value="25">25x25</option>
+        </select>
+        <select id="puzzleSelect" class="puzzle-select">
+            <option value="easy">Easy (random)</option>
+            <option value="medium">Medium (random)</option>
+            <option value="hard">Hard (random)</option>
+            <option value="hardest">Hardest (benchmark)</option>
+            <option value="custom">Custom</option>
+        </select>
+        <select id="solverSelect" class="solver-select">
+            <option value="csp">CSP (Propagation)</option>
+            <option value="dlx">DLX (Dancing Links)</option>
+            <option value="sat">SAT (DPLL)</option>
+        </select>
+        <button id="solveBtn">▶ Solve</button>
+        <button id="resetBtn">⟳ Reset</button>
+    </div>
+
+    <div class="board-wrapper" id="boardWrapper"></div>
+
+    <div class="info-bar">
+        <span class="status" id="statusMsg">Ready</span>
+        <span class="timer" id="timeDisplay">⏱️ -- ms</span>
+    </div>
+    <footer>Easy/Medium/Hard = random puzzles · Hardest = AI Escargot (9x9) / minimal diagonal (16x16/25x25)</footer>
+</div>
+
+<script>
+    // ========== GLOBALS ==========
+    let currentSize = 9;
+    let currentBoard = [];
+    let currentPuzzleMode = "easy";
+    let boardInputs = [];
+
+    // ========== UTILITIES ==========
+    function emptyBoard(size) { return new Array(size * size).fill(0); }
+
+    function renderGrid() {
+        const wrapper = document.getElementById("boardWrapper");
+        const N = currentSize;
+        const table = document.createElement("table");
+        table.className = `sudoku-grid size-${currentSize}`;
+        const blockSize = Math.sqrt(N);
+        boardInputs = [];
+
+        for (let r = 0; r < N; r++) {
+            const tr = document.createElement("tr");
+            for (let c = 0; c < N; c++) {
+                const td = document.createElement("td");
+                const idx = r * N + c;
+                const val = currentBoard[idx];
+                const input = document.createElement("input");
+                input.type = "text";
+                input.inputMode = "numeric";
+                input.maxLength = 2;
+                input.value = val === 0 ? "" : val.toString();
+                if ((c + 1) % blockSize === 0 && c !== N-1) td.classList.add("block-border-right");
+                if ((r + 1) % blockSize === 0 && r !== N-1) td.classList.add("block-border-bottom");
+                input.addEventListener("input", (function(row, col, idx) {
+                    return function(e) {
+                        let newVal = e.target.value.trim();
+                        if (newVal === "") newVal = "0";
+                        let num = parseInt(newVal, 10);
+                        if (isNaN(num)) num = 0;
+                        if (num < 0 || num > N) num = 0;
+                        currentBoard[idx] = num;
+                        e.target.value = num === 0 ? "" : num.toString();
+                        if (currentPuzzleMode !== "custom") {
+                            document.getElementById("puzzleSelect").value = "custom";
+                            currentPuzzleMode = "custom";
+                        }
+                    };
+                })(r, c, idx));
+                td.appendChild(input);
+                tr.appendChild(td);
+                boardInputs.push(input);
+            }
+            table.appendChild(tr);
+        }
+        wrapper.innerHTML = "";
+        wrapper.appendChild(table);
+    }
+
+    function syncBoardFromInputs() {
+        const N = currentSize;
+        const total = N * N;
+        for (let i = 0; i < total; i++) {
+            const inp = boardInputs[i];
+            if (inp) {
+                let val = parseInt(inp.value, 10);
+                if (isNaN(val)) val = 0;
+                currentBoard[i] = val;
+            }
+        }
+    }
+
+    // ========== PUZZLE GENERATION ==========
+    function generateSolvedCyclic(N) {
+        const block = Math.sqrt(N);
+        const board = new Array(N*N).fill(0);
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                const val = ((i * block + Math.floor(i / block) + j) % N) + 1;
+                board[i*N + j] = val;
+            }
+        }
+        return board;
+    }
+
+    function removeClues(solved, clueCount) {
+        const N = Math.sqrt(solved.length);
+        const total = solved.length;
+        const puzzle = [...solved];
+        const indices = [...Array(total).keys()];
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        const toRemove = total - clueCount;
+        for (let i = 0; i < toRemove; i++) {
+            puzzle[indices[i]] = 0;
+        }
+        return puzzle;
+    }
+
+    function getRandomPuzzle(size, difficulty) {
+        const solved = generateSolvedCyclic(size);
+        let clueCount = 0;
+        if (size === 9) {
+            if (difficulty === "easy") clueCount = 45;
+            else if (difficulty === "medium") clueCount = 35;
+            else clueCount = 28;
+        } else if (size === 16) {
+            if (difficulty === "easy") clueCount = 100;
+            else if (difficulty === "medium") clueCount = 80;
+            else clueCount = 65;
+        } else if (size === 25) {
+            if (difficulty === "easy") clueCount = 200;
+            else if (difficulty === "medium") clueCount = 170;
+            else clueCount = 140;
+        }
+        return removeClues(solved, clueCount);
+    }
+
+    function getHardestPuzzle(size) {
+        if (size === 9) {
+            return parseBoard9x9([
+                [8,0,0,0,0,0,0,0,0],
+                [0,0,3,6,0,0,0,0,0],
+                [0,7,0,0,9,0,2,0,0],
+                [0,5,0,0,0,7,0,0,0],
+                [0,0,0,0,4,5,7,0,0],
+                [0,0,0,1,0,0,0,3,0],
+                [0,0,1,0,0,0,0,6,8],
+                [0,0,8,5,0,0,0,1,0],
+                [0,9,0,0,0,0,4,0,0]
+            ]);
+        } else if (size === 16) {
+            const puzzle = emptyBoard(16);
+            for (let i = 0; i < 16; i++) puzzle[i*16 + i] = i+1;
+            return puzzle;
+        } else {
+            const puzzle = emptyBoard(25);
+            for (let i = 0; i < 25; i++) puzzle[i*25 + i] = i+1;
+            return puzzle;
+        }
+    }
+
+    function parseBoard9x9(arr2d) {
+        const flat = [];
+        for (let r=0;r<9;r++) for(let c=0;c<9;c++) flat.push(arr2d[r][c]);
+        return flat;
+    }
+
+    function loadPuzzle() {
+        const puzzleType = document.getElementById("puzzleSelect").value;
+        currentPuzzleMode = puzzleType;
+        if (puzzleType === "custom") {
+            currentBoard = emptyBoard(currentSize);
+        } else if (puzzleType === "hardest") {
+            currentBoard = getHardestPuzzle(currentSize);
+        } else {
+            currentBoard = getRandomPuzzle(currentSize, puzzleType);
+        }
+        renderGrid();
+        let msg = "";
+        if (puzzleType === "easy") msg = "Random easy puzzle loaded";
+        else if (puzzleType === "medium") msg = "Random medium puzzle loaded";
+        else if (puzzleType === "hard") msg = "Random hard puzzle loaded";
+        else if (puzzleType === "hardest") {
+            if (currentSize === 9) msg = "Hardest 9x9 (AI Escargot) loaded";
+            else if (currentSize === 16) msg = "Hardest 16x16 (minimal diagonal) loaded";
+            else msg = "Hardest 25x25 (minimal diagonal) loaded";
+        } else msg = "Custom mode: edit cells, then SOLVE";
+        document.getElementById("statusMsg").innerHTML = msg;
+        document.getElementById("timeDisplay").innerHTML = "⏱️ -- ms";
+    }
+
+    function onSizeChange() {
+        const newSize = parseInt(document.getElementById("sizeSelect").value, 10);
+        currentSize = newSize;
+        const puzzleType = document.getElementById("puzzleSelect").value;
+        if (puzzleType === "custom") {
+            currentBoard = emptyBoard(newSize);
+        } else if (puzzleType === "hardest") {
+            currentBoard = getHardestPuzzle(newSize);
+        } else {
+            currentBoard = getRandomPuzzle(newSize, puzzleType);
+        }
+        renderGrid();
+        let msg = "";
+        if (puzzleType === "easy") msg = `Random easy ${currentSize}x${currentSize} puzzle loaded`;
+        else if (puzzleType === "medium") msg = `Random medium ${currentSize}x${currentSize} puzzle loaded`;
+        else if (puzzleType === "hard") msg = `Random hard ${currentSize}x${currentSize} puzzle loaded`;
+        else if (puzzleType === "hardest") {
+            if (currentSize === 9) msg = "Hardest 9x9 (AI Escargot) loaded";
+            else if (currentSize === 16) msg = "Hardest 16x16 (minimal diagonal) loaded";
+            else msg = "Hardest 25x25 (minimal diagonal) loaded";
+        } else msg = "Custom mode: edit cells, then SOLVE";
+        document.getElementById("statusMsg").innerHTML = msg;
+        document.getElementById("timeDisplay").innerHTML = "⏱️ -- ms";
+    }
+
+    // ========== CSP SOLVER (unchanged, working) ==========
+    function solveCSP(board, N) {
+        const boardCopy = [...board];
+        const candidates = initCandidates(boardCopy, N);
+        if (solveWithRefinement(boardCopy, candidates, N)) return boardCopy;
+        return null;
+    }
+
+    function initCandidates(board, N) {
+        const candidates = [];
+        for (let i=0;i<N*N;i++) {
+            if (board[i] !== 0) candidates.push(new Set());
+            else candidates.push(new Set([...Array(N).keys()].map(x=>x+1)));
+        }
+        for (let i=0;i<N*N;i++) {
+            if (board[i] !== 0) {
+                const val = board[i];
+                const peers = getPeersGeneral(i, N);
+                for (let p of peers) candidates[p].delete(val);
+            }
+        }
+        return candidates;
+    }
+
+    function getPeersGeneral(idx, N) {
+        const row = Math.floor(idx / N);
+        const col = idx % N;
+        const blockSize = Math.sqrt(N);
+        const boxRow = Math.floor(row / blockSize) * blockSize;
+        const boxCol = Math.floor(col / blockSize) * blockSize;
+        const peers = new Set();
+        for (let c = 0; c < N; c++) peers.add(row * N + c);
+        for (let r = 0; r < N; r++) peers.add(r * N + col);
+        for (let r = 0; r < blockSize; r++)
+            for (let c = 0; c < blockSize; c++)
+                peers.add((boxRow + r) * N + (boxCol + c));
+        peers.delete(idx);
+        return Array.from(peers);
+    }
+
+    function refineStep(board, candidates, N) {
+        for (let i=0;i<N*N;i++) {
+            if (board[i]===0 && candidates[i].size===1) {
+                const val = candidates[i].values().next().value;
+                return {index:i, value:val};
+            }
+        }
+        const units = [];
+        for (let r=0;r<N;r++) { const row=[]; for(let c=0;c<N;c++) row.push(r*N+c); units.push(row);}
+        for (let c=0;c<N;c++) { const col=[]; for(let r=0;r<N;r++) col.push(r*N+c); units.push(col);}
+        const blockSize = Math.sqrt(N);
+        for (let br=0;br<blockSize;br++) {
+            for (let bc=0;bc<blockSize;bc++) {
+                const box=[];
+                for (let dr=0;dr<blockSize;dr++)
+                    for (let dc=0;dc<blockSize;dc++)
+                        box.push((br*blockSize+dr)*N + (bc*blockSize+dc));
+                units.push(box);
+            }
+        }
+        for (let unit of units) {
+            for (let num=1;num<=N;num++) {
+                let possible=[];
+                for (let idx of unit) {
+                    if (board[idx]===0 && candidates[idx].has(num)) possible.push(idx);
+                }
+                if (possible.length===1) return {index:possible[0], value:num};
+            }
+        }
+        return null;
+    }
+
+    function applyAssignment(board, candidates, idx, val, N) {
+        board[idx]=val;
+        candidates[idx].clear();
+        const peers = getPeersGeneral(idx, N);
+        for (let p of peers) candidates[p].delete(val);
+        for (let i=0;i<N*N;i++) if(board[i]===0 && candidates[i].size===0) return false;
+        return true;
+    }
+
+    function solveWithRefinement(board, candidates, N) {
+        let progress=true;
+        while(progress) {
+            progress=false;
+            const assign = refineStep(board, candidates, N);
+            if(assign) {
+                if(!applyAssignment(board, candidates, assign.index, assign.value, N)) return false;
+                progress=true;
+            }
+        }
+        if(!board.includes(0)) return true;
+        let bestIdx=-1, bestSize=N+1;
+        for(let i=0;i<N*N;i++) {
+            if(board[i]===0 && candidates[i].size>0 && candidates[i].size<bestSize) {
+                bestSize=candidates[i].size;
+                bestIdx=i;
+            }
+        }
+        if(bestIdx===-1) return false;
+        const values = Array.from(candidates[bestIdx]);
+        for(let v of values) {
+            const boardCopy = [...board];
+            const candidatesCopy = candidates.map(s=>new Set(s));
+            if(applyAssignment(boardCopy, candidatesCopy, bestIdx, v, N)) {
+                if(solveWithRefinement(boardCopy, candidatesCopy, N)) {
+                    for(let i=0;i<N*N;i++) board[i]=boardCopy[i];
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // ========== DLX SOLVER (unchanged, working) ==========
+    class DLXNode {
+        constructor() { this.left=this.right=this.up=this.down=this; this.col=null; this.rowId=-1; }
+    }
+    class ColumnNode extends DLXNode {
+        constructor(name) { super(); this.size=0; this.name=name; this.col=this; }
+    }
+    class DLX {
+        constructor() {
+            this.header = new ColumnNode("root");
+            this.header.left = this.header.right = this.header;
+            this.columns = [];
+            this.solution = [];
+            this.rowNodes = new Map();
+        }
+        addColumn(name) {
+            const col = new ColumnNode(name);
+            col.right = this.header; col.left = this.header.left;
+            this.header.left.right = col; this.header.left = col;
+            this.columns.push(col);
+            return col;
+        }
+        addRow(columns, rowId) {
+            if (columns.length===0) return;
+            const nodes = [];
+            let first = null;
+            for (let colIdx of columns) {
+                const colNode = this.columns[colIdx];
+                const node = new DLXNode();
+                node.col = colNode; node.rowId = rowId;
+                node.down = colNode; node.up = colNode.up;
+                colNode.up.down = node; colNode.up = node;
+                colNode.size++;
+                if (first===null) { first=node; node.left=node.right=node; }
+                else {
+                    node.left = first.left; node.right = first;
+                    first.left.right = node; first.left = node;
+                }
+                nodes.push(node);
+            }
+            this.rowNodes.set(rowId, nodes);
+        }
+        cover(col) {
+            col.right.left = col.left; col.left.right = col.right;
+            for (let node = col.down; node !== col; node = node.down) {
+                for (let peer = node.right; peer !== node; peer = peer.right) {
+                    peer.down.up = peer.up; peer.up.down = peer.down;
+                    peer.col.size--;
+                }
+            }
+        }
+        uncover(col) {
+            for (let node = col.up; node !== col; node = node.up) {
+                for (let peer = node.left; peer !== node; peer = peer.left) {
+                    peer.col.size++; peer.down.up = peer; peer.up.down = peer;
+                }
+            }
+            col.right.left = col; col.left.right = col;
+        }
+        search() {
+            if (this.header.right === this.header) return true;
+            let col = this.header.right;
+            for (let c = col.right; c !== this.header; c = c.right) if (c.size < col.size) col = c;
+            this.cover(col);
+            for (let row = col.down; row !== col; row = row.down) {
+                this.solution.push(row);
+                for (let peer = row.right; peer !== row; peer = peer.right) this.cover(peer.col);
+                if (this.search()) return true;
+                for (let peer = row.left; peer !== row; peer = peer.left) this.uncover(peer.col);
+                this.solution.pop();
+            }
+            this.uncover(col);
+            return false;
+        }
+        getSolutionRows() { return this.solution.map(node => node.rowId); }
+    }
+
+    function solveDLX(board, N) {
+        const blockSize = Math.sqrt(N);
+        const totalCells = N*N;
+        const colOffsets = [0, totalCells, 2*totalCells, 3*totalCells];
+        const totalColumns = 4 * totalCells;
+        const dlx = new DLX();
+        for (let i=0; i<totalColumns; i++) dlx.addColumn(`c${i}`);
+        const rowMap = new Map();
+        let rowId = 0;
+        for (let r=0; r<N; r++) {
+            for (let c=0; c<N; c++) {
+                const boxIdx = Math.floor(r/blockSize)*blockSize + Math.floor(c/blockSize);
+                for (let v=1; v<=N; v++) {
+                    const cols = [
+                        colOffsets[0] + r*N + c,
+                        colOffsets[1] + r*N + (v-1),
+                        colOffsets[2] + c*N + (v-1),
+                        colOffsets[3] + boxIdx*N + (v-1)
+                    ];
+                    dlx.addRow(cols, rowId);
+                    rowMap.set(`${r},${c},${v}`, rowId);
+                    rowId++;
+                }
+            }
+        }
+        // apply clues
+        for (let r=0; r<N; r++) {
+            for (let c=0; c<N; c++) {
+                const val = board[r*N + c];
+                if (val !== 0) {
+                    const key = `${r},${c},${val}`;
+                    const rid = rowMap.get(key);
+                    if (rid === undefined) return null;
+                    const nodes = dlx.rowNodes.get(rid);
+                    if (nodes) {
+                        for (let node of nodes) dlx.cover(node.col);
+                    } else return null;
+                }
+            }
+        }
+        if (!dlx.search()) return null;
+        const solutionRows = dlx.getSolutionRows();
+        const solved = new Array(N*N).fill(0);
+        for (let rid of solutionRows) {
+            for (let [key, id] of rowMap.entries()) {
+                if (id === rid) {
+                    const [r,c,v] = key.split(',').map(Number);
+                    solved[r*N + c] = v;
+                    break;
+                }
+            }
+        }
+        // reapply clues (some may have been covered and not in solution)
+        for (let r=0; r<N; r++) for (let c=0; c<N; c++) if (board[r*N+c] !== 0) solved[r*N+c] = board[r*N+c];
+        return solved;
+    }
+
+    // ========== IMPROVED SAT SOLVER ==========
+    function solveSAT(board, N) {
+        const totalCells = N * N;
+        // variable index: (r,c,v) -> 1‑based
+        function varIdx(r,c,v) { return ((r * N + c) * N + (v - 1)) + 1; }
+        const numVars = totalCells * N;
+        
+        // Build clauses
+        let clauses = [];
+        
+        // 1. Each cell at least one value
+        for (let r = 0; r < N; r++) {
+            for (let c = 0; c < N; c++) {
+                const clause = [];
+                for (let v = 1; v <= N; v++) clause.push(varIdx(r,c,v));
+                clauses.push(clause);
+            }
+        }
+        // 2. Each cell at most one value
+        for (let r = 0; r < N; r++) {
+            for (let c = 0; c < N; c++) {
+                for (let v1 = 1; v1 <= N; v1++) {
+                    for (let v2 = v1+1; v2 <= N; v2++) {
+                        clauses.push([-varIdx(r,c,v1), -varIdx(r,c,v2)]);
+                    }
+                }
+            }
+        }
+        // 3. Row constraints
+        for (let r = 0; r < N; r++) {
+            for (let v = 1; v <= N; v++) {
+                const clause = [];
+                for (let c = 0; c < N; c++) clause.push(varIdx(r,c,v));
+                clauses.push(clause);
+                for (let c1 = 0; c1 < N; c1++) {
+                    for (let c2 = c1+1; c2 < N; c2++) {
+                        clauses.push([-varIdx(r,c1,v), -varIdx(r,c2,v)]);
+                    }
+                }
+            }
+        }
+        // 4. Column constraints
+        for (let c = 0; c < N; c++) {
+            for (let v = 1; v <= N; v++) {
+                const clause = [];
+                for (let r = 0; r < N; r++) clause.push(varIdx(r,c,v));
+                clauses.push(clause);
+                for (let r1 = 0; r1 < N; r1++) {
+                    for (let r2 = r1+1; r2 < N; r2++) {
+                        clauses.push([-varIdx(r1,c,v), -varIdx(r2,c,v)]);
+                    }
+                }
+            }
+        }
+        // 5. Box constraints
+        const blockSize = Math.sqrt(N);
+        for (let br = 0; br < blockSize; br++) {
+            for (let bc = 0; bc < blockSize; bc++) {
+                for (let v = 1; v <= N; v++) {
+                    const cells = [];
+                    for (let dr = 0; dr < blockSize; dr++) {
+                        for (let dc = 0; dc < blockSize; dc++) {
+                            const r = br*blockSize + dr;
+                            const c = bc*blockSize + dc;
+                            cells.push([r,c]);
+                        }
+                    }
+                    const clause = cells.map(([r,c]) => varIdx(r,c,v));
+                    clauses.push(clause);
+                    for (let i = 0; i < cells.length; i++) {
+                        for (let j = i+1; j < cells.length; j++) {
+                            const [r1,c1] = cells[i];
+                            const [r2,c2] = cells[j];
+                            clauses.push([-varIdx(r1,c1,v), -varIdx(r2,c2,v)]);
+                        }
+                    }
+                }
+            }
+        }
+        // 6. Add clues as unit clauses
+        const assignment = new Array(numVars+1).fill(null);
+        for (let r = 0; r < N; r++) {
+            for (let c = 0; c < N; c++) {
+                const val = board[r*N + c];
+                if (val !== 0) {
+                    const lit = varIdx(r,c,val);
+                    assignment[lit] = true;
+                    for (let v = 1; v <= N; v++) {
+                        if (v !== val) assignment[varIdx(r,c,v)] = false;
+                    }
+                }
+            }
+        }
+
+        // Helper: simplify clauses by removing satisfied ones and deleting false literals
+        function simplify(clauses, assign) {
+            const newClauses = [];
+            for (let clause of clauses) {
+                let satisfied = false;
+                const newClause = [];
+                for (let lit of clause) {
+                    const vid = Math.abs(lit);
+                    const val = assign[vid];
+                    if (val === true && lit > 0) { satisfied = true; break; }
+                    if (val === false && lit < 0) { satisfied = true; break; }
+                    if (val === null) newClause.push(lit);
+                }
+                if (!satisfied) {
+                    if (newClause.length === 0) return null; // contradiction
+                    newClauses.push(newClause);
+                }
+            }
+            return newClauses;
+        }
+
+        // Unit propagation: returns true if no conflict, false if conflict
+        function unitPropagate(clauses, assign) {
+            let changed;
+            do {
+                changed = false;
+                for (let clause of clauses) {
+                    let unassigned = null;
+                    let satisfied = false;
+                    for (let lit of clause) {
+                        const vid = Math.abs(lit);
+                        const val = assign[vid];
+                        if (val === true && lit > 0) { satisfied = true; break; }
+                        if (val === false && lit < 0) { satisfied = true; break; }
+                        if (val === null) {
+                            if (unassigned === null) unassigned = lit;
+                            else { unassigned = null; break; } // more than one unassigned
+                        }
+                    }
+                    if (satisfied) continue;
+                    if (unassigned !== null) {
+                        const vid = Math.abs(unassigned);
+                        assign[vid] = (unassigned > 0);
+                        changed = true;
+                    } else {
+                        // clause has all false and no unassigned -> conflict
+                        return false;
+                    }
+                }
+            } while (changed);
+            return true;
+        }
+
+        // Pure literal elimination
+        function pureLiteralElimination(clauses, assign) {
+            let changed = false;
+            const pos = new Map();
+            const neg = new Map();
+            for (let clause of clauses) {
+                for (let lit of clause) {
+                    const vid = Math.abs(lit);
+                    if (assign[vid] !== null) continue;
+                    if (lit > 0) pos.set(vid, (pos.get(vid)||0) + 1);
+                    else neg.set(vid, (neg.get(vid)||0) + 1);
+                }
+            }
+            for (let [vid, cnt] of pos) {
+                if (!neg.has(vid) && assign[vid] === null) {
+                    assign[vid] = true;
+                    changed = true;
+                }
+            }
+            for (let [vid, cnt] of neg) {
+                if (!pos.has(vid) && assign[vid] === null) {
+                    assign[vid] = false;
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        // Choose variable with highest occurrence in remaining clauses
+        function chooseVariable(clauses, assign) {
+            const counts = new Map();
+            for (let clause of clauses) {
+                for (let lit of clause) {
+                    const vid = Math.abs(lit);
+                    if (assign[vid] === null) {
+                        counts.set(vid, (counts.get(vid)||0) + 1);
+                    }
+                }
+            }
+            let best = null, bestCount = -1;
+            for (let [vid, cnt] of counts) {
+                if (cnt > bestCount) {
+                    bestCount = cnt;
+                    best = vid;
+                }
+            }
+            return best;
+        }
+
+        // Main DPLL recursion
+        function dpll(clauses, assign) {
+            // Unit propagation
+            if (!unitPropagate(clauses, assign)) return null;
+            // Simplify
+            let simp = simplify(clauses, assign);
+            if (simp === null) return null;
+            if (simp.length === 0) return assign;
+            // Pure literal elimination
+            let pureChanged;
+            do {
+                pureChanged = pureLiteralElimination(simp, assign);
+                if (pureChanged) {
+                    // After pure literal, we must propagate and simplify again
+                    if (!unitPropagate(simp, assign)) return null;
+                    simp = simplify(simp, assign);
+                    if (simp === null) return null;
+                    if (simp.length === 0) return assign;
+                }
+            } while (pureChanged);
+            // Choose a variable
+            const v = chooseVariable(simp, assign);
+            if (v === null) return null;
+            // Try true
+            let newAssign = [...assign];
+            newAssign[v] = true;
+            let result = dpll(simp, newAssign);
+            if (result) return result;
+            // Try false
+            newAssign = [...assign];
+            newAssign[v] = false;
+            return dpll(simp, newAssign);
+        }
+
+        const finalAssign = dpll(clauses, assignment);
+        if (!finalAssign) {
+            console.log("SAT solver: no model found");
+            return null;
+        }
+
+        // Decode model to board
+        const solved = [...board];
+        for (let r = 0; r < N; r++) {
+            for (let c = 0; c < N; c++) {
+                for (let v = 1; v <= N; v++) {
+                    if (finalAssign[varIdx(r,c,v)] === true) {
+                        solved[r*N + c] = v;
+                        break;
+                    }
+                }
+            }
+        }
+        // Verify that all cells are filled (optional)
+        if (solved.includes(0)) {
+            console.warn("SAT solver: not all cells filled, re-checking...");
+            // fallback: if some cell still zero, we might have missed; try to find true literal
+            for (let r = 0; r < N; r++) {
+                for (let c = 0; c < N; c++) {
+                    if (solved[r*N + c] === 0) {
+                        for (let v = 1; v <= N; v++) {
+                            if (finalAssign[varIdx(r,c,v)] === true) {
+                                solved[r*N + c] = v;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        console.log("SAT solver finished, first cell value:", solved[0]);
+        return solved;
+    }
+
+    // ========== MAIN SOLVE DISPATCH ==========
+    function solveCurrent() {
+        const solveBtn = document.getElementById("solveBtn");
+        const solverSelect = document.getElementById("solverSelect");
+        const solver = solverSelect.value;
+        const statusSpan = document.getElementById("statusMsg");
+        const timeSpan = document.getElementById("timeDisplay");
+
+        solveBtn.disabled = true;
+        statusSpan.innerHTML = `<span class="spinner"></span> Solving with ${solver.toUpperCase()}...`;
+        timeSpan.innerHTML = "⏱️ ...";
+
+        setTimeout(() => {
+            syncBoardFromInputs();
+            const N = currentSize;
+            const start = performance.now();
+            let solved = null;
+            try {
+                if (solver === "csp") solved = solveCSP(currentBoard, N);
+                else if (solver === "dlx") solved = solveDLX(currentBoard, N);
+                else if (solver === "sat") solved = solveSAT(currentBoard, N);
+            } catch (e) {
+                console.error(e);
+                solved = null;
+            }
+            const end = performance.now();
+            const elapsed = (end - start).toFixed(2);
+            timeSpan.innerHTML = `⏱️ ${elapsed} ms`;
+            if (solved) {
+                currentBoard = solved;
+                renderGrid();
+                statusSpan.innerHTML = "✅ Solved!";
+                statusSpan.style.color = "#b0ffc0";
+            } else {
+                statusSpan.innerHTML = "❌ Unsolvable or error";
+                statusSpan.style.color = "#ffb0a0";
+            }
+            solveBtn.disabled = false;
+        }, 10);
+    }
+
+    function resetToCurrentPuzzle() {
+        loadPuzzle();
+    }
+
+    // Event listeners
+    document.getElementById("sizeSelect").addEventListener("change", onSizeChange);
+    document.getElementById("puzzleSelect").addEventListener("change", loadPuzzle);
+    document.getElementById("solveBtn").addEventListener("click", solveCurrent);
+    document.getElementById("resetBtn").addEventListener("click", resetToCurrentPuzzle);
+
+    // initial load
+    loadPuzzle();
+</script>
+</body>
+</html>
