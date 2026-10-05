@@ -6,24 +6,29 @@ CLI: python3 generate_real.py 2m-rng.txt -o real.html
      python3 generate_real.py 2m-rng.txt --start 100
      python3 generate_real.py 2m-rng.txt --random-start --seed 12345
      python3 generate_real.py 2m-rng.txt --start 100 --no-cycle
+     python3 generate_real.py 2m-rng.txt --count 0
 
 Input: one result (0 through 36) per line; record locations are 1-based.
-Cyclic mode is on by default and emits each source record exactly once:
-start through last, then first through the record before start. With cyclic
-mode off, output stops at the last source record. Random mode chooses only
-the starting record; it never shuffles the results. Verification formula:
+Cyclic mode is on by default. Output defaults to at most 21,600 records,
+starting at the chosen record and wrapping at the end when needed. Each
+source record is used at most once. Set the record count to 0 for all available
+records. With cyclic mode off, output stops at the last source record.
+Random mode chooses only the starting record from the ENTIRE source file,
+independently of the output count; it never shuffles the results. Formula:
     random.Random(seed).randint(1, total_records)
+Both endpoints are inclusive: for 2 million inputs, records 1 to 2,000,000.
 
 The first visible HTML row is "seed: N" in pre#seed (-1 for nonrandom starts).
 Spin rows remain in pre#spins as tab-separated elapsed-time/result pairs.
-Times start at 00:00:00, advance by 30 seconds, and never wrap at midnight.
+Times use DDD:HH:MM:SS, start at 000:00:00:00, and advance by 30 seconds.
+Days have at least three digits; hours roll over at 24, days never roll over.
 All rows are immediately present in the static HTML. No automatic upload.
 Requires Python 3.8+; the desktop GUI also requires Tkinter.
 """
 
 import argparse
 from dataclasses import dataclass
-from itertools import chain
+from itertools import chain, islice
 import os
 from pathlib import Path
 import queue
@@ -35,6 +40,7 @@ import threading
 
 
 INTERVAL_SECONDS = 30
+DEFAULT_RECORD_COUNT = 21_600
 PROGRESS_INTERVAL = 50_000
 FOOTER = '</pre></body>\n</html>\n'
 
@@ -57,10 +63,11 @@ class GenerationResult:
 
 
 def elapsed_time(seconds: int) -> str:
-    """Format elapsed seconds as HH:MM:SS, with unbounded hours."""
-    hours, remainder = divmod(seconds, 3600)
+    """Format elapsed seconds as DDD:HH:MM:SS, with unbounded days."""
+    days, remainder = divmod(seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
     minutes, seconds = divmod(remainder, 60)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    return f"{days:03d}:{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
 def check_cancelled(cancel_event):
@@ -76,6 +83,7 @@ def generate_html(
     random_start: bool = False,
     seed=None,
     cyclic: bool = True,
+    record_count: int = DEFAULT_RECORD_COUNT,
     progress=None,
     cancel_event=None,
 ) -> GenerationResult:
@@ -84,6 +92,8 @@ def generate_html(
     progress, when supplied, receives (phase, completed, total); total is None
     during loading. It runs on the caller's thread and must not modify Tk UI.
     An omitted random seed is generated automatically and returned/recorded.
+    record_count is an output limit, not a random-start range. Zero means all
+    available records; output never exceeds one full pass through the source.
     Invalid input or cancellation leaves any existing output unchanged.
     """
     source, destination = Path(source), Path(destination)
@@ -95,6 +105,8 @@ def generate_html(
         raise ValueError("A seed can only be used with a random start.")
     if type(start_record) is not int or start_record < 1:
         raise ValueError("Starting record must be a positive integer (first record is 1).")
+    if type(record_count) is not int or record_count < 0:
+        raise ValueError("Record count must be a nonnegative integer; 0 means all available.")
 
     def report(phase, completed, total):
         if progress is not None:
@@ -128,7 +140,8 @@ def generate_html(
     if start_record > total:
         raise ValueError(f"Starting record must be between 1 and {total:,}.")
 
-    spin_count = total if cyclic else total - start_record + 1
+    available = total if cyclic else total - start_record + 1
+    spin_count = min(record_count, available) if record_count else available
     header = (
         '<!doctype html>\n'
         '<html lang="en">\n'
@@ -136,7 +149,8 @@ def generate_html(
         f'<body><pre id="seed">seed: {actual_seed}</pre>\n'
         f'<pre id="spins" data-interval-seconds="{INTERVAL_SECONDS}" '
         f'data-start-record="{start_record}" data-total-records="{total}" '
-        f'data-output-records="{spin_count}" data-cyclic="{str(cyclic).lower()}">'
+        f'data-output-records="{spin_count}" data-requested-records="{record_count}" '
+        f'data-time-format="ddd:hh:mm:ss" data-cyclic="{str(cyclic).lower()}">'
     )
     indices = chain(
         range(start_record - 1, total),
@@ -153,7 +167,7 @@ def generate_html(
         ) as output_file:
             temporary_path = Path(output_file.name)
             output_file.write(header)
-            for output_index, source_index in enumerate(indices):
+            for output_index, source_index in enumerate(islice(indices, spin_count)):
                 check_cancelled(cancel_event)
                 time = elapsed_time(output_index * INTERVAL_SECONDS)
                 output_file.write(f"{time}\t{records[source_index]}\n")
@@ -210,6 +224,7 @@ def launch_gui(args) -> int:
     mode = tk.StringVar(value=initial_mode)
     record = tk.StringVar(value=str(args.start))
     seed_value = tk.StringVar(value="" if args.seed is None else str(args.seed))
+    output_count = tk.StringVar(value=str(args.count))
     cyclic = tk.BooleanVar(value=not args.no_cycle)
     status = tk.StringVar(value="Choose your input, starting record, and output file.")
     messages = queue.Queue()
@@ -254,7 +269,7 @@ def launch_gui(args) -> int:
         button.grid(row=row, column=2, padx=(10, 0), pady=5)
         controls.extend((entry, button))
 
-    starts = ttk.LabelFrame(frame, text="Starting record", padding=12)
+    starts = ttk.LabelFrame(frame, text="Starting record and output size", padding=12)
     starts.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(14, 10))
     starts.columnconfigure(2, weight=1)
 
@@ -279,11 +294,19 @@ def launch_gui(args) -> int:
     ttk.Label(starts, text="The same seed and input reproduce the same starting record.").grid(
         row=3, column=0, columnspan=3, sticky="w", pady=(9, 0)
     )
+    ttk.Label(starts, text="Records to publish").grid(row=4, column=0, sticky="w", pady=(12, 0))
+    count_entry = ttk.Entry(starts, textvariable=output_count, width=18)
+    count_entry.grid(row=4, column=1, sticky="w", pady=(12, 0))
+    controls.append(count_entry)
+    ttk.Label(starts, text="0 = all available records").grid(
+        row=4, column=2, sticky="w", padx=10, pady=(12, 0)
+    )
 
     cycle_button = ttk.Checkbutton(frame, text="Cyclic sequence (wrap once to the beginning)", variable=cyclic)
     cycle_button.grid(row=5, column=0, columnspan=3, sticky="w", pady=(0, 5))
     controls.append(cycle_button)
-    ttk.Label(frame, text="On: start → last → first → record before start.  Off: start → last.").grid(
+    ttk.Label(frame, text="On: wrap at the end. Off: stop at the last record.\n"
+              "The count is a maximum; each source record is used at most once.").grid(
         row=6, column=0, columnspan=3, sticky="w", pady=(0, 12)
     )
 
@@ -325,10 +348,13 @@ def launch_gui(args) -> int:
                 raise ValueError("Choose both an input file and an output HTML path.")
             source, destination = Path(source_text).expanduser(), Path(destination_text).expanduser()
             selected_start = int(record.get()) if mode.get() == "specific" else 1
+            selected_count = int(output_count.get().strip().replace(",", ""))
             is_random = mode.get() == "random"
             chosen_seed = int(seed_value.get().strip()) if is_random and seed_value.get().strip() else None
             if selected_start < 1:
                 raise ValueError("Starting record must be at least 1.")
+            if selected_count < 0:
+                raise ValueError("Record count must be nonnegative; 0 means all available records.")
             if chosen_seed is not None and chosen_seed < 0:
                 raise ValueError("Random seed must be nonnegative; -1 is reserved for nonrandom starts.")
             if source.resolve() == destination.resolve():
@@ -354,6 +380,7 @@ def launch_gui(args) -> int:
                 result = generate_html(
                     source, destination, start_record=selected_start,
                     random_start=is_random, seed=chosen_seed, cyclic=is_cyclic,
+                    record_count=selected_count,
                     progress=lambda phase, completed, total: messages.put(
                         ("progress", (phase, completed, total))
                     ),
@@ -395,7 +422,7 @@ def launch_gui(args) -> int:
                         set_details(
                             f"Start: record {result.start_record:,} of {result.total_records:,} | "
                             f"seed: {result.seed} | cyclic: {'on' if result.cyclic else 'off'}\n"
-                            f"Timeline: 00:00:00 to {result.last_time} | 30 seconds per spin\n"
+                            f"Timeline: 000:00:00:00 to {result.last_time} | 30 seconds per spin\n"
                             f"Output: {destination.resolve()}"
                         )
                     elif kind == "cancelled":
@@ -439,11 +466,17 @@ def main(argv=None) -> int:
     starts.add_argument("--random-start", action="store_true", help="Choose a starting record using a seed.")
     parser.add_argument("--seed", type=int, help="Nonnegative random seed; omitted means generate one.")
     parser.add_argument("--no-cycle", action="store_true", help="Stop at the last record without wrapping.")
+    parser.add_argument(
+        "--count", type=int, default=DEFAULT_RECORD_COUNT,
+        help="Maximum output records (default: 21600; 0: all available, up to one full pass).",
+    )
     args = parser.parse_args(arguments)
     if args.seed is not None and not args.random_start:
         parser.error("--seed requires --random-start")
     if args.seed is not None and args.seed < 0:
         parser.error("--seed must be nonnegative; -1 is reserved")
+    if args.count < 0:
+        parser.error("--count must be nonnegative; 0 means all available")
     if not arguments or args.gui:
         return launch_gui(args)
 
@@ -451,13 +484,14 @@ def main(argv=None) -> int:
         result = generate_html(
             args.input, args.output, start_record=args.start,
             random_start=args.random_start, seed=args.seed, cyclic=not args.no_cycle,
+            record_count=args.count,
         )
     except (OSError, UnicodeError, ValueError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
     print(f"Wrote {result.spin_count:,} spins to {args.output}")
     print(f"Start record: {result.start_record:,} / {result.total_records:,}; seed: {result.seed}; cyclic: {result.cyclic}")
-    print(f"Timeline: 00:00:00 to {result.last_time}; {INTERVAL_SECONDS} seconds per spin")
+    print(f"Timeline: 000:00:00:00 to {result.last_time}; {INTERVAL_SECONDS} seconds per spin")
     return 0
 
 
