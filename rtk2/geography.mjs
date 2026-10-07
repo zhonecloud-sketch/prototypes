@@ -1,7 +1,7 @@
 export const REGIONS=[['Youzhou','幽州'],['Bingzhou','并州'],['Jizhou','冀州'],['Qingzhou','青州'],['Yanzhou','兗州'],['Sili','司隸'],['Yongzhou','雍州'],['Liangzhou','涼州'],['Xuzhou','徐州'],['Yuzhou','豫州'],['Jingzhou','荊州'],['Yangzhou','揚州'],['Yizhou','益州'],['Jiaozhou','交州']];
 export function regionName(p,year=189){let index=p.region;if(p.id===12&&year<213)index=5;if(p.id===13&&year<213)index=7;if(p.region===13&&year<203)return ['Jiaozhi circuit','交趾部'];return REGIONS[index];}
-export function provinceLabel(p,year=189,chinese=false){const region=regionName(p,year);const seat=p.id===25&&year>=211?(chinese?'建業':'Jianye'):(chinese?p.seatZh:p.seat);return chinese?`${seat} · ${region[1]}`:`${seat} · ${region[0]}`;}
-export function applyGeography(state){for(const p of state.provinces){const region=regionName(p,state.year);p.name=p.id===25&&state.year>=211?'Jianye':p.seat||p.name;p.zh=(p.id===25&&state.year>=211?'建業':p.seatZh||p.zh.split(' · ')[0])+' · '+region[1];}}
+export function provinceLabel(p,year=189,chinese=false){const region=regionName(p,year);const seat=p.id===17&&year<221?(chinese?'許縣':'Xu county'):p.id===25&&year>=212?(chinese?'建業':'Jianye'):(chinese?p.seatZh:p.seat);return chinese?`${seat} · ${region[1]}`:`${seat} · ${region[0]}`;}
+export function applyGeography(state){for(const p of state.provinces){const region=regionName(p,state.year);p.name=p.id===17&&state.year<221?'Xu county':p.id===25&&state.year>=212?'Jianye':p.seat||p.name;p.zh=(p.id===17&&state.year<221?'許縣':p.id===25&&state.year>=212?'建業':p.seatZh||p.zh.split(' · ')[0])+' · '+region[1];}}
 export function project(lon,lat){return {x:(lon-111.5)*3.2,z:(33.5-lat)*3.7};}
 export const pointFor=p=>p.geo?project(...p.geo):{x:(p.x-3.5)*12,z:(p.y-4)*11+(p.x%2)*5.5};
 // Use the DOS sector coordinates, not the remaster's historical seat locations.

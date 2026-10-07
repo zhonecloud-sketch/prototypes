@@ -60,3 +60,9 @@ Five new artworks were generated in one parallel batch, one request each, with n
 | `capitals-v9.webp` | 1774 × 887 | 4 × 2 alpha cells: imperial capital, northern fort, central market, river port, southeast canal, western mountain seat, southern coast, southwest terraces. Each province seat uses its regional stamp. |
 
 The returned atlas cells are 443.5 × 443.5 pixels; source rectangles use these exact floating-point cell dimensions rather than rounding or resampling the sheet into integer cells. No generated cartographic boundary, province label or rule is treated as game data. New graphics do not replace the 352 unique portraits, twelve event scenes or four weather states. Native Canvas tests confirm that all eight army poses and eight capital cells differ, retain visible alpha artwork, and preserve cell ratios in narrow/wide display frames.
+
+## V11 courier and terrain masks
+
+`rtk2/assets/courier.webp` is a new image-generated RGBA mounted Han courier atlas, 2172 × 724 pixels. Four 543 × 724 cells contain complete right-facing gallop poses of the horse, rider, scroll, cape and tack. The inspected original was encoded to WebP without resizing; uniform contain scaling is used for the journey scene, and the map sprite preserves the 543:724 frame ratio. No unrelated artwork was regenerated.
+
+Terrain variants are drawn from the existing terrain atlas with a six-bit neighbor mask and cached by terrain/mask pair. The bits use the same six directions as tactical movement. Water edges against other terrain gain a shoreline; matching neighbors suppress those contours. This is code-based terrain composition rather than generated map geometry. City stamps use exact projection anchors. Numbered seals sit above them, with thin leaders when mobile collision avoidance requires an offset; clipped Voronoi colour regions represent ownership and can be hidden. These display regions do not change the original 93 province connections.

@@ -1,6 +1,6 @@
 # Romance of the Three Kingdoms II — mobile raster remaster
 
-A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows a rotate prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
+A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
 ## Run
 
@@ -18,9 +18,9 @@ The downloadable package has the application in `rtk2/` and libraries in its sib
 
 The first screen has **New Game**, **Load Game**, and **Quit**. New Game follows this sequence:
 
-1. Choose one of six scenarios: 189, 194, 201, 208, 215 or 220.
+1. Choose Historic or Fiction, and one of six scenarios: 189, 194, 201, 208, 215 or 220.
 2. Choose 0–12 human players. Later scenarios limit the count to their available active rulers.
-3. For nonzero players, select one distinct ruler for each human, in order.
+3. For nonzero players, select one distinct ruler for each human, in order. Create a custom ruler and follower in an empty province from this step if desired.
 4. Choose AI intelligence: **Beginner**, **Medium**, or **Hard**.
 5. Start Game.
 
@@ -34,7 +34,7 @@ Pause AI and speed control automated turns. AI stops while a dialog/HUD is open 
 
 ## Original-style mobile display
 
-The map occupies **40% of the screen width**, and the right pane occupies **60%**. There is no fixed top header. Month, year and season appear in the map’s upper-left corner, with Menu at the upper right. The current ruler’s home province blinks; controlled provinces have gold outlines. Reduced-motion settings replace blinking with a static highlight.
+The map occupies **40% of the screen width**, and the right pane occupies **60%**. There is no fixed top header. Month, year and season appear in the map’s upper-left corner, with Menu at the upper right. Cities are drawn at the map anchors and carry numbered seals; province names appear in detailed views. **Ownership on/off** toggles coloured areas. The current ruler’s home province blinks; controlled provinces have gold outlines. Reduced-motion settings replace blinking with a static highlight.
 
 The right pane’s sections occupy **30% / 50% / 20%** of its height:
 
@@ -42,17 +42,27 @@ The right pane’s sections occupy **30% / 50% / 20%** of its height:
 - **Middle:** the event scene at the beginning of a turn; twelve attributes in Province View (Pop, Men, Generals, Free Gen, Gold, Food, Rate, Horses, Loy, Land, Flood, Forts); or the nineteen commands in Province Orders.
 - **Bottom:** navigation to this month’s events across China, Province View and Province Orders. The event list highlights controlled provinces and marks the current capital with a star. Province Orders links back to Province Events and Province View. Monthly council review adds Next event / Begin monthly orders before commands become available.
 
-Every faction turn starts on the China map at the current ruler’s home. **Rest** ends the faction’s turn after confirmation. The command grid contains **Rest, Move, Send, War, Milit, Person, Diplom, Spy, View, Cultiv, Flood, Reward, Give, Merch, Tax, Map, Deleg, Exile, Advice**. The detailed staged suborders, action gates and resource limits are listed in the v9 Province Orders table below.
+Every faction turn starts on the China map at the current ruler’s home. **Rest** finishes this province and moves to the next directly ruled province. The separate **End turn** finishes the whole faction after running delegated orders. The command grid contains **Rest, Move, Send, War, Milit, Person, Diplom, Spy, View, Cultiv, Flood, Reward, Give, Merch, Tax, Map, Deleg, Exile, Advice**. The detailed staged suborders, action gates and resource limits are listed in the v9 Province Orders table below.
 
 Save Game, Load Game, Chronicle, checkpoint status, sound/music, help, settings and Exit are inside Menu. Portrait and event atlas cells are drawn with a single scale factor and centred letterboxing. This applies to turn, setup and dialog portraits, events and launch artwork; army sprites retain the source frame ratio as well.
 
-All 352 distinct officers across the six scenarios have their own generated portrait. These are artistic interpretations, not authenticated historical likenesses. Twelve expanded event scenes accompany the original diplomacy, military/capture and council atlas. The HUD can preview diplomacy/messenger-detention artwork without changing the campaign; previews are marked and removed when loading saves. Actual prisoner/capture messages use the detention scene. A new diplomatic messenger-imprisonment decision system is not implemented by this UI update.
+All 352 distinct officers across the six scenarios have their own generated portrait. These are artistic interpretations, not authenticated historical likenesses. Twelve expanded event scenes accompany the original diplomacy, military/capture and council atlas. The HUD can preview diplomacy/messenger-detention artwork without changing the campaign; previews are marked and removed when loading saves. Actual prisoner/capture messages use the detention scene. Messengers now travel on horseback along connected numbered cities, with an animated route and possible interception. Our missions wait for Continue journey; AI journeys advance with AI turns. An intercepting human ruler chooses Set free, Capture or Behead. Diplomacy, spying and supply escorts share this travel state; saves preserve its progress.
 
-Battles allocate **75% of the screen width** to the unobstructed battlefield and **25%** to a right panel. The battle panel uses **20% / 50% / 30%** of its height for province/date/weather/wind, the army comparison, and orders. The comparison always shows **defenders on the left** and **attackers on the right**, with a weather image and row labels between their commander portraits. It shows each ruler, commander, current soldiers, fighting generals / generals remaining in the side’s province, army rice and province treasury. These values update after casualties, inspections, reinforcements and army handoffs. Portraits and weather images preserve their source ratio.
+Battles allocate **75% of the screen width** to the unobstructed battlefield and **25%** to a right panel. The battle panel uses **20% / 50% / 30%** of its height for province/date/weather/wind, the army comparison, and orders. The comparison always shows **defenders on the left** and **attackers on the right**, with a weather image and row labels between their commander portraits. It shows each ruler, commander, current soldiers, fighting generals / generals remaining in the side’s province, army rice and separate field treasury. These values update after casualties, inspections, reinforcements and army handoffs. Portraits and weather images preserve their source ratio.
 
 The bottom section starts with **Move, Attack, Wait, View, Strategy, Flee**. Move replaces that list with **Normal move / Move enemy**; Attack replaces it with **Normal / Simultaneous / Fireball / Charge**. Back returns to the six orders. Wait acts immediately. View keeps the main order list and opens a unit selector: friendly inspection is free; every enemy inspection costs 100 gold. Strategy provides **Reinforce / Bribe** with a Back button. The lead general's Flee confirms defeat and whole-army withdrawal. Other generals choose an empty connected province; attackers can also choose their source province. Deployment uses a unit selector and Confirm placement in the bottom section.
 
 Tap a friendly unit on the battlefield to select it; drag/pinch to explore. **Menu → Battle controls** also provides a unit selector, movement directions, target coordinates, personal challenge, Finish army orders and battle log. Menu provides a direct Finish army orders action as well. Menu and HUD are in the battle panel’s top section.
+
+## V11 decisions and terrain
+
+Battlefield artwork uses a cached six-bit terrain mask in the same direction order as hex movement. Matching neighbors join; differing edges draw terrain boundaries and river shorelines. The original terrain records and movement rules remain the data source.
+
+Victors decide **Recruit / Set free / Behead** separately for each captured general, governor or ruler. Defenders with no empty connected retreat province are all captured. Otherwise capture probability declines with INT and WAR. Recruitment can be refused; execution removes the officer permanently. A released landless ruler continues with Move, View, Settle and Rest; a released ruler with territory returns there. V12 voluntary **Exile** also continues with a saved party after its two confirmations.
+
+General selectors use illustrated cards showing INT, WAR, CHA, LOY, TRAIN and MEN, with the relevant attributes highlighted. A local adviser with INT 80+ gives estimated success/failure for recruitment, diplomatic and spy missions, or expected domestic improvements. The forecast does not roll or alter the campaign RNG. Numbered seals, bronze/parchment choice boards and custom diamond checks replace visible browser select and radio widgets.
+
+Capture, captive recruitment and interception rates are remaster formulas. DOS prompts support these branches, but their original probabilities have not been recovered. `tools/decode-reference.py` decodes the uploaded English DOS scenario/arrival/portrait files and can compare them with the Chinese reconstruction; `--portrait-sheet` renders native pixels for inspection. It does not execute `main.exe` or replace campaign data automatically.
 
 ## Monthly council and events
 
@@ -88,7 +98,7 @@ The battlefield uses the original province’s **13 × 12 offset-column hex grid
 
 **Deployment comes first.** Select each commander and tap a highlighted feasible hex, then confirm that army’s positions. Attackers must use passable hexes on the edge facing their source province, excluding the palace. The approach uses the original DOS sector coordinates and six fixed connections, rather than the remaster's geographic seat locations. A source to the lower right of the target enters on the target's lower-right edge. Diagonal entry areas occupy the corresponding half of a side and half of its adjacent top/bottom edge; vertical approaches use the top or bottom edge. If an approach has fewer legal hexes than commanders, send fewer commanders. Defenders may choose any free passable hex. Both armies finish deployment before day one. Unfinished placement is included in saves.
 
-Each unit starts with **two mobility points** and has **one daily order**. Unused mobility carries forward. **Wait** keeps the unit in place and banks **one additional point**; finishing an army’s orders makes every unit without an order Wait once. Movement consumes the terrain cost along the chosen path. Inspection is available after an order and does not consume an order. A complete turn—orders from both armies—is **one day**. If day 30 ends unresolved, **the defender wins**; day 31 cannot begin.
+Each unit starts with **two mobility points** and has **one daily order**. Unused mobility carries forward. **Wait** keeps the unit in place and banks **one additional point**; finishing an army’s orders makes every unit without an order Wait once. Movement consumes the terrain cost along the chosen path. Inspection is available after an order and does not consume an order. A complete turn—orders from both armies—is **one day**. If day 30 ends unresolved, the battle suspends and resumes after the next monthly council. No automatic defender victory is awarded.
 
 | Terrain entered | Mobility cost |
 |---|---:|
@@ -174,7 +184,7 @@ node --check rtk2/audio.mjs
 
 The 15 engine checks cover domestic formulas, transactions, all scenarios/rulers, save invariants and ten-year monthly simulations. The 15 strategy checks cover player setup, legacy migration, faction ordering, observable AI controls, battle save validation, movement, damage, retreat/capture, atomic HUD edits, human defense, portrait coverage, audio/event save persistence, animation cues and **6,000 AI actions per scenario** with checkpoint validation.
 
-Forty-three battle checks cover hex geometry, all 41 original terrain arrays, deployment/checkpoints, terrain costs and persistent mobility, charges and simultaneous attacks, enemy lures, paid inspection, challenge response and captured rulers, commander/individual flight, palace occupation, the 30-day cutoff, six-direction winds, correct flanks and aggressive spread, rain, all eight ambush positions and movement paths, reinforcement/bribe settlement, viewing defaults, automated campaigns, and legacy migration, directional approaches, charge occupancy, breakthrough blocking and landing effects. Twelve monthly-event checks cover council sequencing and saves, one-time effects, historical cards, age/arrival rules, succession, disaster losses/spread, imprisoned generals, rebellion and invalid event saves.
+Forty-three battle checks cover hex geometry, all 41 original terrain arrays, deployment/checkpoints, terrain costs and persistent mobility, charges and simultaneous attacks, enemy lures, paid inspection, challenge response and captured rulers, commander/individual flight, palace occupation, 30-day suspension and resumption, six-direction winds, correct flanks and aggressive spread, rain, all eight ambush positions and movement paths, reinforcement/bribe settlement, viewing defaults, automated campaigns, and legacy migration, directional approaches, charge occupancy, breakthrough blocking and landing effects. Twelve monthly-event checks cover council sequencing and saves, one-time effects, historical cards, age/arrival rules, succession, disaster losses/spread, imprisoned generals, rebellion and invalid event saves.
 
 For emulated interface and actual raster drawing checks (Node 24+):
 
@@ -220,7 +230,7 @@ The four battle states are Clear, Few clouds, Cloudy and Rain, each with matchin
 
 These event categories and effects follow the requested original-game behavior. Random chances, losses and stratagem eligibility are explicit remaster rules; they are not claimed to reproduce unrecovered DOS formulas. The introductory council can include random special events. Later monthly councils resolve health, age, future arrivals, disasters and special events before orders.
 
-`officer-roster.mjs` records exactly 352 distinct identities across all six scenarios, including the future-arrival records recovered from upstream `Taiki.dat`. Spelling aliases are unified; Zhang Yi, Zhang Xiu, Zhang Heng and Liu Yan namesakes retain distinct identities. The 194 Yu Jin record is corrected from the earlier Yue Jin transcription. The unavailable Sun Liang reserve sentinel is excluded from the playable roster. Future arrival dates and province references are preserved on officers; they cannot be found before entering the campaign. Each identity has its own generated portrait cell, consistently used across scenarios. Numeric campaign slots remain unchanged, and older saves restore newly added future records into their formerly unused slots.
+`officer-roster.mjs` records exactly 352 distinct identities across all six scenarios, including the future-arrival records recovered from upstream `Taiki.dat`. Spelling aliases are unified; Zhang Yi, Zhang Xiu, Zhang Heng and Liu Yan namesakes retain distinct identities. The 194 Yu Jin record is corrected from the earlier Yue Jin transcription. The unavailable Sun Liang reserve sentinel is excluded from the playable roster. Future arrival dates and province references are preserved on officers; they cannot be found before entering the campaign. Each identity has its own generated portrait cell, consistently used across scenarios. Initial campaign slots remain unchanged. V12 appends absent future identities with stable IDs and preserves the ten earlier pending records already stored in initial slots.
 
 The seventeen expansion checks cover explicit retreat destinations and atomic failures, reservation/restoration/settlement, defender restrictions, weather/fire differences and old-weather migration, famine expiry, regional disasters, one-vs-three-month recovery, comet/death/succession, stratagem eligibility, all 352 identities and unique portrait assignments, dated future arrivals, and occupation-event artwork persistence. Artwork checks compare every portrait’s pixel hash and verify uniform scaling in landscape and portrait display frames.
 
@@ -233,9 +243,9 @@ The launch has a new cinematic Han campaign illustration. Eight detailed terrain
 | Advice | **Advice / Rumours / Healing**. Advice requires the advisor in the current province and rolls once per province/month against INT; high INT gives useful, accurate supply, talent, loyalty, flood and invasion observations. Rumours require Sima Hui or Xu Shao visiting locally; healing requires Hua Tuo and restores all sick/injured officers here. Three travelling visitors select different provinces each month. |
 | Move | **Move where → Move whom → gold 0..available → food 0..available**. Friendly/independent adjacent destinations; leave a governor and respect destination storage. |
 | Milit | **Hire / Reassign / Train**. Hire chooses the officer then 1..maximum hundreds of men, costing 10 gold and 100 food/population per hundred. Capacity retains the source 50,000 civilian reserve. Hire and Reassign use the same shared allocation pool, with up to 10,000 men per officer. Reduce a commander's assignment to free men, then assign them elsewhere. Finish, Close, or Esc with unassigned men requires explicit disbanding confirmation; the men return to population. Train selects an instructor and improves all local armies using the source formula. |
-| Person | **Recruit / Search / Appoint / Dismiss**; Appoint branches to Governor / Advisor. Dismiss frees a subordinate and disbands their army; it cannot dismiss the ruler or the last governor. |
+| Person | **Recruit / Search / Appoint / Dismiss**. Recruitment selects Special attention/Horse/Gold/Letter and a messenger; hostile subordinates can be targeted. Ruler-only Appoint selects an owned province and Governor/Advisor. Dismiss conceals a subordinate nearby and disbands their army, or demotes an advisor while retaining service. |
 | Diplom | **Alliance / Joint invasion / Marriage / Gift / Cancel alliance / Threaten**. Select the target first, then an envoy. Joint invasion requires a current ally and a target bordering both realms, then an envoy; the plan lasts one month and brings up to two ready allied formations from their own connected province edge. Surviving support returns to its realm, with proportionate gold/food payment on victory. Marriage uses one daughter per ruler. Gift is 100..available gold. Cancellation lists current allies, voids joint plans and requires the ruler present. Threaten also requires the ruler present; acceptance transfers the rival territory. |
-| Spy | **Infiltrate / Rival tigers / Tiger and wolf / Betrayal / Forged letter**, issued where the ruler is staying. Infiltration sends a fully loyal subordinate as a free general; enemy recruitment lets them undermine subordinate loyalty and return to your side in battle. Rival tigers uses two rulers and two messengers. Tiger and wolf can turn an enemy governor into an independent ruler. Betrayal creates a three-month battle defection pact. Forged letters reduce subordinate loyalty. |
+| Spy | **Hide/Infiltrate / Rival tigers / Tiger and wolf / Betrayal / Forged letter / Verify / Withdraw**, issued where the ruler is staying. Infiltration sends a fully loyal subordinate as a free general; enemy recruitment lets them undermine subordinate loyalty and return to your side in battle. Rival tigers uses two rulers and two messengers. Tiger and wolf can turn an enemy governor into an independent ruler. Betrayal creates a three-month battle defection pact. Forged letters reduce subordinate loyalty. |
 | View | **Other provinces / Generals / Summary 1 / Summary 2 / Territory / Data order**. Summary 1 contains rank, loyalty and abilities; Summary 2 contains source years in service, training, arms, weapons and men. Service years advance with the calendar; recruitment starts a new service record. Territory lists your provinces and marks self-rule with `*`. Data order sorts local officers by a chosen attribute while keeping ruler/governor first and preserving IDs. |
 | Cultiv / Flood / Give | Select who will act, then gold 1..100 for cultivation/dikes or food 1..10,000 for relief, bounded by the province's resources. |
 | Reward | Requires a ready governor. **Gold / Horse / Writings → recipient → gold 1..100**. Gold/horse improve loyalty; horse also uses stock, and writings use a local advisor at least two INT points above the pupil, once per pupil/month. All three charge the requested gold amount; this requested writings fee is a remaster change from source free teaching. |
@@ -243,10 +253,53 @@ The launch has a new cinematic Han campaign illustration. Eight detailed terrain
 | Tax | Requires a ready governor. **Impose special tax? Yes / No**. Confirmation consumes the governor's action; original repeat/summer restrictions and loyalty/trust penalties remain. |
 | Map | Shows the selected province's original battlefield with one button for every fixed connected province. Selecting a neighbour highlights its legal attacking deployment edge in gold; top province information stays unchanged. |
 | Deleg | Only a ready ruler present may choose **send orders where → Self rule / Direct rule** for another own province. Self rule performs domestic development at faction end; the ruler's own province stays direct. |
-| Exile | Only the ruler present, with a ready governor, may confirm **self-exile**. This dissolves their realm into independent provinces and releases officers/soldiers. With no remaining human ruler, the campaign pauses and ends; another hotseat human can continue. Subordinate dismissal is under Person. |
+| Exile | Ready ruler present → go into exile Yes/No → take all local generals Yes/No. The player continues with a saved party, troops and home supplies; other provinces become independent. Ongoing wars prevent exile. Move/View/Settle/Rest remain available; subordinate dismissal is under Person. |
 
 Domestic source formulas and manual order structure are retained where recovered. Diplomatic/spy success, alliance support limits/payments, event chances, health visits, and self-exile settlement are documented remaster rules rather than claimed byte-for-byte DOS behavior. The [official Koei instruction booklet](https://www.digitpress.com/library/manuals/nes/Romance%20of%20the%20Three%20Kingdoms%20II.pdf) supplies the View/Army/Diplom/Spy command structure and pact durations; Commands4/8/11/18 in the inspected upstream supply allocation, summaries, reward and advice/visitor behavior.
 
 Run `npm test` for the engine, strategy, battle, monthly, expanded-art/roster and 22 new province-order checks; run `npm run test:ui` for the emulated menu and native Canvas integration checks. The new checks exercise shared-pool conservation and disband confirmation, all-army training, governor gates, advice/visitors, reciprocal diplomacy, joint support and atomic invasion failure, infiltration/loyalty, timed betrayal, governor rebellion, delegation, exile and malformed saves. Raster checks cover every new formation/capital frame, distinct poses, alpha, and uniform scaling. Real handset/browser layout and audible playback still require device verification.
 
-The follow-up hardens order continuity and saved battles: reassignment must finish before changing provinces or staging a different order; joint invasions exclude allies of either partner and new alliances cancel conflicting plans; personal units cannot override deployment directions, remote reinforcement origins or allegiance flags in a save; self-exile prevents AI/faction restart while preserving Menu → Exit. Targeted regression checks cover these cases alongside the existing bribery and allied-support restoration checks.
+The follow-up hardens order continuity and saved battles: reassignment must finish before changing provinces or staging a different order; joint invasions exclude allies of either partner and new alliances cancel conflicting plans; personal units cannot override deployment directions, remote reinforcement origins or allegiance flags in a save; self-exile now preserves continuing human control and Menu → Exit. Targeted regression checks cover these cases alongside the existing bribery and allied-support restoration checks.
+
+
+## v12 fidelity and complete game pack
+
+The pack includes the playable remaster, every bundled image and audio file,
+all six scenario datasets, the complete 412-record future-arrival catalogue,
+local JavaScript libraries and licenses, source, regression checks, tools, and
+`differences.md`. Python launch scripts serve the extracted game locally;
+Python is needed for those launchers, Node/npm only for development tests.
+Original DOS executables and unmodified commercial data/art are not included.
+
+Voluntary exile asks whether to leave and whether to take all generals in the
+current province. It retains your player, army, gold and food in a saved party
+with Move, View, Settle and Rest. Human realms choose a successor. Full control
+of all 41 provinces produces a unification report.
+
+Unfinished battles suspend after day 30. Other factions and domestic orders
+continue; committed generals and besieged provinces are unavailable. Multiple
+sieges can persist, and resume in the following month after the council. Field
+purses are separate from provincial gold. Defeated commanders and exhausted
+food end a battle. Jungle troops remain concealed until approached.
+
+Move supports multiple generals, abandonment confirmation and a governor
+choice. Recruitment includes special attention, horse, gold and letter; enemy
+subordinates can be approached by a mounted envoy. Ruler appointments can
+reach other owned provinces. Advisers can be demoted without dismissal.
+Spy includes Verify/Withdraw. Merchant orders require a ready general and
+use the reconstructed source's integer rounding. Map permits permanent forts
+on plain/hill hexes for a stated remaster cost of 100 gold.
+
+Exact original arrival-month/slot handling, probabilistic formulas, several
+edition-specific branches, items/custom-ruler setup, and AI rules remain
+unverified or pending. The report distinguishes implemented branches,
+accepted remaster choices, and outstanding work; this is not a claim of
+complete executable-level parity.
+
+## V13 command and settlement completion
+
+Self rule offers Full, Internal, Military and Personnel authority, supply destinations and attack targets. Return to Direct rule to issue manual commands. Joint-invasion allies choose troops and provisions; Reinforce → Ask ally requests defensive or offensive support with a mounted messenger. A human ally can refuse, with a trust penalty.
+
+Courier cargo is deducted at departure. Convoys may lose goods to bandits; intercepted outward messengers may lose their carried offer. Refused gifts return. Only an army commander can bribe, one opening duel is allowed, and flight through adjacent hostile units risks capture. Protect/Plunder and treasure recipients follow an attacking victory after captive decisions. General details show possessions.
+
+See `differences.md` for every comparison, intentional override, primary source and remaining original-game uncertainty. V13 passes 175 gameplay checks and 24 DOM/Canvas interface groups. These checks do not substitute for physical handset or DOS execution testing.

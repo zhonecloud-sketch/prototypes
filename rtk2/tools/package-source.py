@@ -30,7 +30,7 @@ def main():
             archive.write(ROOT / APP / name, 'lib/' + name)
         for name in ['README.md', 'ARTWORK.md', 'THREE-LICENSE.txt', 'YAML-LICENSE.txt',
                      'package.json', 'package-lock.json', 'tests.mjs', 'strategy-tests.mjs',
-                     'battle-tests.mjs', 'province-tests.mjs', 'expansion-tests.mjs', 'monthly-tests.mjs', 'artwork-tests.mjs', 'ui-tests.mjs']:
+                     'battle-tests.mjs', 'decisions-tests.mjs', 'fidelity-tests.mjs', 'completion-tests.mjs', 'differences.md', 'province-tests.mjs', 'expansion-tests.mjs', 'monthly-tests.mjs', 'artwork-tests.mjs', 'ui-tests.mjs']:
             content = (ROOT / name).read_text()
             if name.endswith('.mjs') or name.endswith('.md'):
                 content = content.replace('./dist/', './rtk2/').replace('dist/', 'rtk2/')
@@ -41,6 +41,9 @@ def main():
         for file in sorted((ROOT / 'tools').glob('*.py')):
             archive.write(file, 'tools/' + file.name)
         archive.writestr('SOURCE-COMMIT.txt', commit + '\n')
+        archive.writestr('start-game.bat', '@echo off\r\ncd /d "%~dp0"\r\nstart "" http://localhost:8080/rtk2/\r\npy -m http.server 8080 --bind 127.0.0.1\r\npause\r\n')
+        archive.writestr('start-game.sh', '#!/bin/sh\ncd "$(dirname "$0")"\npython3 -m http.server 8080 --bind 127.0.0.1\n')
+        archive.writestr('START-HERE.html', '<!doctype html><meta charset="utf-8"><title>RTK2 Remastered</title><h1>RTK2 Remastered</h1><p>Start the included local server, then <a href="http://localhost:8080/rtk2/">open the game</a>. Windows: run start-game.bat with Python installed. macOS/Linux: run sh start-game.sh. See README.md for phone/LAN access and source checks.</p><p>Opening the game HTML directly from disk will not load its modules and campaign data.</p>')
     with zipfile.ZipFile(output) as archive:
         assert archive.testzip() is None, 'The source ZIP failed verification.'
         assert {'rtk2/index.html', 'rtk2/battle.mjs', 'lib/three.module.js',

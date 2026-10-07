@@ -12,7 +12,7 @@ data = args.scenario_dat.read_bytes()
 assert len(data) >= 6 * 0x33af
 for index, scenario in enumerate(scenarios):
     for officer in scenario['officers']:
-        years = data[index * 0x33af + 0x20 + officer['id'] * 43 + 12]
+        years = data[index * 0x33af + 0x16 + officer['id'] * 43 + 12]
         if officer['owner'] != 255:
             officer['serviceSince'] = scenario['year'] - max(1, years) + 1
 (app / 'scenarios.json').write_text(json.dumps(scenarios, ensure_ascii=False, separators=(',', ':')))
