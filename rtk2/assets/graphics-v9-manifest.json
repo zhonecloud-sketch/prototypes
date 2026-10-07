@@ -1,0 +1,2017 @@
+{
+  "version": "v9",
+  "generation_mode": "built-in image_gen",
+  "generation_calls": 5,
+  "parallel_batches": 1,
+  "variants": 0,
+  "retries": 0,
+  "creative_postprocessing": false,
+  "source_images_preserved": true,
+  "assets": [
+    {
+      "filename": "launch.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 1536,
+      "height": 1024,
+      "requested_width": 1536,
+      "requested_height": 1024,
+      "sha256": "b1b7d124a4ccaf5aa969fa052cdd1870e733ddfea55778f7cb8e2d93201213ad",
+      "byte_identical_to_source": true,
+      "transparent_requested": false,
+      "prompt": "Use case: historical-scene.\nAsset type: final premium mobile strategy game launch illustration, opaque PNG, 1536 x 1024 landscape.\nPrimary request: cinematic naturalistic painted 2D landscape of China circa AD 190, with massed late Han armies in disciplined ranks approaching a fortified capital beside a broad river. Misty mountain layers recede into the distance. Red and gold silk standards catch warm sunrise light. Make the terrain, architecture and dense human formations convincing in scale.\nStyle/medium: highly detailed hand-painted historical game artwork, coherent with finely painted Late Han portraits and a dark jade and aged gold game palette; naturalistic forms, rich material textures, restrained realism, polished finished art.\nComposition/framing: an expansive landscape, three-quarter distant view, with a calm darker left third reserved for game-native title and menu overlays that will be added later. The major walled capital, gates and approaching army formations occupy the center-right and right. Show small believable human figures in massed ranks, no oversized foreground hero. Keep the left third visually quiet with dark atmospheric terrain and soft mist; avoid strong focal objects there.\nLighting/mood: warm amber sunrise through cool mist, dignified and dramatic historical atmosphere.\nMaterials/textures: period earthen and timber fortifications, tiled Han palace roofs, river water, rugged distant mountains, worn iron armor, crimson details and silk standards.\nConstraints: opaque full-bleed illustration; no modern objects; historically plausible late Han scene.\nAvoid: UI, menus, captions, title lettering, Chinese characters, any words or numbers, border, decorative frame, logo, watermark, modern buildings, guns, fantasy armor, cartoon styling, plastic 3D render.",
+      "alpha": {
+        "present": false,
+        "fully_opaque": true
+      }
+    },
+    {
+      "filename": "terrain.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 1774,
+      "height": 887,
+      "requested_width": 2048,
+      "requested_height": 1024,
+      "sha256": "01bbdc12e8f96255a49645cf950dc5c3b55abcc5a265c6e3b27b3498e1cdfbf9",
+      "byte_identical_to_source": true,
+      "transparent_requested": false,
+      "prompt": "Use case: historical-scene.\nAsset type: final opaque terrain texture atlas for a premium late Han mobile strategy game, exactly 2048 x 1024 pixels, exactly four equal columns and two equal rows, eight square 512 x 512 cells.\nPrimary request: detailed naturalistic painted 2D terrain textures viewed straight down in orthographic overhead projection, with each square cell a self-contained distinct terrain type, fully occupying its cell. The strict row-major order is: top row cell 1 grassy plains, cell 2 dense forest, cell 3 foothills, cell 4 rocky mountains; bottom row cell 1 river water and natural banks, cell 2 earthen timber fort, cell 3 late Han walled city, cell 4 rice paddies.\nGrid layout: the canvas is partitioned mathematically into four columns of identical width and two rows of identical height. Each terrain stays completely inside its own equal square cell. No visible grid lines, no gutters, no separators and no borders. Cell boundaries are only changes between terrain textures. All eight cells have precisely the same size.\nStyle/medium: richly detailed naturalistic hand-painted historical 2D game artwork, premium finish, coherent with detailed late Han portrait art and dark jade and aged gold UI. Terrain must remain distinguishable when cropped into small hexes, with clear characteristic shapes and distinct colors.\nComposition/framing: strictly top-down overhead orthographic in every cell, absolutely no isometric or oblique camera. Plains use warm fresh grass; forest uses dense dark jade green foliage; foothills use rolling olive and earth forms; mountains use rugged gray stone; river uses blue jade water with banks; fort uses brown earthen walls and timber; city uses dense pale walls and charcoal tiled roofs; paddies use wet green agricultural grids and narrow bunds.\nLighting/mood: consistent soft daylight, local relief shading rather than dramatic cast shadows.\nConstraints: no actual hex outlines; no modern structures; eight clearly separate textures; no content crosses cell boundaries.\nAvoid: UI, labels, letters, text, captions, coordinates, numbers, decorative borders, watermark, roads linking panels, isometric miniatures, cartoon icons, 3D plastic look.",
+      "alpha": {
+        "present": false,
+        "fully_opaque": true
+      },
+      "grid": {
+        "columns": 4,
+        "rows": 2,
+        "order": "row-major",
+        "nominal_cell_width": 443.5,
+        "nominal_cell_height": 443.5,
+        "exact_integer_cells": false,
+        "requested_cell_width": 512,
+        "requested_cell_height": 512,
+        "cells": [
+          {
+            "index": 0,
+            "row": 0,
+            "column": 0,
+            "label": "grassy plains",
+            "crop_box_xyxy": [
+              0,
+              0,
+              444,
+              444
+            ],
+            "normalized_bounds_uv": [
+              0,
+              0,
+              0.25,
+              0.5
+            ]
+          },
+          {
+            "index": 1,
+            "row": 0,
+            "column": 1,
+            "label": "dense forest",
+            "crop_box_xyxy": [
+              444,
+              0,
+              887,
+              444
+            ],
+            "normalized_bounds_uv": [
+              0.25,
+              0,
+              0.5,
+              0.5
+            ]
+          },
+          {
+            "index": 2,
+            "row": 0,
+            "column": 2,
+            "label": "foothills",
+            "crop_box_xyxy": [
+              887,
+              0,
+              1330,
+              444
+            ],
+            "normalized_bounds_uv": [
+              0.5,
+              0,
+              0.75,
+              0.5
+            ]
+          },
+          {
+            "index": 3,
+            "row": 0,
+            "column": 3,
+            "label": "rocky mountains",
+            "crop_box_xyxy": [
+              1330,
+              0,
+              1774,
+              444
+            ],
+            "normalized_bounds_uv": [
+              0.75,
+              0,
+              1,
+              0.5
+            ]
+          },
+          {
+            "index": 4,
+            "row": 1,
+            "column": 0,
+            "label": "river water and banks",
+            "crop_box_xyxy": [
+              0,
+              444,
+              444,
+              887
+            ],
+            "normalized_bounds_uv": [
+              0,
+              0.5,
+              0.25,
+              1
+            ]
+          },
+          {
+            "index": 5,
+            "row": 1,
+            "column": 1,
+            "label": "earthen timber fort",
+            "crop_box_xyxy": [
+              444,
+              444,
+              887,
+              887
+            ],
+            "normalized_bounds_uv": [
+              0.25,
+              0.5,
+              0.5,
+              1
+            ]
+          },
+          {
+            "index": 6,
+            "row": 1,
+            "column": 2,
+            "label": "late Han walled city",
+            "crop_box_xyxy": [
+              887,
+              444,
+              1330,
+              887
+            ],
+            "normalized_bounds_uv": [
+              0.5,
+              0.5,
+              0.75,
+              1
+            ]
+          },
+          {
+            "index": 7,
+            "row": 1,
+            "column": 3,
+            "label": "rice paddies",
+            "crop_box_xyxy": [
+              1330,
+              444,
+              1774,
+              887
+            ],
+            "normalized_bounds_uv": [
+              0.75,
+              0.5,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "validation_notes": [
+        "Actual native output is 1774 x 887 despite prompt request for 2048 x 1024; nominal cells are 443.5 x 443.5.",
+        "Eight distinct terrain categories appear in the requested row-major order.",
+        "Output preserved byte-for-byte; no post-generation regridding or resampling."
+      ]
+    },
+    {
+      "filename": "army.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 1774,
+      "height": 887,
+      "requested_width": 2048,
+      "requested_height": 1024,
+      "sha256": "0b86a04d2fc7ff98f6231b766dd2f649bf5e0ffb1e0f84e2ff1faa2817dc778b",
+      "byte_identical_to_source": true,
+      "transparent_requested": true,
+      "prompt": "Use case: historical-scene.\nAsset type: final animated army sprite atlas for a premium late Han tactical strategy game, PNG with genuine transparent alpha background, exactly 2048 x 1024 pixels, exactly four equal columns and two equal rows, eight 512 x 512 square cells.\nPrimary request: every cell depicts THE SAME COMPLETE ARMY FORMATION OF TWENTY-FOUR LATE HAN INFANTRY, arranged as exactly SIX small helmeted soldiers ACROSS by FOUR orderly RANKS deep. Each formation includes the same twenty-four infantry with spears and shields, and two modest crimson silk standards carried within the ranks. Make a readable mass of small soldiers; never a lone enlarged soldier. The count, scale, formation footprint, camera angle, center position, costume and composition are consistent across all eight cells.\nAnimation order: top row left to right shows four consecutive group marching poses, all twenty-four soldiers moving together in a coherent march cycle. Bottom row left to right shows four consecutive coordinated group attack poses: ready with spears held, advance as a formation, synchronized spear thrust, recover into formation. Only limb and spear poses change between frames. Keep the same army and two standards in every frame.\nGrid layout: exactly four equal columns by two equal rows. Each complete formation is centered inside its own equal square cell with generous transparent margins on all sides; no soldier, spear, banner or shadow touches or crosses a cell boundary. The group should occupy roughly the central two-thirds of each cell, enabling reliable sprite cropping.\nStyle/medium: naturalistic finely painted 2D historical game sprites, matching detailed late Han portraits, restrained worn iron armor, muted cloth, crimson accents, authentic small shields and spears, no fantasy gear. Three-quarter overhead tactical view from above, a consistent direction in all cells.\nLighting/mood: consistent soft sunlight from upper left, crisp readable soldier silhouettes and ranks, polished premium art.\nTransparency: truly transparent empty canvas and gaps around every formation, preserve alpha; no colored backdrop, no ground, no base plate, no checkerboard painted into the picture.\nConstraints: twenty-four soldiers, six across and four ranks in EVERY cell; entire army formation in EVERY cell; same scale; all eight formations separate and completely contained.\nAvoid: lone oversized soldier, hero portrait, merged overlapping frames, missing ranks, varying soldier count, background scenery, UI, text, letters, labels, numbers, border, grid lines, frame, watermark, modern objects, cartoon styling, plastic 3D render.",
+      "alpha": {
+        "present": true,
+        "minimum": 0,
+        "maximum": 255,
+        "fully_transparent_pixels": 926774,
+        "fully_opaque_pixels": 1181,
+        "partially_transparent_pixels": 645583,
+        "most_common_values": [
+          {
+            "value": 0,
+            "pixels": 926774
+          },
+          {
+            "value": 252,
+            "pixels": 174593
+          },
+          {
+            "value": 253,
+            "pixels": 93481
+          },
+          {
+            "value": 251,
+            "pixels": 54313
+          },
+          {
+            "value": 1,
+            "pixels": 53634
+          },
+          {
+            "value": 250,
+            "pixels": 26305
+          },
+          {
+            "value": 2,
+            "pixels": 24447
+          },
+          {
+            "value": 249,
+            "pixels": 16125
+          },
+          {
+            "value": 3,
+            "pixels": 15278
+          },
+          {
+            "value": 248,
+            "pixels": 11533
+          }
+        ]
+      },
+      "grid": {
+        "columns": 4,
+        "rows": 2,
+        "order": "row-major",
+        "nominal_cell_width": 443.5,
+        "nominal_cell_height": 443.5,
+        "exact_integer_cells": false,
+        "requested_cell_width": 512,
+        "requested_cell_height": 512,
+        "cells": [
+          {
+            "index": 0,
+            "row": 0,
+            "column": 0,
+            "label": "march 1",
+            "crop_box_xyxy": [
+              0,
+              0,
+              444,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              41,
+              33,
+              436,
+              417
+            ],
+            "alpha_margins_pixels": {
+              "left": 41,
+              "top": 33,
+              "right": 8,
+              "bottom": 27
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  55,
+                  37,
+                  408,
+                  379
+                ],
+                "margins_pixels": {
+                  "left": 55,
+                  "top": 37,
+                  "right": 36,
+                  "bottom": 65
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  55,
+                  37,
+                  407,
+                  378
+                ],
+                "margins_pixels": {
+                  "left": 55,
+                  "top": 37,
+                  "right": 37,
+                  "bottom": 66
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  55,
+                  39,
+                  407,
+                  378
+                ],
+                "margins_pixels": {
+                  "left": 55,
+                  "top": 39,
+                  "right": 37,
+                  "bottom": 66
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  56,
+                  40,
+                  407,
+                  377
+                ],
+                "margins_pixels": {
+                  "left": 56,
+                  "top": 40,
+                  "right": 37,
+                  "bottom": 67
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  58,
+                  50,
+                  406,
+                  377
+                ],
+                "margins_pixels": {
+                  "left": 58,
+                  "top": 50,
+                  "right": 38,
+                  "bottom": 67
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0,
+              0,
+              0.25,
+              0.5
+            ]
+          },
+          {
+            "index": 1,
+            "row": 0,
+            "column": 1,
+            "label": "march 2",
+            "crop_box_xyxy": [
+              444,
+              0,
+              887,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              35,
+              433,
+              417
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 35,
+              "right": 10,
+              "bottom": 27
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  58,
+                  38,
+                  412,
+                  386
+                ],
+                "margins_pixels": {
+                  "left": 58,
+                  "top": 38,
+                  "right": 31,
+                  "bottom": 58
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  59,
+                  38,
+                  412,
+                  386
+                ],
+                "margins_pixels": {
+                  "left": 59,
+                  "top": 38,
+                  "right": 31,
+                  "bottom": 58
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  59,
+                  39,
+                  412,
+                  385
+                ],
+                "margins_pixels": {
+                  "left": 59,
+                  "top": 39,
+                  "right": 31,
+                  "bottom": 59
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  60,
+                  40,
+                  411,
+                  385
+                ],
+                "margins_pixels": {
+                  "left": 60,
+                  "top": 40,
+                  "right": 32,
+                  "bottom": 59
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  68,
+                  47,
+                  410,
+                  385
+                ],
+                "margins_pixels": {
+                  "left": 68,
+                  "top": 47,
+                  "right": 33,
+                  "bottom": 59
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.25,
+              0,
+              0.5,
+              0.5
+            ]
+          },
+          {
+            "index": 2,
+            "row": 0,
+            "column": 2,
+            "label": "march 3",
+            "crop_box_xyxy": [
+              887,
+              0,
+              1330,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              35,
+              442,
+              389
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 35,
+              "right": 1,
+              "bottom": 55
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  60,
+                  42,
+                  422,
+                  387
+                ],
+                "margins_pixels": {
+                  "left": 60,
+                  "top": 42,
+                  "right": 21,
+                  "bottom": 57
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  60,
+                  43,
+                  421,
+                  386
+                ],
+                "margins_pixels": {
+                  "left": 60,
+                  "top": 43,
+                  "right": 22,
+                  "bottom": 58
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  61,
+                  44,
+                  421,
+                  386
+                ],
+                "margins_pixels": {
+                  "left": 61,
+                  "top": 44,
+                  "right": 22,
+                  "bottom": 58
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  61,
+                  46,
+                  420,
+                  386
+                ],
+                "margins_pixels": {
+                  "left": 61,
+                  "top": 46,
+                  "right": 23,
+                  "bottom": 58
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  65,
+                  51,
+                  420,
+                  384
+                ],
+                "margins_pixels": {
+                  "left": 65,
+                  "top": 51,
+                  "right": 23,
+                  "bottom": 60
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.5,
+              0,
+              0.75,
+              0.5
+            ]
+          },
+          {
+            "index": 3,
+            "row": 0,
+            "column": 3,
+            "label": "march 4",
+            "crop_box_xyxy": [
+              1330,
+              0,
+              1774,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              1,
+              35,
+              420,
+              436
+            ],
+            "alpha_margins_pixels": {
+              "left": 1,
+              "top": 35,
+              "right": 24,
+              "bottom": 8
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  72,
+                  38,
+                  416,
+                  382
+                ],
+                "margins_pixels": {
+                  "left": 72,
+                  "top": 38,
+                  "right": 28,
+                  "bottom": 62
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  73,
+                  39,
+                  415,
+                  381
+                ],
+                "margins_pixels": {
+                  "left": 73,
+                  "top": 39,
+                  "right": 29,
+                  "bottom": 63
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  73,
+                  40,
+                  415,
+                  381
+                ],
+                "margins_pixels": {
+                  "left": 73,
+                  "top": 40,
+                  "right": 29,
+                  "bottom": 63
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  74,
+                  41,
+                  414,
+                  381
+                ],
+                "margins_pixels": {
+                  "left": 74,
+                  "top": 41,
+                  "right": 30,
+                  "bottom": 63
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  79,
+                  47,
+                  414,
+                  380
+                ],
+                "margins_pixels": {
+                  "left": 79,
+                  "top": 47,
+                  "right": 30,
+                  "bottom": 64
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.75,
+              0,
+              1,
+              0.5
+            ]
+          },
+          {
+            "index": 4,
+            "row": 1,
+            "column": 0,
+            "label": "attack ready",
+            "crop_box_xyxy": [
+              0,
+              444,
+              444,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              0,
+              434,
+              443
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 0,
+              "right": 10,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  32,
+                  32,
+                  416,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 32,
+                  "top": 32,
+                  "right": 28,
+                  "bottom": 68
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  32,
+                  33,
+                  416,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 32,
+                  "top": 33,
+                  "right": 28,
+                  "bottom": 68
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  33,
+                  34,
+                  415,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 33,
+                  "top": 34,
+                  "right": 29,
+                  "bottom": 68
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  33,
+                  35,
+                  415,
+                  374
+                ],
+                "margins_pixels": {
+                  "left": 33,
+                  "top": 35,
+                  "right": 29,
+                  "bottom": 69
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  34,
+                  37,
+                  414,
+                  373
+                ],
+                "margins_pixels": {
+                  "left": 34,
+                  "top": 37,
+                  "right": 30,
+                  "bottom": 70
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0,
+              0.5,
+              0.25,
+              1
+            ]
+          },
+          {
+            "index": 5,
+            "row": 1,
+            "column": 1,
+            "label": "attack advance",
+            "crop_box_xyxy": [
+              444,
+              444,
+              887,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              35,
+              443,
+              419
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 35,
+              "right": 0,
+              "bottom": 24
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  27,
+                  37,
+                  443,
+                  377
+                ],
+                "margins_pixels": {
+                  "left": 27,
+                  "top": 37,
+                  "right": 0,
+                  "bottom": 66
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  27,
+                  38,
+                  443,
+                  377
+                ],
+                "margins_pixels": {
+                  "left": 27,
+                  "top": 38,
+                  "right": 0,
+                  "bottom": 66
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  28,
+                  39,
+                  421,
+                  377
+                ],
+                "margins_pixels": {
+                  "left": 28,
+                  "top": 39,
+                  "right": 22,
+                  "bottom": 66
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  29,
+                  40,
+                  421,
+                  376
+                ],
+                "margins_pixels": {
+                  "left": 29,
+                  "top": 40,
+                  "right": 22,
+                  "bottom": 67
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  42,
+                  47,
+                  420,
+                  376
+                ],
+                "margins_pixels": {
+                  "left": 42,
+                  "top": 47,
+                  "right": 23,
+                  "bottom": 67
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.25,
+              0.5,
+              0.5,
+              1
+            ]
+          },
+          {
+            "index": 6,
+            "row": 1,
+            "column": 2,
+            "label": "attack thrust",
+            "crop_box_xyxy": [
+              887,
+              444,
+              1330,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              6,
+              436,
+              443
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 6,
+              "right": 7,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  0,
+                  33,
+                  429,
+                  380
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 33,
+                  "right": 14,
+                  "bottom": 63
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  0,
+                  33,
+                  429,
+                  380
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 33,
+                  "right": 14,
+                  "bottom": 63
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  0,
+                  34,
+                  428,
+                  379
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 34,
+                  "right": 15,
+                  "bottom": 64
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  2,
+                  37,
+                  428,
+                  379
+                ],
+                "margins_pixels": {
+                  "left": 2,
+                  "top": 37,
+                  "right": 15,
+                  "bottom": 64
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  3,
+                  47,
+                  427,
+                  378
+                ],
+                "margins_pixels": {
+                  "left": 3,
+                  "top": 47,
+                  "right": 16,
+                  "bottom": 65
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.5,
+              0.5,
+              0.75,
+              1
+            ]
+          },
+          {
+            "index": 7,
+            "row": 1,
+            "column": 3,
+            "label": "attack recover",
+            "crop_box_xyxy": [
+              1330,
+              444,
+              1774,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              3,
+              25,
+              428,
+              419
+            ],
+            "alpha_margins_pixels": {
+              "left": 3,
+              "top": 25,
+              "right": 16,
+              "bottom": 24
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  33,
+                  30,
+                  420,
+                  376
+                ],
+                "margins_pixels": {
+                  "left": 33,
+                  "top": 30,
+                  "right": 24,
+                  "bottom": 67
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  34,
+                  30,
+                  420,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 34,
+                  "top": 30,
+                  "right": 24,
+                  "bottom": 68
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  34,
+                  31,
+                  419,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 34,
+                  "top": 31,
+                  "right": 25,
+                  "bottom": 68
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  35,
+                  33,
+                  419,
+                  375
+                ],
+                "margins_pixels": {
+                  "left": 35,
+                  "top": 33,
+                  "right": 25,
+                  "bottom": 68
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  41,
+                  49,
+                  418,
+                  374
+                ],
+                "margins_pixels": {
+                  "left": 41,
+                  "top": 49,
+                  "right": 26,
+                  "bottom": 69
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.75,
+              0.5,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "validation_notes": [
+        "Genuine RGBA alpha confirmed. Source pixels and alpha preserved byte-for-byte.",
+        "Actual native output is 1774 x 887 despite prompt request for 2048 x 1024; nominal atlas cells are 443.5 x 443.5.",
+        "Some alpha content reaches nominal cell edges; full-pixel and thresholded bounds are recorded for integration.",
+        "Formation soldier count, exact frame registration, historical architecture, and generous margins are prompt requirements, not programmatically certified."
+      ]
+    },
+    {
+      "filename": "china-relief.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 1536,
+      "height": 1024,
+      "requested_width": 1536,
+      "requested_height": 1024,
+      "sha256": "97a3eccc7cd2f7d4f4e937a62af477b33de702c200cf0cfd30f659aba070e20a",
+      "byte_identical_to_source": true,
+      "transparent_requested": false,
+      "prompt": "Use case: historical-scene.\nAsset type: final opaque landscape relief texture beneath a geographic China map in a premium late Han mobile strategy game, PNG, 1536 x 1024 pixels.\nPrimary request: a top-down naturalistic illustrated relief texture inspired by the broad terrain of China, with detailed rugged tan western mountain ranges transitioning into northern earth-colored plains and green eastern and southern agricultural country. Include subtle hills, branching river valleys and believable varied natural terrain. This is a continuous illustrated terrain texture only; the game will draw verified geographic data over it.\nStyle/medium: highly detailed naturalistic painted 2D historical game map artwork, rich earthen texture and fine elevation shading, coherent with detailed late Han portrait art and dark jade and aged gold game UI, premium finished art.\nComposition/framing: landscape, strictly overhead top-down orthographic, all terrain fills the canvas; rugged tan mountains in the west/left, dry earth plains toward the north/top, cultivated jade and olive greens toward the east/right and south/bottom. Broad readable terrain transitions, fine valleys and natural river drainage, no depicted coastlines.\nLighting/mood: soft consistent relief illumination, restrained and legible beneath map overlays.\nConstraints: opaque continuous terrain canvas with no actual coastline, no exact geographic diagram, no continent silhouette, no political borders, no province boundaries, no region divisions, no city markers, no roads or settlement symbols. Keep the entire canvas inland terrain.\nAvoid: labels, Chinese characters, words, numbers, UI, legend, compass rose, grid, ornamental border, frame, watermark, modern objects, satellite photograph, exaggerated fantasy mountains, isometric view.",
+      "alpha": {
+        "present": false,
+        "fully_opaque": true
+      }
+    },
+    {
+      "filename": "capitals.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 1774,
+      "height": 887,
+      "requested_width": 2048,
+      "requested_height": 1024,
+      "sha256": "3b03efd875c899bf8d7d57324c9e874dd372967b6273aa67642d89b5ca2f645b",
+      "byte_identical_to_source": true,
+      "transparent_requested": true,
+      "prompt": "Use case: historical-scene.\nAsset type: final miniature provincial capital sprite atlas for a premium late Han mobile strategy game, PNG with genuine transparent alpha background, exactly 2048 x 1024 pixels, exactly four equal columns and two equal rows, eight 512 x 512 square cells.\nPrimary request: eight complete miniature late Han provincial walled capitals, each viewed from a consistent three-quarter aerial camera high above. Each stamp is centered completely inside one equal square cell with generous genuinely transparent margins. Row-major order: top row cell 1 imperial palace and capital city, cell 2 northern fortified earth town, cell 3 central tiled-roof market city, cell 4 river-port city; bottom row cell 1 southeastern canal and paddy city, cell 2 western mountain-valley city, cell 3 southern coastal port, cell 4 southwestern terraced-hill city.\nGrid layout: exactly four identical width columns and two identical height rows. Keep each whole town, walls, gates, roofs, docks, small surrounding terrain details and silhouettes entirely inside its own cell; no part touches or crosses a cell boundary. Each complete miniature is a distinct silhouette at a consistent scale, occupying approximately the central two-thirds of its cell, with broad transparent margins between stamps. No connecting landscape between cells.\nHistorical architecture: authentic late Han earthen or stone walls, timber gates, dark tiled roofs, appropriate palace courtyards and compact neighborhoods; distinguish the cities by regional architecture, layout and silhouette. Imperial capital has formal palace courtyards; northern town has rugged earth fortifications; central market has dense tiled roofs; river port has docks and river-facing gates; southeastern city has canal bridges and paddy details; western city fits a mountain valley; southern port has timber wharves; southwestern city has stepped terraced hillside forms.\nStyle/medium: naturalistic finely painted 2D historical miniatures, coherent with detailed dark jade and gold late Han portraits, premium finished game artwork with clear readable forms. Same sunlight direction and aerial camera angle across all eight stamps.\nTransparency: real transparent background around every stamp; no ground-colored canvas, no painted checkerboard, no rectangular or circular base plate, no pedestal. Only the compact city and integrated small regional terrain features are opaque.\nConstraints: all eight complete cities inside their equal cells; consistent miniature scale and lighting; no modern buildings.\nAvoid: UI, letters, labels, captions, Chinese writing, numbers, decorative frame, borders, grid lines, watermark, tall modern towers, fantasy castles, cartoon icons, plastic 3D render, oversized scene spilling into adjacent cells.",
+      "alpha": {
+        "present": true,
+        "minimum": 0,
+        "maximum": 255,
+        "fully_transparent_pixels": 647117,
+        "fully_opaque_pixels": 229,
+        "partially_transparent_pixels": 926192,
+        "most_common_values": [
+          {
+            "value": 0,
+            "pixels": 647117
+          },
+          {
+            "value": 252,
+            "pixels": 419407
+          },
+          {
+            "value": 251,
+            "pixels": 250245
+          },
+          {
+            "value": 250,
+            "pixels": 49496
+          },
+          {
+            "value": 1,
+            "pixels": 42439
+          },
+          {
+            "value": 253,
+            "pixels": 35893
+          },
+          {
+            "value": 249,
+            "pixels": 16735
+          },
+          {
+            "value": 2,
+            "pixels": 12446
+          },
+          {
+            "value": 248,
+            "pixels": 9944
+          },
+          {
+            "value": 247,
+            "pixels": 7079
+          }
+        ]
+      },
+      "grid": {
+        "columns": 4,
+        "rows": 2,
+        "order": "row-major",
+        "nominal_cell_width": 443.5,
+        "nominal_cell_height": 443.5,
+        "exact_integer_cells": false,
+        "requested_cell_width": 512,
+        "requested_cell_height": 512,
+        "cells": [
+          {
+            "index": 0,
+            "row": 0,
+            "column": 0,
+            "label": "imperial palace and city",
+            "crop_box_xyxy": [
+              0,
+              0,
+              444,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              23,
+              444,
+              442
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 23,
+              "right": 0,
+              "bottom": 2
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  10,
+                  68,
+                  444,
+                  413
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 68,
+                  "right": 0,
+                  "bottom": 31
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  10,
+                  69,
+                  444,
+                  412
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 69,
+                  "right": 0,
+                  "bottom": 32
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  11,
+                  69,
+                  444,
+                  412
+                ],
+                "margins_pixels": {
+                  "left": 11,
+                  "top": 69,
+                  "right": 0,
+                  "bottom": 32
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  11,
+                  70,
+                  444,
+                  411
+                ],
+                "margins_pixels": {
+                  "left": 11,
+                  "top": 70,
+                  "right": 0,
+                  "bottom": 33
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  14,
+                  78,
+                  444,
+                  407
+                ],
+                "margins_pixels": {
+                  "left": 14,
+                  "top": 78,
+                  "right": 0,
+                  "bottom": 37
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0,
+              0,
+              0.25,
+              0.5
+            ]
+          },
+          {
+            "index": 1,
+            "row": 0,
+            "column": 1,
+            "label": "northern fortified earth town",
+            "crop_box_xyxy": [
+              444,
+              0,
+              887,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              21,
+              443,
+              444
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 21,
+              "right": 0,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  0,
+                  60,
+                  440,
+                  405
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 60,
+                  "right": 3,
+                  "bottom": 39
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  0,
+                  64,
+                  440,
+                  404
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 64,
+                  "right": 3,
+                  "bottom": 40
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  0,
+                  67,
+                  439,
+                  404
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 67,
+                  "right": 4,
+                  "bottom": 40
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  0,
+                  69,
+                  439,
+                  403
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 69,
+                  "right": 4,
+                  "bottom": 41
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  0,
+                  80,
+                  437,
+                  403
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 80,
+                  "right": 6,
+                  "bottom": 41
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.25,
+              0,
+              0.5,
+              0.5
+            ]
+          },
+          {
+            "index": 2,
+            "row": 0,
+            "column": 2,
+            "label": "central tiled-roof market city",
+            "crop_box_xyxy": [
+              887,
+              0,
+              1330,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              23,
+              443,
+              444
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 23,
+              "right": 0,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  14,
+                  80,
+                  436,
+                  394
+                ],
+                "margins_pixels": {
+                  "left": 14,
+                  "top": 80,
+                  "right": 7,
+                  "bottom": 50
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  14,
+                  82,
+                  436,
+                  393
+                ],
+                "margins_pixels": {
+                  "left": 14,
+                  "top": 82,
+                  "right": 7,
+                  "bottom": 51
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  15,
+                  85,
+                  435,
+                  393
+                ],
+                "margins_pixels": {
+                  "left": 15,
+                  "top": 85,
+                  "right": 8,
+                  "bottom": 51
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  16,
+                  86,
+                  435,
+                  392
+                ],
+                "margins_pixels": {
+                  "left": 16,
+                  "top": 86,
+                  "right": 8,
+                  "bottom": 52
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  18,
+                  98,
+                  433,
+                  390
+                ],
+                "margins_pixels": {
+                  "left": 18,
+                  "top": 98,
+                  "right": 10,
+                  "bottom": 54
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.5,
+              0,
+              0.75,
+              0.5
+            ]
+          },
+          {
+            "index": 3,
+            "row": 0,
+            "column": 3,
+            "label": "river-port city",
+            "crop_box_xyxy": [
+              1330,
+              0,
+              1774,
+              444
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              27,
+              443,
+              444
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 27,
+              "right": 1,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  7,
+                  93,
+                  429,
+                  411
+                ],
+                "margins_pixels": {
+                  "left": 7,
+                  "top": 93,
+                  "right": 15,
+                  "bottom": 33
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  8,
+                  97,
+                  428,
+                  410
+                ],
+                "margins_pixels": {
+                  "left": 8,
+                  "top": 97,
+                  "right": 16,
+                  "bottom": 34
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  8,
+                  98,
+                  428,
+                  410
+                ],
+                "margins_pixels": {
+                  "left": 8,
+                  "top": 98,
+                  "right": 16,
+                  "bottom": 34
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  9,
+                  98,
+                  427,
+                  410
+                ],
+                "margins_pixels": {
+                  "left": 9,
+                  "top": 98,
+                  "right": 17,
+                  "bottom": 34
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  10,
+                  112,
+                  422,
+                  406
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 112,
+                  "right": 22,
+                  "bottom": 38
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.75,
+              0,
+              1,
+              0.5
+            ]
+          },
+          {
+            "index": 4,
+            "row": 1,
+            "column": 0,
+            "label": "southeastern canal and paddy city",
+            "crop_box_xyxy": [
+              0,
+              444,
+              444,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              7,
+              444,
+              443
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 7,
+              "right": 0,
+              "bottom": 0
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  10,
+                  45,
+                  444,
+                  398
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 45,
+                  "right": 0,
+                  "bottom": 45
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  10,
+                  47,
+                  444,
+                  397
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 47,
+                  "right": 0,
+                  "bottom": 46
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  11,
+                  52,
+                  444,
+                  397
+                ],
+                "margins_pixels": {
+                  "left": 11,
+                  "top": 52,
+                  "right": 0,
+                  "bottom": 46
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  12,
+                  52,
+                  444,
+                  396
+                ],
+                "margins_pixels": {
+                  "left": 12,
+                  "top": 52,
+                  "right": 0,
+                  "bottom": 47
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  15,
+                  56,
+                  444,
+                  395
+                ],
+                "margins_pixels": {
+                  "left": 15,
+                  "top": 56,
+                  "right": 0,
+                  "bottom": 48
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0,
+              0.5,
+              0.25,
+              1
+            ]
+          },
+          {
+            "index": 5,
+            "row": 1,
+            "column": 1,
+            "label": "western mountain-valley city",
+            "crop_box_xyxy": [
+              444,
+              444,
+              887,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              0,
+              443,
+              427
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 16
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  0,
+                  18,
+                  441,
+                  399
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 18,
+                  "right": 2,
+                  "bottom": 44
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  0,
+                  19,
+                  441,
+                  399
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 19,
+                  "right": 2,
+                  "bottom": 44
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  0,
+                  19,
+                  441,
+                  398
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 19,
+                  "right": 2,
+                  "bottom": 45
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  0,
+                  20,
+                  440,
+                  397
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 20,
+                  "right": 3,
+                  "bottom": 46
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  0,
+                  24,
+                  439,
+                  396
+                ],
+                "margins_pixels": {
+                  "left": 0,
+                  "top": 24,
+                  "right": 4,
+                  "bottom": 47
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.25,
+              0.5,
+              0.5,
+              1
+            ]
+          },
+          {
+            "index": 6,
+            "row": 1,
+            "column": 2,
+            "label": "southern coastal port",
+            "crop_box_xyxy": [
+              887,
+              444,
+              1330,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              0,
+              443,
+              415
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 28
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  6,
+                  57,
+                  441,
+                  407
+                ],
+                "margins_pixels": {
+                  "left": 6,
+                  "top": 57,
+                  "right": 2,
+                  "bottom": 36
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  6,
+                  60,
+                  441,
+                  407
+                ],
+                "margins_pixels": {
+                  "left": 6,
+                  "top": 60,
+                  "right": 2,
+                  "bottom": 36
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  7,
+                  62,
+                  440,
+                  406
+                ],
+                "margins_pixels": {
+                  "left": 7,
+                  "top": 62,
+                  "right": 3,
+                  "bottom": 37
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  8,
+                  65,
+                  439,
+                  405
+                ],
+                "margins_pixels": {
+                  "left": 8,
+                  "top": 65,
+                  "right": 4,
+                  "bottom": 38
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  10,
+                  80,
+                  437,
+                  403
+                ],
+                "margins_pixels": {
+                  "left": 10,
+                  "top": 80,
+                  "right": 6,
+                  "bottom": 40
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.5,
+              0.5,
+              0.75,
+              1
+            ]
+          },
+          {
+            "index": 7,
+            "row": 1,
+            "column": 3,
+            "label": "southwestern terraced-hill city",
+            "crop_box_xyxy": [
+              1330,
+              444,
+              1774,
+              887
+            ],
+            "alpha_content_bbox_cell_xyxy": [
+              0,
+              0,
+              444,
+              411
+            ],
+            "alpha_margins_pixels": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 32
+            },
+            "alpha_content_bbox_at_thresholds": {
+              "16": {
+                "bbox_cell_xyxy": [
+                  3,
+                  17,
+                  436,
+                  402
+                ],
+                "margins_pixels": {
+                  "left": 3,
+                  "top": 17,
+                  "right": 8,
+                  "bottom": 41
+                }
+              },
+              "64": {
+                "bbox_cell_xyxy": [
+                  4,
+                  22,
+                  434,
+                  401
+                ],
+                "margins_pixels": {
+                  "left": 4,
+                  "top": 22,
+                  "right": 10,
+                  "bottom": 42
+                }
+              },
+              "128": {
+                "bbox_cell_xyxy": [
+                  5,
+                  23,
+                  434,
+                  400
+                ],
+                "margins_pixels": {
+                  "left": 5,
+                  "top": 23,
+                  "right": 10,
+                  "bottom": 43
+                }
+              },
+              "200": {
+                "bbox_cell_xyxy": [
+                  6,
+                  25,
+                  433,
+                  400
+                ],
+                "margins_pixels": {
+                  "left": 6,
+                  "top": 25,
+                  "right": 11,
+                  "bottom": 43
+                }
+              },
+              "250": {
+                "bbox_cell_xyxy": [
+                  8,
+                  35,
+                  432,
+                  397
+                ],
+                "margins_pixels": {
+                  "left": 8,
+                  "top": 35,
+                  "right": 12,
+                  "bottom": 46
+                }
+              }
+            },
+            "normalized_bounds_uv": [
+              0.75,
+              0.5,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "validation_notes": [
+        "Genuine RGBA alpha confirmed. Source pixels and alpha preserved byte-for-byte.",
+        "Actual native output is 1774 x 887 despite prompt request for 2048 x 1024; nominal atlas cells are 443.5 x 443.5.",
+        "Some stamps approach or reach nominal cell edges; full-pixel and thresholded bounds are recorded for integration."
+      ]
+    }
+  ]
+}
