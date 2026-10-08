@@ -2,9 +2,9 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v18
+## Latest update — v19
 
-War now requires governor election before the ruler marches, with candidate-specific loyalty/risk advice. The China map highlights original connections and lists numbered routes, and the launch menu moves to the quiet left side. Rival Tigers is verified against the supplied executable: two different messengers. See the V18 section below.
+Province choices show city number, historical name and ruler, with A–Z and # ordering. Advisor capability is prepared independently per order at month start, saved, and cannot be retried for a new result. Build Fort moves from monthly events to Milit and opens battlefield placement. AI interfaces remain discussion only.
 
 ## V17 battlefield update
 
@@ -280,7 +280,7 @@ The launch has a new cinematic Han campaign illustration. Eight detailed terrain
 
 | Order | Flow and behavior |
 | --- | --- |
-| Advice | **Advice / Rumours / Healing**. Advice requires the advisor in the current province and rolls once per province/month against INT; high INT gives useful, accurate supply, talent, loyalty, flood and invasion observations. Rumours require Sima Hui or Xu Shao visiting locally; healing requires Hua Tuo and restores all sick/injured officers here. Three travelling visitors select different provinces each month. |
+| Advice | **Advice / Rumours / Healing**. Advice requires the advisor in the current province and uses a saved, independent monthly capability decision per order against the advisor’s month-start INT; high INT gives useful, accurate supply, talent, loyalty, flood and invasion observations. Rumours require Sima Hui or Xu Shao visiting locally; healing requires Hua Tuo and restores all sick/injured officers here. Three travelling visitors select different provinces each month. |
 | Move | **Move where → Move whom → gold 0..available → food 0..available**. Friendly/independent adjacent destinations; leave a governor and respect destination storage. |
 | Milit | **Hire / Reassign / Train**. Hire chooses the officer then 1..maximum hundreds of men, costing 10 gold and 100 food/population per hundred. Capacity retains the source 50,000 civilian reserve. Hire and Reassign use the same shared allocation pool, with up to 10,000 men per officer. Reduce a commander's assignment to free men, then assign them elsewhere. Finish, Close, or Esc with unassigned men requires explicit disbanding confirmation; the men return to population. Train selects an instructor and improves all local armies using the source formula. |
 | Person | **Recruit / Search / Appoint / Dismiss**. Recruitment selects Special attention/Horse/Gold/Letter and a messenger; hostile subordinates can be targeted. Ruler-only Appoint selects an owned province and Governor/Advisor. Dismiss conceals a subordinate nearby and disbands their army, or demotes an advisor while retaining service. |
@@ -371,3 +371,7 @@ War requires an explicit governor when the governor/ruler marches. Candidate car
 ## V18 final validation
 
 The complete release passes **207 gameplay/data/artwork checks**, **31 emulated DOM/native-Canvas interface groups**, and **17 supplied-binary checks**. Governor election rejects missing/departing candidates atomically, preserves the chosen governor through battle save/load, and restores ruler governance after return. The actual War form leaves the election empty and refuses March until selection; candidate advice updates without spending RNG. Map route buttons/highlights share the native graph, including Province 9’s six connections and its single available Move destination in scenario 189. Two-messenger Rival Tigers saves enforce distinct assignments and correct destinations. Existing battle, courier, slider, victory and 41-painted-map checks still pass. Native Canvas China/battlefield art was inspected. Browser/physical handset layout, audible playback and DOS runtime execution remain unverified.
+
+## V19 verification
+
+211 gameplay/data/artwork checks and 33 emulated DOM/native-Canvas groups pass. Province sort modes preserve names/numbers/rulers, unavailable monthly advice survives retries and save/load, and fort construction opens the tactical map from Milit. No AI gameplay bridge is implemented.

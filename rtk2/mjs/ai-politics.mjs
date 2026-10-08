@@ -21,4 +21,4 @@ export function aiPolitics(g,p,ready,ai){
  else return false;
  try{g.execute(type,args);return true;}catch{return false;}
 }
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=18';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=19';

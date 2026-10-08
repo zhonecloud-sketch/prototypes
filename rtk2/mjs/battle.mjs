@@ -1,5 +1,5 @@
-import {provinceTerrain} from './campaign-fidelity.mjs?v=18';
-import {provinceDirection} from './geography.mjs?v=18';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=19';
+import {provinceDirection} from './geography.mjs?v=19';
 // Original province layouts with offset-column hex geometry and revised battle rules.
 export const TERRAIN=['Plain','Jungle','Hill','Mountain','Water','Castle','Palace'];
 export const WEATHER={sunny:'Clear',fewclouds:'Few clouds',cloudy:'Cloudy',rain:'Rain'};
@@ -149,4 +149,4 @@ export function validateBattle(b,state,terrains){
  for(const side of ['attack','defend'])if(b.leaders?.[side]!==null&&!b.units.some(u=>u.id===b.leaders?.[side]&&u.side===side))throw Error('Invalid army commander.');if(!Array.isArray(b.challengeIssued)||new Set(b.challengeIssued).size!==b.challengeIssued.length||b.challengeIssued.some(id=>!seen.has(id)))throw Error('Invalid challenge history.');if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);if(b.phase!=='battle'||b.day!==1||!u||!v||u.side===v.side||u.side!==b.side||!u.placed||!v.placed||u.war<b.challengeWar||u.captured||v.captured)throw Error('Invalid pending challenge.');}
  b.events=Array.isArray(b.events)?b.events.filter(t=>typeof t==='string').map(t=>t.slice(0,500)).slice(0,50):[];if(b.outcome&&(!['attack','defend'].includes(b.outcome.winner)||typeof b.outcome.reason!=='string'))throw Error('Invalid battle result.');
 }
-import {battleDailyFood} from './war-provisions.mjs?v=18';
+import {battleDailyFood} from './war-provisions.mjs?v=19';

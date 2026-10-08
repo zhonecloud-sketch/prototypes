@@ -1,5 +1,5 @@
-import {hireCapacity} from './province-rules.mjs?v=18';
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=18';
+import {hireCapacity} from './province-rules.mjs?v=19';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=19';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.
 export function orderUnavailable(g,p,id){
@@ -59,6 +59,7 @@ export function orderUnavailable(g,p,id){
  if(['spy:verify','spy:withdraw'].includes(id))return s.officers.some(o=>o.spyFor===r.id&&!o.dead&&o.prisonerOf===undefined)?null:'There is no deployed spy to command.';
  if(id==='spy'&&home&&s.officers.some(o=>o.spyFor===r.id&&!o.dead&&o.prisonerOf===undefined))return null;
  if(none)return none;
+ if(id==='military:fort')return p.gold<100?'Building a fort requires 100 gold.':null;
  if(['develop','flood'].includes(id)&&p.gold<1)return 'This province has no gold to spend.';
  if(id==='relief'&&p.food<1)return 'This province has no food to give.';
  if(['move','war'].includes(id)){

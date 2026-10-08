@@ -1,9 +1,11 @@
-import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=18';
-import {recruitMethodChance} from './fidelity-orders.mjs?v=18';
-import {portraitFrame} from './portraits.mjs?v=18';
-import {missionChance,spyChance} from './province-rules.mjs?v=18';
-import {hireCapacity} from './province-rules.mjs?v=18';
-import {warProvisions} from './war-provisions.mjs?v=18';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=19';
+import {provinceLabel} from './province-choice.mjs?v=19';
+import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=19';
+import {recruitMethodChance} from './fidelity-orders.mjs?v=19';
+import {portraitFrame} from './portraits.mjs?v=19';
+import {missionChance,spyChance} from './province-rules.mjs?v=19';
+import {hireCapacity} from './province-rules.mjs?v=19';
+import {warProvisions} from './war-provisions.mjs?v=19';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function relevantAttributes(purpose=''){
  if(/governor/i.test(purpose))return ['loyalty','charm','int','war'];
@@ -19,7 +21,8 @@ export function generalStats(o,purpose=''){
 }
 export function orderInsight(g,purpose,officer,data={}){
  if(!g||officer===undefined)return '';const p=g.province(g.s.selected),r=g.ruler(p.owner===g.s.player?p.owner:g.s.player),advisor=r?.advisor===null?null:g.s.officers.find(o=>o.id===r?.advisor);
- if(!advisor||advisor.int<80||!p.officers.includes(advisor.id)||advisor.dead)return '';
+ if(!advisor||!p.officers.includes(advisor.id)||advisor.dead)return '';
+ if(!canAdvise(g.s,r,advisor,purpose,data))return `<aside class="advisor-insight" role="status"><strong>${esc(advisor.name)} · INT ${advisor.int}</strong><span>${ADVICE_UNAVAILABLE}</span></aside>`;
  const o=g.officer(Number(officer));let chance=null,effect='';
  if(/^recruit/i.test(purpose)&&data.target!==undefined)chance=data.method?recruitMethodChance(g,p,o,g.officer(Number(data.target)),data.method):g.recruitChance(p,o,g.officer(Number(data.target)));
  else if(/search/i.test(purpose))chance=Math.max(0,Math.floor(o.int/3)+Math.floor(o.charm/2)-10);
@@ -34,6 +37,7 @@ export function orderInsight(g,purpose,officer,data={}){
  }
  else if(/cultiv|flood/i.test(purpose)){const key=/cultiv/i.test(purpose)?'develop':'flood',amount=Number(data.amount??Math.min(100,p.gold));effect=`Expected improvement: +${g.preview(key,p.id,o.id,amount)}. Cost: ${amount} gold.${p[key==='develop'?'land':'flood']===100?' This attribute is already at its maximum.':''}`;}
  else if(/give|relief/i.test(purpose)){const amount=Number(data.amount??1),gain=g.preview('relief',p.id,o.id,amount);effect=`Popular loyalty ${p.loyalty} → ${p.loyalty+gain} (+${gain}). Costs ${amount.toLocaleString()} food.${gain===0?' Increase the food amount to improve loyalty.':''}`;}
+ else if(/fort/i.test(purpose))effect='Choose an empty plain or hill hex. Building costs 100 gold and uses this general’s monthly action.';
  else if(/hire/i.test(purpose)){const hundreds=Number(data.hundreds??1);effect=`${hundreds*100} recruits cost ${hundreds*10} gold and ${hundreds*100} food. Current capacity: ${hireCapacity(g,p)} hundreds. Allocate all recruited men before leaving.`;}
  else if(/reassign/i.test(purpose))effect='Reassignment conserves soldiers. Unallocated men will be disbanded only after confirmation.';
  else if(/war|invasion/i.test(purpose)&&data.officers){const men=data.officers.reduce((n,id)=>n+g.officer(id).soldiers,0),stores=warProvisions(men,Number(data.food??0)),enemy=g.province(Number(data.target)),hostile=enemy.officers.reduce((n,id)=>n+g.officer(id).soldiers,0);effect=`${men.toLocaleString()} men face ${hostile.toLocaleString()} defenders. ${stores.days<30?'Take more food for a full month.':'Food covers a full month at this strength.'} Terrain, training and enemy reserves can change the outcome.`;}
@@ -57,7 +61,9 @@ export function enhanceControls(root,g){
   const purpose=select.dataset.purpose||document.getElementById('dialogTitle')?.textContent||select.getAttribute('aria-label')||'',officerIds=['officer','allocationOfficer','battleUnit','battleQuickUnit','inspectTarget','challengeTarget','bribeTarget','reinforceOfficer'];
   const cards=[];for(const option of select.options){
    const btn=document.createElement('button');btn.type='button';btn.className='choice-tile';btn.dataset.value=option.value;btn.disabled=option.disabled||select.disabled;
-   let o=null;if(g){const id=Number(option.dataset.officer??option.value.split(':').at(-1));const candidate=g.s.officers.find(o=>o.id===id);if(option.dataset.officer!==undefined||officerIds.includes(select.id)||candidate&&option.textContent.startsWith(candidate.name))o=candidate;}
+   const provinceId=option.dataset.province!==undefined?Number(option.dataset.province):(['enemyProvince','retreatProvince','spyProv','exileDestination','hudEntity'].includes(select.id)&& (select.id!=='hudEntity'||document.getElementById('hudKind')?.value==='province')?Number(option.value):null),province=g&&provinceId!==null?g.s.provinces.find(p=>p.id===provinceId):null;
+   if(province){btn.dataset.province=province.id;const label=provinceLabel(g,province);btn.dataset.provinceSuffix=option.textContent.startsWith(label)?option.textContent.slice(label.length):'';option.textContent=label+btn.dataset.provinceSuffix;}
+   let o=null;if(g&&!province){const id=Number(option.dataset.officer??option.value.split(':').at(-1));const candidate=g.s.officers.find(o=>o.id===id);if(option.dataset.officer!==undefined||officerIds.includes(select.id)||candidate&&option.textContent.startsWith(candidate.name))o=candidate;}
    if(o){const live=g.s.battle?.units.find(u=>u.id===o.id),frame=portraitFrame(o,g.s.year);btn.classList.add('general-choice');btn.innerHTML=`<canvas data-atlas="${frame.atlas}" data-cell="${frame.cell}" class="choice-portrait" role="img" aria-label="${esc(o.name)}"></canvas><span class="choice-copy"><strong>${esc(option.textContent)}</strong><span class="general-stats">${generalStats({...o,...live},purpose)}</span></span>`;}
    else btn.textContent=option.textContent;
    const sync=()=>{for(const card of cards){const chosen=card.dataset.value===select.value;card.classList.toggle('chosen',chosen);card.setAttribute('aria-pressed',String(chosen));}};
@@ -65,6 +71,9 @@ export function enhanceControls(root,g){
   }
   const sync=()=>{for(const card of cards){const chosen=card.dataset.value===select.value;card.classList.toggle('chosen',chosen);card.setAttribute('aria-pressed',String(chosen));card.disabled=select.disabled||select.options[Array.from(select.options).findIndex(o=>o.value===card.dataset.value)]?.disabled;}};
   select.addEventListener('change',sync);sync();
-  if(cards.length>18){const filter=document.createElement('div');filter.className='choice-initials';filter.setAttribute('role','group');filter.setAttribute('aria-label','Filter names by initial');for(const [label,pattern]of [['All',null],['A–F',/^[a-f]/i],['G–L',/^[g-l]/i],['M–R',/^[m-r]/i],['S–Z',/^[s-z]/i],['#',/^[^a-z]/i]]){const button=document.createElement('button');button.type='button';button.textContent=label;button.onclick=()=>{for(const card of cards){const text=card.querySelector('strong')?.textContent||card.textContent;card.hidden=pattern?!pattern.test(text.trim()):false;}for(const other of filter.children)other.setAttribute('aria-pressed',String(other===button));};filter.append(button);}board.before(filter);}
+  if(cards.some(card=>card.dataset.province!==undefined)){
+   const modes=document.createElement('div');modes.className='choice-initials';modes.setAttribute('role','group');modes.setAttribute('aria-label','Order provinces');
+   for(const mode of ['A–Z','#']){const button=document.createElement('button');button.type='button';button.textContent=mode;button.onclick=()=>{const alpha=mode==='A–Z';cards.sort((a,b)=>{const pa=g.s.provinces.find(p=>p.id===Number(a.dataset.province)),pb=g.s.provinces.find(p=>p.id===Number(b.dataset.province));return !pa?-1:!pb?1:alpha?pa.name.localeCompare(pb.name,'en')||pa.id-pb.id:pa.id-pb.id;});for(const card of cards){const q=g.s.provinces.find(p=>p.id===Number(card.dataset.province));if(q)card.textContent=provinceLabel(g,q,alpha)+(card.dataset.provinceSuffix||'');card.hidden=false;board.append(card);}for(const other of modes.children)other.setAttribute('aria-pressed',String(other===button));};modes.append(button);}board.before(modes);modes.children[1].click();
+  }else if(cards.length>18){const filter=document.createElement('div');filter.className='choice-initials';filter.setAttribute('role','group');filter.setAttribute('aria-label','Filter names by initial');for(const [label,pattern]of [['All',null],['A–F',/^[a-f]/i],['G–L',/^[g-l]/i],['M–R',/^[m-r]/i],['S–Z',/^[s-z]/i],['#',/^[^a-z]/i]]){const button=document.createElement('button');button.type='button';button.textContent=label;button.onclick=()=>{for(const card of cards){const text=card.querySelector('strong')?.textContent||card.textContent;card.hidden=pattern?!pattern.test(text.trim()):false;}for(const other of filter.children)other.setAttribute('aria-pressed',String(other===button));};filter.append(button);}board.before(filter);}
  }
 }
