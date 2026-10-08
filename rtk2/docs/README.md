@@ -2,7 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v27
+## Latest update — v28
+
+All 15 scheduled historical events have matching illustrations, visible in monthly playback and clickable chronology entries. Province reports include numbers; simultaneous disasters remain separate and mark every affected province. Local diplomacy, messenger journeys, treasures and plunder stay in province Events. Routine protection notices and duplicate dates are removed. War summaries account for rulers present without fighting units.
+
+## V27 chronology update
 
 Events now shows dated strategic war summaries, including source/target province numbers, monthly extensions and final captive outcomes. The current province list shows all 41 cities and their current rulers, with “No event” where appropriate. Tactical messages remain live during battle. Older completed text-only battle logs cannot recover missing source or captive details; see [differences.md](differences.md).
 

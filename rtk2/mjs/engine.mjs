@@ -1,5 +1,5 @@
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=27';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=27';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=28';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=28';
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};
 export const clamp=(x,min=0,max=100)=>Math.max(min,Math.min(max,x));
@@ -98,7 +98,7 @@ export class Game{
    if(this.s.version===1&&!own&&p.gold>=100&&p.officers.length){const o=this.officer(p.governor);const f=p.land<p.flood?'land':'flood';p[f]=clamp(p[f]+this.development(p,o,100,f));p.gold-=100;}
    if(own){report.gold+=p.gold-beforeGold;report.food+=p.food-beforeFood;}
   }
-  for(const o of this.s.officers)o.acted=false;this.s.books=[];report.year=this.s.year;report.month=this.s.month;runMonthlyEvents(this,report);this.s.lastReport=report;this.record(`A new month begins. ${report.events.length?report.events.join(' '):'The realm is at peace.'}`,'month');return report;
+  for(const o of this.s.officers)o.acted=false;this.s.books=[];report.year=this.s.year;report.month=this.s.month;runMonthlyEvents(this,report);this.s.lastReport=report;for(const e of report.details){this.record(e.text,e.kind);this.s.log[0].event={...e};if(e.province)this.s.log[0].province=e.province;}return report;
  }
 }
 export function validateSave(raw,scenarios){

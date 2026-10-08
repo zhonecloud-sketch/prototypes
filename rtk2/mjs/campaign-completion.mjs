@@ -1,9 +1,9 @@
-import {invasionFoodPlan} from './war-provisions.mjs?v=27';
-import {clamp} from './engine.mjs?v=27';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=27';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=27';
-import {provinceDirection} from './geography.mjs?v=27';
-import {hireCapacity} from './province-rules.mjs?v=27';
+import {invasionFoodPlan} from './war-provisions.mjs?v=28';
+import {clamp} from './engine.mjs?v=28';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=28';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=28';
+import {provinceDirection} from './geography.mjs?v=28';
+import {hireCapacity} from './province-rules.mjs?v=28';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},

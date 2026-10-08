@@ -1,6 +1,6 @@
-import {recordWarFate} from './event-chronicle.mjs?v=27';
-import {retireRulerFamily} from './ruler-family.mjs?v=27';
-import {clamp} from './engine.mjs?v=27';
+import {recordWarFate} from './event-chronicle.mjs?v=28';
+import {retireRulerFamily} from './ruler-family.mjs?v=28';
+import {clamp} from './engine.mjs?v=28';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
@@ -45,15 +45,15 @@ export function dispatchJourney(g,type,args){
  for(const id of ids){const o=g.officer(id);o.acted=true;o.inTransit=true;}
  const cargo={gold:0,food:0,horses:0};const source=g.province(from);if(type==='transport'){cargo.gold=Number(args.gold);cargo.food=Number(args.food);}else if(type==='diplomaticMission'&&args.mode==='gift'||type==='recruitMethod'&&args.method==='gold')cargo.gold=Number(args.amount);else if(type==='recruitMethod'&&args.method==='horse')cargo.horses=1;source.gold-=cargo.gold;source.food-=cargo.food;source.horses-=cargo.horses;
  g.s.journey={cargo,type,args:JSON.parse(JSON.stringify(args)),owner,source:from,legs,leg:0,phase:'outbound',interception:null,visited:[]};
- return g.record(`${ids.map(id=>g.officer(id).name).join(' and ')} departed from Province ${from} on horseback.`,'diplomacy');
+ const purpose=type==='diplomaticMission'?({joint:'joint invasion proposal',marriage:'royal marriage proposal',alliance:'alliance proposal',gift:'diplomatic gift',threat:'surrender demand'}[args.mode]||'diplomatic mission'):type==='spyMission'?'spy mission':type==='transport'?'supply delivery':'recruitment mission';return g.record(`${ids.map(id=>g.officer(id).name).join(' and ')} rode from #${from} ${g.province(from).name} to ${legs.map(leg=>'#'+leg.route.at(-1)+' '+g.province(leg.route.at(-1)).name).join(' and ')} as messengers for ${purpose}.`,'diplomacy',{province:from});
 }
-function cancelJourney(g,text){const j=g.s.journey;for(const leg of j.legs){const o=g.officer(leg.officer);delete o.inTransit;o.acted=true;}g.s.journey=null;g.normalize();g.record(text,'prison');}
+function cancelJourney(g,text,province=g.s.journey?.source){const j=g.s.journey;for(const leg of j.legs){const o=g.officer(leg.officer);delete o.inTransit;o.acted=true;}g.s.journey=null;g.normalize();g.record(text,'prison',{province});}
 export function interceptJourney(g,choice){
  const j=g.s.journey,c=j?.interception;if(!c)throw Error('No messenger is intercepted.');if(!['free','capture','behead'].includes(choice))throw Error('Choose Set free, Capture, or Behead.');
- const o=g.officer(c.officer);if(choice==='free'){j.interception=null;g.record(`${g.ruler(c.owner).name} allowed ${o.name} to continue.`,'diplomacy');return;}
+ const o=g.officer(c.officer);if(choice==='free'){j.interception=null;g.record(`${g.ruler(c.owner).name} allowed ${o.name} to continue.`,'diplomacy',{province:c.province});return;}
  if(j.phase==='outbound'&&j.cargo){const source=g.province(c.province);source.gold=Math.min(30000,source.gold+j.cargo.gold);source.food=Math.min(3000000,source.food+j.cargo.food);source.horses=Math.min(100,source.horses+j.cargo.horses);j.cargo={gold:0,food:0,horses:0};}
  takeCaptive(g,o.id,c.owner,c.province,j.owner,'messenger',o.id===g.ruler(j.owner).leader?'Ruler':'Messenger');
- if(choice==='behead')decideCaptive(g,o.id,'behead');cancelJourney(g,`${o.name} was ${choice==='behead'?'beheaded':'captured'} in Province ${c.province}. The mission was cancelled.`);resolveAICaptives(g);
+ if(choice==='behead')decideCaptive(g,o.id,'behead');cancelJourney(g,`${o.name} was ${choice==='behead'?'beheaded':'captured'} in Province ${c.province}. The mission was cancelled.`,c.province);resolveAICaptives(g);
 }
 export function advanceJourney(g){
  const j=g.s.journey;if(!j)return false;if(j.interception)return false;const leg=j.legs[j.leg];

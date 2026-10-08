@@ -1,8 +1,8 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=27';
-import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=27';
+import {retireRulerFamily} from './ruler-family.mjs?v=28';
+import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=28';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Probabilities and loss amounts are remaster rules, not recovered DOS formulas.
-export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council'];
+export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council','history'];
 export const monthNumber=s=>s.year*12+s.month-1;
 export const incomeFactor=(s,p)=>p.famineUntil>=monthNumber(s)?.75:1;
 export const floodRegion=p=>[1,2,3,4,5,6,7,9].includes(p.region);
@@ -134,7 +134,7 @@ export function runMonthlyEvents(game,report,{initial=false}={}){
  s.monthlyState.applied=key;
  const history=HISTORY.find(([year])=>year===s.year);
  if(s.historyMode!=='fiction'&&history&&!s.monthlyState.history.includes(s.year)&&(initial||s.month===1)){
-  s.monthlyState.history.push(s.year);add(report,`Historical chronicle · ${s.year}`,history[2],null,null,'history');
+  s.monthlyState.history.push(s.year);add(report,`Historical chronicle · ${s.year} · ${history[1]}`,history[2],null,null,'history','history').historyYear=s.year;
  }
  if(!initial){
   if(s.month===1)add(report,'A new year begins','Generals grow a year older. Young officers come of age, and population and tax rolls are renewed.');lifecycle(game,report);

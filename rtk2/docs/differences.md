@@ -1,17 +1,29 @@
 # RTK2 Remastered — differences from the original game
 
-Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
+Initial audit: 2026-10-07 UTC; updated 2026-10-09 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v27; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v26, commit `7548c93fbb5131f1b088d7a2a7d58db81ef03cd4`
+Latest implementation: v28; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v27, commit `6c19124c2ec4910f821133e3eada0f20ee0491ea`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
 
+## V28 event artwork, location and report corrections
+
+Every one of the 15 scheduled historical chronicles now has its own generated illustration in `assets/history-v28.webp`. The historical year selects its atlas cell for monthly playback, saved reports, chronology thumbnails and timed replay; unknown historical cards have an illustrated fallback. Images preserve their aspect ratio. Clicking a national chronology entry opens the message and matching artwork. See [artwork-v28.md](artwork-v28.md) for the prompt and cell order.
+
+Province event titles and messages include the province number. Monthly rollover records each detail separately, rather than a combined “A new month begins” paragraph. Both provinces affected by simultaneous epidemics therefore retain distinct entries and map event markers. Old combined rollover logs are hidden in favour of the retained individual monthly details.
+
+Treasure awards, plunder, local diplomatic replies, messenger departures and interceptions belong to their province’s current events. Routine “the victorious army protected the inhabitants” notices are omitted; if the same report contains a treasure award, that significant part remains. Horseback departure now names the messenger, source, destination and mission purpose: it is a messenger journey, not exile or a Move order. Older departure messages are clarified as messenger journeys where their destination/purpose was not stored.
+
+One shared date formatter prevents duplicate long/short month prefixes. War records snapshot whether the defending ruler is in the province even when they have no fighting unit. Actual capture or return decisions take precedence. Old records without enough evidence no longer claim the ruler was “not personally present”; “not captured” describes the recorded outcome without inventing whereabouts. Governors, army commanders and other subordinate officers are grouped under generals; the ruler remains a separate fate.
+
+This pass changes report presentation and metadata, not original capture equations or battle settlement rules. Seven new regression groups cover all historical illustrations, two epidemics, local report routing, duplicate dates, non-fighting ruler presence, the Yuan Shu/Sun Jian invasion and explicit messenger missions. Gameplay and Canvas/DOM interface suites passed; physical-device layout and audio were not reverified.
+
 ## V27 strategic Events display
 
-Events now separates **Across China (chronology)** from **Provinces (current)**. Wars have one dated summary per battle month, naming the original attacking and defending rulers and source/target province numbers. A suspended siege records “Extended to next month”; its following month has its own result. Completed summaries list recruited, released and beheaded opposing generals, and report the opposing or attacking ruler’s actual fate. Decisions still pending are explicitly marked. Failed recruitment attempts do not create duplicate outcomes. A ruler absent from the battlefield is identified as absent rather than reported as captured or returned.
+Events now separates **Across China (chronology)** from **Provinces (current)**. Wars have one dated summary per battle month, naming the original attacking and defending rulers and source/target province numbers. A suspended siege records “Extended to next month”; its following month has its own result. Completed summaries list recruited, released and beheaded opposing generals, and report the opposing or attacking ruler’s actual fate. Decisions still pending are explicitly marked. Failed recruitment attempts do not create duplicate outcomes. The initial v27 absence wording is superseded by the v28 correction above.
 
 War history stores ruler/name snapshots and final captive dispositions independently of the short text log. Individual moves, Wait, weather, daily side changes, fire damage and refused-recruitment prompts no longer fill Events or the Menu chronology. Live tactical messages and their configured reading time remain available during battle. The retained strategic history normally keeps the latest 400 war-month records, protecting active and undecided records from eviction. Save validation checks report dates, province/ruler references and captive links.
 

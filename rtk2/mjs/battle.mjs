@@ -1,5 +1,5 @@
-import {provinceTerrain} from './campaign-fidelity.mjs?v=27';
-import {provinceDirection} from './geography.mjs?v=27';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=28';
+import {provinceDirection} from './geography.mjs?v=28';
 // Original province layouts with offset-column hex geometry and revised battle rules.
 export const TERRAIN=['Plain','Jungle','Hill','Mountain','Water','Castle','Palace'];
 export const WEATHER={sunny:'Clear',fewclouds:'Few clouds',cloudy:'Cloudy',rain:'Rain'};
@@ -127,7 +127,7 @@ function advance(game){const b=game.s.battle;for(const u of living(b).filter(u=>
  b.side=b.side==='attack'?'defend':'attack';for(const u of living(b).filter(u=>u.side===b.side)){u.ordered=u.orderDay===b.day;if(!u.ordered)u.mobility=Math.max(u.mobility,dailyMobility(u.training));}b.selected=living(b).find(u=>u.side===b.side)?.id??null;outcome(b);return event(b,`Day ${b.day}: ${b.side==='attack'?'Invading':'Defending'} army’s orders.`);
 }
 // Compatibility exports; tactical policy lives in ai-battle.mjs.
-export {planBattleRoute,palaceGuard,minimumStrikeLoss,aiAttackTarget,armyPower,safeFireTarget,tacticalPosition,aiBattle} from './ai-battle.mjs?v=27';
+export {planBattleRoute,palaceGuard,minimumStrikeLoss,aiAttackTarget,armyPower,safeFireTarget,tacticalPosition,aiBattle} from './ai-battle.mjs?v=28';
 export function validateBattle(b,state,terrains){
  if(!b)return;b.eventSerial??=0;b.messages??=[];if(!Number.isInteger(b.eventSerial)||b.eventSerial<0||!Array.isArray(b.messages)||b.messages.length>50||b.messages.some((m,i)=>!Number.isInteger(m.serial)||m.serial<1||m.serial>b.eventSerial||(i>0&&m.serial<=b.messages[i-1].serial)||typeof m.text!=='string'||m.text.length>1000||!Number.isInteger(m.day)||m.day<1||m.day>30))throw Error('Invalid battle messages.');if(!b.gold){b.gold={attack:state.provinces[b.source-1]?.gold??0,defend:state.provinces[b.target-1]?.gold??0};if(state.provinces[b.source-1])state.provinces[b.source-1].gold=0;if(state.provinces[b.target-1])state.provinces[b.target-1].gold=0;}
  const legacy=b.rulesVersion===undefined||b.rulesVersion===2;
@@ -147,4 +147,4 @@ export function validateBattle(b,state,terrains){
  for(const side of ['attack','defend'])if(b.leaders?.[side]!==null&&!b.units.some(u=>u.id===b.leaders?.[side]&&u.side===side))throw Error('Invalid army commander.');if(!Array.isArray(b.challengeIssued)||new Set(b.challengeIssued).size!==b.challengeIssued.length||b.challengeIssued.some(id=>!seen.has(id)))throw Error('Invalid challenge history.');if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);if(b.phase!=='battle'||b.day!==1||!u||!v||u.side===v.side||u.side!==b.side||!u.placed||!v.placed||u.war<b.challengeWar||u.captured||v.captured)throw Error('Invalid pending challenge.');}
  b.events=Array.isArray(b.events)?b.events.filter(t=>typeof t==='string').map(t=>t.slice(0,500)).slice(0,50):[];if(b.outcome&&(!['attack','defend'].includes(b.outcome.winner)||typeof b.outcome.reason!=='string'))throw Error('Invalid battle result.');
 }
-import {battleDailyFood,battleRationMen,invasionFoodPlan} from './war-provisions.mjs?v=27';
+import {battleDailyFood,battleRationMen,invasionFoodPlan} from './war-provisions.mjs?v=28';

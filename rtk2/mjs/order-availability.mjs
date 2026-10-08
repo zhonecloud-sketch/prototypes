@@ -1,5 +1,5 @@
-import {hireCapacity} from './province-rules.mjs?v=27';
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=27';
+import {hireCapacity} from './province-rules.mjs?v=28';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=28';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.
 export function orderUnavailable(g,p,id){
