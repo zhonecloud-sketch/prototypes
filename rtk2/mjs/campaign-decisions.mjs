@@ -1,5 +1,6 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=26';
-import {clamp} from './engine.mjs?v=26';
+import {recordWarFate} from './event-chronicle.mjs?v=27';
+import {retireRulerFamily} from './ruler-family.mjs?v=27';
+import {clamp} from './engine.mjs?v=27';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
@@ -18,7 +19,7 @@ export function decideCaptive(g,id,action){
  if(action==='recruit'){
   if(c.recruitTried)throw Error('This captive has already refused recruitment.');c.recruitTried=true;
   const host=g.officer(p.governor??r.leader),chance=clamp(host.charm/2+r.trust/3-o.loyalty/3+25,5,95);
-  if(g.random()*100>=chance){g.record(`${o.name} refused recruitment. Decide whether to set them free or behead them.`,'prison');return false;}
+  if(g.random()*100>=chance){g.record(`${o.name} refused recruitment. Decide whether to set them free or behead them.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return false;}
   detachOfficer(g,o.id);p.officers.push(o.id);o.owner=c.owner;o.loyalty=clamp(60-Math.floor(o.loyalty/3),20,60);o.serviceSince=g.s.year;replaceRuler(g,c.formerOwner,o.id);
  }else if(action==='behead'){
   detachOfficer(g,o.id);o.owner=255;o.soldiers=0;o.weapons=0;o.dead=true;o.deathYear=g.s.year;o.deathReason='execution';replaceRuler(g,c.formerOwner,o.id);r.trust=clamp(r.trust-5);
@@ -29,8 +30,8 @@ export function decideCaptive(g,id,action){
   else if(isRuler){g.s.roaming??=[];g.s.roaming=g.s.roaming.filter(x=>x.owner!==c.formerOwner);g.s.roaming.push({owner:c.formerOwner,province:p.id,officers:[o.id],gold:0,food:0});g.ruler(c.formerOwner).home=p.id;g.ruler(c.formerOwner).exiled=true;}
   else {const destination=p.neighbors.map(i=>g.province(i)).find(q=>q.owner===255)||p;destination.unclaimed.push(o.id);}
  }
- delete o.prisonerOf;delete o.inTransit;g.s.captiveDecisions=g.s.captiveDecisions.filter(x=>x!==c);g.normalize();
- g.record(`${o.name}: ${action==='recruit'?'recruited with loyalty '+o.loyalty:action==='free'?'set free':'beheaded'}.`,'prison');return true;
+ recordWarFate(g,c,action);delete o.prisonerOf;delete o.inTransit;g.s.captiveDecisions=g.s.captiveDecisions.filter(x=>x!==c);g.normalize();
+ g.record(`${o.name}: ${action==='recruit'?'recruited with loyalty '+o.loyalty:action==='free'?'set free':'beheaded'}.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return true;
 }
 export function resolveAICaptives(g){for(const c of [...(g.s.captiveDecisions||[])])if(!g.isHuman(c.owner)){if(g.officer(c.officer).int+g.officer(c.officer).war>=90){if(!decideCaptive(g,c.officer,'recruit'))decideCaptive(g,c.officer,'free');}else decideCaptive(g,c.officer,'free');}}
 

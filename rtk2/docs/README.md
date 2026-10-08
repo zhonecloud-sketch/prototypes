@@ -2,7 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v26
+## Latest update — v27
+
+Events now shows dated strategic war summaries, including source/target province numbers, monthly extensions and final captive outcomes. The current province list shows all 41 cities and their current rulers, with “No event” where appropriate. Tactical messages remain live during battle. Older completed text-only battle logs cannot recover missing source or captive details; see [differences.md](differences.md).
+
+## V26 order-flow update
 
 Province navigation stays in one three-button row. Horse and Writings rewards no longer charge gold; Gold uses amount → recipient → confirmation. Writings is adviser-led study, not an inventory treasure. Move adds destination/team advice and payroll/harvest supply estimates. Hire has an explicit review; fort placement confirms before construction and returns to Orders. Governor appointments confirm and display the appointed province. See [differences.md](differences.md) for the all-order sequence audit and 48 reproducible native byte checks.
 

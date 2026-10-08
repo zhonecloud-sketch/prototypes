@@ -2,12 +2,24 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v26; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v25, commit `07da8f2545710a92d723ff750684eea662381892`
+Latest implementation: v27; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v26, commit `7548c93fbb5131f1b088d7a2a7d58db81ef03cd4`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V27 strategic Events display
+
+Events now separates **Across China (chronology)** from **Provinces (current)**. Wars have one dated summary per battle month, naming the original attacking and defending rulers and source/target province numbers. A suspended siege records “Extended to next month”; its following month has its own result. Completed summaries list recruited, released and beheaded opposing generals, and report the opposing or attacking ruler’s actual fate. Decisions still pending are explicitly marked. Failed recruitment attempts do not create duplicate outcomes. A ruler absent from the battlefield is identified as absent rather than reported as captured or returned.
+
+War history stores ruler/name snapshots and final captive dispositions independently of the short text log. Individual moves, Wait, weather, daily side changes, fire damage and refused-recruitment prompts no longer fill Events or the Menu chronology. Live tactical messages and their configured reading time remain available during battle. The retained strategic history normally keeps the latest 400 war-month records, protecting active and undecided records from eviction. Save validation checks report dates, province/ruler references and captive links.
+
+The current province section lists all 41 numbered cities with their names and current ruler (or Unclaimed), right-aligned. It shows current-month local reports and orders, or “No event”; historical battles stay in the chronology. Controlled provinces and the current headquarters remain highlighted. Menu → Chronicle uses the same compact strategic entries and retains timed replay.
+
+**Older saves:** known active or suspended battles can be migrated using their stored source, target and date. Completed battles in old text-only logs may lack their original source and final captive dispositions. Their remaining strategic result is retained; missing details are not invented. The richer summaries are recorded for newly resolved battles. This is a requested display/history improvement, not a claim of a newly recovered native battle formula.
+
+Validation adds eight regression groups covering monthly continuation, all final captive actions, refused recruitment, ruler-name snapshots, defeated-ruler return, local province filtering, legacy migration and malformed save rejection. The interface harness checks both sections, all city labels and right-aligned rulers.
 
 ## V26 order flows and original-game sequence audit
 
