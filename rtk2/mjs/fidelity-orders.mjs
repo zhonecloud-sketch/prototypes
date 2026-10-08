@@ -1,8 +1,10 @@
-import {clamp} from './engine.mjs?v=28';
-import {detachOfficer} from './campaign-decisions.mjs?v=28';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=29';
+import {clamp} from './engine.mjs?v=29';
+import {detachOfficer} from './campaign-decisions.mjs?v=29';
 export const FIDELITY_ORDERS=new Set(['moveParty','appointRealm','demoteAdvisor','recruitMethod','spyControl','buildFort']);
 const home=(g,p)=>{if(!p.officers.includes(g.ruler().leader))throw Error('Issue this order where your ruler is staying.');};
 export function recruitMethodChance(g,p,envoy,target,method){
+ if(recruitmentProtection(g.s,target,target.owner,g.s.player))return 0;
  const ability=method==='letter'?envoy.int:method==='horse'?envoy.war:envoy.charm,loyalty=target.owner===255?0:target.loyalty/2;
  return clamp(g.recruitChance(p,envoy,target)+(ability-envoy.charm)/3-(target.virtue??50)/10+(target.ambition??50)/20-loyalty-(g.s.difficulty-1)*5,5,95);
 }
@@ -35,7 +37,7 @@ export function fidelityOrder(g,type,args){const old=JSON.parse(JSON.stringify(g
   const method=args.method;if(!['attention','horse','gold','letter'].includes(method))throw Error('Choose a recruitment method.');
   let gold=0;if(method==='gold')gold=g.amount(args.amount,p.gold,100);if(method==='horse'&&p.horses<1)throw Error('No horse is available.');
   const chance=recruitMethodChance(g,p,envoy,target,method);if(method==='horse')p.horses--;p.gold-=gold;envoy.acted=true;
-  if(g.random()*100<clamp(chance+(method==='gold'?Math.floor(Math.sqrt(gold)/3):0),5,95)){
+  if(chance>0&&g.random()*100<clamp(chance+(method==='gold'?Math.floor(Math.sqrt(gold)/3):0),5,95)){
    detachOfficer(g,target.id);target.owner=r.id;target.loyalty=clamp(100-Math.floor(Math.sqrt(Math.max(0,target.loyalty/2)*Math.abs(target.compatibility-g.officer(r.leader).compatibility))),40,100);target.serviceSince=g.s.year;target.acted=true;p.officers.push(target.id);if(method==='horse')target.hasHorse=true;text=`${target.name} accepted ${envoy.name}'s ${method==='attention'?'special attention':method} invitation.`;
   }else text=`${target.name} refused ${envoy.name}'s invitation.`;
  }else if(type==='spyControl'){

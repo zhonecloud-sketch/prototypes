@@ -1,4 +1,4 @@
-import {FUTURE_OFFICERS} from './future-officers.mjs?v=28';
+import {FUTURE_OFFICERS} from './future-officers.mjs?v=29';
 export const arrivalRecords=s=>FUTURE_OFFICERS[s.scenarioId??s.id]||[];
 export function processArrivals(g,report){
  const s=g.s;s.arrivalsDone??=[];
@@ -38,3 +38,10 @@ export function validateSuccessors(s){
 
 export function provinceTerrain(p,base){const tiles=[...base];for(const i of p.forts||[])tiles[i]=5;return tiles;}
 export function validateForts(s,terrains){for(const p of s.provinces){p.forts??=[];if(!Array.isArray(p.forts)||p.forts.length>156||new Set(p.forts).size!==p.forts.length||p.forts.some(i=>!Number.isInteger(i)||i<0||i>=156||terrains[p.id-1]&&![0,2].includes(terrains[p.id-1][i])))throw Error('Invalid constructed fort.');}}
+
+// Native hostile-recruit gate at 0x12ee4–0x12f0e; free recruitment uses a separate branch.
+export function recruitmentProtection(s,o,formerOwner=o.owner,requester=null){
+ const r=s.rulers.find(r=>r.id===formerOwner);if(!r||formerOwner===255||o.id===r.leader||o.spyFor===requester)return null;
+ const leader=s.officers[r.leader];if(o.blood>0&&leader&&(o.blood&leader.blood)!==0)return 'shared family allegiance';
+ return o.loyalty===100?'absolute loyalty':null;
+}

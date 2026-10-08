@@ -1,6 +1,7 @@
-import {recordWarFate} from './event-chronicle.mjs?v=28';
-import {retireRulerFamily} from './ruler-family.mjs?v=28';
-import {clamp} from './engine.mjs?v=28';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=29';
+import {recordWarFate} from './event-chronicle.mjs?v=29';
+import {retireRulerFamily} from './ruler-family.mjs?v=29';
+import {clamp} from './engine.mjs?v=29';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
@@ -18,7 +19,7 @@ export function decideCaptive(g,id,action){
  const o=g.officer(c.officer),r=g.ruler(c.owner),p=g.province(c.province),isRuler=g.ruler(c.formerOwner)?.leader===o.id;
  if(action==='recruit'){
   if(c.recruitTried)throw Error('This captive has already refused recruitment.');c.recruitTried=true;
-  const host=g.officer(p.governor??r.leader),chance=clamp(host.charm/2+r.trust/3-o.loyalty/3+25,5,95);
+  const protection=isRuler?null:recruitmentProtection(g.s,o,c.formerOwner,c.owner),host=g.officer(p.governor??r.leader),chance=protection?0:clamp(host.charm/2+r.trust/3-o.loyalty/3+25,5,95);
   if(g.random()*100>=chance){g.record(`${o.name} refused recruitment. Decide whether to set them free or behead them.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return false;}
   detachOfficer(g,o.id);p.officers.push(o.id);o.owner=c.owner;o.loyalty=clamp(60-Math.floor(o.loyalty/3),20,60);o.serviceSince=g.s.year;replaceRuler(g,c.formerOwner,o.id);
  }else if(action==='behead'){

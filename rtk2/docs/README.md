@@ -2,7 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v28
+## Latest update — v29
+
+War summaries distinguish actual commanders from rulers on other fronts. Shortages and unpaid wages stay in numbered province Events. Liu Bei now has a mature portrait with long earlobes, aligned with his four historical scenes; every live event illustration uses the same wide frame. Verified native shared-blood and LOY-100 protection now blocks hostile and captive recruitment, without a gold bonus bypass. See [differences.md](differences.md) for the conditional allegiance rule and remaining approximations.
+
+## V28 update
 
 All 15 scheduled historical events have matching illustrations, visible in monthly playback and clickable chronology entries. Province reports include numbers; simultaneous disasters remain separate and mark every affected province. Local diplomacy, messenger journeys, treasures and plunder stay in province Events. Routine protection notices and duplicate dates are removed. War summaries account for rulers present without fighting units.
 

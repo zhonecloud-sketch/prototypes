@@ -2,12 +2,30 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-09 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v28; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v27, commit `6c19124c2ec4910f821133e3eada0f20ee0491ea`
+Latest implementation: v29; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v28, commit `e97c0e34022cafdb67d66d8bdfad7f1141883ba9`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V29 commanders, allegiance and consistent artwork
+
+War records now snapshot both commanders independently of the rulers who own their provinces. When the defeated commander is a subordinate, an unsuccessful invasion says “The attacking commander returned unharmed”; a governor-led defence says “The opposing commander was not captured.” Actual recruitment, release and execution override those fallback outcomes. A ruler's fate is separate when their presence and outcome are known. Commanders and governors remain in the generals lists. Older reports lacking commander identity use the commander wording when ruler presence was absent or unknown; missing identities are not invented. This supersedes v28's generic ruler-not-captured fallback.
+
+Rice shortages, unpaid wages and harvest reports belong to numbered province Events, including recognised legacy messages. Monthly playback retains separate province details. Economic equations are unchanged.
+
+Liu Bei's replacement portrait has a mature face, moustache, beard and distinctive long earlobes. The four historical scenes featuring him—Xu Province, the three visits, Shu coronation and deathbed—were edited against that same portrait and visually reviewed. These are consistent illustrative interpretations, not authenticated historical likenesses. All live event atlas cells now match `events.webp`: 991.5 × 396.5 pixels, ratio 1983:793. Two-by-two atlases are 1983 × 793; the four-by-four historical atlas is 3966 × 1586. Artwork is contained proportionally in a dark matte without stretching or cropping. See [artwork-v29.md](artwork-v29.md).
+
+### Native allegiance evidence
+
+The supplied English `main.exe` supersedes the Python recreation. In its unpacked code, hostile recruitment helper `0x12EA8` checks shared blood at `0x12EE4` and loyalty exactly 100 at `0x12EEE`; either reaches the zero-result branch at `0x12F0E`. The helper has linked-list, battle-command and AI callers. Its preceding covert-allegiance branch is retained as a distinct exception. Scenario 189 Guan Yu and Zhang Fei both have LOY 100 and blood 0, so the loyalty gate explains their protection, rather than shared family blood. The verifier now passes 54 byte checks; [original-v29-checks.json](original-v29-checks.json) records offsets, hashes and limitations.
+
+The remaster now applies that zero-chance gate to hostile recruitment and captive recruitment, retaining the former owner while prisoners are unaffiliated. Gold bonuses and minimum chance floors cannot override it. Battlefield bribery, secret betrayal pacts and coercive wolf/betrayal spies also respect allegiance protection; those extensions are consistent remaster safeguards, not claims to have recovered every native spy coefficient. Returning planted spies retain their exception, and captive rulers retain the separate ruler handling.
+
+No permanent named-character “never recruit” attribute was established. Once loyalty falls below 100, or an officer becomes genuinely free, the verified hostile-service gate does not establish lifelong immunity. Existing service-year departure protection is separate. Full recruitment probabilities remain partly approximated; these changes do not retroactively undo officers already recruited in old saves.
+
+Validation: 283 gameplay/data/artwork checks, 43 emulated DOM/native-Canvas interface groups and 54 supplied-binary byte checks. New coverage includes ruler/commander separation, legacy summaries, local supply reports, exact atlas dimensions, captive oath-brother refusal, gold-floor bypass prevention and battlefield bribery. Physical handset layout, audible playback and execution in the original DOS game remain unverified.
 
 ## V28 event artwork, location and report corrections
 

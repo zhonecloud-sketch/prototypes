@@ -1,0 +1,5 @@
+// Packaging: keep every source-cell pixel, using a common matte and proportional fit.
+import fs from 'node:fs';import {createCanvas,loadImage} from '@napi-rs/canvas';
+const root=new URL('../',import.meta.url),base=await loadImage(new URL('assets/events.webp',root).pathname);
+export async function normalizeEventAtlas(source,columns,rows,output){const image=await loadImage(source),w=base.width/2,h=base.height/2,canvas=createCanvas(w*columns,h*rows),ctx=canvas.getContext('2d');ctx.fillStyle='#172021';ctx.fillRect(0,0,canvas.width,canvas.height);for(let cell=0;cell<columns*rows;cell++){const sw=image.width/columns,sh=image.height/rows,scale=Math.min(w/sw,h/sh);ctx.drawImage(image,cell%columns*sw,Math.floor(cell/columns)*sh,sw,sh,cell%columns*w+(w-sw*scale)/2,Math.floor(cell/columns)*h+(h-sh*scale)/2,sw*scale,sh*scale);}fs.writeFileSync(output,await canvas.encode('webp'));return {width:canvas.width,height:canvas.height,cellWidth:w,cellHeight:h};}
+if(process.argv[2])console.log(await normalizeEventAtlas(process.argv[2],Number(process.argv[3]),Number(process.argv[4]),process.argv[5]));

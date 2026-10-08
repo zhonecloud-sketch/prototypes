@@ -1,4 +1,4 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=28';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=29';
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function moveForecast(g,source,destination,ids){
  const officers=[...new Set([...destination.officers,...ids])].map(id=>g.officer(Number(id))),soldiers=officers.reduce((sum,o)=>sum+o.soldiers,0);

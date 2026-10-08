@@ -1,9 +1,10 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=28';
-import {provinceLabel} from './province-choice.mjs?v=28';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=28';
-import {clamp} from './engine.mjs?v=28';
-import {disaster,monthNumber} from './monthly-events.mjs?v=28';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=28';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=29';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=29';
+import {provinceLabel} from './province-choice.mjs?v=29';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=29';
+import {clamp} from './engine.mjs?v=29';
+import {disaster,monthNumber} from './monthly-events.mjs?v=29';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=29';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
@@ -30,7 +31,7 @@ export function provinceAdvice(g,p){
 }
 export function provinceRumours(g,p){const v=updateVisitors(g),visitor=v.scholar===p.id?'Sima Hui':v.critic===p.id?'Xu Shao':null;if(!visitor)return 'Neither Sima Hui nor Xu Shao is visiting this province this month.';const candidates=g.s.provinces.flatMap(q=>[...q.hidden,...q.unclaimed].map(id=>({p:q,o:g.officer(id)}))).filter(({o})=>!o.pendingArrival&&!o.dead&&o.name!=='Unnamed').sort((a,b)=>visitor==='Sima Hui'?b.o.int-a.o.int:b.o.war+b.o.charm-a.o.war-a.o.charm);const x=candidates[0];return x?`${visitor}: I have heard of ${x.o.name} in ${provinceLabel(g,x.p)}. ${x.p.hidden.includes(x.o.id)?'Search there for this talent.':'They are available for recruitment.'}`:`${visitor}: I have no news of unclaimed talent today.`;}
 export function missionChance(g,p,envoy,target,mode){const me=g.ruler(),hostility=me.relations[target.id]??50;return clamp(mode==='threat'?20+(strength(g,me.id)/Math.max(1,strength(g,target.id))-1)*25+envoy.charm/4:mode==='joint'?45+envoy.charm/3+me.trust/5-hostility/3:mode==='marriage'?25+(envoy.charm+g.officer(me.leader).charm)/4+me.trust/5-hostility/2:25+envoy.charm/2+me.trust/4-hostility/2,5,95);}
-export function spyChance(g,envoy,target,mode,second=null,other=null){const me=g.ruler();if(mode==='infiltrate')return 100;if(mode==='rival'){if(!second||!other)return null;return clamp((me.trust+envoy.int+second.int)/3+advisorInt(g,me)/3-(advisorInt(g,target)+advisorInt(g,other))/4,5,95);}const province=g.s.provinces.find(q=>q.officers.includes(target.id));if(!province)return null;const enemy=g.ruler(province.owner);return clamp((mode==='forged'?envoy.int:envoy.charm)/2+me.trust/4+advisorInt(g,me)/4-target.loyalty/2-(mode==='wolf'?(target.virtue??50)/4:(enemy.trust+target.int)/8),5,95);}
+export function spyChance(g,envoy,target,mode,second=null,other=null){const me=g.ruler();if(mode==='infiltrate')return 100;if(mode==='rival'){if(!second||!other)return null;return clamp((me.trust+envoy.int+second.int)/3+advisorInt(g,me)/3-(advisorInt(g,target)+advisorInt(g,other))/4,5,95);}const province=g.s.provinces.find(q=>q.officers.includes(target.id));if(!province)return null;const enemy=g.ruler(province.owner);if(['wolf','betrayal'].includes(mode)&&recruitmentProtection(g.s,target,province.owner,me.id))return 0;return clamp((mode==='forged'?envoy.int:envoy.charm)/2+me.trust/4+advisorInt(g,me)/4-target.loyalty/2-(mode==='wolf'?(target.virtue??50)/4:(enemy.trust+target.int)/8),5,95);}
 
 function applyOrder(g,type,args){
  const p=g.owned(args.province),me=g.ruler();let text='';

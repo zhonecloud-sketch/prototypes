@@ -251,3 +251,5 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 .realm-event button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font-size:var(--text-meta);padding:8px}.chronology-art{flex:0 0 84px;width:84px;height:84px}.realm-event button span{min-width:0}
 
 .province-label.has-event::after{content:'!';position:absolute;right:-5px;top:-6px;width:12px;height:12px;border-radius:50%;background:#e8ba61;color:#282115;font-size:10px;line-height:12px;box-shadow:0 0 0 1px #302819}
+
+.chronology-art{height:33.59px;aspect-ratio:1983/793}

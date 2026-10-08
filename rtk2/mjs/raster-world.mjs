@@ -1,12 +1,12 @@
-import {provinceCurrentEvents} from './event-chronicle.mjs?v=28';
-import {activeBattleUnit} from './battle-presentation.mjs?v=28';
-import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=28';
-import {provinceTerrain} from './campaign-fidelity.mjs?v=28';
-import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=28';
-import {pointFor,project,provinceDirection} from './geography.mjs?v=28';
-import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=28';
+import {provinceCurrentEvents} from './event-chronicle.mjs?v=29';
+import {activeBattleUnit} from './battle-presentation.mjs?v=29';
+import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=29';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=29';
+import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=29';
+import {pointFor,project,provinceDirection} from './geography.mjs?v=29';
+import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=29';
 const palette=['#e0b65e','#88b19c','#8faecc','#d98f79','#c0a377','#b78251','#d0be83','#81989e','#c687a4','#a995c5','#83a664','#9aafc1','#a0be7c','#d8a18a','#75b0ac','#cfb24b'];
-export async function loadRasterAssets(){const assets={};await Promise.all(['history','courier','portraits','events','army','launch','relief','capitals','weather','disasters','omens','stories','officersHistoric','triumph',...Array.from({length:22},(_,i)=>'officers'+i),...Array.from({length:41},(_,i)=>battlefieldKey(i+1))].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{assets[key]=im;resolve();};im.onerror=()=>reject(Error('Artwork could not load: '+key));const file=key.startsWith('battlefield')?battlefieldFile(Number(key.slice(11))).replace(/\.webp$/,''):{history:'history-v28',triumph:'triumph-v17',officersHistoric:'officers-historic-v16',terrain:'terrain-v15',army:'army-v23',launch:'launch-v9',relief:'china-relief-v9',capitals:'capitals-v9'}[key]||key;im.src='./assets/'+file+'.webp';})));return assets;}
+export async function loadRasterAssets(){const assets={};await Promise.all(['history','courier','portraits','events','army','launch','relief','capitals','weather','disasters','omens','stories','officersHistoric','triumph',...Array.from({length:22},(_,i)=>'officers'+i),...Array.from({length:41},(_,i)=>battlefieldKey(i+1))].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{assets[key]=im;resolve();};im.onerror=()=>reject(Error('Artwork could not load: '+key));const file=key.startsWith('battlefield')?battlefieldFile(Number(key.slice(11))).replace(/\.webp$/,''):{triumph:'triumph-v17',officersHistoric:'officers-historic-v29',history:'history-v29',disasters:'disasters-v29',omens:'omens-v29',stories:'stories-v29',terrain:'terrain-v15',army:'army-v23',launch:'launch-v9',relief:'china-relief-v9',capitals:'capitals-v9'}[key]||key;im.src='./assets/'+file+'.webp';})));return assets;}
 const tileCell=t=>({0:0,1:1,2:2,3:3,4:4,5:5,6:6})[t]??0;
 export function createRasterWorld(canvas,labels,game,map,terrains,assets,mode,onSelect,onHex){
  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw Error('Canvas 2D is unavailable.');let width=1,height=1,dpr=1,running=true,frames=0,dirty=true,scale=1,center={x:0,z:7},lastFrame=0,actionTime=0,lastAction='',lastAmbush='',ambushTime=0,positionCache=new Map(),moves=new Map(),buttons=new Map();const army=assets.army,cells=ownershipCells(game.s.provinces.map(p=>({...pointFor(p),id:p.id})));let badgeLayout=null,eventLog,eventReport,eventMonth,eventIds=new Set();const currentEvents=()=>{const month=game.s.year*12+game.s.month;if(eventLog!==game.s.log||eventReport!==game.s.lastReport||eventMonth!==month){eventLog=game.s.log;eventReport=game.s.lastReport;eventMonth=month;eventIds=new Set(provinceCurrentEvents(game).filter(x=>x.events.length).map(x=>x.province.id));}return eventIds;};const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
