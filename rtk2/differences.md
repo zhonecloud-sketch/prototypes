@@ -2,12 +2,31 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v20; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v19, commit `ac2a06420a09d3b418508e43a58eb1fff7db853e`
+Latest implementation: v22; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v21, commit `c6c9b76c561787a93428c5b3318634d0c5fd4d21`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
-The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V22 terrain tactics and apparent retreat audit
+
+The AI never issued voluntary flee orders. Remaining soldiers do not prevent commander capture, morale routing, food exhaustion or palace occupation from ending a battle; these rules remain. Result text now distinguishes morale/capture losses from an army depleted to zero. Commanders previously accepted uncertain duels; all AI generals now accept only a guaranteed WAR advantage beyond the duel's ±10 rolls, and initiate challenges only beyond that margin.
+
+Both sides now evaluate nearby jungle ambush positions and dry river banks against visible enemies. Defensive units protect the palace; its guard stays in place. Outnumbered attackers seek advantageous terrain, wait at most two consecutive days for an approach, then resume their objective. Strength considers men, WAR, training, morale and weapon coverage. Fire takes priority when outnumbered or defending the palace against multiple adjacent enemies, subject to weather and friendly-unit/palace wind-spread safety. Empty approach tiles may be ignited to obstruct an advance. Existing native ambush, water damage, fire chance and daily spread rules are unchanged. Fire is not guaranteed to succeed and wind can change later.
+
+These tactical policies are remaster improvements, not claims of recovered DOS AI algorithms. Regression cases cover safe palace fire, rain, jungle, river banks, bounded attacker waiting, commander duels and honest routing reasons. Browser/handset layout limitations and the separately documented long-run suspended-war ownership issue remain.
+
+## V21 fixed army summary and separate defensive tactics
+
+| Finding | Current behaviour | Evidence / limits |
+|---|---|---|
+| AI-versus-AI army information scrolls away | The comparison previously had `overflow:auto`, fixed minimum rows and a rebuilt subtree after every AI action. It now uses a non-scrolling, size-contained grid with rows scaled to its allotted height. Columns, statistic cells and weather canvas stay mounted while values, portraits and controller highlighting update in place. Scroll anchoring is disabled and the comparison stays at its top. | Same summary renderer is used in human/AI and AI/AI battles; the 75/25 layout and 20/50/30 section split remain. DOM regression retains the same summary nodes after multiple real scheduler actions and checks every updated army statistic. Physical handset/browser scrolling is not yet independently verified. |
+| Sole defender abandons the palace | The sole defender is the palace guard. While holding it, they wait for attackers, attack adjacent threats without moving, and avoid Charge/breakthrough away from the garrison. An adjacent attacking commander that can be killed by a minimum-damage normal strike gets priority. An out-of-position guard returns toward the empty palace using terrain-aware routing. | Combat and victory formulas are unchanged. Normal attacks can finish the attacking commander while the defender remains in the palace. This is an explicit remaster tactical policy, not a reconstructed native AI equation. |
+| Larger defending armies need distinct roles | The defender on the palace remains guard; if empty, the field commander is assigned to return. Other defenders intercept reachable enemies approaching the palace. A guard declines uncertain personal combat and challenges an attacking commander only when the WAR comparison guarantees victory under the existing ±10 duel rolls. | This preserves a garrison rather than sending every defender across the field. Reinforcements remain possible under the existing rules. Human orders are unaffected. |
+| Attacker needs a different objective | Attackers continue terrain-aware advance toward the palace, engaging blockers. Adjacent palace guards take priority over unrelated weak neighbours; a guaranteed enemy-commander kill takes the highest priority. | Existing Charge, simultaneous attacks and fire remain available to attacking AI. Mountain detours and the battle-wide personal-challenge limit from v20 are preserved. |
+
+V21 verification: **223 gameplay/data/artwork checks**, **35 emulated DOM/native-Canvas interface groups**, and Hard/all-battles spectator simulations totalling **15,000 actions across all six scenarios**. New cases cover every AI level's lone-garrison behaviour, adjacent attacks without charge displacement, commander kills, guard return, larger defensive formations, attacker objectives and safe personal challenges. The separate long-campaign suspended-war save issue recorded under v20 remains open.
 
 ## V20 zero-player Hard / all-battles AI fixes
 

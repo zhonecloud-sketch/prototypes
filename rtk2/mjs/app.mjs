@@ -1,21 +1,21 @@
-import {provinceChoice,provinceLabel as provinceOwnerLabel} from './province-choice.mjs?v=20';
-import {battleOrderUnavailable} from './battle-presentation.mjs?v=20';
-import {orderUnavailable} from './order-availability.mjs?v=20';
-import {childAge,eligibleRoyalChildren,initializeRoyalFamilies} from './ruler-family.mjs?v=20';
-import {warProvisions} from './war-provisions.mjs?v=20';
-import {ITEMS,createCustomRuler,supportCandidates,aiAlly} from './campaign-completion.mjs?v=20';
-import {provinceTerrain} from './campaign-fidelity.mjs?v=20';
-import {enhanceControls,generalStats,orderInsight} from './game-ui.mjs?v=20';
-import {createProvinceCommands} from './province-ui.mjs?v=20';
-import {Game,createCampaign,validateSave,DEFAULT_RULES} from './strategy.mjs?v=20';
-import {loadRasterAssets,createRasterWorld} from './raster-world.mjs?v=20';
-import {portraitIndex,portraitAssigned,portraitFrame} from './portraits.mjs?v=20';
-import {eventFor,eventCell,eventFrame} from './events.mjs?v=20';
-import {armySummary} from './battle-summary.mjs?v=20';
-import {createArtwork} from './artwork.mjs?v=20';
-import {AudioBus} from './audio.mjs?v=20';
-import {regionName,provinceLabel,provinceDirection} from './geography.mjs?v=20';
-import {living,visibleUnit,at,reachable,TERRAIN,distance,DIRECTIONS,WEATHER,windLabel,windStrengthLabel,direction,placementCells,reinforcementOptions,isLeader,controllerSide,retreatOptions} from './battle.mjs?v=20';
+import {provinceChoice,provinceLabel as provinceOwnerLabel} from './province-choice.mjs?v=22';
+import {battleOrderUnavailable} from './battle-presentation.mjs?v=22';
+import {orderUnavailable} from './order-availability.mjs?v=22';
+import {childAge,eligibleRoyalChildren,initializeRoyalFamilies} from './ruler-family.mjs?v=22';
+import {warProvisions} from './war-provisions.mjs?v=22';
+import {ITEMS,createCustomRuler,supportCandidates,aiAlly} from './campaign-completion.mjs?v=22';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=22';
+import {enhanceControls,generalStats,orderInsight} from './game-ui.mjs?v=22';
+import {createProvinceCommands} from './province-ui.mjs?v=22';
+import {Game,createCampaign,validateSave,DEFAULT_RULES} from './strategy.mjs?v=22';
+import {loadRasterAssets,createRasterWorld} from './raster-world.mjs?v=22';
+import {portraitIndex,portraitAssigned,portraitFrame} from './portraits.mjs?v=22';
+import {eventFor,eventCell,eventFrame} from './events.mjs?v=22';
+import {armySummary} from './battle-summary.mjs?v=22';
+import {createArtwork} from './artwork.mjs?v=22';
+import {AudioBus} from './audio.mjs?v=22';
+import {regionName,provinceLabel,provinceDirection} from './geography.mjs?v=22';
+import {living,visibleUnit,at,reachable,TERRAIN,distance,DIRECTIONS,WEATHER,windLabel,windStrengthLabel,direction,placementCells,reinforcementOptions,isLeader,controllerSide,retreatOptions} from './battle.mjs?v=22';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>Math.round(n).toLocaleString('en-GB'),compact=n=>n>=1000000?(n/1e6).toFixed(2)+'m':n>=10000?(n/1000).toFixed(1)+'k':num(n);
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'],regions=['You','Bing','Ji','Qing','Yan','Si','Yong','Liang','Xu','Yu','Jing','Yang','Yi','Jiao'];
@@ -176,8 +176,7 @@ function renderWar(){
  $('battleProvince').textContent='#'+b.target+' · '+game.province(b.target).name;$('battleProvince').title=game.province(b.target).name;
  $('battleDate').textContent=`${months[game.s.month-1]} · Day ${b.day}`;
  $('battleWeather').textContent=WEATHER[b.weather];$('battleWind').textContent=`Wind · ${windStrengthLabel(b.windStrength)} · ${windLabel(b.wind)}`;
- $('battleComparison').innerHTML=armyColumn('defend')+`<div class="army-column army-labels"><div></div><div class="army-picture"><canvas id="battleWeatherImage" data-atlas="weather" data-cell="${({sunny:0,fewclouds:1,cloudy:2,rain:3})[b.weather]}" role="img" aria-label="${WEATHER[b.weather]} weather"></canvas></div><div></div><span>Men</span><span>Generals</span><span>Food</span><span>Gold</span><span>Weapons</span></div>`+armyColumn('attack');
- $('battleComparison').querySelectorAll('[data-army-leader]').forEach(button=>button.onclick=()=>battleInspect(Number(button.dataset.armyLeader)));
+ renderArmyComparison();
  if(b.challenge){const c=b.challenge;$('panelBody').innerHTML=`<p class="battle-notice">${esc(name(game.officer(c.challenger)))} challenges ${esc(name(game.officer(c.target)))}.</p><div class="battle-actions"><button id="acceptChallenge" ${human?'':'disabled'}>Accept</button><button id="refuseChallenge" ${human?'':'disabled'}>Refuse</button></div>`;$('acceptChallenge').onclick=()=>battleOrder('challengeResponse',{accept:true});$('refuseChallenge').onclick=()=>battleOrder('challengeResponse',{accept:false});return;}
  if(b.phase==='deployment'){
   $('panelBody').innerHTML=`<label class="battle-unit-label" for="battleQuickUnit">Place units · ${army.filter(v=>v.placed).length}/${army.length}</label><select id="battleQuickUnit" aria-label="Choose unit for placement" ${human?'':'disabled'}>${options(army.map(v=>[v.id,game.officer(v.id).name+' · '+(v.placed?'Placed':'Place')]),b.selected)}</select><button id="confirmDeployment" class="gold-button" ${human&&army.every(v=>v.placed)?'':'disabled'}>Confirm placement</button>`;
@@ -198,6 +197,19 @@ function armyColumn(side){
  const b=game.s.battle,info=armySummary(game,b,side),label=side==='defend'?'Defender':'Attacker';
  const values=[['men',compact(info.men),num(info.men)+' soldiers'],['generals',info.generals+'/'+info.remaining,info.generals+' in the field / '+info.remaining+' remaining in '+info.province.name],['food',compact(info.food),num(info.food)+' rice'],['gold',compact(info.gold),num(info.gold)+' gold'],['weapons',compact(info.weapons),num(info.weapons)+' weapons · '+info.armedPercent+'% of soldiers armed']];
  return `<div class="army-column ${side} ${controllerSide(b)===side?'active-army':''}" data-side="${side}"><div class="army-heading"><small>${label}</small><strong title="${esc(name(info.ruler))}">${esc(name(info.ruler))}</strong></div><button class="army-picture" data-army-leader="${info.leader?.id??''}" aria-label="Inspect ${esc(info.leader?name(info.leader):label)}" title="${side===b.side?'Free inspection':'Enemy inspection · 100 gold'}" ${!game.battleHuman()||!info.leader||b.challenge?'disabled':''}>${portraitMarkup(info.leader,'battle-portrait')}</button><strong class="army-leader" title="${esc(info.leader?name(info.leader):'No commander')}">${esc(info.leader?name(info.leader):'—')}</strong>${values.map(([key,value,title])=>`<span data-army-stat="${key}" title="${esc(title)}" aria-label="${esc(title)}">${value}</span>`).join('')}</div>`;
+}
+function renderArmyComparison(){
+ const b=game.s.battle,root=$('battleComparison');
+ if(!root.querySelector('[data-side]'))root.innerHTML=armyColumn('defend')+'<div class="army-column army-labels"><div></div><div class="army-picture"><canvas id="battleWeatherImage" data-atlas="weather" role="img"></canvas></div><div></div><span>Men</span><span>Generals</span><span>Food</span><span>Gold</span><span>Weapons</span></div>'+armyColumn('attack');
+ for(const side of ['defend','attack']){
+  const info=armySummary(game,b,side),column=root.querySelector(`[data-side="${side}"]`),ruler=column.querySelector('.army-heading strong'),leader=column.querySelector('.army-leader'),picture=column.querySelector('.army-picture'),label=side==='defend'?'Defender':'Attacker';
+  column.classList.toggle('active-army',controllerSide(b)===side);ruler.textContent=name(info.ruler);ruler.title=name(info.ruler);leader.textContent=info.leader?name(info.leader):'—';leader.title=info.leader?name(info.leader):'No commander';
+  picture.dataset.armyLeader=info.leader?.id??'';picture.disabled=!game.battleHuman()||!info.leader||!!b.challenge;picture.setAttribute('aria-label','Inspect '+(info.leader?name(info.leader):label));picture.title=side===b.side?'Free inspection':'Enemy inspection · 100 gold';picture.onclick=()=>battleInspect(Number(picture.dataset.armyLeader));
+  const portraitKey=String(info.leader?.id)+':'+game.s.year;if(picture.dataset.portraitKey!==portraitKey){picture.dataset.portraitKey=portraitKey;picture.innerHTML=portraitMarkup(info.leader,'battle-portrait');}
+  const values=[['men',compact(info.men),num(info.men)+' soldiers'],['generals',info.generals+'/'+info.remaining,info.generals+' in the field / '+info.remaining+' remaining in '+info.province.name],['food',compact(info.food),num(info.food)+' rice'],['gold',compact(info.gold),num(info.gold)+' gold'],['weapons',compact(info.weapons),num(info.weapons)+' weapons · '+info.armedPercent+'% of soldiers armed']];
+  for(const [key,value,title]of values){const cell=column.querySelector(`[data-army-stat="${key}"]`);cell.textContent=value;cell.title=title;cell.setAttribute('aria-label',title);}
+ }
+ const weather=$('battleWeatherImage');weather.dataset.cell=({sunny:0,fewclouds:1,cloudy:2,rain:3})[b.weather];weather.setAttribute('aria-label',WEATHER[b.weather]);root.scrollTop=0;
 }
 function battleControlsDialog(){
  const b=game.s.battle,army=living(b).filter(u=>u.side===b.side),u=army.find(v=>v.id===b.selected),human=game.battleHuman();

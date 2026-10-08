@@ -1,5 +1,5 @@
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=20';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=20';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=22';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=22';
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};
 export const clamp=(x,min=0,max=100)=>Math.max(min,Math.min(max,x));

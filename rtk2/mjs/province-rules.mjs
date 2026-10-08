@@ -1,9 +1,9 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=20';
-import {provinceLabel} from './province-choice.mjs?v=20';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=20';
-import {clamp} from './engine.mjs?v=20';
-import {disaster,monthNumber} from './monthly-events.mjs?v=20';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=20';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=22';
+import {provinceLabel} from './province-choice.mjs?v=22';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=22';
+import {clamp} from './engine.mjs?v=22';
+import {disaster,monthNumber} from './monthly-events.mjs?v=22';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=22';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);

@@ -2,9 +2,9 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v20
+## Latest update — v22
 
-Zero-player Hard campaigns with All battles now route around mountain barriers using complete terrain-cost paths. The day-one pause from a second AI personal challenge is fixed. The saved second-battle checkpoint advances automatically without human orders. Province selectors, monthly advisor decisions and Milit fort placement from v19 remain.
+Battle army summaries now update in place inside a fixed, non-scrolling section. Defender AI keeps a palace guard: a lone unit holds position and attacks adjacent enemies without charging out, while additional units intercept approaching attackers. Attacking AI prioritises palace access, its guard and decisive commander kills. The v20 mountain-routing and personal-challenge fixes remain.
 
 ## V17 battlefield update
 
@@ -379,3 +379,7 @@ The complete release passes **207 gameplay/data/artwork checks**, **31 emulated 
 ## V20 verification
 
 216 gameplay/data/artwork checks and 34 emulated DOM/native-Canvas groups pass. Dedicated Hard/all-battles spectator simulations cover 15,000 actions across all six scenarios and 117 battle starts. Mountain detours obey the existing movement rules, and the original second-battle day-one checkpoint progresses with the actual AI scheduler.
+
+## V21 verification
+
+223 gameplay/data/artwork checks and 35 emulated DOM/native-Canvas groups pass. Guard, interception, attacker-objective and challenge regressions supplement all-six-scenario Hard spectator tests. The army comparison retains its nodes while the actual AI scheduler updates its values. Physical handset/browser scrolling still requires device verification.

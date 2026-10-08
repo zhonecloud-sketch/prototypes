@@ -225,3 +225,10 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 #launch:has(#setupWizard:not([hidden])) .launch-setup{grid-column:2;padding:24px clamp(16px,4vw,60px);background:#0d1919ed}
 #warGovernor{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 @media(max-height:500px){#launch .launch-art{height:43%;gap:7px}#launch .launch-art h1{font-size:clamp(22px,3.2vw,34px)}#launch .launch-art .seal{display:none}#launch .launch-setup{padding-top:43dvh}#launch:has(#setupWizard:not([hidden])) .launch-setup{padding:14px 20px}}
+
+/* V21: the comparison stays fixed while AI updates its values in place. */
+#battleComparison{overflow:hidden;overflow-anchor:none;container-type:size}
+#battleComparison .army-column{height:100%;min-height:0;overflow:hidden;grid-template-rows:clamp(24px,16cqh,44px) minmax(0,1fr) clamp(16px,10cqh,30px) repeat(5,minmax(0,clamp(12px,8cqh,26px)))}
+#battleComparison .army-column>span{line-height:1;overflow:hidden;text-overflow:ellipsis}
+#battleComparison .army-heading strong,#battleComparison .army-heading small{line-height:1.05}
+#battleComparison .army-leader{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
