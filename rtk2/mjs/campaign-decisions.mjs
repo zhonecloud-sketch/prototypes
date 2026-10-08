@@ -1,5 +1,5 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=19';
-import {clamp} from './engine.mjs?v=19';
+import {retireRulerFamily} from './ruler-family.mjs?v=20';
+import {clamp} from './engine.mjs?v=20';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}

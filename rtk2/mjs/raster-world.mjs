@@ -1,9 +1,9 @@
-import {activeBattleUnit} from './battle-presentation.mjs?v=19';
-import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=19';
-import {provinceTerrain} from './campaign-fidelity.mjs?v=19';
-import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=19';
-import {pointFor,project,provinceDirection} from './geography.mjs?v=19';
-import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=19';
+import {activeBattleUnit} from './battle-presentation.mjs?v=20';
+import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=20';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=20';
+import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=20';
+import {pointFor,project,provinceDirection} from './geography.mjs?v=20';
+import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=20';
 const palette=['#e0b65e','#88b19c','#8faecc','#d98f79','#c0a377','#b78251','#d0be83','#81989e','#c687a4','#a995c5','#83a664','#9aafc1','#a0be7c','#d8a18a','#75b0ac','#cfb24b'];
 export async function loadRasterAssets(){const assets={};await Promise.all(['courier','portraits','events','army','launch','relief','capitals','weather','disasters','omens','stories','officersHistoric','triumph',...Array.from({length:22},(_,i)=>'officers'+i),...Array.from({length:41},(_,i)=>battlefieldKey(i+1))].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{assets[key]=im;resolve();};im.onerror=()=>reject(Error('Artwork could not load: '+key));const file=key.startsWith('battlefield')?battlefieldFile(Number(key.slice(11))).replace(/\.webp$/,''):{triumph:'triumph-v17',officersHistoric:'officers-historic-v16',terrain:'terrain-v15',army:'army-v9',launch:'launch-v9',relief:'china-relief-v9',capitals:'capitals-v9'}[key]||key;im.src='./assets/'+file+'.webp';})));return assets;}
 const tileCell=t=>({0:0,1:1,2:2,3:3,4:4,5:5,6:6})[t]??0;

@@ -1,5 +1,5 @@
-import {provinceTerrain} from './campaign-fidelity.mjs?v=19';
-import {provinceDirection} from './geography.mjs?v=19';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=20';
+import {provinceDirection} from './geography.mjs?v=20';
 // Original province layouts with offset-column hex geometry and revised battle rules.
 export const TERRAIN=['Plain','Jungle','Hill','Mountain','Water','Castle','Palace'];
 export const WEATHER={sunny:'Clear',fewclouds:'Few clouds',cloudy:'Cloudy',rain:'Rain'};
@@ -123,12 +123,25 @@ function dailyEffects(game){const b=game.s.battle;for(const side of ['attack','d
 function advance(game){const b=game.s.battle;for(const u of living(b).filter(u=>u.side===b.side&&!u.ordered)){u.mobility=Math.min(1000,u.mobility+1);u.ordered=true;u.orderDay=b.day;}if(b.side==='defend'){dailyEffects(game);b.completedDays=b.day;if(outcome(b))return event(b,b.outcome.reason);if(b.day===30){b.suspended=true;return event(b,'Thirty days elapsed; warfare continues next month.');}b.day++;setWeather(b,rollWeather(game));b.wind=game.int(0,6);b.windStrength=b.wind===0?0:game.int(1,3);event(b,`Day ${b.day}: ${WEATHER[b.weather]}; ${windStrengthLabel(b.windStrength)} wind ${windLabel(b.wind)}${b.weather==='rain'?'; all fires extinguished':''}.`);}
  b.side=b.side==='attack'?'defend':'attack';for(const u of living(b).filter(u=>u.side===b.side))u.ordered=u.orderDay===b.day;b.selected=living(b).find(u=>u.side===b.side)?.id??null;outcome(b);return event(b,`Day ${b.day}: ${b.side==='attack'?'Invading':'Defending'} army’s orders.`);
 }
+// Plan across the whole field, independent of today's mobility. Enemy contact
+// ends a route, just as it does in reachable(); mountains, fire and occupied
+// hexes cannot be crossed. This permits detours that initially increase distance.
+export function planBattleRoute(b,u,enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side))){
+ const start=u.r*13+u.q,occupied=new Set(living(b).filter(v=>v.placed&&v.id!==u.id).map(v=>v.r*13+v.q)),hostile=living(b).filter(v=>v.side!==u.side&&v.placed),contact=new Set(hostile.flatMap(v=>neighbors(v.q,v.r).map(p=>p.r*13+p.q))),costs=new Map([[start,0]]),paths=new Map([[start,[]]]),queue=[{q:u.q,r:u.r,cost:0}];
+ while(queue.length){queue.sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q);const n=queue.shift(),index=n.r*13+n.q;if(n.cost!==costs.get(index))continue;if(index!==start&&contact.has(index))continue;
+  for(const next of neighbors(n.q,n.r)){const key=next.r*13+next.q,cost=n.cost+terrainCost(b.terrain[key]);if(!Number.isFinite(cost)||occupied.has(key)||b.fire[key]||cost>=(costs.get(key)??Infinity))continue;costs.set(key,cost);paths.set(key,[...paths.get(index),next]);queue.push({...next,cost});}
+ }
+ const best=goals=>goals.map(p=>({...p,cost:costs.get(p.r*13+p.q),path:paths.get(p.r*13+p.q)})).filter(p=>p.path?.length).sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q)[0]||null;
+ if(u.side==='attack'){const palace=at(b,b.palace.q,b.palace.r),route=best(palace?neighbors(b.palace.q,b.palace.r):[b.palace]);if(route)return route;}
+ return best(enemies.flatMap(v=>neighbors(v.q,v.r)));
+}
 export function aiBattle(game,intelligence=60){const b=game.s.battle;if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);return act(game,'challengeResponse',{accept:v.war>=u.war-5});}if(b.phase==='deployment'){const u=living(b).find(u=>u.side===b.side&&!u.placed);if(!u)return act(game,'deploy');const cells=placementCells(b,u.side,u).sort((a,z)=>distance(a,b.palace)-distance(z,b.palace));return act(game,'place',{unit:u.id,...cells[0]});}
  const units=living(b).filter(u=>u.side===b.side&&!u.ordered);if(!units.length)return act(game,'end');const u=units.sort((a,z)=>intelligence>=50?z.war-a.war:0)[0],enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),adjacent=enemies.filter(v=>distance(u,v)===1).sort((a,z)=>a.soldiers-z.soldiers);
- if(b.day===1&&intelligence>=75&&u.war>=b.challengeWar&&!b.challengeIssued.includes(u.id)){const opponent=enemies.find(v=>v.war<u.war-10);if(opponent)return act(game,'challenge',{unit:u.id,target:opponent.id});}
+ if(b.day===1&&intelligence>=75&&u.war>=b.challengeWar&&b.challengeIssued.length===0){const opponent=enemies.find(v=>v.war<u.war-10);if(opponent)return act(game,'challenge',{unit:u.id,target:opponent.id});}
  if(adjacent.length){const target=adjacent[0];if(intelligence>=50&&jointAttackers(b,u,target).length>1)return act(game,'simultaneous',{unit:u.id,target:target.id});if(intelligence>=75&&u.soldiers>target.soldiers*1.5)return act(game,'charge',{unit:u.id,target:target.id});if(intelligence>=75&&u.int>=70&&b.weather!=='rain'&&[1,5].includes(b.terrain[target.r*13+target.q])&&!b.fire[target.r*13+target.q]&&target.soldiers>u.soldiers&&game.random()<.3)return act(game,'fireball',{unit:u.id,q:target.q,r:target.r});return act(game,'attack',{unit:u.id,target:target.id});}
- const own=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+v.soldiers,0),hostile=enemies.reduce((n,v)=>n+v.soldiers,0);if(intelligence>=75&&own<hostile*.7&&b.units.length<40&&living(b).filter(v=>v.side===u.side).length<10){const option=reinforcementOptions(game,u.side).sort((a,z)=>z.soldiers-a.soldiers)[0];if(option&&placementCells(b,u.side).length)return act(game,'reinforce',{unit:u.id,...option,food:Math.min(option.food,5000,3000000-b.food[u.side])});}
- const goal=u.side==='attack'?b.palace:enemies.sort((a,z)=>distance(u,a)-distance(u,z))[0]||b.palace,moves=reachable(b,u);if(moves.length){moves.sort((a,z)=>distance(a,goal)-distance(z,goal));const spot=intelligence>=50?moves[0]:moves[game.int(0,moves.length-1)];if(distance(spot,goal)<distance(u,goal)||intelligence<50)return act(game,'move',{unit:u.id,...spot});}return act(game,'wait',{unit:u.id});
+ const own=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+v.soldiers,0),hostile=enemies.reduce((n,v)=>n+v.soldiers,0);if(intelligence>=75&&own<hostile*.7&&b.units.length<40&&living(b).filter(v=>v.side===u.side).length<10){const option=reinforcementOptions(game,u.side).filter(o=>placementCells(b,u.side,null,o.province===b.target?null:provinceDirection(game.province(b.target),game.province(o.province))).length).sort((a,z)=>z.soldiers-a.soldiers)[0];if(option&&placementCells(b,u.side).length)return act(game,'reinforce',{unit:u.id,...option,food:Math.min(option.food,5000,3000000-b.food[u.side])});}
+ const moves=reachable(b,u);if(intelligence<50&&moves.length)return act(game,'move',{unit:u.id,...moves[game.int(0,moves.length-1)]});
+ const route=planBattleRoute(b,u,enemies);if(route){let spent=0,last=null;for(const step of route.path){spent+=terrainCost(b.terrain[step.r*13+step.q]);if(spent>u.mobility)break;last=step;}const spot=last&&moves.find(p=>p.q===last.q&&p.r===last.r);if(spot)return act(game,'move',{unit:u.id,...spot});}return act(game,'wait',{unit:u.id});
 }
 export function validateBattle(b,state,terrains){
  if(!b)return;if(!b.gold){b.gold={attack:state.provinces[b.source-1]?.gold??0,defend:state.provinces[b.target-1]?.gold??0};if(state.provinces[b.source-1])state.provinces[b.source-1].gold=0;if(state.provinces[b.target-1])state.provinces[b.target-1].gold=0;}
@@ -149,4 +162,4 @@ export function validateBattle(b,state,terrains){
  for(const side of ['attack','defend'])if(b.leaders?.[side]!==null&&!b.units.some(u=>u.id===b.leaders?.[side]&&u.side===side))throw Error('Invalid army commander.');if(!Array.isArray(b.challengeIssued)||new Set(b.challengeIssued).size!==b.challengeIssued.length||b.challengeIssued.some(id=>!seen.has(id)))throw Error('Invalid challenge history.');if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);if(b.phase!=='battle'||b.day!==1||!u||!v||u.side===v.side||u.side!==b.side||!u.placed||!v.placed||u.war<b.challengeWar||u.captured||v.captured)throw Error('Invalid pending challenge.');}
  b.events=Array.isArray(b.events)?b.events.filter(t=>typeof t==='string').map(t=>t.slice(0,500)).slice(0,50):[];if(b.outcome&&(!['attack','defend'].includes(b.outcome.winner)||typeof b.outcome.reason!=='string'))throw Error('Invalid battle result.');
 }
-import {battleDailyFood} from './war-provisions.mjs?v=19';
+import {battleDailyFood} from './war-provisions.mjs?v=20';

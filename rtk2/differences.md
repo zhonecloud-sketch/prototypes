@@ -2,12 +2,26 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v19; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v18, commit `aeb26060691f012760ae442d0859ccabea26caa3`
+Latest implementation: v20; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v19, commit `ac2a06420a09d3b418508e43a58eb1fff7db853e`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
-The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V20 zero-player Hard / all-battles AI fixes
+
+| Finding | Cause and correction | Verification / fidelity status |
+|---|---|---|
+| AI cannot detour around mountains | The old tactical AI ranked today's reachable hexes by straight-line distance and refused movement unless it became closer immediately. It could wait forever at a mountain wall even when a distant gap was reachable. Smart AI now plans a complete weighted path over passable hexes, then moves along the affordable prefix. It may move sideways or away from the target to reach a mountain gap. It approaches enemy contact when palace access is blocked. | Mountains/fire/occupied tiles remain impassable, original terrain costs remain unchanged, and enemy contact still ends movement. A route whose next tile exceeds current mobility causes Wait to bank mobility rather than an illegal move. A truly unreachable goal produces Wait. This is a remaster AI correction, not a recovered DOS AI algorithm. |
+| Visible AI battle pauses on day one | AI challenge eligibility checked whether **this general** had challenged. The action executor correctly permits only **one challenge in the battle**. A second eligible general attempted another challenge after the first response, causing the scheduler to catch the rejection and pause. The AI now checks the same battle-wide unused-challenge condition as the executor. | Reproduced specifically in the second AI-to-AI battle on Hard (INT90/aggression75), Province 10 → 5, day one. The stored v19 checkpoint now advances beyond day one after save/load and in the actual UI scheduler without human orders. The existing one-challenge rule remains intact, including resumed battles. |
+| Reserve entry eligibility | AI reserve candidates are checked against the actual reserve province's entry direction before requesting reinforcement. | Uses the existing action executor's legal-placement rule rather than the main army's approach as a proxy. |
+
+V20 verification: **216 gameplay/data/artwork checks** and **34 emulated DOM/native-Canvas interface groups** pass. Dedicated zero-player Hard/all-battles runs exercise **15,000 actions across all six scenarios**, including 117 battle starts, valid checkpoints and repeated day-one progression. The original 17 static supplied-binary checks remain unchanged/applicable. Tests include a distant mountain gap requiring initially non-improving movement, sealed paths, fire/occupancy, defender contact and the saved second-battle failure. Physical handset layout, audible playback and DOS runtime execution remain unverified.
+
+### Separate long-campaign save issue still open
+
+An additional exploratory scenario-189 run (seed 1, AI INT90/aggression55, all battles, 7,000 actions) found a save-validation rejection after a reinforcement's origin province changed ruler while its captured, zero-soldier unit remained in a suspended war. The captured unit still records its former army owner, while the origin province has a new owner; `validateBattle` reports **Invalid battle officer**. This is distinct from the fixed day-one personal-challenge exception, and no patch to suspended-war custody/ownership has been made in v20. The 15,000-action verification above is six 2,500-action Hard/aggression75 runs, not a claim that indefinite autoplay or every later campaign checkpoint is verified.
 
 ## V19 province selectors, monthly advice and fort placement
 
