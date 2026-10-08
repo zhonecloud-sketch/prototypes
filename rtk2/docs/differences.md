@@ -2,12 +2,52 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v22; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v21, commit `c6c9b76c561787a93428c5b3318634d0c5fd4d21`
+Latest implementation: v24; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v23, commit `e2bbd5c24bc4fcd3d5a2a7fbe7072f701152d1b2`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V24 report timing, food provisions and hidden battles
+
+Council and AI governance reports now queue at the selected Message Speed (3 / 2 / 1 / 0.5 seconds), independently of Game Speed. AI advancement waits until playback finishes. Each report retains its event artwork; monthly playback and governance playback do not overlap. Changing speed retimes the active report, including paused reading time. Saved Message Speed now survives loading independently of Game Speed; the older base save validator had dropped it, causing a Very Fast game to reload at 0.5-second messages. Log comparisons use entry content so atomic order rollback does not duplicate old reports or skip new ones.
+
+Spectator mode with “My ruler personally present” now resolves invasions by a separate equation path. It does not perform tactical movement, deployment, weather turns, challenges or action-message playback. Loaded and resumed hidden wars use the same resolver. All-battles viewing and eligible human ruler battles retain tactical combat. Display eligibility also governs the map, battle controls and audio, repairing the mixed China-map/battle-panel presentation in the supplied screenshots.
+
+The DOS executable has separate abstract and tactical entry points: unpacked `0x21418` invokes abstract combat at `0x21138`; its loop at `0x213bb` performs six exchanges. Abstract food at `0x20a81` is `floor(ration men / 6) + 5` per exchange. The remaster now uses that structure and ration helper. **Abstract combat power, casualty coefficients and final probability remain remaster approximations; the exact native combat equations have not been fully recovered.**
+
+| Food rule | Native evidence | V24 implementation |
+|---|---|---|
+| Daily tactical rations | `0x22e7b`: divide men by 30, then maximum with one | `max(1, floor(men / 30))` for each living army; replaces the previous higher remaster consumption. |
+| Defending reserves | `0x22f4c` adds province reserve soldiers to field soldiers; linked-list sum at `0x245dc` reads soldier offset `0x12` | Defenders pay for deployed and undeployed troops in the defending province. Attacker home garrison is excluded. |
+| Monthly invasion estimate | `0x1540c`: daily rations multiplied by 30 | War planning uses the same formula. For 10,000 men: 333 daily, 9,990 monthly. |
+| Defending food | `0x1ec10` copies the province food stock | Full defending province food is available. Local reserves cannot contribute the same stock again when reinforcing. |
+| AI invasion food | `0x1e18c`: five times selected men, divided by 2 or 4, plus random amount up to half the men | Native divisor branch is not fully traced. Remaster policy carries 75 days of actual troop rations plus one, at least 6,000 when available, capped by source stock. It refuses an invasion without a full month plus one. `warProvisionDays` is tunable. AI allies use the same plan. |
+
+Zero food still causes immediate defeat; invasion food can range from zero to the available province stock, up to the native 3,000,000 stock cap. The 75-day AI reserve is a declared policy, not a recovered native equation. Casualties reduce later consumption; defending reserves increase it.
+
+Suspended siege units remain reserved after monthly action resets. Their origin provinces cannot be invaded while their troops remain committed, and reserves cannot join two simultaneous fields. Failed AI orders mark the current state officer rather than a stale object restored by rollback, preventing repeated failed actions from stalling governance.
+
+`tools/verify-original.py` now checks 29 native byte sequences; results are included in `original-v24-checks.json`. Evidence is static analysis of the supplied DOS executable, not an emulator playthrough. All unit/campaign suites pass, including ten new V24 groups and the 15,000-step six-scenario Hard/all-battles run. All 37 DOM/Canvas interface checks pass, including real-clock three-second governance playback at Very Fast Game Speed. These checks cover both food accounting paths, hidden battle loading/resumption, saved speed retention and active speed changes. Physical-handset rendering and audible playback have not been independently verified. Earlier V23 statements about unrecovered daily consumption are superseded by this section.
+
+## V23 message playback, AI tuning and DOS food evidence
+
+Message Speed is independent of Game Speed: Slow 3 seconds, Normal 2 seconds, Fast 1 second and Very Fast 0.5 seconds. Battlefield messages queue in action order, name the initiating general and retain fire success/failure and simultaneous-attack results. AI waits for the displayed messages. Monthly reports play automatically before province navigation; the Begin monthly orders button is removed. Chronicle entries replay their message and corresponding artwork, then return to the game. Opening controls or hiding the page pauses active reading time; loading/exiting cancels stale playback. Legacy saves receive an appropriate message setting.
+
+Battle AI is in `mjs/ai-battle.mjs`; monthly governance is in `mjs/ai-governance.mjs`, with political decisions in `mjs/ai-politics.mjs`. Main thresholds and probabilities are in `config/ai-config.json`, validated by `mjs/ai-parameters.mjs`. Defaults preserve v22 tactics. See [ai-tuning.md](ai-tuning.md). These are explicit policies, not recovered native AI formulas.
+
+| Food question | Supplied DOS executable evidence | Implementation |
+|---|---|---|
+| Does zero food defeat either side immediately? | Unpacked offset `0x22dbc` checks the army's 32-bit food against one. The branch at `0x22dd0` assigns outcome 0/4 by side and calls the result setter at `0x25138`; there is no intervening morale check. Both codes map to “food has run out” at DS `0x4128`. | Immediate defeat at food ≤0, regardless of remaining men or morale. Removed an extra remaster starvation morale deduction that could obscure the reason. |
+| How much invasion food can be carried? | `0x15449` reads the source province's 32-bit food and passes lower bound zero and upper bound the available stock to the numeric input. | Zero through all available source food; corrected the engine's unintended minimum of one. |
+| Why does the HUD allow 3,000,000? | Stock clamp at `0x8fab` uses high word `0x002d` and low word `0xc6c0`, together decimal 3,000,000. | Province stock cap and invasion ceiling remain 3,000,000. The actual maximum is the province's available stock. |
+
+These are static binary checks against the supplied `main.exe`, not an emulator playthrough. `tools/verify-original.py` now has 21 binary checks, including these branches. The unpacked image SHA-256 is `5c3e45a5edb097c8719d65b1678784aaf8412258e2437a26bb89d4b249824506`. Daily consumption and the monthly planning estimate remain documented remaster equations; this update does not claim to recover the original consumption formula.
+
+Army artwork now depicts red attacking formations and blue defending formations. Each unit has its soldier count below, a gold commander star and the general's name on its flag. The selected sheet's first two march/attack frames are used to avoid spear bleed in unused cells. Hidden enemy flags are removed with hidden units. Existing 41 painted battlefields are retained.
+
+Regression coverage includes exact playback durations and cancellation, AI configuration validation, both sides losing at zero food with high morale, invasion stock bounds, named battle action messages and save migration. Browser/physical-handset rendering and audio remain unverified independently of the DOM/Canvas checks.
 
 ## V22 terrain tactics and apparent retreat audit
 
@@ -459,7 +499,7 @@ V12 Exile explicitly checks the ruler’s readiness. The ordinary home-governor 
 | B06 | Enemy proximity restricts movement [M21]. | V12 movement may enter a hostile-adjacent hex, then stops; paths cannot continue through enemy control. | Zone-of-control branch implemented; exact DOS mask untraced. |
 | B07 | Forests conceal enemy troops [M21/M22]. | V12 jungle enemies are concealed in the battlefield and View until an opposing unit approaches. AI target lists use the same visibility rule. | Concealment implemented; scouting/reveal persistence and original distance unverified. |
 | B08 | Commander loss ends battle [M20]. | V12 any designated army commander losing fighting status ends the battle, even when not the ruler. | Commander-defeat branch implemented. |
-| B09 | Food exhaustion decides victory [M24]. | V12 a battle-side food store reaching zero produces immediate defeat. | Food-exhaustion branch implemented; supply-use rates remain remaster constants. |
+| B09 | Food exhaustion decides victory [M24], now confirmed in the supplied DOS binary at unpacked `0x22dbc`/`0x22dd0`. | Either battle-side food store reaching zero produces immediate defeat, without waiting for morale loss. | V23 adds exact byte checks; invasion carries zero through available province stock, capped at 3,000,000. Supply-use rates remain remaster constants. |
 | B10 | Capture or elimination [M21/M24]. | Normal attacks mark every routed target captured, including morale routing. No elimination/death outcome from normal combat. | Current engine; exact DOS casualty distribution unverified. |
 | B11 | Only commander bribes [M22]. | V13 only the designated army commander can offer bribes, spending the field purse. | NES branch adopted; exact DOS probability untraced. |
 | B12 | Defender's local reserves [M22]. | V12 defender reserves in the attacked province can join as well as ready adjacent friendly reserves. | Local reserve omission repaired; limits/entry rules remain edition-qualified. |

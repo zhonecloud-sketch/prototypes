@@ -1,4 +1,4 @@
-"""Static v15 checks on supplied packed English main.exe and scenario.dat.
+"""Static v24 checks on supplied packed English main.exe and scenario.dat.
 Unpacks the binary's own backwards RLE stream in memory. Does not execute DOS,
 modify inputs or redistribute executable bytes. Offsets are unpacked load-image offsets.
 """
@@ -32,6 +32,18 @@ def main():
     assert sha==EXPECTED,'This verifier applies to the supplied English binary only.'
     image,blocks=unpack(data)
     checks={
+      'daily_rations_divide_by_30_minimum_one':(0x22e7b,'b8010050b81e00995250ff7608ff76069a18380000509a9c01610583c404'),
+      'ration_linked_list_sums_soldiers':(0x245f7,'8bd88b47122bd20146fc1156fe'),
+      'defender_reserve_rations_added':(0x22f4c,'807efa0075182bc0508b1e74cbff77029a8c09c52383c4040146fc1156fe'),
+      'invasion_monthly_food_estimate':(0x1540c,'b8010050a192ceb91e002bd2f7f1509a9c01610583c404b91e00f7e18946fe'),
+      'ai_food_five_times_men_divisor_then_jitter':(0x1e18c,'a192ce2bd28bd88bf2d1e0d1d2d1e0d1d203c313d652508bf19a1838000003c683d200a3aece8916b0ce'),
+      'abstract_rations_divide_by_six_plus_five':(0x20a81,'b80600995250ff76faff76f89a1838000005050083d200'),
+      'abstract_combat_six_exchanges':(0x213bb,'fe46f4807ef4067303e9b1fe'),
+      'abstract_combat_entry':(0x21418,'0ee898fb0bc074040ee814fd'),
+      'food_exhaustion_check':(0x22dbc,'0bd27f2b7c0783bca5ca017322'),
+      'food_exhaustion_both_armies_outcome':(0x22dd0,'807e0601f51ac0240450807e06011ac0f6d8509a9806aa24'),
+      'invasion_food_uses_province_stock':(0x15449,'8b1e9a33ff770cff770a2bc050509ae208ef03'),
+      'province_food_stock_cap_3000000':(0x8fab,'837f0c2d7c167f07817f0ac0c6760d'),
       'rival_requires_two_ready_officers':(0x180a8,'9a8e008a123c027309'),
       'rival_first_messenger_selection':(0x17f6e,'ff76060ee8bfff83c4028946fe'),
       'rival_second_messenger_selection':(0x17f8b,'ff76080ee8a2ff83c4028946fc'),
@@ -55,7 +67,7 @@ def main():
     while ptr:
         at=ptr-0x42;names.append(scenario[at+28:at+41].split(b'\0')[0].decode('ascii'));ptr=struct.unpack_from('<H',scenario,at)[0]
     assert names==['Liu Bei','Guan Yu','Zhang Fei']
-    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},messengers='Rival Tigers requires at least two ready officers; separate calls to the same candidate selector store two officers and dispatch two journeys, one per rival. Other inspected spy/diplomatic entry points use one selector. Exact probabilities remain remaster approximations.',charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',liuBei189=names)
+    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},rations='Daily food is max(1, integer(total soldiers / 30)); defending non-field reserves are added. Monthly estimate multiplies daily food by 30. Native AI forms carried food from five times selected soldiers divided by two or four plus random up to half the men; the choice condition remains untraced. Abstract combat has a separate six-exchange routine and food helper dividing total men by six plus five. Exact abstract combat coefficients are not fully ported.',food='DOS food exhaustion tests the army rice store against one and writes the winning side and food outcome codes immediately; it does not wait for morale. Invasion input uses full province stock as its upper bound. Province stores clamp at 0x002dc6c0 = 3,000,000. Static disassembly, not DOS execution.',messengers='Rival Tigers requires at least two ready officers; separate calls to the same candidate selector store two officers and dispatch two journeys, one per rival. Other inspected spy/diplomatic entry points use one selector. Exact probabilities remain remaster approximations.',charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',liuBei189=names)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(f'{len(checks)} binary checks passed; Liu Bei 189: {len(names)} officers. {args.output}')
 if __name__=='__main__':main()

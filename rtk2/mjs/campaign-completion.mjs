@@ -1,8 +1,9 @@
-import {clamp} from './engine.mjs?v=22';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=22';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=22';
-import {provinceDirection} from './geography.mjs?v=22';
-import {hireCapacity} from './province-rules.mjs?v=22';
+import {invasionFoodPlan} from './war-provisions.mjs?v=24';
+import {clamp} from './engine.mjs?v=24';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=24';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=24';
+import {provinceDirection} from './geography.mjs?v=24';
+import {hireCapacity} from './province-rules.mjs?v=24';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},
@@ -45,9 +46,9 @@ export function configureDelegation(g,args){
 export function runDelegated(g,owner){
  const saved=g.s.player;g.s.player=owner;try{for(const p of g.s.provinces.filter(p=>p.owner===owner&&p.delegation&&p.delegate!=='manual')){
  const d=p.delegation;let ready=p.officers.map(id=>g.officer(id)).filter(o=>{try{g.ready(p,o.id);return true;}catch{return false;}}).sort((a,b)=>b.int-a.int);
- if(d.attack&&['full','military'].includes(d.policy)&&g.province(d.attack).owner!==255&&g.province(d.attack).owner!==owner&&!g.ruler().alliances.includes(g.province(d.attack).owner)&&!g.s.wars.some(b=>[b.source,b.target].includes(p.id)||b.target===d.attack)){
+ if(d.attack&&['full','military'].includes(d.policy)&&g.province(d.attack).owner!==255&&g.province(d.attack).owner!==owner&&!g.ruler().alliances.includes(g.province(d.attack).owner)&&!g.s.wars.some(b=>[b.source,b.target].includes(p.id)||[b.source,b.target,...b.units.map(u=>u.origin)].includes(d.attack))){
   const army=ready.filter(o=>o.soldiers>0).sort((a,b)=>b.war-a.war).slice(0,Math.min(5,p.officers.length-1)),men=army.reduce((n,o)=>n+o.soldiers,0),enemy=g.province(d.attack).officers.reduce((n,id)=>n+g.officer(id).soldiers,0);
-  if(army.length&&men>enemy*1.3&&p.food>men){g.invade({province:p.id,target:d.attack,officers:army.map(o=>o.id),food:Math.min(p.food,men*2),gold:Math.min(p.gold,1000)});if(g.s.battle||g.s.spoils.length||g.s.captiveDecisions.length)return false;}
+  const carried=invasionFoodPlan(men,p.food,g.rules.ai?.governance);if(army.length&&men>enemy*1.3&&carried!==null){g.invade({province:p.id,target:d.attack,officers:army.map(o=>o.id),food:carried,gold:Math.min(p.gold,1000)});if(g.s.battle||g.s.spoils.length||g.s.captiveDecisions.length)return false;}
  }
  if(d.supply&&ready.length&&g.province(d.supply).owner===owner&&g.route(p.id,d.supply)&&(p.gold>500||p.food>30000)){
   const dest=g.province(d.supply),o=ready.shift(),gold=Math.min(Math.max(0,p.gold-500),30000-dest.gold),food=Math.min(Math.max(0,p.food-30000),3000000-dest.food);if(gold||food){p.gold-=gold;p.food-=food;dest.gold+=gold;dest.food+=food;o.acted=true;g.record(`Province ${p.id}: delegated supplies ${gold} gold / ${food} food reached #${dest.id}.`);}
@@ -94,7 +95,7 @@ export function requestBattleAlly(g,allyId){
  const b=g.s.battle;if(!b||b.outcome||g.s.allyDecisions.length)throw Error('No battle can request help now.');const owner=ownerFor(b,b.side),ally=g.ruler(Number(allyId));if(!ally||!g.ruler(owner).alliances.includes(ally.id)||ally.alliances.includes(ownerFor(b,b.side==='attack'?'defend':'attack'))||b.supportAsked?.includes(ally.id))throw Error('Choose an available ally who is not allied to the opponent.');
  const x={kind:'battle',owner:ally.id,requester:owner,province:b.target,side:b.side,route:realmRoute(g,b.target,ally.home),index:0};if(!supportCandidates(g,x).length)throw Error('This ally has no ready adjacent reserves.');b.supportAsked??=[];b.supportAsked.push(ally.id);g.s.allyDecisions.push(x);return g.record(`A mounted messenger asks ${ally.name} for help at Province ${b.target}.`,'diplomacy');
 }
-export function aiAlly(g){const x=g.s.allyDecisions?.[0];if(!x||g.isHuman(x.owner))return false;if(x.route&&x.index<x.route.length-1){x.index++;return true;}const available=supportCandidates(g,x),ids=available.slice(0,Math.min(2,Math.max(0,10-(g.s.battle?living(g.s.battle).filter(u=>u.side===x.side).length:0)))).map(o=>o.id),p=available[0]&&g.province(available[0].province);try{answerAlly(g,ids.length>0&&g.random()*100<(g.ruler(x.owner).trust+50)/2,{officers:ids,food:Math.min(2000,p?.food??0),gold:0});}catch{answerAlly(g,false);}return true;}
+export function aiAlly(g){const x=g.s.allyDecisions?.[0];if(!x||g.isHuman(x.owner))return false;if(x.route&&x.index<x.route.length-1){x.index++;return true;}const available=supportCandidates(g,x),ids=available.slice(0,Math.min(2,Math.max(0,10-(g.s.battle?living(g.s.battle).filter(u=>u.side===x.side).length:0)))).map(o=>o.id),p=available[0]&&g.province(available[0].province),food=invasionFoodPlan(ids.reduce((n,id)=>n+g.officer(id).soldiers,0),p?.food??0,g.rules.ai?.governance);try{answerAlly(g,ids.length>0&&food!==null&&g.random()*100<(g.ruler(x.owner).trust+50)/2,{officers:ids,food:food??0,gold:0});}catch{answerAlly(g,false);}return true;}
 export function createCustomRuler(s,args){
  const p=s.provinces[Number(args.province)-1];if(!p||p.owner!==255)throw Error('Choose an empty starting province.');if(s.customOfficers?.length)throw Error('Only one custom ruler and follower can be created.');const id=Array.from({length:16},(_,i)=>i).find(id=>!s.rulers.some(r=>r.id===id));if(id===undefined)throw Error('No ruler slot is available.');
  const specs=[{name:args.name,age:Number(args.age??25),sex:args.sex??'male',int:Number(args.int??70),war:Number(args.war??70),charm:Number(args.charm??70)},{name:args.follower||'Companion',age:25,sex:'male',int:60,war:60,charm:60}];

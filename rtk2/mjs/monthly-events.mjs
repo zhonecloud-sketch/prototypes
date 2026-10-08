@@ -1,5 +1,5 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=22';
-import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=22';
+import {retireRulerFamily} from './ruler-family.mjs?v=24';
+import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=24';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Probabilities and loss amounts are remaster rules, not recovered DOS formulas.
 export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council'];

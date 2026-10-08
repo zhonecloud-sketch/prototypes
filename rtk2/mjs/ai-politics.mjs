@@ -1,6 +1,8 @@
+import {DEFAULT_AI} from './ai-parameters.mjs?v=24';
 // Heuristic coverage of the diplomatic and covert repertoire; not decoded DOS AI.
 export function aiPolitics(g,p,ready,ai){
- if(!p.officers.includes(g.ruler().leader)||ai.intelligence<40||g.random()>=.12)return false;
+ const tuning=g.rules.ai?.governance??DEFAULT_AI.governance;
+ if(!p.officers.includes(g.ruler().leader)||ai.intelligence<tuning.politicsMinimumIntelligence||g.random()>=tuning.politicsChance)return false;
  const envoy=[...ready].filter(o=>o.id!==g.ruler().leader).sort((a,b)=>b.int+b.charm-a.int-a.charm)[0];if(!envoy)return false;
  const me=g.ruler(),others=g.s.rulers.filter(r=>r.id!==me.id&&g.s.provinces.some(p=>p.owner===r.id)),allies=others.filter(r=>me.alliances.includes(r.id)),rivals=others.filter(r=>!me.alliances.includes(r.id));if(!others.length)return false;
  const leader=g.officer(me.leader),cursor=g.s.aiPoliticalCursor?.[me.id]??0;g.s.aiPoliticalCursor??={};g.s.aiPoliticalCursor[me.id]=(cursor+1)%11;
@@ -21,4 +23,4 @@ export function aiPolitics(g,p,ready,ai){
  else return false;
  try{g.execute(type,args);return true;}catch{return false;}
 }
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=22';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=24';

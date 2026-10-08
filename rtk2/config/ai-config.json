@@ -1,0 +1,37 @@
+{
+  "battle": {
+    "smartIntelligence": 50,
+    "expertIntelligence": 75,
+    "safeDuelWarMargin": 20,
+    "outnumberedPowerRatio": 0.85,
+    "fireMinimumIntelligence": 60,
+    "reinforceMenRatio": 0.7,
+    "chargeMenRatio": 1.5,
+    "reinforceFood": 5000,
+    "ambushAdvanceEveryDays": 3,
+    "terrainSearchRadius": 4,
+    "jungleWeight": 7,
+    "riverBankWeight": 6
+  },
+  "governance": {
+    "smartIntelligence": 50,
+    "maxInvaders": 5,
+    "courtMarriageChance": 0.02,
+    "diplomacyChance": 0.07,
+    "attackStrengthRatio": 1.25,
+    "basicAttackStrengthRatio": 0.65,
+    "minimumWarFood": 5000,
+    "minimumCarriedFood": 6000,
+    "warProvisionDays": 75,
+    "loyaltyTarget": 65,
+    "reliefAmount": 3000,
+    "recruitTargetMen": 4000,
+    "hireHundreds": 10,
+    "weaponsCoverageTarget": 0.8,
+    "trainingTarget": 70,
+    "developmentGold": 100,
+    "politicsChance": 0.12,
+    "politicsMinimumIntelligence": 40,
+    "battleAllyChance": 0.05
+  }
+}

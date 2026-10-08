@@ -232,3 +232,14 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 #battleComparison .army-column>span{line-height:1;overflow:hidden;text-overflow:ellipsis}
 #battleComparison .army-heading strong,#battleComparison .army-heading small{line-height:1.05}
 #battleComparison .army-leader{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Army flags carry officer names; troop counts stay below the formation. */
+#game .army-flag{position:absolute;transform:translate(-50%,-50%);min-height:0;padding:1px 3px;border:0;border-radius:0;font-size:var(--text-meta);font-weight:bold;line-height:1.05;text-align:center;color:#fff7e8;white-space:normal;overflow-wrap:normal;box-shadow:0 1px 4px #0008;background:#922d29ec}
+#game .army-flag[data-side=defend]{background:#244d9fec}
+#game .unit-label[data-side=attack]{border-color:#d85c50;background:#49201ded}
+#game .unit-label[data-side=defend]{border-color:#6b9ce5;background:#1d304bed}
+#game .unit-label.commander{color:#ffe2a1;border-color:#ffe2a1;font-weight:bold}
+.monthly-progress{display:flex;align-items:center;justify-content:center;grid-column:1/-1;color:var(--gold);font-size:var(--text-ui)}
+#messageSpeed button{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px}
+.chronicle-item{display:flex;flex-direction:column;text-align:left;width:100%;gap:5px;padding:10px;margin-bottom:6px}
+#toast{white-space:normal;line-height:1.3}
