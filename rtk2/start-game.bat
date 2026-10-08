@@ -1,5 +1,4 @@
 @echo off
 cd /d "%~dp0"
-start "" http://localhost:8080/rtk2/
-py -m http.server 8080 --bind 127.0.0.1
+py tools\serve-game.py --open
 pause

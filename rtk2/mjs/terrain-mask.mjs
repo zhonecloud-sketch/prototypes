@@ -7,7 +7,9 @@ export function terrainMask(tiles,q,r){
  return mask;
 }
 export function terrainEdges(mask){return Array.from({length:6},(_,d)=>d).filter(d=>!(mask&(1<<d)));}
-export function terrainVariant(tiles,q,r){const kind=tiles[r*13+q],mask=terrainMask(tiles,q,r);return {kind,mask,key:kind+':'+mask,edges:terrainEdges(mask)};}
+export function terrainVariant(tiles,q,r){const kind=tiles[r*13+q],mask=terrainMask(tiles,q,r),neighbors=Array.from({length:6},(_,d)=>{const n=direction(q,r,d);return n.q>=0&&n.q<13&&n.r>=0&&n.r<12?tiles[n.r*13+n.q]:99;});return {kind,mask,neighbors,key:kind+':'+mask+':'+neighbors.join(','),edges:terrainEdges(mask)};}
+export const NORTHERN_PROVINCES=[1,2,3,4,15];
+export const ownershipNorth=p=>NORTHERN_PROVINCES.includes(p.id)?p.z-12:null;
 
 // A clipped Voronoi cell assigns the visible land around each city to its owner.
 export function ownershipCells(points,bounds=[-72,-64,72,80]){
@@ -16,7 +18,8 @@ export function ownershipCells(points,bounds=[-72,-64,72,80]){
   for(const other of points){if(other===p)continue;const dx=other.x-p.x,dz=other.z-p.z,k=(other.x*other.x+other.z*other.z-p.x*p.x-p.z*p.z)/2;const next=[];
    for(let i=0;i<poly.length;i++){const a=poly[i],v=poly[(i+1)%poly.length],fa=a.x*dx+a.z*dz-k,fv=v.x*dx+v.z*dz-k;if(fa<=0)next.push(a);if((fa<=0)!==(fv<=0)){const u=fa/(fa-fv);next.push({x:a.x+(v.x-a.x)*u,z:a.z+(v.z-a.z)*u});}}
    poly=next;if(!poly.length)break;
-  }return poly;
+  }
+  const north=ownershipNorth(p);if(north!==null){const next=[];for(let i=0;i<poly.length;i++){const a=poly[i],v=poly[(i+1)%poly.length];if(a.z>=north)next.push(a);if((a.z>=north)!==(v.z>=north)){const u=(north-a.z)/(v.z-a.z);next.push({x:a.x+(v.x-a.x)*u,z:north});}}poly=next;}return poly;
  });
 }
 

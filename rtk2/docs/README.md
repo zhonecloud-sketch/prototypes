@@ -4,15 +4,24 @@ A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portr
 
 ## Run
 
-No build step is needed. Serve the package root over HTTP(S):
+The downloadable ZIP contains only `rtk2/`. Put it beside the existing `lib/` folder:
+
+- `prototypes/rtk2/index.html`
+- `prototypes/lib/js-yaml.js`
+- `prototypes/lib/three-core.js`
+- `prototypes/lib/three.module.js`
+
+Shared libraries are excluded from the package as requested. No build step is needed. On Windows run `rtk2/start-game.bat`; on macOS/Linux run `sh rtk2/start-game.sh`. These launchers require Python and serve the parent folder so shared library paths work. Open `http://localhost:8080/rtk2/`.
+
+For a phone on the same network, run from the game folder:
 
 ```sh
-python3 -m http.server 8080 
+python3 tools/serve-game.py --bind 0.0.0.0
 ```
 
-Open `http://localhost:8080/rtk2/`. For a phone, use the server computer’s LAN address. ES modules and JSON/config requests require HTTP rather than opening the HTML as a local file.
+Use the server computer's LAN address with `/rtk2/`. ES modules and JSON/config requests require HTTP, rather than opening the HTML from disk. For GitHub Pages, place the complete `rtk2/` folder under `prototypes/`; the existing `prototypes/lib/` stays in place.
 
-The downloadable package has the application in `rtk2/` and libraries in its sibling `lib/`. Serve the package root and open `/rtk2/`.
+Main files stay at the game root. Game modules are in `mjs/`, configuration in `config/`, assets in `assets/`, documentation/licenses in `docs/`, all tests in `tests/`, and tools in `tools/`.
 
 ## Launch and control
 
@@ -30,7 +39,7 @@ Zero humans skips ruler selection and runs AI versus AI. The presets set intelli
 
 **Save Game** in the menu uses the browser's external file save dialog when available. Otherwise, or when the picker is restricted, it downloads a `.json` campaign file. **Load Game** uses a file input, with native open-picker support where available. Browsers cannot silently read arbitrary device paths, so paths are chosen through their file picker.
 
-Pause AI and speed control automated turns. AI stops while a dialog/HUD is open or the page is hidden. Every active faction takes one turn before monthly upkeep, income, events and refreshed officer actions. A human controls the defending army when that battle is included in the selected Battle view.
+**HUD → Resume AI** controls automated playback. **Menu → Game Speed** offers Slow, Normal, Fast and Very Fast. AI stops while a dialog/HUD is open or the page is hidden. Every active faction takes one turn before monthly upkeep, income, events and refreshed officer actions. A human controls the defending army when that battle is included in the selected Battle view.
 
 ## Original-style mobile display
 
@@ -115,7 +124,7 @@ The six main commands have these options:
 | Command | Options and behavior |
 |---|---|
 | **1. Move** | **Normal move** follows affordable six-direction steps; occupied and burning hexes block movement. **Move enemy** taunts a hostile general into a feasible hex closer to the issuing unit. Relative intelligence affects success; a successful lure spends the enemy’s mobility. |
-| **2. Attack** | **Normal** strikes an adjacent enemy with retaliation. **Simultaneous** requires at least two ready friendly units beside the enemy and consumes their daily orders. **Fireball** tries to ignite adjacent dry ground. **Charge** makes up to three strikes with higher own losses, stopping if either unit is defeated. A surviving charger occupies an enemy's hex when its soldiers reach zero. If soldiers remain, it has a **50% chance** to land one hex beyond the enemy along the same hex direction. Landing requires an unoccupied, in-bounds, passable hex, costs no extra normal-move mobility, and can trigger an ambush or palace victory. A charger that is itself defeated cannot advance. |
+| **2. Attack** | **Normal** strikes an adjacent enemy with retaliation. **Simultaneous** requires at least two ready friendly units beside the enemy and consumes their daily orders. **Fireball** tries to ignite adjacent dry ground. **Charge** makes up to three strikes with higher own losses, stopping if either unit is defeated. A surviving charger occupies an enemy's hex when its soldiers reach zero. If soldiers remain, it has a chance equal to **War / 100** to land one hex beyond the enemy along the same hex direction. Landing requires an unoccupied, in-bounds, passable hex, costs no extra normal-move mobility, and can trigger an ambush or palace victory. A charger that is itself defeated cannot advance. |
 | **3. Wait** | Remain in the same hex; add one mobility point. No movement is required. |
 | **4. View** | Choose any battlefield unit. Friendly inspection is free; **every enemy inspection costs 100 gold** from the current army’s province treasury. Inspection does not spend the daily order. |
 | **5. Strategy** | **Reinforce** calls a ready reserve commander with rice from a friendly province adjacent to the battlefield, leaving an officer behind to govern. Choose a feasible entry hex on the edge facing the reserve commander's home province. New arrivals start with two mobility and may act from their next army turn. **Bribe** spends an offer of at least 100 gold to try to recruit an enemy general; rulers cannot be bribed. Gold is spent even on refusal. |
@@ -135,7 +144,7 @@ Legacy square-grid battle checkpoints migrate to the hex rules, starting mobilit
 
 ## Testing HUD
 
-**HUD** opens a live panel and pauses AI. Changes are explicit and bounded; rejected edits restore the full prior state. Close & resume AI restarts automation. One AI action advances one automated order or tactical action; when a battle is outside the selected view, it resolves the entire battle and records its result.
+**HUD** opens a live panel and pauses AI. Changes are explicit and bounded; rejected edits restore the full prior state. **Resume AI** restarts automation and is available inside HUD on every tab. One AI action advances one automated order or tactical action; when a battle is outside the selected view, it resolves the entire battle and records its result.
 
 | Tab | Editable values |
 |---|---|
@@ -150,9 +159,9 @@ During battle, campaign officer/province edits are blocked; use the Battle tab t
 
 **All active gameplay graphics are 2D raster.** Canvas 2D draws the geographic coastline/rivers, raster terrain tiles, cities, army sprites and effects. Portraits and event scenes are raster images. Army movement and attacks select frames from an eight-frame painted sprite sheet. Functional controls remain accessible HTML. No WebGL or THREE renderer is loaded by the current app; the earlier THREE modules/libraries remain in the source for reference.
 
-Optimized WebP atlases are used at runtime. The original four PNG atlases are retained alongside their WebP copies. The expanded portrait/event/weather set is distributed as full-dimension WebP atlases. Low/balanced/high raster resolution caps device pixel ratio at 1/1.5/2. Province animation targets 30 fps and stops when hidden. Static China frames redraw only when needed. Art prompts and assignments are recorded in `ARTWORK.md`.
+Optimized WebP atlases are used at runtime. The original four PNG atlases are retained alongside their WebP copies. The expanded portrait/event/weather set is distributed as full-dimension WebP atlases. Low/balanced/high raster resolution caps device pixel ratio at 1/1.5/2. Province animation targets 30 fps and stops when hidden. Static China frames redraw only when needed. Art prompts and assignments are recorded in `docs/ARTWORK.md`.
 
-YAML configuration still tries `../lib/js-yaml.js`, its pinned js-yaml 4.1.0 CDN, then the bundled copy. The original THREE 0.180.0 and js-yaml library copies remain in the download's sibling `lib/` directory. No build step is needed.
+YAML configuration loads the existing `../lib/js-yaml.js`; no CDN or bundled fallback is used. Historical THREE modules refer to the sibling shared library. The current Canvas renderer does not load THREE. Shared libraries are omitted from this ZIP. If a library fails to load, built-in domestic defaults keep the campaign launch usable.
 
 Historical monthly cards, disasters, named officer deaths, ruler succession, comet omens, stratagems and recovery events run in the campaign. Humans play hotseat; network multiplayer is not included. Engine and DOM/file/audio flows were checked in an emulated DOM; raster scenes were rendered with a real Canvas 2D implementation and visually inspected. **A real browser, physical handset layout/touch behavior and audible playback still require device verification.**
 
@@ -162,24 +171,24 @@ Feature-detected browser WebMCP tools read the same live campaign, select a prov
 
 Inspected [JuQiang/Rotk2_Python](https://github.com/JuQiang/Rotk2_Python) at `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`.
 
-The six scenario datasets, 255 officer slots, original 41 sectors, troops and attributes come from `Scenario.dat` and the source data classes. Province adjacency follows `Helper.GetNeighbor`. Cultivation/dikes and relief retain integer formulas in `Command9_10_12`. Rewards, teaching, merchant costs and extra taxation follow Commands 11, 13 and 14, with transactions/action limits completed. Recruitment retains compatibility/charm/trust concepts with a bounded probability model. Hire capacity and province-wide training now use Command4; advisor accuracy and visitor restrictions use Command18. Movement, transport, diplomatic/spy probabilities, delegation, monthly simulation, full faction AI and tactical rules complete the unfinished systems as explicit remaster implementations. `game-config.yaml` configures domestic monthly rules.
+The six scenario datasets, 255 officer slots, original 41 sectors, troops and attributes come from `Scenario.dat` and the source data classes. Province adjacency follows `Helper.GetNeighbor`. Cultivation/dikes and relief retain integer formulas in `Command9_10_12`. Rewards, teaching, merchant costs and extra taxation follow Commands 11, 13 and 14, with transactions/action limits completed. Recruitment retains compatibility/charm/trust concepts with a bounded probability model. Hire capacity and province-wide training now use Command4; advisor accuracy and visitor restrictions use Command18. Movement, transport, diplomatic/spy probabilities, delegation, monthly simulation, full faction AI and tactical rules complete the unfinished systems as explicit remaster implementations. `config/game-config.yaml` configures domestic monthly rules.
 
 Guo Huai’s 194 reserve record has source loyalty 215; playable loyalty is clamped to 100 with `sourceLoyalty: 215` retained. The supplied DOS `main.exe` was inspected as an MZ executable and not executed. No original images/audio or executable are distributed for display.
 
 ## Verify
 
 ```sh
-node tests.mjs
-node strategy-tests.mjs
-node battle-tests.mjs
-node monthly-tests.mjs
-node expansion-tests.mjs
-node artwork-tests.mjs
-node --check rtk2/app.mjs
-node --check rtk2/strategy.mjs
-node --check rtk2/battle.mjs
-node --check rtk2/raster-world.mjs
-node --check rtk2/audio.mjs
+node tests/tests.mjs
+node tests/strategy-tests.mjs
+node tests/battle-tests.mjs
+node tests/monthly-tests.mjs
+node tests/expansion-tests.mjs
+node tests/artwork-tests.mjs
+node --check mjs/app.mjs
+node --check mjs/strategy.mjs
+node --check mjs/battle.mjs
+node --check mjs/raster-world.mjs
+node --check mjs/audio.mjs
 ```
 
 The 15 engine checks cover domestic formulas, transactions, all scenarios/rulers, save invariants and ten-year monthly simulations. The 15 strategy checks cover player setup, legacy migration, faction ordering, observable AI controls, battle save validation, movement, damage, retreat/capture, atomic HUD edits, human defense, portrait coverage, audio/event save persistence, animation cues and **6,000 AI actions per scenario** with checkpoint validation.
@@ -190,7 +199,7 @@ For emulated interface and actual raster drawing checks (Node 24+):
 
 ```sh
 npm install
-node ui-tests.mjs
+node tests/ui-tests.mjs
 ```
 
 These check the ordered launch, twelve-player/era limits, domestic forms, portrait/event frames, independent audio toggles, external save/open, menu-only checkpoint/save/Chronicle, monthly council review/resume, deployment and battle checkpoint flows, both human armies’ deployment, all six command menus, paid inspection, mobility and weather HUD edits, challenge response handoffs/desertion, actual reinforcement/rice transfer, confirmed/cancelled commander withdrawal, raster drawing, WebMCP, Esc, Quit and zero-human automation. They do not replace real-device tests.
@@ -201,7 +210,7 @@ Romance of the Three Kingdoms II is a Koei title. This is an independent prototy
 
 Physical data: [Natural Earth land](https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-land/), [rivers](https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-rivers-lake-centerlines/), [public-domain terms](https://www.naturalearthdata.com/about/terms-of-use/). Historical circuit naming cross-checked against the public-domain [Book of the Later Han, Treatise 18](https://zh.wikisource.org/wiki/後漢書/卷118). Representative seat locations are a remaster layer, not data reverse-engineered from the original game. `tools/build-geography.py` rebuilds the geographic JSON from downloaded Natural Earth GeoJSON with Shapely. Supply a directory containing `land.geojson` and `rivers.geojson`: `python tools/build-geography.py /path/to/natural-earth`.
 
-`tools/build-audio.py` regenerates the original sound set with NumPy and ffmpeg. Generated artwork was made with the built-in image-generation tool; original and optimized assets are in `rtk2/assets/`.
+`tools/build-audio.py` regenerates the original sound set with NumPy and ffmpeg. Generated artwork was made with the built-in image-generation tool; original and optimized assets are in `assets/`.
 
 Battle reference: [Koei RTK2 NES instruction booklet](https://www.digitpress.com/library/manuals/nes/Romance%20of%20the%20Three%20Kingdoms%20II.pdf), pp. 40–54: deployment, six-direction movement/attacks, enemy taunts, personal challenges, commander flight, Wait, reinforcement, bribery and the 100-gold enemy inspection. The requested two-point starting mobility and terrain costs take precedence over the manual’s mobility defaults. Province terrain comes from the DOS source resources.
 
@@ -303,3 +312,19 @@ Self rule offers Full, Internal, Military and Personnel authority, supply destin
 Courier cargo is deducted at departure. Convoys may lose goods to bandits; intercepted outward messengers may lose their carried offer. Refused gifts return. Only an army commander can bribe, one opening duel is allowed, and flight through adjacent hostile units risks capture. Protect/Plunder and treasure recipients follow an attacking victory after captive decisions. General details show possessions.
 
 See `differences.md` for every comparison, intentional override, primary source and remaining original-game uncertainty. V13 passes 175 gameplay checks and 24 DOM/Canvas interface groups. These checks do not substitute for physical handset or DOS execution testing.
+
+## V14 original checks and daughters
+
+The supplied English **main.exe always supersedes the Python reconstruction** on conflicting rules. `docs/differences.md` separates confirmed branches from unrecovered formulas. **Liu Bei 189 starts with three generals: Liu Bei, Guan Yu and Zhang Fei. Investigation closed.**
+
+To inspect daughter status, use **Province Orders → View → Generals → your ruler**, or open your ruler's portrait. The Daughter section shows the one native marriage daughter (0/1), eligibility and marriage partner. **Diplom → Marriage** rejects a missing or already-married daughter. Original daughter ages and a daughter-birth event are not tracked; there is no numeric age threshold to inspect. Native scenario availability is imported, saved, and retired when affected rulers are replaced or die.
+
+A surviving charging attacker always occupies a defender's tile when the defender reaches zero soldiers. It cannot overrun that tile. A surviving defender may allow a War-dependent breakthrough to the next vacant passable tile. The relevant original branch was statically unpacked/disassembled; this is not an original DOS runtime test. To reproduce ten binary checks plus the Liu Bei chain check:
+
+```sh
+python3 tools/verify-original.py /path/to/original-files /path/to/output.json
+```
+
+The original files are not redistributed. Battlefield terrain uses the new `assets/terrain-v14.webp` atlas with world-aligned textures, six-bit terrain masks, soft terrain transitions and connected riverbanks. Northern ownership display caps affect provinces 1,2,3,4,15 without changing city positions or game connections. Both map switches use 108 × 40 pixel touch targets.
+
+From the `rtk2/` directory run `npm ci`, `npm test`, and `npm run test:ui`. Package the checked committed source with `python3 tools/package-source.py /path/outside/checkout/rtk2-remastered-source.zip`. The ZIP excludes shared libraries and contains all main files, modules, tests, tools, configuration, artwork/audio and documentation in the requested folders.

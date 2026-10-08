@@ -1,3 +1,4 @@
+import {retireRulerFamily} from './ruler-family.mjs';
 import {processArrivals,protectedService} from './campaign-fidelity.mjs';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Probabilities and loss amounts are remaster rules, not recovered DOS formulas.
@@ -44,7 +45,7 @@ export function disaster(game,p,type,report){
   p.officers=[];p.owner=slot??255;p.governor=slot===undefined?null:governor;
   for(const id of ids){const o=game.officer(id),follows=slot!==undefined&&(id===governor||o.loyalty<70);o.owner=follows?slot:255;if(follows){p.officers.push(id);o.loyalty=id===governor?100:60;}else p.unclaimed.push(id);}
   for(const r of game.s.rulers){if(ids.includes(r.advisor))r.advisor=null;if(slot!==undefined)r.alliances=r.alliances.filter(id=>id!==slot);}
-  if(slot!==undefined){const rebel={id:slot,founder:governor,leader:governor,name:general.name,zh:general.zh,home:p.id,advisor:null,trust:30,relations:Object.fromEntries(Array.from({length:16},(_,i)=>[i,i===oldOwner?100:60])),alliances:[]},index=game.s.rulers.findIndex(r=>r.id===slot);if(index<0)game.s.rulers.push(rebel);else game.s.rulers[index]=rebel;extra=` ${general.name} seized the province and became its ruler. Other generals followed the rebellion or became unaffiliated.`;}
+  if(slot!==undefined){const rebel={id:slot,founder:governor,leader:governor,name:general.name,zh:general.zh,home:p.id,advisor:null,hasDaughter:false,trust:30,relations:Object.fromEntries(Array.from({length:16},(_,i)=>[i,i===oldOwner?100:60])),alliances:[]},index=game.s.rulers.findIndex(r=>r.id===slot);if(index<0)game.s.rulers.push(rebel);else game.s.rulers[index]=rebel;extra=` ${general.name} seized the province and became its ruler. Other generals followed the rebellion or became unaffiliated.`;}
   else extra=` ${general.name} broke allegiance. The province is independent; its officers are unaffiliated.`;
  }
  const changes=[before.food-p.food?`${(before.food-p.food).toLocaleString()} rice lost`:null,before.gold-p.gold?`${before.gold-p.gold} gold lost`:null,before.population-p.population?`${(before.population-p.population).toLocaleString()} people lost`:null].filter(Boolean);
@@ -69,6 +70,7 @@ export const EARLY_DEATHS={'Sun Jian':[192,199],'Sun Ce':[200,205],'Zhou Yu':[21
 export function officerDeath(game,id,report,cause='after illness'){
  if([...(game.s.wars||[]),...(game.s.battle?[game.s.battle]:[])].some(b=>b.units.some(u=>u.id===id)))return false;
  const o=game.officer(id),p=game.s.provinces.find(p=>['officers','unclaimed','hidden'].some(k=>p[k].includes(id)));if(!p||o.dead)return false;const r=game.ruler(p.owner);
+ if(id===r?.leader)retireRulerFamily(game.s,r);
  if(id===r?.leader&&!succession(game,r,o,report)){r.extinct=true;r.advisor=null;add(report,'A realm ends',`${r.name} died without a successor.`,p.id,id,'month','death');}
  for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(n=>n!==id);o.owner=255;o.soldiers=0;o.dead=true;o.sick=false;o.injured=false;o.illMonths=0;
  if(r?.advisor===id)r.advisor=null;if(p.governor===id)p.governor=p.officers[0]??null;if(!p.officers.length)p.owner=255;

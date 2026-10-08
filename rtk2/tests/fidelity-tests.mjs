@@ -1,11 +1,11 @@
 import fs from 'node:fs';import assert from 'node:assert/strict';
-import {Game,createCampaign,validateSave} from './rtk2/strategy.mjs';
-import {FUTURE_OFFICERS} from './rtk2/future-officers.mjs';
-import {processArrivals,chooseSuccessor,provinceTerrain} from './rtk2/campaign-fidelity.mjs';
-import {officerDeath,runMonthlyEvents} from './rtk2/monthly-events.mjs';
-import {aiBattle,visibleUnit,reachable} from './rtk2/battle.mjs';
-import {provinceLabel} from './rtk2/geography.mjs';
-const scenarios=JSON.parse(fs.readFileSync('rtk2/scenarios.json')),terrains=JSON.parse(fs.readFileSync('rtk2/province-terrain.json'));
+import {Game,createCampaign,validateSave} from '../mjs/strategy.mjs';
+import {FUTURE_OFFICERS} from '../mjs/future-officers.mjs';
+import {processArrivals,chooseSuccessor,provinceTerrain} from '../mjs/campaign-fidelity.mjs';
+import {officerDeath,runMonthlyEvents} from '../mjs/monthly-events.mjs';
+import {aiBattle,visibleUnit,reachable} from '../mjs/battle.mjs';
+import {provinceLabel} from '../mjs/geography.mjs';
+const scenarios=JSON.parse(fs.readFileSync('config/scenarios.json')),terrains=JSON.parse(fs.readFileSync('config/province-terrain.json'));
 let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
 const fresh=(n=0)=>{const g=new Game(createCampaign(scenarios[n],[0]),{},structuredClone(terrains));g.s.monthlyReview=null;g.random=()=>0;return g;};
 const report=()=>({events:[],details:[]});const valid=g=>validateSave(structuredClone(g.s),scenarios,g.terrains);

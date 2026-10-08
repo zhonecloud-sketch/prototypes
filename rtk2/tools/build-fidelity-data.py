@@ -6,10 +6,12 @@ import argparse,json,struct
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('scenario_dat',type=Path);p.add_argument('taiki_dat',type=Path);p.add_argument('chinese_scenario_dat',type=Path);p.add_argument('chinese_taiki_dat',type=Path)
-a=p.parse_args();root=Path(__file__).resolve().parents[1];app=root/('dist' if (root/'dist').exists() else 'rtk2')
-ss=json.loads((app/'scenarios.json').read_text());sd=a.scenario_dat.read_bytes();cs=a.chinese_scenario_dat.read_bytes();td=a.taiki_dat.read_bytes();ct=a.chinese_taiki_dat.read_bytes()
-roster=json.loads((app/'officer-roster.mjs').read_text().split('export const OFFICER_ROSTER=')[1].split(';')[0]);names={};byname={o['name']:o for o in roster}
+a=p.parse_args();root=Path(__file__).resolve().parents[1];app=root
+ss=json.loads((app/'config'/'scenarios.json').read_text());sd=a.scenario_dat.read_bytes();cs=a.chinese_scenario_dat.read_bytes();td=a.taiki_dat.read_bytes();ct=a.chinese_taiki_dat.read_bytes()
+roster=json.loads((app/'mjs'/'officer-roster.mjs').read_text().split('export const OFFICER_ROSTER=')[1].split(';')[0]);names={};byname={o['name']:o for o in roster}
 for n,s in enumerate(ss):
+ for r in s['rulers']:
+  at=n*0x33af+0x2b34-0x42+r['id']*41;r['hasDaughter']=not bool(sd[at+7]&2);r['nativeFamilyFlags']=sd[at+7]
  for o in s['officers']:
   off=n*0x33af+0x16+o['id']*43;b=sd[off:off+43];ch=cs[off:off+43]
   if o.get('pendingArrival'):continue
@@ -28,6 +30,6 @@ for n,count in enumerate(counts):
   assert ident is not None,(n,i,raw,c[25]);assert rec[2]<41
   rows.append(dict(record=i,appearanceYear=rec[0]+1,arrivalProvince=rec[2]+1,sourceSlot=rec[1],name=ident['name'],zh=ident['zh'],rosterId=ident['id'],birth=ident['birth'],int=b[4],war=b[5],charm=b[6],virtue=b[7],benevolence=b[8],ambition=b[9],loyalty=min(100,b[11]),compatibility=b[15],blood=struct.unpack_from('<H',b,16)[0],portrait=struct.unpack_from('<H',b,26)[0]-1))
  out.append(rows)
-(app/'scenarios.json').write_text(json.dumps(ss,ensure_ascii=False,separators=(',',':')))
-(app/'future-officers.mjs').write_text('// Complete non-sentinel Taiki records. Source slot is retained as evidence, not reused at runtime.\nexport const FUTURE_OFFICERS='+json.dumps(out,ensure_ascii=False,separators=(',',':'))+';\n')
+(app/'config'/'scenarios.json').write_text(json.dumps(ss,ensure_ascii=False,separators=(',',':')))
+(app/'mjs'/'future-officers.mjs').write_text('// Complete non-sentinel Taiki records. Source slot is retained as evidence, not reused at runtime.\nexport const FUTURE_OFFICERS='+json.dumps(out,ensure_ascii=False,separators=(',',':'))+';\n')
 print('Future records:',[len(x) for x in out],'total',sum(map(len,out)))

@@ -2,7 +2,7 @@
 
 The original four atlases were generated with the built-in image-generation tool for this project. No original DOS graphic was used.
 
-Original-generation assets: `rtk2/assets/portraits.webp`, `events.webp`, `terrain.webp`, `army.webp`. The terrain and single-soldier army sheets are superseded by v9 at runtime. The PNG originals are retained in the same folder. WebP copies keep the original dimensions and alpha; they are encoding optimizations.
+Original-generation assets: `assets/portraits.webp`, `events.webp`, `terrain.webp`, `army.webp`. The terrain and single-soldier army sheets are superseded by v9 at runtime. The PNG originals are retained in the same folder. WebP copies keep the original dimensions and alpha; they are encoding optimizations.
 
 Portrait atlas: row-major Cao Cao, Liu Bei, Sun Quan, Guan Yu, Zhang Fei, Zhao Yun, Zhuge Liang, Zhou Yu, Sima Yi, Lu Bu, Dong Zhuo, Yuan Shao, Sun Jian, Ma Chao, Huang Zhong, reserved officer. These are artistic interpretations. This original portrait sheet is now retained for launch/fallback graphics. Every named campaign officer uses the expanded roster sheets described below.
 
@@ -35,21 +35,21 @@ Atlas cells are drawn into Canvas 2D with a single uniform scale and centred let
 
 ## Battle weather atlas
 
-The former `rtk2/assets/weather.png` is a 1254 × 1254 image generated with the built-in image generator. It contains four square cells: sun (upper left), clouds (upper right), storm/lightning (lower left), rain (lower right). The full atlas is retained without resizing or cropping on disk; Canvas 2D selects a cell and fits it proportionally between the commanders.
+The former `assets/weather.png` is a 1254 × 1254 image generated with the built-in image generator. It contains four square cells: sun (upper left), clouds (upper right), storm/lightning (lower left), rain (lower right). The full atlas is retained without resizing or cropping on disk; Canvas 2D selects a cell and fits it proportionally between the commanders.
 
 Generation brief: one precise 2×2 atlas of restrained painted weather symbols on opaque dark jade (#17251e); gold sun, pale grey clouds, dark storm clouds and lightning, muted blue rain. Centred symbols kept inside equal cells, readable at 36–48 pixels, with no text, borders, interface, people, logos, scenery or watermark. Built-in generation, opaque background, one output and no retries.
 
 ## Expanded set
 
-Twenty-two square 4×4 officer sheets provide 352 distinct portrait cells. Their runtime paths are `rtk2/assets/officers0.webp` through `officers21.webp`. `officer-roster.mjs` identifies the canonical officers; `portraits.mjs` gives the bijection between identities and generated cells, avoiding slot-based identity changes between scenarios. These are artistic interpretations, not historical likenesses. No cell is reused for two distinct officers; unnamed unused slots retain the reserved fallback.
+Twenty-two square 4×4 officer sheets provide 352 distinct portrait cells. Their runtime paths are `assets/officers0.webp` through `officers21.webp`. `officer-roster.mjs` identifies the canonical officers; `portraits.mjs` gives the bijection between identities and generated cells, avoiding slot-based identity changes between scenarios. These are artistic interpretations, not historical likenesses. No cell is reused for two distinct officers; unnamed unused slots retain the reserved fallback.
 
 Three 2×2 scene sheets contain twelve complete landscape cells: `disasters.webp` (locusts/uprising/typhoon/flood), `omens.webp` (plague/comet/troop deployment/occupation) and `stories.webp` (Xun Yu’s plan/officer death/Diaochan’s plan/Hua Tuo’s medical book). `weather.webp` is a 2×2 square sheet: Clear/Few clouds/Cloudy/Rain. The superseded weather PNG is retained for reference and is not loaded by the app.
 
-All 26 expanded sheets were generated once using the built-in image-generation tool, without variant regeneration. WebP encoding preserves the full sheet dimensions; runtime Canvas cell selection uses uniform scaling and centred letterboxing. Full production prompts, generation-order names and the returned image dimensions are recorded in `rtk2/assets/expanded-art-prompts.json` and `expanded-art-manifest.json`. The face sheets vary age, facial shape, eyebrows, eyes, facial hair and period headwear; no modern likenesses, borders, captions or interface are requested. Event scenes use naturalistic late Han painted realism with no modern plague equipment or graphic harm. Weather symbols use restrained gold/grey/blue on dark jade, with no text or scenery.
+All 26 expanded sheets were generated once using the built-in image-generation tool, without variant regeneration. WebP encoding preserves the full sheet dimensions; runtime Canvas cell selection uses uniform scaling and centred letterboxing. Full production prompts, generation-order names and the returned image dimensions are recorded in `docs/artwork/expanded-art-prompts.json` and `expanded-art-manifest.json`. The face sheets vary age, facial shape, eyebrows, eyes, facial hair and period headwear; no modern likenesses, borders, captions or interface are requested. Event scenes use naturalistic late Han painted realism with no modern plague equipment or graphic harm. Weather symbols use restrained gold/grey/blue on dark jade, with no text or scenery.
 
 ## V9 graphics
 
-Five new artworks were generated in one parallel batch, one request each, with no variants or retries. The returned PNGs were inspected before integration. Full production prompts and native dimensions are in `rtk2/assets/graphics-v9-prompts.json` and `graphics-v9-manifest.json`; the manifest describes the generated originals. Runtime copies are WebP encoded at quality 85 without resizing or creative postprocessing, retaining alpha.
+Five new artworks were generated in one parallel batch, one request each, with no variants or retries. The returned PNGs were inspected before integration. Full production prompts and native dimensions are in `docs/artwork/graphics-v9-prompts.json` and `graphics-v9-manifest.json`; the manifest describes the generated originals. Runtime copies are WebP encoded at quality 85 without resizing or creative postprocessing, retaining alpha.
 
 | Runtime asset | Native dimensions | Cells and use |
 | --- | --- | --- |
@@ -63,6 +63,14 @@ The returned atlas cells are 443.5 × 443.5 pixels; source rectangles use these 
 
 ## V11 courier and terrain masks
 
-`rtk2/assets/courier.webp` is a new image-generated RGBA mounted Han courier atlas, 2172 × 724 pixels. Four 543 × 724 cells contain complete right-facing gallop poses of the horse, rider, scroll, cape and tack. The inspected original was encoded to WebP without resizing; uniform contain scaling is used for the journey scene, and the map sprite preserves the 543:724 frame ratio. No unrelated artwork was regenerated.
+`assets/courier.webp` is a new image-generated RGBA mounted Han courier atlas, 2172 × 724 pixels. Four 543 × 724 cells contain complete right-facing gallop poses of the horse, rider, scroll, cape and tack. The inspected original was encoded to WebP without resizing; uniform contain scaling is used for the journey scene, and the map sprite preserves the 543:724 frame ratio. No unrelated artwork was regenerated.
 
 Terrain variants are drawn from the existing terrain atlas with a six-bit neighbor mask and cached by terrain/mask pair. The bits use the same six directions as tactical movement. Water edges against other terrain gain a shoreline; matching neighbors suppress those contours. This is code-based terrain composition rather than generated map geometry. City stamps use exact projection anchors. Numbered seals sit above them, with thin leaders when mobile collision avoidance requires an offset; clipped Voronoi colour regions represent ownership and can be hidden. These display regions do not change the original 93 province connections.
+
+## V14 battlefield terrain overhaul
+
+Runtime asset: `assets/terrain-v14.webp`, 2048 × 1024, eight equal square cells. Generated with the built-in image-generation tool, then uniformly resized from its 2:1 original and encoded as WebP for the game. This replaces `terrain-v9.webp` at runtime. Older atlases remain archival assets.
+
+Prompt: Use case: historical-scene. A precise 4-column × 2-row equal-square texture atlas, edge-filling, no gutters, hex outlines, writing or UI. Orthographic top-down painterly historical cartography, muted natural colours, coherent soft daylight, crisp organic small details. Row 1: olive grassland with subtle paths, irregular dark green woodland canopy, ochre rolling hills, slate rocky mountains. Row 2: uniform deep teal water, small centred Han stone fort with plenty of surrounding earth, compact walled Han capital with rooftops and surrounding grass, dry sandy grassland. No units, floating platforms, vignette padding or watermark.
+
+`mjs/terrain-art.mjs` samples textures in battlefield coordinates, mirrors texture repeats to eliminate seams, and blends neighbouring terrain from the six-bit mask. Connected water edges have no internal bank line; exposed banks follow the neighbouring land. Source and displayed raster cells retain their aspect ratio. Functional grid clipping, adjacency masks and transition masks are generated from terrain data, rather than decorative vector artwork.

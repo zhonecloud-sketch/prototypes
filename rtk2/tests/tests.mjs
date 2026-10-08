@@ -1,5 +1,5 @@
-import fs from 'node:fs';import assert from 'node:assert/strict';import {Game,createCampaign,validateSave} from './rtk2/engine.mjs';
-const scenarios=JSON.parse(fs.readFileSync(new URL('./rtk2/scenarios.json',import.meta.url)));let checks=0;const test=(name,fn)=>{fn();checks++;console.log('PASS',name);};
+import fs from 'node:fs';import assert from 'node:assert/strict';import {Game,createCampaign,validateSave} from '../mjs/engine.mjs';
+const scenarios=JSON.parse(fs.readFileSync(new URL('../config/scenarios.json',import.meta.url)));let checks=0;const test=(name,fn)=>{fn();checks++;console.log('PASS',name);};
 const fresh=()=>new Game(createCampaign(scenarios[0],0,2));
 test('Every playable ruler in all six scenarios can save and load',()=>{for(const s of scenarios)for(const r of s.rulers){if(s.provinces.some(p=>p.owner===r.id))validateSave(createCampaign(s,r.id),scenarios);}});
 test('Province adjacency is symmetric and has no invalid destinations',()=>{for(const p of scenarios[0].provinces)for(const n of p.neighbors){assert(n>=1&&n<=41);assert(scenarios[0].provinces[n-1].neighbors.includes(p.id));}});

@@ -1,6 +1,6 @@
 import {pointFor,project,insideLand} from './geography.mjs';
 export async function loadThree(){
- const paths=['../lib/three.module.js','https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js','./three.module.js'];let error;
+ const paths=['../../lib/three.module.js','https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js','./three.module.js'];let error;
  for(const path of paths){try{const T=await import(path);if(!T.WebGLRenderer||!T.PerspectiveCamera)throw Error('Invalid THREE module');return {T,source:path};}catch(e){error=e;}}
  throw Error('THREE.js could not load. Check the local library files or your internet connection. '+error.message);
 }

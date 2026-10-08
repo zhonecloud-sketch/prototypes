@@ -1,9 +1,9 @@
 import fs from 'node:fs';import assert from 'node:assert/strict';
-import {Game,createCampaign,validateSave} from './rtk2/strategy.mjs';
-import {aiBattle,retreatOptions,WEATHER,setWeather,fireChance} from './rtk2/battle.mjs';
-import {runMonthlyEvents,disaster,triggerEvent,incomeFactor,officerDeath} from './rtk2/monthly-events.mjs';
-import {OFFICER_ROSTER} from './rtk2/officer-roster.mjs';import {portraitIndex,portraitFrame} from './rtk2/portraits.mjs';import {eventFrame,EVENT_ART} from './rtk2/events.mjs';
-const scenarios=JSON.parse(fs.readFileSync('rtk2/scenarios.json')),terrains=JSON.parse(fs.readFileSync('rtk2/province-terrain.json'));
+import {Game,createCampaign,validateSave} from '../mjs/strategy.mjs';
+import {aiBattle,retreatOptions,WEATHER,setWeather,fireChance} from '../mjs/battle.mjs';
+import {runMonthlyEvents,disaster,triggerEvent,incomeFactor,officerDeath} from '../mjs/monthly-events.mjs';
+import {OFFICER_ROSTER} from '../mjs/officer-roster.mjs';import {portraitIndex,portraitFrame} from '../mjs/portraits.mjs';import {eventFrame,EVENT_ART} from '../mjs/events.mjs';
+const scenarios=JSON.parse(fs.readFileSync('config/scenarios.json')),terrains=JSON.parse(fs.readFileSync('config/province-terrain.json'));
 let checks=0;const test=(label,fn)=>{fn();checks++;console.log('PASS',label);},report=()=>({events:[],details:[]}),fresh=(i=0)=>{const s=createCampaign(scenarios[i],[0]);s.seed=12345;const g=new Game(s,{},structuredClone(terrains));g.random=()=>.99;return g;};
 function arena(){const g=fresh();g.invade({province:9,target:8,officers:[0,34],food:20000});while(g.s.battle.phase==='deployment')aiBattle(g);const b=g.s.battle,u=b.units.find(x=>x.id===0),f=b.units.find(x=>x.id===34),v=b.units.find(x=>x.side==='defend'&&x.id!==b.leaders.defend),king=b.units.find(x=>x.id===b.leaders.defend);b.units=[u,f,v,king];b.terrain=Array(156).fill(0);b.terrain[155]=6;g.terrains[b.target-1]=[...b.terrain];b.palace={q:12,r:11};b.food={attack:1000000,defend:1000000};setWeather(b,'sunny');for(const [i,x] of b.units.entries())Object.assign(x,{q:6+i%2,r:5+Math.floor(i/2),placed:true,mobility:10,ordered:false,orderDay:0,morale:100,soldiers:5000,startSoldiers:5000,int:80});return {g,b,u,f,v,king};}
 function neutral(g,b){const p=g.province(g.province(b.target).neighbors.find(id=>id!==b.source));for(const id of p.officers){g.officer(id).owner=255;p.unclaimed.push(id);}p.officers=[];p.owner=255;p.governor=null;g.normalize();return p;}

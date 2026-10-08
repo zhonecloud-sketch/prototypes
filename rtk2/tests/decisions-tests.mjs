@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {Game,createCampaign,validateSave,activeRulers} from './rtk2/strategy.mjs';
-import {terrainMask,terrainVariant,ownershipCells,layoutCityBadges} from './rtk2/terrain-mask.mjs';
-import {pointFor} from './rtk2/geography.mjs';
-import {realmRoute} from './rtk2/campaign-decisions.mjs';
-import {orderInsight,relevantAttributes} from './rtk2/game-ui.mjs';
-const scenarios=JSON.parse(fs.readFileSync(new URL('./rtk2/scenarios.json',import.meta.url))),terrain=JSON.parse(fs.readFileSync(new URL('./rtk2/province-terrain.json',import.meta.url)));
+import {Game,createCampaign,validateSave,activeRulers} from '../mjs/strategy.mjs';
+import {terrainMask,terrainVariant,ownershipCells,ownershipNorth,layoutCityBadges} from '../mjs/terrain-mask.mjs';
+import {pointFor} from '../mjs/geography.mjs';
+import {realmRoute} from '../mjs/campaign-decisions.mjs';
+import {orderInsight,relevantAttributes} from '../mjs/game-ui.mjs';
+const scenarios=JSON.parse(fs.readFileSync(new URL('../config/scenarios.json',import.meta.url))),terrain=JSON.parse(fs.readFileSync(new URL('../config/province-terrain.json',import.meta.url)));
 const fresh=()=>{const g=new Game(createCampaign(scenarios[0],[0]),{},structuredClone(terrain));g.s.monthlyReview=null;return g;};
 const check=g=>assert(validateSave(g.s,scenarios,terrain));
 let checks=0;const test=(name,fn)=>{fn();checks++;console.log('PASS',name);};
@@ -58,4 +58,5 @@ test('Numbered city seals remain distinct in dense mobile China views',()=>{
 test('Relevant abilities and local intelligent-advisor forecasts do not consume RNG',()=>{
  const g=fresh();g.ruler().advisor=33;g.officer(33).int=95;const seed=g.s.seed;assert(orderInsight(g,'Cultivate',34).includes('Expected improvement'));assert(orderInsight(g,'Recruit',34,{target:g.province(9).unclaimed[0]??40}).includes('chance'));assert.equal(g.s.seed,seed);assert(relevantAttributes('Train').includes('war'));assert(orderInsight(g,'Spy · Forged letter',34,{target:40}).includes('chance'));assert.equal(g.s.seed,seed);g.ruler().advisor=null;assert.equal(orderInsight(g,'Search',34),'');
 });
+test('Northern ownership caps lower provinces 1,2,3,4,15 without moving cities or changing other sectors',()=>{const points=scenarios[0].provinces.map(p=>({...pointFor(p),id:p.id})),cells=ownershipCells(points),plain=ownershipCells(points.map(({x,z})=>({x,z})));for(let i=0;i<41;i++){if([1,2,3,4,15].includes(i+1)){assert(cells[i].length>=3);assert(cells[i].every(v=>v.z>=ownershipNorth(points[i])-1e-8));assert(cells[i].some(v=>Math.abs(v.z-ownershipNorth(points[i]))<1e-8));}else assert.deepEqual(cells[i],plain[i]);}});
 console.log(checks+' campaign decision, travel and terrain checks passed.');

@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';
-import {Game,createCampaign,validateSave} from './rtk2/strategy.mjs';
-import {createCustomRuler,configureDelegation,runDelegated,surrenderRealm,answerAlly,queueSpoils,ITEMS,conditionalHistory,validateCompletion} from './rtk2/campaign-completion.mjs';
-import {updateVisitors,covertUpkeep} from './rtk2/province-rules.mjs';
-import {adviceTopic} from './rtk2/advice-topics.mjs';import {aiPolitics} from './rtk2/ai-politics.mjs';import {aiBattle,living,neighbors} from './rtk2/battle.mjs';
-const scenarios=JSON.parse(fs.readFileSync('rtk2/scenarios.json')),terrains=JSON.parse(fs.readFileSync('rtk2/province-terrain.json'));let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
+import {Game,createCampaign,validateSave} from '../mjs/strategy.mjs';
+import {createCustomRuler,configureDelegation,runDelegated,surrenderRealm,answerAlly,queueSpoils,ITEMS,conditionalHistory,validateCompletion} from '../mjs/campaign-completion.mjs';
+import {updateVisitors,covertUpkeep} from '../mjs/province-rules.mjs';
+import {adviceTopic} from '../mjs/advice-topics.mjs';import {aiPolitics} from '../mjs/ai-politics.mjs';import {aiBattle,living,neighbors} from '../mjs/battle.mjs';
+const scenarios=JSON.parse(fs.readFileSync('config/scenarios.json')),terrains=JSON.parse(fs.readFileSync('config/province-terrain.json'));let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
 const fresh=()=>{const g=new Game(createCampaign(scenarios[0],[0]),{},structuredClone(terrains));g.s.monthlyReview=null;g.random=()=>.5;return g;};const valid=g=>validateSave(structuredClone(g.s),scenarios,terrains);
 const atomic=(g,fn)=>{const state=JSON.stringify(g.s);assert.throws(fn);assert.equal(JSON.stringify(g.s),state);};
 const travel=g=>{let n=0;while(g.s.journey){if(g.s.journey.interception)g.interceptJourney('free');else g.advanceJourney();assert(++n<200);}};

@@ -1,3 +1,4 @@
+import {retireRulerFamily} from './ruler-family.mjs';
 import {clamp} from './engine.mjs';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
@@ -8,7 +9,7 @@ export function takeCaptive(g,id,owner,province,formerOwner,kind='battle',role='
  if(!g.s.captiveDecisions.some(c=>c.officer===id))g.s.captiveDecisions.push({officer:id,owner,province,formerOwner,kind,role});
 }
 function replaceRuler(g,oldOwner,id){const r=g.ruler(oldOwner);if(!r||r.leader!==id)return;const candidates=g.s.provinces.filter(p=>p.owner===oldOwner).flatMap(p=>p.officers).filter(x=>x!==id&&!g.officer(x).dead);
- if(candidates.length){candidates.sort((a,b)=>g.officer(b).charm+g.officer(b).int-g.officer(a).charm-g.officer(a).int);if(g.officer(id).dead){r.succession??=[];if(!r.succession.includes(id))r.succession.push(id);}else{r.displacedLeaders??=[];if(!r.displacedLeaders.includes(id))r.displacedLeaders.push(id);g.officer(id).formerRuler=oldOwner;g.officer(id).formerRulers??=[];if(!g.officer(id).formerRulers.includes(oldOwner))g.officer(id).formerRulers.push(oldOwner);}r.leader=candidates[0];r.name=g.officer(r.leader).name;r.zh=g.officer(r.leader).zh;r.home=g.s.provinces.find(p=>p.officers.includes(r.leader)).id;g.province(r.home).governor=r.leader;}
+ retireRulerFamily(g.s,r);if(candidates.length){candidates.sort((a,b)=>g.officer(b).charm+g.officer(b).int-g.officer(a).charm-g.officer(a).int);if(g.officer(id).dead){r.succession??=[];if(!r.succession.includes(id))r.succession.push(id);}else{r.displacedLeaders??=[];if(!r.displacedLeaders.includes(id))r.displacedLeaders.push(id);g.officer(id).formerRuler=oldOwner;g.officer(id).formerRulers??=[];if(!g.officer(id).formerRulers.includes(oldOwner))g.officer(id).formerRulers.push(oldOwner);}r.leader=candidates[0];r.name=g.officer(r.leader).name;r.zh=g.officer(r.leader).zh;r.home=g.s.provinces.find(p=>p.officers.includes(r.leader)).id;g.province(r.home).governor=r.leader;}
 }
 export function decideCaptive(g,id,action){
  const c=g.s.captiveDecisions?.find(c=>c.officer===Number(id));if(!c)throw Error('This captive has already been decided.');

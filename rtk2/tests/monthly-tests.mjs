@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import {Game,createCampaign,validateSave} from './rtk2/strategy.mjs';
-import {runMonthlyEvents,disaster} from './rtk2/monthly-events.mjs';
-const scenarios=JSON.parse(fs.readFileSync(new URL('./rtk2/scenarios.json',import.meta.url)));
-const terrains=JSON.parse(fs.readFileSync(new URL('./rtk2/province-terrain.json',import.meta.url)));
+import {Game,createCampaign,validateSave} from '../mjs/strategy.mjs';
+import {runMonthlyEvents,disaster} from '../mjs/monthly-events.mjs';
+const scenarios=JSON.parse(fs.readFileSync(new URL('../config/scenarios.json',import.meta.url)));
+const terrains=JSON.parse(fs.readFileSync(new URL('../config/province-terrain.json',import.meta.url)));
 const fresh=()=>new Game(createCampaign(scenarios[0],[0]),{},terrains);
 const report=()=>({events:[],details:[],gold:0,food:0});
 let checks=0;const test=(name,f)=>{f();checks++;console.log('PASS',name);};

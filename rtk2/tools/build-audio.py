@@ -1,7 +1,7 @@
 """Original synthesized score and effects. Requires NumPy and ffmpeg."""
 from pathlib import Path
 import numpy as np,wave,subprocess
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/('dist' if (ROOT/'dist').exists() else 'rtk2')/'assets';OUT.mkdir(exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'assets';OUT.mkdir(exist_ok=True)
 SR=22050;rng=np.random.default_rng(204)
 def write(name,data):
  data=np.asarray(data);data=data/max(1,np.max(np.abs(data))/0.88);data=np.column_stack((data,np.roll(data,127)*.98)) if data.ndim==1 else data
