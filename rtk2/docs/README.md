@@ -2,7 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v17
+## Latest update — v18
+
+War now requires governor election before the ruler marches, with candidate-specific loyalty/risk advice. The China map highlights original connections and lists numbered routes, and the launch menu moves to the quiet left side. Rival Tigers is verified against the supplied executable: two different messengers. See the V18 section below.
+
+## V17 battlefield update
 
 Battlefield terrain now uses **41 separate full-map paintings** matching the original province grids. The former autotiling renderer is removed. The original terrain data still decides movement, deployment, mountains, water, forts and palace occupation. Army formations, tactical highlights, fire and weather remain above the painting.
 
@@ -359,3 +363,11 @@ From the `rtk2/` directory run `npm ci`, `npm test`, and `npm run test:ui`. Pack
 ## V17 final validation
 
 The complete release passes 203 gameplay/asset checks (`npm test`), 30 emulated DOM/native-Canvas interface groups (`npm run test:ui`), and 12 static original-binary checks. Actual Charge-button interaction verifies occupation of a zero-soldier defender’s hex and its on-field label; victory artwork renders before captive decisions. All 41 unique paintings were inspected together and the integrated battlefield/victory images inspected. Painterly geography remains approximate; the original terrain grids and exact fort/palace markers govern play. Physical handset layout, audible playback and original DOS execution remain unverified.
+
+## V18
+
+War requires an explicit governor when the governor/ruler marches. Candidate cards and local advisor assessments mention loyalty, defection/rebellion and military/economic risks. The election survives battle saves. China map routes and highlighted cities use the original province graph; separated ownership areas do not imply extra connections. Province 9 connects to 6, 7, 8, 10, 16 and 17, and not 18. The launch title/menu now occupy the quiet left side so the armies and capital remain visible. Rival Tigers correctly uses two different messengers; other courier missions use one. See differences.md for static main.exe evidence, validation and remaining partial-success fidelity limits.
+
+## V18 final validation
+
+The complete release passes **207 gameplay/data/artwork checks**, **31 emulated DOM/native-Canvas interface groups**, and **17 supplied-binary checks**. Governor election rejects missing/departing candidates atomically, preserves the chosen governor through battle save/load, and restores ruler governance after return. The actual War form leaves the election empty and refuses March until selection; candidate advice updates without spending RNG. Map route buttons/highlights share the native graph, including Province 9’s six connections and its single available Move destination in scenario 189. Two-messenger Rival Tigers saves enforce distinct assignments and correct destinations. Existing battle, courier, slider, victory and 41-painted-map checks still pass. Native Canvas China/battlefield art was inspected. Browser/physical handset layout, audible playback and DOS runtime execution remain unverified.

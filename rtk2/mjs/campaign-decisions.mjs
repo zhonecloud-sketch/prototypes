@@ -1,5 +1,5 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=17';
-import {clamp} from './engine.mjs?v=17';
+import {retireRulerFamily} from './ruler-family.mjs?v=18';
+import {clamp} from './engine.mjs?v=18';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
@@ -81,6 +81,7 @@ export function validateDecisions(s){
  if(!Array.isArray(s.roaming)||s.roaming.length>16||new Set(s.roaming.map(p=>p.owner)).size!==s.roaming.length)throw Error('Invalid roaming parties.');
  for(const p of s.roaming){if(!Number.isInteger(p.gold)||p.gold<0||p.gold>30000||!Number.isInteger(p.food)||p.food<0||p.food>3000000)throw Error('Invalid exile supplies.');if(!owners.has(p.owner)||!s.provinces[p.province-1]||!Array.isArray(p.officers)||!p.officers.includes(s.rulers.find(r=>r.id===p.owner).leader)||p.officers.some(id=>!s.officers[id]||s.officers[id].dead||ids.has(id)))throw Error('Invalid roaming party.');for(const id of p.officers){if(s.provinces.some(q=>['officers','unclaimed','hidden'].some(k=>q[k].includes(id))))throw Error('Roaming officer duplicated.');ids.add(id);}}
  if(s.journey){const j=s.journey;if(!owners.has(j.owner)||!['diplomaticMission','spyMission','transport','recruitMethod'].includes(j.type)||!Array.isArray(j.legs)||!j.legs.length||j.legs.length>2||!Number.isInteger(j.leg)||!j.legs[j.leg]||!['outbound','return'].includes(j.phase)||Number(j.args?.province)!==j.source||!s.provinces[j.source-1])throw Error('Invalid messenger journey.');
+  if(j.legs.length!==(j.type==='spyMission'&&j.args.mode==='rival'?2:1)||new Set(j.legs.map(leg=>leg.officer)).size!==j.legs.length||j.legs[0].officer!==Number(j.args.officer)||j.legs.length===2&&j.legs[1].officer!==Number(j.args.second))throw Error('Invalid messenger assignments.');
   for(const leg of j.legs){if(!s.officers[leg.officer]||!Array.isArray(leg.route)||!leg.route.length||leg.route.length>41||!Number.isInteger(leg.index)||leg.index<0||leg.index>=leg.route.length)throw Error('Invalid messenger route.');for(let i=0;i<leg.route.length;i++){const p=s.provinces[leg.route[i]-1];if(!p||i&&!s.provinces[leg.route[i-1]-1].neighbors.includes(p.id))throw Error('Invalid messenger route edge.');}}
   if(j.cargo&&(['gold','food','horses'].some(k=>!Number.isInteger(j.cargo[k])||j.cargo[k]<0||j.cargo[k]>(k==='food'?3000000:k==='gold'?30000:100))))throw Error('Invalid messenger cargo.');
   if(j.interception&&(!owners.has(j.interception.owner)||j.interception.owner===j.owner||s.provinces[j.interception.province-1]?.owner!==j.interception.owner||j.interception.province!==j.legs[j.leg].route[j.legs[j.leg].index]||j.interception.officer!==j.legs[j.leg].officer))throw Error('Invalid interception.');

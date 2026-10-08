@@ -1,8 +1,8 @@
-import {orderUnavailable} from './order-availability.mjs?v=17';
-import {adviceTopic} from './advice-topics.mjs?v=17';
-import {orderInsight,generalStats} from './game-ui.mjs?v=17';
-import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=17';
-import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=17';
+import {orderUnavailable} from './order-availability.mjs?v=18';
+import {adviceTopic} from './advice-topics.mjs?v=18';
+import {orderInsight,generalStats} from './game-ui.mjs?v=18';
+import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=18';
+import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=18';
 export function createProvinceCommands(c){
  const $=id=>document.getElementById(id),g=()=>c.getGame(),p=()=>c.getSelected(),me=()=>g().ruler(),e=c.esc,n=c.num;
  let allocation=null;
@@ -65,7 +65,7 @@ export function createProvinceCommands(c){
  function diplomacy(){const items=['alliance','joint','marriage','gift','cancel','threat'].map((id,i)=>[id,['Alliance','Joint invasion',g().s.familyMode==='expanded'?'Royal marriage':'Marriage','Gift','Cancel alliance','Threaten'][i],()=>diplomatic(id),['alliance','joint','marriage','cancel','threat'].includes(id)&&!rulerPresent(g(),p())]);if(g().s.familyMode==='expanded')items.push(['court','Court marriage',()=>{try{g().ready(p(),me().leader);if(me().family?.spouse)throw Error('Your ruler is already married.');flow('Court marriage',[yes('Marry a court consort? Costs 100 gold and the ruler’s monthly action.')],d=>{if(Number(d.confirm))perform('courtMarriage',{});else c.close();});}catch(error){info('Court marriage',error.message);}},!rulerPresent(g(),p())]);items.push(['family','Royal Family',()=>c.showFamily(me().id)]);menu('Diplom',items);}
  function spy(mode){const steps=[];
   if(mode==='infiltrate'){steps.push(select('target','Infiltrate which province?',()=>g().s.provinces.filter(q=>![255,me().id].includes(q.owner)).map(q=>[q.id,'#'+q.id])),select('officer','Send whom? (Loyalty 100)',()=>officers(readyOfficers(g(),p()).filter(o=>o.id!==me().leader&&o.loyalty===100).map(o=>o.id))));}
-  else if(mode==='rival')steps.push(select('target','First rival ruler',()=>rulers()),select('other','Second rival ruler',d=>rulers(active().filter(r=>r.id!==Number(d.target)))),select('officer','First messenger',ready),select('second','Second messenger',d=>ready().filter(([id])=>id!==Number(d.officer))));
+  else if(mode==='rival')steps.push(select('target','First rival ruler',()=>rulers()),select('other','Second rival ruler',d=>rulers(active().filter(r=>r.id!==Number(d.target)))),select('officer','Messenger to the first ruler',ready),select('second','Different messenger to the second ruler',d=>ready().filter(([id])=>id!==Number(d.officer))));
   else steps.push(select('target',mode==='wolf'?'Incite which governor?':'Target which general?',()=>enemyOfficers(mode==='wolf')),select('officer','Send whom as messenger?',ready));
   flow('Spy · '+({infiltrate:'Infiltrate',rival:'Rival tigers',wolf:'Tiger and wolf',betrayal:'Betrayal',forged:'Forged letter'})[mode],steps,d=>perform('spyMission',{...d,mode}));
  }

@@ -1,11 +1,12 @@
-import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=17';
-import {recruitMethodChance} from './fidelity-orders.mjs?v=17';
-import {portraitFrame} from './portraits.mjs?v=17';
-import {missionChance,spyChance} from './province-rules.mjs?v=17';
-import {hireCapacity} from './province-rules.mjs?v=17';
-import {warProvisions} from './war-provisions.mjs?v=17';
+import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=18';
+import {recruitMethodChance} from './fidelity-orders.mjs?v=18';
+import {portraitFrame} from './portraits.mjs?v=18';
+import {missionChance,spyChance} from './province-rules.mjs?v=18';
+import {hireCapacity} from './province-rules.mjs?v=18';
+import {warProvisions} from './war-provisions.mjs?v=18';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function relevantAttributes(purpose=''){
+ if(/governor/i.test(purpose))return ['loyalty','charm','int','war'];
  if(/train|hire|reassign|invasion|commander|challenge|battle|retreat/i.test(purpose))return ['war','training','soldiers','weapons'];
  if(/recruit|diplom|reward|give|gift|marriage|alliance|threat/i.test(purpose))return ['charm','loyalty','int'];
  if(/cultiv|flood|spy|search|forged|bribe|advisor/i.test(purpose))return ['int','charm','war'];
@@ -22,6 +23,7 @@ export function orderInsight(g,purpose,officer,data={}){
  const o=g.officer(Number(officer));let chance=null,effect='';
  if(/^recruit/i.test(purpose)&&data.target!==undefined)chance=data.method?recruitMethodChance(g,p,o,g.officer(Number(data.target)),data.method):g.recruitChance(p,o,g.officer(Number(data.target)));
  else if(/search/i.test(purpose))chance=Math.max(0,Math.floor(o.int/3)+Math.floor(o.charm/2)-10);
+ else if(/governor/i.test(purpose)){effect=`${o.name} · LOY ${o.loyalty}, CHA ${o.charm}, INT ${o.int}, WAR ${o.war}. ${o.loyalty<60?'High defection/rebellion risk: reward this general before entrusting the province.':o.loyalty<90?'Loyalty is below 90; enemy persuasion remains a concern. Consider a reward.':'Strong loyalty reduces concern about enemy persuasion, but does not guarantee loyalty.'} ${o.charm>=80?'Strong CHA supports rewards and recruitment.':'CHA limits the effectiveness of rewards and recruitment.'} ${o.int>=80?'Strong INT supports development and flood control.':'Lower INT limits development and flood control.'} ${o.soldiers<1000?'Few troops remain under this candidate; the province may be vulnerable to attack.':''} ${o.sick||o.injured?'This candidate is recovering and cannot act yet.':o.acted?'This candidate has already acted this month.':''}`;}
  else if(/reward|writings/i.test(purpose)){
   const amount=Number(data.amount??1),governor=g.officer(p.governor),horse=/horse/i.test(purpose),writings=/writings/i.test(purpose);
   if(o.id===r.leader)effect='The ruler cannot reward themselves.';

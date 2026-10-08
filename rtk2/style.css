@@ -212,3 +212,16 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 @media(max-height:500px){.battle-turn-controls,.battle-turn-controls button{min-height:32px}}
 /* Placement retains scrolling; the persistent tactical footer starts after deployment. */
 #game.battle-active #panelBody:has(#confirmDeployment){overflow:auto}
+
+/* V18: readable route topology and an unobstructed launch painting. */
+#provinceConnections{position:absolute;left:8px;right:58px;bottom:60px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;padding:4px;background:#10201cdd;border:1px solid var(--line)}
+#provinceConnections span{font-size:var(--text-meta);color:var(--gold);margin-right:3px}#provinceConnections button{min-height:28px;min-width:28px;padding:0 3px;font-size:var(--text-meta)}
+.province-label.connected:not(.selected){outline:1px dashed #f0d590;outline-offset:2px}
+#launch{grid-template-columns:38% 62%}#launch:before{background:linear-gradient(90deg,#081310d9 0%,#08131080 30%,transparent 52%)}
+#launch .launch-art{position:absolute;left:0;top:0;width:38%;height:42%;padding:clamp(16px,3vh,30px) 3vw;gap:10px;border:0;justify-content:center}
+#launch .launch-art h1{font-size:clamp(24px,3.1vw,46px)}#launch .launch-art .seal{font-size:var(--text-heading);padding:7px}#launch .launch-art .eyebrow{font-size:var(--text-meta)}
+#launch .launch-setup{grid-column:1;padding:42dvh 3vw 3dvh;background:none;backdrop-filter:none}#launchMenu{justify-content:center;gap:9px}#launchMenu h2{display:none}#launchMenu button{min-height:44px;font-size:var(--text-ui)}
+#launch:has(#setupWizard:not([hidden])){grid-template-columns:42% 58%}#launch:has(#setupWizard:not([hidden])) .launch-art{width:42%;height:100%}
+#launch:has(#setupWizard:not([hidden])) .launch-setup{grid-column:2;padding:24px clamp(16px,4vw,60px);background:#0d1919ed}
+#warGovernor{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+@media(max-height:500px){#launch .launch-art{height:43%;gap:7px}#launch .launch-art h1{font-size:clamp(22px,3.2vw,34px)}#launch .launch-art .seal{display:none}#launch .launch-setup{padding-top:43dvh}#launch:has(#setupWizard:not([hidden])) .launch-setup{padding:14px 20px}}

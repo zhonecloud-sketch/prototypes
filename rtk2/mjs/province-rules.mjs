@@ -1,7 +1,7 @@
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=17';
-import {clamp} from './engine.mjs?v=17';
-import {disaster,monthNumber} from './monthly-events.mjs?v=17';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=17';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=18';
+import {clamp} from './engine.mjs?v=18';
+import {disaster,monthNumber} from './monthly-events.mjs?v=18';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=18';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);

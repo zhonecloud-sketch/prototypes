@@ -32,6 +32,11 @@ def main():
     assert sha==EXPECTED,'This verifier applies to the supplied English binary only.'
     image,blocks=unpack(data)
     checks={
+      'rival_requires_two_ready_officers':(0x180a8,'9a8e008a123c027309'),
+      'rival_first_messenger_selection':(0x17f6e,'ff76060ee8bfff83c4028946fe'),
+      'rival_second_messenger_selection':(0x17f8b,'ff76080ee8a2ff83c4028946fc'),
+      'rival_first_journey':(0x1803d,'9a98103011'),
+      'rival_second_journey':(0x18086,'9a98103011'),
       'attack_menu_dispatch':(0x26652,'a0d6b82ae448740a48741b48487429'),
       'defender_defeat_status':(0x24c12,'8b5e08a1c8b839471273072ac0'),
       'charge_terminal_branch':(0x26438,'807efc01750e'),
@@ -50,7 +55,7 @@ def main():
     while ptr:
         at=ptr-0x42;names.append(scenario[at+28:at+41].split(b'\0')[0].decode('ascii'));ptr=struct.unpack_from('<H',scenario,at)[0]
     assert names==['Liu Bei','Guan Yu','Zhang Fei']
-    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',liuBei189=names)
+    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},messengers='Rival Tigers requires at least two ready officers; separate calls to the same candidate selector store two officers and dispatch two journeys, one per rival. Other inspected spy/diplomatic entry points use one selector. Exact probabilities remain remaster approximations.',charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',liuBei189=names)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(f'{len(checks)} binary checks passed; Liu Bei 189: {len(names)} officers. {args.output}')
 if __name__=='__main__':main()

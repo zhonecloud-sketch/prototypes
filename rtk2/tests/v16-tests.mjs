@@ -12,7 +12,7 @@ const fresh=()=>{const g=new Game(createCampaign(scenarios[0],[0]),{},terrains);
 let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
 test('Captured field commander is last for either winning side and remains last after saving',()=>{
  for(const winner of ['attack','defend']){
-  const g=fresh();g.invade({province:9,target:8,officers:[0,34],food:30000,gold:500});g.s.humanRulers.push(g.s.battle.defender);const b=g.s.battle,loser=winner==='attack'?'defend':'attack',leader=b.leaders[loser];
+  const g=fresh();g.invade({province:9,target:8,governor:33,officers:[0,34],food:30000,gold:500});g.s.humanRulers.push(g.s.battle.defender);const b=g.s.battle,loser=winner==='attack'?'defend':'attack',leader=b.leaders[loser];
   if(winner==='defend')for(const u of b.units.filter(u=>u.side==='attack'))u.captured=true;
   b.outcome={winner,reason:'Enemy commander defeated'};g.resolveBattle();const owner=winner==='attack'?b.attacker:b.defender,queue=g.s.captiveDecisions.filter(c=>c.owner===owner);assert(queue.length>1);assert.equal(queue.at(-1).officer,leader);assert.equal(g.s.lastBattle.captured.at(-1),leader);
   const saved=validateSave(g.s,scenarios,terrains);assert.equal(saved.captiveDecisions.filter(c=>c.owner===owner).at(-1).officer,leader);
