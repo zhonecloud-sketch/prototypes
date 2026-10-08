@@ -1,5 +1,5 @@
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=25';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=25';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=26';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=26';
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};
 export const clamp=(x,min=0,max=100)=>Math.max(min,Math.min(max,x));
@@ -34,9 +34,11 @@ export class Game{
  }else if(type==='relief'){
   if(p.loyalty===100)throw Error('The people already have full loyalty.');amount=this.amount(args.amount,Math.min(10000,p.food));const gain=this.relief(p,o,amount);const before=p.loyalty;this.spend(p,'food',amount);p.loyalty=clamp(before+gain);o.acted=true;text=`${o.name} distributed ${amount.toLocaleString()} rice. Loyalty ${before} → ${p.loyalty}.`;
  }else if(type==='reward'){
-  if(!p.officers.includes(a))throw Error('Choose an officer serving here.');o=this.officer(a);if(o.id===this.ruler().leader)throw Error('The ruler cannot reward themselves.');if(o.loyalty===100)throw Error('This officer is already fully loyal.');amount=this.amount(args.amount,Math.min(p.gold,100));const before=o.loyalty;this.spend(p,'gold',amount);o.loyalty=clamp(before+Math.floor(this.officer(p.governor).charm*amount/400)+this.int(0,1));text=`${o.name} received ${amount} gold. Loyalty ${before} → ${o.loyalty}.`;
+  this.ready(p,p.governor);
+  if(!p.officers.includes(a))throw Error('Choose an officer serving here.');o=this.officer(a);if(o.id===this.ruler().leader)throw Error('The ruler cannot reward themselves.');if(o.loyalty===100)throw Error('This officer is already fully loyal.');amount=this.amount(args.amount,Math.min(p.gold,100));const before=o.loyalty;this.spend(p,'gold',amount);o.loyalty=clamp(before+Math.floor(this.officer(p.governor).charm*amount/400)+this.int(0,1));this.officer(p.governor).acted=true;text=`${o.name} received ${amount} gold. Loyalty ${before} → ${o.loyalty}.`;
  }else if(type==='book'){
-  if(!p.officers.includes(a))throw Error('Choose an officer serving here.');o=this.officer(a);const advisor=this.s.officers.find(x=>x.id===this.ruler().advisor);if(!advisor||!p.officers.includes(advisor.id))throw Error('Your adviser must be present.');if(o.int+1>=advisor.int)throw Error('Your adviser cannot improve this officer’s intelligence.');if(this.s.books.includes(a))throw Error('This officer has studied this month.');o.int++;this.s.books.push(a);text=`${o.name} studied with ${advisor.name}. Intelligence is now ${o.int}.`;
+  this.ready(p,p.governor);
+  if(!p.officers.includes(a))throw Error('Choose an officer serving here.');o=this.officer(a);const advisor=this.s.officers.find(x=>x.id===this.ruler().advisor);if(!advisor||!p.officers.includes(advisor.id))throw Error('Your adviser must be present.');if(o.int+1>=advisor.int)throw Error('Your adviser cannot improve this officer’s intelligence.');if(o.id===this.ruler().leader)throw Error('The ruler cannot reward themselves.');o.int++;if(!this.s.books.includes(a))this.s.books.push(a);this.officer(p.governor).acted=true;text=`${o.name} studied with ${advisor.name}. Intelligence is now ${o.int}.`;
  }else if(type==='search'){
   const chance=Math.max(0,Math.floor(o.int/3)+Math.floor(o.charm/2)-this.int(0,20));o.acted=true;
   if(p.hidden.length&&this.random()*100<chance){const id=p.hidden.splice(this.int(0,p.hidden.length-1),1)[0];p.unclaimed.push(id);text=`${o.name} found ${this.officer(id).name}, who is now available for recruitment.`;}else text=`${o.name} searched ${p.name}. No new talent was found this month.`;

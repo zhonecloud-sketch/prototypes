@@ -2,7 +2,9 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v25
+## Latest update — v26
+
+Province navigation stays in one three-button row. Horse and Writings rewards no longer charge gold; Gold uses amount → recipient → confirmation. Writings is adviser-led study, not an inventory treasure. Move adds destination/team advice and payroll/harvest supply estimates. Hire has an explicit review; fort placement confirms before construction and returns to Orders. Governor appointments confirm and display the appointed province. See [differences.md](differences.md) for the all-order sequence audit and 48 reproducible native byte checks.
 
 Navigation now uses equal **Events / Province / Orders** buttons. Epidemic replaces the anachronistic event name. **Game Speed** controls both advancement and message playback at 3 / 2 / 1 / 0.5 seconds. Water costs five mobility points; daily movement restores the native training allowance, Wait banks one up to six, and fire damage is random below 30% rather than a forced 30%. See [differences.md](differences.md) for verified executable offsets and remaining approximations.
 

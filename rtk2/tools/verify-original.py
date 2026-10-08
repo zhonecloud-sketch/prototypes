@@ -1,4 +1,4 @@
-"""Static v25 checks on supplied packed English main.exe and scenario.dat.
+"""Static v26 checks on supplied packed English main.exe and scenario.dat.
 Unpacks the binary's own backwards RLE stream in memory. Does not execute DOS,
 modify inputs or redistribute executable bytes. Offsets are unpacked load-image offsets.
 """
@@ -61,6 +61,21 @@ def main():
       'marriage_outgoing_partner_write':(0x10ad6,'8b1e9433884721'),
       'marriage_incoming_partner_write':(0x10b85,'8b1e9433884720'),
       'dead_spouse_daughter_retirement':(0x7f84,'c64721ff8b1ed0408b1f804f0702')}
+    checks.update({
+      'reward_horse_uses_100_value':(0x1071e,'837e08007505c746086400'),
+      'reward_random_bonus_bound_two':(0x10729,'b002509afa007c05'),
+      'reward_governor_charm_divided_by_400':(0x10731,'8b1e9a338b5f028bc88a47062ae4f76608bb90012bd2f7f302c1'),
+      'reward_horse_marks_governor_action':(0x18b9e,'8b1e9a33ff77029a00079d0583c402'),
+      'reward_horse_deducts_one_stock':(0x18bad,'8b1e9a33fe4f19'),
+      'reward_gold_deducts_selected_amount':(0x18c67,'8b46fc8b1e9a33294708'),
+      'writing_advisor_int_greater_than_pupil_plus_one':(0x18a56,'8b1e94338b5f048a47042ae48b5efe8a4f042aed413bc17e05'),
+      'writing_increments_pupil_int':(0x18aad,'8b5efefe4704'),
+      'hire_capacity_population_and_rations':(0x10f63,'817f0ef401766e39470e76698b470e8bc80346fcd1e82b46fc'),
+      'hire_capacity_gold_divided_by_ten':(0x10fa3,'8b1e9a338b4708b90a002bd2f7f1'),
+      'hire_capacity_ceil_army_space_hundreds':(0x10f2c,'b864009952508b46fa8b56fc05630083d20052509a18380000'),
+      'hire_deducts_ten_gold_per_hundred':(0x110d8,'8b46068bc8d1e0d1e003c1d1e08b1e9a33294708'),
+      'hire_deducts_hundred_food_and_population':(0x110ec,'b89cff9952508b46062bd252509ab23800008b1e9a3301470a11570c8b46068b1e9a3329470e'),
+    })
     checks.update({
       'native_wait_caps_at_six':(0x2262a,'8b1ee6b8807f17067303fe4717'),
       'mobility_training_floor_and_preserve':(0x24a84,'8a46feb1142ae4f6f104022ae4508a4717509a9c016105'),

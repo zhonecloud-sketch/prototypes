@@ -1,11 +1,11 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=25';
-import {provinceLabel} from './province-choice.mjs?v=25';
-import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=25';
-import {recruitMethodChance} from './fidelity-orders.mjs?v=25';
-import {portraitFrame} from './portraits.mjs?v=25';
-import {missionChance,spyChance} from './province-rules.mjs?v=25';
-import {hireCapacity} from './province-rules.mjs?v=25';
-import {warProvisions} from './war-provisions.mjs?v=25';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=26';
+import {provinceLabel} from './province-choice.mjs?v=26';
+import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=26';
+import {recruitMethodChance} from './fidelity-orders.mjs?v=26';
+import {portraitFrame} from './portraits.mjs?v=26';
+import {missionChance,spyChance} from './province-rules.mjs?v=26';
+import {hireCapacity} from './province-rules.mjs?v=26';
+import {warProvisions} from './war-provisions.mjs?v=26';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function relevantAttributes(purpose=''){
  if(/governor/i.test(purpose))return ['loyalty','charm','int','war'];
@@ -30,15 +30,15 @@ export function orderInsight(g,purpose,officer,data={}){
  else if(/reward|writings/i.test(purpose)){
   const amount=Number(data.amount??1),governor=g.officer(p.governor),horse=/horse/i.test(purpose),writings=/writings/i.test(purpose);
   if(o.id===r.leader)effect='The ruler cannot reward themselves.';
-  else if(writings)effect=o.int+1>=advisor.int?'The recipient needs at least two fewer INT points than me.':g.s.books.includes(o.id)?'This general has already studied this month.':`Writings raise ${o.name}’s INT ${o.int} → ${o.int+1}. Cost: ${amount} gold; loyalty is unchanged.`;
+  else if(writings)effect=o.int+1>=advisor.int?'The recipient needs at least two fewer INT points than me.':`Writings raise ${o.name}’s INT ${o.int} → ${o.int+1}. No gold or inventory book is consumed; loyalty is unchanged.`;
   else if(o.loyalty===100)effect=`${o.name} is fully loyal. Save the gold for another general.`;
   else if(horse&&p.horses<1)effect='There is no horse in this province to give.';
-  else {const gain=Math.floor(governor.charm*(horse?100:amount)/400),low=Math.min(100-o.loyalty,gain),high=Math.min(100-o.loyalty,gain+1),minimum=Math.ceil(400/Math.max(1,governor.charm));effect=!horse&&gain===0?`This amount cannot raise loyalty. Offer at least ${minimum} gold (governor CHA ${governor.charm}).`:`${o.name}’s loyalty ${o.loyalty} → ${o.loyalty+low}–${o.loyalty+high} (+${low}–${high}). ${horse?'Uses one horse and ':''}Costs ${amount} gold. ${o.loyalty<60?'Rewarding this general should be a priority.':o.loyalty>=90?'A small reward should suffice.':'This reward will improve retention.'}`;}
+  else {const gain=Math.floor(governor.charm*(horse?100:amount)/400),low=Math.min(100-o.loyalty,gain),high=Math.min(100-o.loyalty,gain+1),minimum=Math.ceil(400/Math.max(1,governor.charm));effect=`${o.name}’s loyalty ${o.loyalty} → ${o.loyalty+low}–${o.loyalty+high} (+${low}–${high}). ${horse?'Uses one horse; no gold is consumed.':'Costs '+amount+' gold.'} ${!horse&&gain===0?'Offer at least '+minimum+' gold for a base gain of one; smaller gifts depend on the random bonus.':''} ${o.loyalty<60?'Rewarding this general should be a priority.':o.loyalty>=90?'A small reward should suffice.':'This reward will improve retention.'}`;}
  }
  else if(/cultiv|flood/i.test(purpose)){const key=/cultiv/i.test(purpose)?'develop':'flood',amount=Number(data.amount??Math.min(100,p.gold));effect=`Expected improvement: +${g.preview(key,p.id,o.id,amount)}. Cost: ${amount} gold.${p[key==='develop'?'land':'flood']===100?' This attribute is already at its maximum.':''}`;}
  else if(/give|relief/i.test(purpose)){const amount=Number(data.amount??1),gain=g.preview('relief',p.id,o.id,amount);effect=`Popular loyalty ${p.loyalty} → ${p.loyalty+gain} (+${gain}). Costs ${amount.toLocaleString()} food.${gain===0?' Increase the food amount to improve loyalty.':''}`;}
  else if(/fort/i.test(purpose))effect='Choose an empty plain or hill hex. Building costs 100 gold and uses this general’s monthly action.';
- else if(/hire/i.test(purpose)){const hundreds=Number(data.hundreds??1);effect=`${hundreds*100} recruits cost ${hundreds*10} gold and ${hundreds*100} food. Current capacity: ${hireCapacity(g,p)} hundreds. Allocate all recruited men before leaving.`;}
+ else if(/hire/i.test(purpose)){const hundreds=Number(data.hundreds??1);effect=`${hundreds*100} recruits cost ${hundreds*10} gold and ${hundreds*100} food. Current capacity: ${hireCapacity(g,p)} hundreds. The hiring general’s abilities do not change recruitment capacity or cost. Allocate all recruited men before leaving.`;}
  else if(/reassign/i.test(purpose))effect='Reassignment conserves soldiers. Unallocated men will be disbanded only after confirmation.';
  else if(/war|invasion/i.test(purpose)&&data.officers){const men=data.officers.reduce((n,id)=>n+g.officer(id).soldiers,0),stores=warProvisions(men,Number(data.food??0)),enemy=g.province(Number(data.target)),hostile=enemy.officers.reduce((n,id)=>n+g.officer(id).soldiers,0);effect=`${men.toLocaleString()} men face ${hostile.toLocaleString()} defenders. ${stores.days<30?'Take more food for a full month.':'Food covers a full month at this strength.'} Terrain, training and enemy reserves can change the outcome.`;}
  else if(/train/i.test(purpose)){const hundreds=p.officers.reduce((n,id)=>n+g.officer(id).soldiers/100,0);effect=`Expected training gain: +${Math.floor(2*o.war/Math.floor(Math.sqrt(Math.floor(hundreds)+1)))}.`;}

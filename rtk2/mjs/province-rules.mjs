@@ -1,14 +1,14 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=25';
-import {provinceLabel} from './province-choice.mjs?v=25';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=25';
-import {clamp} from './engine.mjs?v=25';
-import {disaster,monthNumber} from './monthly-events.mjs?v=25';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=25';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=26';
+import {provinceLabel} from './province-choice.mjs?v=26';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=26';
+import {clamp} from './engine.mjs?v=26';
+import {disaster,monthNumber} from './monthly-events.mjs?v=26';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=26';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
 export const rulerPresent=(g,p)=>p.officers.includes(g.ruler().leader);
-export function hireCapacity(g,p){const people=Math.floor(p.population/100),men=Math.floor(p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)/100),space=Math.floor(p.officers.reduce((n,id)=>n+10000-g.officer(id).soldiers,0)/100);return Math.max(0,Math.floor(Math.min(people-500,(people-men)/2,p.food/100,p.gold/10,space)));}
+export function hireCapacity(g,p){const people=Math.floor(p.population/100),men=Math.floor(p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)/100),space=Math.ceil(p.officers.reduce((n,id)=>n+10000-g.officer(id).soldiers,0)/100);return Math.max(0,Math.floor(Math.min(people-500,(people-men)/2,p.food/100,p.gold/10,space)));}
 const active=(g,id)=>g.s.rulers.find(r=>r.id===Number(id)&&g.s.provinces.some(p=>p.owner===r.id));
 const strength=(g,id)=>g.s.provinces.filter(p=>p.owner===id).reduce((n,p)=>n+p.officers.reduce((s,i)=>s+g.officer(i).soldiers,0),0);
 const advisorInt=(g,r)=>r.advisor===null?g.officer(r.leader).int:g.officer(r.advisor).int;
@@ -45,11 +45,11 @@ function applyOrder(g,type,args){
  }else if(type==='trainArmy'){
   const officer=g.ready(p,args.officer),men=p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0);if(!men)throw Error('This province has no soldiers to train.');if(p.officers.every(id=>g.officer(id).training===100))throw Error('The army is already fully trained.');const gain=Math.floor(officer.war*2/Math.floor(Math.sqrt(Math.floor(men/100)+1)));for(const id of p.officers){const o=g.officer(id);if(o.soldiers)o.training=clamp(o.training+gain);}officer.acted=true;text=`${officer.name} trained every army in ${p.name}; training increased by up to ${gain}.`;
  }else if(['rewardGold','rewardHorse','rewardWritings'].includes(type)){
-  g.ready(p,p.governor);const target=g.officer(args.officer);if(!p.officers.includes(target.id)||target.id===me.leader)throw Error('Choose a subordinate serving in this province.');const amount=g.amount(args.amount,Math.min(100,p.gold));
+  g.ready(p,p.governor);const target=g.officer(args.officer);if(!p.officers.includes(target.id)||target.id===me.leader)throw Error('Choose a subordinate serving in this province.');const amount=type==='rewardGold'?g.amount(args.amount,Math.min(100,p.gold)):100;
   if(type==='rewardHorse'&&p.horses<1)throw Error('No horse is available.');
-  if(type==='rewardWritings'){const advisor=me.advisor===null?null:g.officer(me.advisor);if(!advisor||!p.officers.includes(advisor.id)||target.int+1>=advisor.int)throw Error('An advisor here must have at least two more intelligence points than the recipient.');if(g.s.books.includes(target.id))throw Error('This general has studied this month.');target.int++;g.s.books.push(target.id);text=`${target.name} received writings and gained one intelligence point.`;}
-  else{if(target.loyalty===100)throw Error('This general is already fully loyal.');if(type==='rewardGold'&&Math.floor(g.officer(p.governor).charm*amount/400)===0)throw Error('Offer enough gold to improve loyalty.');const before=target.loyalty;target.loyalty=clamp(before+Math.floor(g.officer(p.governor).charm*(type==='rewardHorse'?100:amount)/400)+g.int(0,1));if(type==='rewardHorse'){p.horses--;target.hasHorse=true;}text=`${target.name} received ${type==='rewardHorse'?'a horse':amount+' gold'}. Loyalty ${before} → ${target.loyalty}.`;}
-  p.gold-=amount;
+  if(type==='rewardWritings'){const advisor=me.advisor===null?null:g.officer(me.advisor);if(!advisor||!p.officers.includes(advisor.id)||target.int+1>=advisor.int)throw Error('An advisor here must have at least two more intelligence points than the recipient.');target.int++;if(!g.s.books.includes(target.id))g.s.books.push(target.id);text=`${target.name} received writings and gained one intelligence point.`;}
+  else{if(target.loyalty===100)throw Error('This general is already fully loyal.');const before=target.loyalty;target.loyalty=clamp(before+Math.floor(g.officer(p.governor).charm*(type==='rewardHorse'?100:amount)/400)+g.int(0,1));if(type==='rewardHorse'){p.horses--;}text=`${target.name} received ${type==='rewardHorse'?'a horse':amount+' gold'}. Loyalty ${before} → ${target.loyalty}.`;}
+  if(type==='rewardGold')p.gold-=amount;g.officer(p.governor).acted=true;
  }else if(type==='dismiss'){
   homeOnly(g,p);const officer=g.officer(args.officer);if(!p.officers.includes(officer.id)||officer.id===me.leader||p.officers.length<2)throw Error('Dismiss a subordinate and leave an officer to govern.');p.officers=p.officers.filter(id=>id!==officer.id);const destination=g.province(p.neighbors[g.int(0,p.neighbors.length-1)]);destination.hidden.push(officer.id);p.population=Math.min(3000000,p.population+officer.soldiers);officer.soldiers=0;officer.weapons=0;officer.owner=255;officer.acted=true;if(me.advisor===officer.id)me.advisor=null;text=`${officer.name} was dismissed and is now a free general.`;
  }else if(type==='healing'){

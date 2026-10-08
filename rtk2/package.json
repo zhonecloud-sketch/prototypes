@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/tests.mjs && node tests/strategy-tests.mjs && node tests/battle-tests.mjs && node tests/monthly-tests.mjs && node tests/artwork-tests.mjs && node tests/expansion-tests.mjs && node tests/province-tests.mjs && node tests/decisions-tests.mjs && node tests/fidelity-tests.mjs && node tests/completion-tests.mjs && node tests/v15-tests.mjs && node tests/v16-tests.mjs && node tests/v17-tests.mjs && node tests/v18-tests.mjs && node tests/v19-tests.mjs && node tests/v20-tests.mjs && node tests/v21-tests.mjs && node tests/v22-tests.mjs && node tests/v23-tests.mjs && node tests/v24-tests.mjs && node tests/v25-tests.mjs",
+    "test": "node tests/tests.mjs && node tests/strategy-tests.mjs && node tests/battle-tests.mjs && node tests/monthly-tests.mjs && node tests/artwork-tests.mjs && node tests/expansion-tests.mjs && node tests/province-tests.mjs && node tests/decisions-tests.mjs && node tests/fidelity-tests.mjs && node tests/completion-tests.mjs && node tests/v15-tests.mjs && node tests/v16-tests.mjs && node tests/v17-tests.mjs && node tests/v18-tests.mjs && node tests/v19-tests.mjs && node tests/v20-tests.mjs && node tests/v21-tests.mjs && node tests/v22-tests.mjs && node tests/v23-tests.mjs && node tests/v24-tests.mjs && node tests/v25-tests.mjs && node tests/v26-tests.mjs",
     "test:ui": "node tests/ui-tests.mjs"
   },
   "devDependencies": {

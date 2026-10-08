@@ -1,5 +1,5 @@
-import {hireCapacity} from './province-rules.mjs?v=25';
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=25';
+import {hireCapacity} from './province-rules.mjs?v=26';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=26';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.
 export function orderUnavailable(g,p,id){
@@ -43,13 +43,12 @@ export function orderUnavailable(g,p,id){
   if(mode==='cancel')return null;
  }
  if(id==='reward'||id.startsWith('reward:')){
-  if(p.gold<1)return 'This province has no gold to spend.';
   const targets=p.officers.map(id=>g.officer(id)).filter(o=>o.id!==r.leader);
   if(!targets.length)return 'There is no subordinate here to reward.';
-  const gold=targets.some(o=>o.loyalty<100)&&Math.floor(g.officer(p.governor).charm*Math.min(100,p.gold)/400)>0;
-  const horse=p.horses>0&&targets.some(o=>o.loyalty<100),advisor=r.advisor===null?null:g.officer(r.advisor),writings=advisor&&p.officers.includes(advisor.id)&&targets.some(o=>o.int+1<advisor.int&&!s.books.includes(o.id));
+  const gold=targets.some(o=>o.loyalty<100)&&p.gold>0;
+  const horse=p.horses>0&&targets.some(o=>o.loyalty<100),advisor=r.advisor===null?null:g.officer(r.advisor),writings=advisor&&p.officers.includes(advisor.id)&&targets.some(o=>o.int+1<advisor.int);
   if(id==='reward:horse'&&!horse)return p.horses<1?'This province has no horse to give.':'All subordinates are already fully loyal.';
-  if(id==='reward:writings'&&!writings)return 'An advisor here must exceed an eligible pupil by at least two intelligence points; each pupil can study once a month.';
+  if(id==='reward:writings'&&!writings)return 'An advisor here must exceed an eligible pupil by at least two intelligence points.';
   if(id==='reward:gold'&&!gold)return 'No eligible subordinate can gain loyalty with the available gold.';
   if(id==='reward'&&!gold&&!horse&&!writings)return 'No subordinate here can benefit from a reward this month.';
   return null;

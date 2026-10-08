@@ -1,17 +1,17 @@
-import {resolveAbstractBattle} from './auto-battle.mjs?v=25';
-import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=25';
-import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=25';
-import {aiGovernance} from './ai-governance.mjs?v=25';
-import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=25';
-import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=25';
-import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=25';
-import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=25';
-import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,validateDecisions} from './campaign-decisions.mjs?v=25';
-import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=25';
-import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=25';
-import {applyGeography} from './geography.mjs?v=25';
-import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=25';
-import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=25';
+import {resolveAbstractBattle} from './auto-battle.mjs?v=26';
+import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=26';
+import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=26';
+import {aiGovernance} from './ai-governance.mjs?v=26';
+import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=26';
+import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=26';
+import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=26';
+import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=26';
+import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,validateDecisions} from './campaign-decisions.mjs?v=26';
+import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=26';
+import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=26';
+import {applyGeography} from './geography.mjs?v=26';
+import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=26';
+import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=26';
 export {DEFAULT_RULES};export const AI_DEFAULTS={intelligence:60,aggression:55};
 const clone=v=>JSON.parse(JSON.stringify(v));
 export const activeRulers=s=>s.rulers.filter(r=>s.provinces.some(p=>p.owner===r.id)||(s.roaming||[]).some(p=>p.owner===r.id));
@@ -38,7 +38,7 @@ export class Game extends Domestic{
  requestBattleAlly(id){return requestBattleAlly(this,id);}
  answerAlly(accept,args){return answerAlly(this,accept,args);}
  restProvince(id){const p=this.owned(id);if(!this.s.provinceCompleted.includes(p.id))this.s.provinceCompleted.push(p.id);const next=this.s.provinces.find(q=>q.owner===this.s.player&&q.delegate==='manual'&&!this.s.provinceCompleted.includes(q.id));if(next){this.s.selected=next.id;return this.record(`Province ${p.id} finished its orders. Continue in Province ${next.id}.`);}return this.finishFactionTurn();}
- applyMission(type,args){if(type==='delegateRealm')return configureDelegation(this,args);if(['governor','advisor','dismiss'].includes(type)&&!this.province(args.province).officers.includes(this.ruler().leader))throw Error('Only the ruler may appoint or dismiss officers.');if(FIDELITY_ORDERS.has(type))return fidelityOrder(this,type,args);return NEW_ORDERS.has(type)?executeProvinceOrder(this,type,args):super.execute(type,args);}
+ applyMission(type,args){if(type==='reward')type='rewardGold';if(type==='book')type='rewardWritings';if(type==='delegateRealm')return configureDelegation(this,args);if(['governor','advisor','dismiss'].includes(type)&&!this.province(args.province).officers.includes(this.ruler().leader))throw Error('Only the ruler may appoint or dismiss officers.');if(FIDELITY_ORDERS.has(type))return fidelityOrder(this,type,args);return NEW_ORDERS.has(type)?executeProvinceOrder(this,type,args):super.execute(type,args);}
  decideCaptive(id,action){if(this.s.triumph)throw Error('Continue from the victory screen first.');const result=decideCaptive(this,id,action);resolveAICaptives(this);this.reconcileControl();if(!this.s.captiveDecisions.length&&!this.s.spoils.length)this.resumeWars();return result;}
  advanceJourney(){return advanceJourney(this);}
  interceptJourney(choice){const result=interceptJourney(this,choice);this.reconcileControl();return result;}

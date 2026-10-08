@@ -38,7 +38,7 @@ canvas.dialog-portrait{width:145px;height:145px;aspect-ratio:1}
 #game #instructionFrame{padding:8px 10px;display:flex;flex-direction:column;justify-content:center;gap:6px;overflow:auto;background:#1b2822}
 #provinceNavigation{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;flex-shrink:0}
 #provinceNavigation button{min-height:44px;line-height:1.25;padding:6px 10px;font-size:clamp(12px,1.5vw,16px)}
-#provincePanel[data-screen="province"] #provinceNavigation,#provincePanel[data-screen="orders"] #provinceNavigation{grid-template-columns:repeat(2,minmax(0,1fr))}
+#provincePanel[data-screen="province"] #provinceNavigation,#provincePanel[data-screen="orders"] #provinceNavigation{grid-template-columns:repeat(3,minmax(0,1fr))}
 #nextMonthlyEvent{grid-column:1/-1}
 #game #endTurn{min-height:44px;flex-shrink:0}
 .province-attributes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;height:100%;align-content:space-between}
