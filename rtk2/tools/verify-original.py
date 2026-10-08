@@ -1,4 +1,4 @@
-"""Static v14 checks on supplied packed English main.exe and scenario.dat.
+"""Static v15 checks on supplied packed English main.exe and scenario.dat.
 Unpacks the binary's own backwards RLE stream in memory. Does not execute DOS,
 modify inputs or redistribute executable bytes. Offsets are unpacked load-image offsets.
 """
@@ -41,6 +41,8 @@ def main():
       'percentage_test':(0x58aa,'3a46067205'),
       'marriage_no_daughter_flag':(0x16f06,'8b1e9433f6470702741cb8e376'),
       'marriage_already_married':(0x16f2c,'807f21ff7406b8f976'),
+      'marriage_outgoing_partner_write':(0x10ad6,'8b1e9433884721'),
+      'marriage_incoming_partner_write':(0x10b85,'8b1e9433884720'),
       'dead_spouse_daughter_retirement':(0x7f84,'c64721ff8b1ed0408b1f804f0702')}
     for name,(offset,hexbytes) in checks.items():
         expected=bytes.fromhex(hexbytes);assert image[offset:offset+len(expected)]==expected,name
@@ -48,7 +50,7 @@ def main():
     while ptr:
         at=ptr-0x42;names.append(scenario[at+28:at+41].split(b'\0')[0].decode('ascii'));ptr=struct.unpack_from('<H',scenario,at)[0]
     assert names==['Liu Bei','Guan Yu','Zhang Fei']
-    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag and one outgoing marriage partner; no daughter age/count records or birth-event mechanism identified.',liuBei189=names)
+    result=dict(method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',liuBei189=names)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(f'{len(checks)} binary checks passed; Liu Bei 189: {len(names)} officers. {args.output}')
 if __name__=='__main__':main()

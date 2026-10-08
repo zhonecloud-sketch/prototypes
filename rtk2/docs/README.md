@@ -2,6 +2,19 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
+## Latest update — v17
+
+Battlefield terrain now uses **41 separate full-map paintings** matching the original province grids. The former autotiling renderer is removed. The original terrain data still decides movement, deployment, mountains, water, forts and palace occupation. Army formations, tactical highlights, fire and weather remain above the painting.
+
+A persistent **End turn** control ends the acting army’s daily orders. **Weapons** and armed coverage appear in army comparisons, selection cards, war planning and inspection, and the Battle HUD can edit equipment. Buy weapons through Merch: each gold purchases 100 weapons, subject to stock capacity and a visiting merchant. Equipment affects the remaster attack formula and persists through battle settlement and suspension.
+
+The battlefield loop is now **144 BPM**. Triumph uses separately preloaded, versioned artwork and a fanfare before any captive decision. Zero-soldier charge occupation is tested through the actual Charge action and displayed unit coordinates; release-versioned module imports prevent old and new engine modules being mixed from cache.
+
+Numerical inputs use sliders for large adjustments, **−/+** for exact steps, hold-to-repeat and **Min/Max** shortcuts. Name selection uses initial filters; custom ruler names have a compact game letter pad. These controls keep the operating system keyboard from covering the landscape game.
+
+V16’s commander-last capture order, clickable grey invalid orders, unified fonts, number visibility toggle, active-unit blink and 352 distinct portrait assignments remain. Fifteen principal officers use revised historical/literary artwork, with Xiahou Dun’s eye injury dated from 198. See [differences.md](differences.md) for the complete fidelity audit and [ARTWORK.md](ARTWORK.md) for image provenance.
+
+
 ## Run
 
 The downloadable ZIP contains only `rtk2/`. Put it beside the existing `lib/` folder:
@@ -22,6 +35,18 @@ python3 tools/serve-game.py --bind 0.0.0.0
 Use the server computer's LAN address with `/rtk2/`. ES modules and JSON/config requests require HTTP, rather than opening the HTML from disk. For GitHub Pages, place the complete `rtk2/` folder under `prototypes/`; the existing `prototypes/lib/` stays in place.
 
 Main files stay at the game root. Game modules are in `mjs/`, configuration in `config/`, assets in `assets/`, documentation/licenses in `docs/`, all tests in `tests/`, and tools in `tools/`.
+
+## V15 changes
+
+Battlefields now use clean, brighter auto-tiling artwork. **War** calculates daily food, a 30-day estimate and days of supplies from your selected soldiers. A human victory opens the illustrated **Triumph** screen and fanfare before captive decisions. Battles use their own instrumental music; Menu's Music switch controls all three themes independently of effects.
+
+Advisors with INT 80+ in your province now give useful Reward Gold/Horse/Writings forecasts, including loyalty gains, minimum gold, full loyalty and study restrictions. Amount changes update forecasts. Other order flows expose costs, gains or existing success estimates.
+
+Historic and Fiction are selectable, visibly highlighted choices. **Family rules** are separate: Original preserves the DOS abstract daughter slot; Expanded is the new-game default and tracks spouses, princes/princesses, births, ages and marriages. Existing campaigns stay Original until **Menu → Royal Family → Enable Expanded family**.
+
+View family through **Menu → Royal Family**, ruler detail, or Diplom. Expanded **Diplom → Court marriage** costs 100 gold and the ruler's action. **Royal marriage** chooses a receiving ruler, an unmarried child aged 16+ and an envoy. Princesses marry male rulers; princes female rulers. All eligible families share 3% monthly expected-birth probability, nine-month gestation, and a twelve-month post-birth cooldown. Births require both partners 18+, mother ≤45, father ≤65, and a healthy free ruler. There is no individual fertility stat. Children are family records and do not alter the officer roster. These are explicitly remaster rules; no original birth/age model was identified. The native daughter is seeded at 18 as a gameplay migration, not historical genealogy.
+
+See **docs/differences.md** for original-binary evidence, exact extension rules and remaining fidelity limitations.
 
 ## Launch and control
 
@@ -87,7 +112,7 @@ Dated **Historical chronicle** cards cover milestones from Dong Zhuo's control o
 
 The game menu has independent **Sound effects** and **Music** switches. Both are enabled by default, saved in the campaign and remembered as preferences for new campaigns. Playback starts only after a start/load gesture. Disabling effects stops current effects without stopping music; disabling music leaves effects available. Audio stops on exit/quit and while the document is hidden.
 
-Bundled MP3s include an original 48-second pentatonic, plucked-string instrumental loop and six synthesized effects for selection, orders, battle, fire, monthly council and messages. No remote media, recordings from the DOS game or third-party soundtrack are used. Browser playback control was tested with mocked audio objects; audible quality and physical device mute/autoplay behavior have not been evaluated.
+Bundled MP3s include an original 48-second council loop, 40-second battlefield loop, 18-second triumph fanfare and six synthesized effects for selection, orders, battle, fire, monthly council and messages. No remote media, recordings from the DOS game or third-party soundtrack are used. Browser playback control was tested with mocked audio objects; audible quality and physical device mute/autoplay behavior have not been evaluated.
 
 ## China and province maps
 
@@ -184,6 +209,8 @@ node tests/battle-tests.mjs
 node tests/monthly-tests.mjs
 node tests/expansion-tests.mjs
 node tests/artwork-tests.mjs
+node tests/v16-tests.mjs
+node tests/v17-tests.mjs
 node --check mjs/app.mjs
 node --check mjs/strategy.mjs
 node --check mjs/battle.mjs
@@ -253,7 +280,7 @@ The launch has a new cinematic Han campaign illustration. Eight detailed terrain
 | Move | **Move where → Move whom → gold 0..available → food 0..available**. Friendly/independent adjacent destinations; leave a governor and respect destination storage. |
 | Milit | **Hire / Reassign / Train**. Hire chooses the officer then 1..maximum hundreds of men, costing 10 gold and 100 food/population per hundred. Capacity retains the source 50,000 civilian reserve. Hire and Reassign use the same shared allocation pool, with up to 10,000 men per officer. Reduce a commander's assignment to free men, then assign them elsewhere. Finish, Close, or Esc with unassigned men requires explicit disbanding confirmation; the men return to population. Train selects an instructor and improves all local armies using the source formula. |
 | Person | **Recruit / Search / Appoint / Dismiss**. Recruitment selects Special attention/Horse/Gold/Letter and a messenger; hostile subordinates can be targeted. Ruler-only Appoint selects an owned province and Governor/Advisor. Dismiss conceals a subordinate nearby and disbands their army, or demotes an advisor while retaining service. |
-| Diplom | **Alliance / Joint invasion / Marriage / Gift / Cancel alliance / Threaten**. Select the target first, then an envoy. Joint invasion requires a current ally and a target bordering both realms, then an envoy; the plan lasts one month and brings up to two ready allied formations from their own connected province edge. Surviving support returns to its realm, with proportionate gold/food payment on victory. Marriage uses one daughter per ruler. Gift is 100..available gold. Cancellation lists current allies, voids joint plans and requires the ruler present. Threaten also requires the ruler present; acceptance transfers the rival territory. |
+| Diplom | **Alliance / Joint invasion / Marriage / Gift / Cancel alliance / Threaten**. Select the target first, then an envoy. Joint invasion requires a current ally and a target bordering both realms, then an envoy; the plan lasts one month and brings up to two ready allied formations from their own connected province edge. Surviving support returns to its realm, with proportionate gold/food payment on victory. Original marriage uses one daughter per ruler. Expanded adds tracked children, a spouse, Court marriage and age-16 royal proposals. Gift is 100..available gold. Cancellation lists current allies, voids joint plans and requires the ruler present. Threaten also requires the ruler present; acceptance transfers the rival territory. |
 | Spy | **Hide/Infiltrate / Rival tigers / Tiger and wolf / Betrayal / Forged letter / Verify / Withdraw**, issued where the ruler is staying. Infiltration sends a fully loyal subordinate as a free general; enemy recruitment lets them undermine subordinate loyalty and return to your side in battle. Rival tigers uses two rulers and two messengers. Tiger and wolf can turn an enemy governor into an independent ruler. Betrayal creates a three-month battle defection pact. Forged letters reduce subordinate loyalty. |
 | View | **Other provinces / Generals / Summary 1 / Summary 2 / Territory / Data order**. Summary 1 contains rank, loyalty and abilities; Summary 2 contains source years in service, training, arms, weapons and men. Service years advance with the calendar; recruitment starts a new service record. Territory lists your provinces and marks self-rule with `*`. Data order sorts local officers by a chosen attribute while keeping ruler/governor first and preserving IDs. |
 | Cultiv / Flood / Give | Select who will act, then gold 1..100 for cultivation/dikes or food 1..10,000 for relief, bounded by the province's resources. |
@@ -325,6 +352,10 @@ A surviving charging attacker always occupies a defender's tile when the defende
 python3 tools/verify-original.py /path/to/original-files /path/to/output.json
 ```
 
-The original files are not redistributed. Battlefield terrain uses the new `assets/terrain-v14.webp` atlas with world-aligned textures, six-bit terrain masks, soft terrain transitions and connected riverbanks. Northern ownership display caps affect provinces 1,2,3,4,15 without changing city positions or game connections. Both map switches use 108 × 40 pixel touch targets.
+The original files are not redistributed. Battlefield terrain now uses the 41 paintings in `assets/battlefields/`; the former terrain atlas renderer and its six-bit autotiling have been retired. Northern ownership display caps affect provinces 1,2,3,4,15 without changing city positions or game connections. Both map switches use 108 × 40 pixel touch targets.
 
 From the `rtk2/` directory run `npm ci`, `npm test`, and `npm run test:ui`. Package the checked committed source with `python3 tools/package-source.py /path/outside/checkout/rtk2-remastered-source.zip`. The ZIP excludes shared libraries and contains all main files, modules, tests, tools, configuration, artwork/audio and documentation in the requested folders.
+
+## V17 final validation
+
+The complete release passes 203 gameplay/asset checks (`npm test`), 30 emulated DOM/native-Canvas interface groups (`npm run test:ui`), and 12 static original-binary checks. Actual Charge-button interaction verifies occupation of a zero-soldier defender’s hex and its on-field label; victory artwork renders before captive decisions. All 41 unique paintings were inspected together and the integrated battlefield/victory images inspected. Painterly geography remains approximate; the original terrain grids and exact fort/palace markers govern play. Physical handset layout, audible playback and original DOS execution remain unverified.

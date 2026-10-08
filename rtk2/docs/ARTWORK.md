@@ -74,3 +74,21 @@ Runtime asset: `assets/terrain-v14.webp`, 2048 × 1024, eight equal square cells
 Prompt: Use case: historical-scene. A precise 4-column × 2-row equal-square texture atlas, edge-filling, no gutters, hex outlines, writing or UI. Orthographic top-down painterly historical cartography, muted natural colours, coherent soft daylight, crisp organic small details. Row 1: olive grassland with subtle paths, irregular dark green woodland canopy, ochre rolling hills, slate rocky mountains. Row 2: uniform deep teal water, small centred Han stone fort with plenty of surrounding earth, compact walled Han capital with rooftops and surrounding grass, dry sandy grassland. No units, floating platforms, vignette padding or watermark.
 
 `mjs/terrain-art.mjs` samples textures in battlefield coordinates, mirrors texture repeats to eliminate seams, and blends neighbouring terrain from the six-bit mask. Connected water edges have no internal bank line; exposed banks follow the neighbouring land. Source and displayed raster cells retain their aspect ratio. Functional grid clipping, adjacency masks and transition masks are generated from terrain data, rather than decorative vector artwork.
+
+## V15 clean battlefield and triumph art
+
+Generated using the built-in image-generation tool, with one request for each asset. Final runtime files are `assets/terrain-v15.webp` (2048 × 1024, exact 4 × 2 atlas) and `assets/triumph-v15.webp` (2048 × 1152, exact 16:9 scene). Source PNGs were uniformly resized and encoded to WebP, preserving their aspect ratio. The atlas replaces V14 at runtime; its world-aligned samples span several hexes and six-bit masks blend adjacent terrain. Rain/cloud layers are lighter so the art remains readable. The full production prompts are saved in `docs/artwork/v15-prompts.json`. No original DOS artwork was copied.
+
+Terrain prompt: clean top-down Han-era strategy terrain, broad jade/olive grass, rounded emerald forest canopies, smooth pale green hills, blue-grey mountain ridges; clear azure water, compact fort, walled capital and golden grass in exact row-major 4 × 2 squares. Restrained readable detail, flat soft daylight, edge-to-edge seamless material fields; no gritty/grunge/noisy texture, hex outlines, UI, troops or labels.
+
+Triumph prompt: victorious Han-era army formations, many soldiers with raised spears and red banners, sunrise over a captured Chinese walled city, polished clean illustrated shapes, open upper sky for the Victory title, 16:9. No UI/text, modern elements or gore.
+
+Original compositions `assets/battle-music.mp3` and `assets/triumph-music.mp3` are reproducible with `tools/build-battle-audio.py`: pentatonic plucked strings, breathy flute, horn harmonics, war drums and gong, with stereo room reflections. No third-party samples or DOS recordings were used.
+
+## V17 — 41 full province battlefield paintings
+
+The battlefield autotiling/texture-blending renderer is retired. One full hand-painted landscape replaces it for each of the 41 provinces, derived from that province’s original 13 × 12 semantic terrain guide. Guide centers use the same offset-column hex coordinates as the engine, including the original fort and palace anchors. No repeated tile images are used at runtime. All original fort/palace coordinates and newly constructed forts use the existing city artwork as small, exactly aligned overlays.
+
+Assets are `assets/battlefields/province-01-v17.webp` through `province-41-v17.webp`. `config/battlefield-paintings.json` records all 41 production prompts, image dimensions, image hashes, source hashes, original terrain arrays/hashes and painting registration. Built-in image generation was used once per province. WebP encoding preserves source dimensions and aspect ratio, without stretching or changing artwork positions. These are artistic reconstructions; the original terrain grid remains the gameplay authority.
+
+The previously generated triumph scene is now `assets/triumph-v17.webp` and preloaded before a campaign begins. The faster battle score is `assets/battle-music-v17.mp3`, composed at 144 BPM using the updated `tools/build-battle-audio.py`. It uses no original game samples. The separate triumph fanfare remains.

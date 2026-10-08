@@ -13,7 +13,7 @@ function win(empty=false,strong=false){const g=fresh(),target=g.province(8),sour
  if(empty){const p=g.province(target.neighbors.find(id=>id!==source.id));for(const id of p.officers){g.officer(id).owner=255;p.unclaimed.push(id);}p.officers=[];p.owner=255;p.governor=null;g.normalize();}
  for(const p of target.neighbors.map(id=>g.province(id)))if(p.owner===255&&!empty){const id=source.officers.find(id=>id!==0);source.officers=source.officers.filter(x=>x!==id);p.officers=[id];p.owner=0;p.governor=id;}
  for(const id of ids){g.officer(id).int=strong?100:0;g.officer(id).war=strong?100:0;}
- g.random=()=>.5;g.invade({province:9,target:8,officers:[0],food:10000});g.s.battle.outcome={winner:'attack',reason:'Palace occupied'};g.resolveBattle();return {g,former,ids};
+ g.random=()=>.5;g.invade({province:9,target:8,officers:[0],food:10000});g.s.battle.outcome={winner:'attack',reason:'Palace occupied'};g.resolveBattle();assert(g.s.triumph);g.acknowledgeTriumph();return {g,former,ids};
 }
 test('No empty adjacent province captures every defending officer, including ruler/governor; checkpoint retains decisions',()=>{
  const {g,ids}=win();assert.deepEqual(new Set(g.s.captiveDecisions.map(c=>c.officer)),new Set(ids));assert(g.s.captiveDecisions.some(c=>c.role==='Ruler'));assert.equal(g.s.battle,null);assert.throws(()=>g.finishFactionTurn(),/captives/);

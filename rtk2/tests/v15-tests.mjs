@@ -1,0 +1,46 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {Game,createCampaign,validateSave} from '../mjs/strategy.mjs';
+import {initializeRoyalFamilies,eligibleRoyalChildren,checkRoyalProposal,acceptRoyalProposal,royalFamilyUpkeep,retireRulerFamily,childAge} from '../mjs/ruler-family.mjs';
+import {orderInsight} from '../mjs/game-ui.mjs';import {warProvisions} from '../mjs/war-provisions.mjs';import {aiBattle,living} from '../mjs/battle.mjs';
+const scenarios=JSON.parse(fs.readFileSync('config/scenarios.json')),terrains=JSON.parse(fs.readFileSync('config/province-terrain.json'));
+let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
+const fresh=(expanded=true)=>{const s=createCampaign(scenarios[0],[0]);s.familyMode=expanded?'expanded':'original';const g=new Game(s,{},terrains);g.s.monthlyReview=null;g.random=()=>.5;return g;};
+const valid=g=>validateSave(structuredClone(g.s),scenarios,terrains);
+const report=()=>({events:[],details:[]});const setMonth=(s,stamp)=>{s.year=Math.floor(stamp/12);s.month=stamp%12+1;};
+test('War monthly estimate follows actual daily deductions and adjusts for selected troop strength',()=>{
+ const g=fresh(false);g.s.settings.battleView='all';g.invade({province:9,target:8,officers:[0,34],food:30000,gold:500});while(g.s.battle.phase==='deployment')aiBattle(g);const b=g.s.battle,men=living(b).filter(u=>u.side==='attack').reduce((n,u)=>n+u.soldiers,0),before=b.food.attack,e=warProvisions(men,before);g.battleAction('end');g.battleAction('end');assert.equal(b.food.attack,before-e.daily);assert.equal(e.monthly,e.daily*30);assert.equal(warProvisions(20000,30000).days,30);assert.equal(warProvisions(0,1000).monthly,0);
+});
+test('Victory persists before captive decisions and blocks orders until acknowledged',()=>{
+ const g=fresh(false);g.s.settings.battleView='all';g.invade({province:9,target:8,officers:[0,34],food:30000,gold:500});g.s.battle.outcome={winner:'attack',reason:'Enemy army defeated'};g.resolveBattle();assert(g.s.triumph);assert(g.s.captiveDecisions.length);const saved=valid(g);assert.deepEqual(saved.triumph,g.s.triumph);assert.throws(()=>g.execute('search',{province:8,officer:34}),/victory screen/);assert.throws(()=>g.finishFactionTurn(),/victory screen/);g.acknowledgeTriumph();assert.equal(g.s.triumph,null);assert(g.s.captiveDecisions.length);valid(g);
+});
+test('Original saves retain their one-slot rules; Expanded seeds only the native gameplay daughter',()=>{
+ const g=fresh(false);assert.equal(g.s.familyMode,'original');assert(!g.ruler().family);g.s.familyMode='expanded';initializeRoyalFamilies(g.s);const f=g.ruler().family;assert.equal(f.children.length,1);assert.equal(childAge(g.s,f.children[0]),18);assert(f.children[0].nativeSlot);assert.equal(g.s.officers.length,255);valid(g);
+});
+test('Court marriage consumes the ruler action and exactly 100 gold, and cannot be duplicated',()=>{
+ const g=fresh(),p=g.province(9),before=p.gold;g.execute('courtMarriage',{province:9});assert.equal(p.gold,before-100);assert.equal(g.ruler().family.spouse.kind,'court');assert(g.officer(g.ruler().leader).acted);const state=JSON.stringify(g.s);assert.throws(()=>g.execute('courtMarriage',{province:9}));assert.equal(JSON.stringify(g.s),state);valid(g);
+});
+test('Royal proposals enforce age 16, ruler sex, unmarried recipient, and reciprocal family links',()=>{
+ const g=fresh(),r=g.ruler(),target=g.ruler(3),child=r.family.children[0];child.birthMonth=g.s.year*12+g.s.month-1-15*12;assert.throws(()=>checkRoyalProposal(g,r,target,child.id),/16/);child.birthMonth-=12;assert.equal(checkRoyalProposal(g,r,target,child.id),child);acceptRoyalProposal(g,r,target,child.id);assert.equal(target.family.spouse.child,child.id);assert.equal(eligibleRoyalChildren(g.s,r).length,0);assert.throws(()=>checkRoyalProposal(g,r,target,child.id),/unmarried/);valid(g);
+ const h=fresh(),source=h.ruler(),woman=h.ruler(3);h.officer(woman.leader).sex='female';assert.throws(()=>checkRoyalProposal(h,source,woman,source.family.children[0].id));const id=source.family.nextChild++,prince={id:source.family.id+'-c'+id,name:'Prince Test',sex:'male',birthMonth:h.s.year*12+h.s.month-1-16*12,marriedTo:null,marriedLeader:null,eligibleNotified:true};source.family.children.push(prince);acceptRoyalProposal(h,source,woman,prince.id);assert.equal(woman.family.spouse.sex,'male');valid(h);
+});
+test('Royal births use saved gestation, cooldown and gender; offspring do not inflate the officer roster',()=>{
+ const g=fresh();g.execute('courtMarriage',{province:9});g.random=()=>0;const start=g.s.year*12+g.s.month-1,first=report();royalFamilyUpkeep(g,first);assert.equal(g.ruler().family.pregnancy.due,start+9);g.s=valid(g);setMonth(g.s,start+8);royalFamilyUpkeep(g,report());assert.equal(g.ruler().family.children.length,1);setMonth(g.s,start+9);const birth=report();royalFamilyUpkeep(g,birth);assert.equal(g.ruler().family.children.length,2);assert.equal(birth.details[0].title,'A royal child is born');assert.equal(g.ruler().family.children[1].sex,'female');assert.equal(g.s.officers.length,255);royalFamilyUpkeep(g,report());assert.equal(g.ruler().family.pregnancy,null);setMonth(g.s,start+20);royalFamilyUpkeep(g,report());assert.equal(g.ruler().family.pregnancy,null);setMonth(g.s,start+21);royalFamilyUpkeep(g,report());assert(g.ruler().family.pregnancy);valid(g);
+});
+test('An actual monthly council includes a royal birth and survives save validation',()=>{const g=fresh();g.execute('courtMarriage',{province:9});g.ruler().family.pregnancy={due:g.s.year*12+g.s.month,sex:'male'};const result=g.endMonth();assert(result.details.some(e=>e.title==='A royal child is born'));assert(valid(g).lastReport.details.some(e=>e.title==='A royal child is born'));});
+test('Coming-of-age notices occur once; no expected birth for unmarried or age-ineligible families',()=>{
+ const g=fresh(),f=g.ruler().family,c=f.children[0],stamp=g.s.year*12+g.s.month-1;c.birthMonth=stamp-16*12;c.eligibleNotified=false;g.random=()=>0;const a=report();royalFamilyUpkeep(g,a);assert.equal(a.details.length,1);assert.equal(f.pregnancy,null);const b=report();royalFamilyUpkeep(g,b);assert.equal(b.details.length,0);g.execute('courtMarriage',{province:9});f.spouse.birthMonth=stamp-46*12;royalFamilyUpkeep(g,report());assert.equal(f.pregnancy,null);valid(g);
+});
+test('Ruler retirement preserves genealogy and frees their royal spouse for remarriage',()=>{
+ const g=fresh(),parent=g.ruler(),target=g.ruler(3),child=parent.family.children[0];acceptRoyalProposal(g,parent,target,child.id);retireRulerFamily(g.s,target);assert.equal(child.marriedTo,null);assert(child.widowed);assert(g.s.familyArchives.length);target.leader=g.province(target.home).officers.find(id=>id!==target.leader);target.name=g.officer(target.leader).name;initializeRoyalFamilies(g.s);assert.equal(target.family.spouse,null);assert.equal(g.s.familyArchives[0].children.length,1);assert(eligibleRoyalChildren(g.s,parent).includes(child));
+});
+test('Family validation rejects malformed age, pregnancy, duplicate child and marriage links',()=>{
+ for(const mutate of [s=>s.rulers[0].family.children[0].birthMonth=s.year*12+100,s=>s.rulers[0].family.pregnancy={due:s.year*12+100,sex:'female'},s=>s.rulers[0].family.children.push(structuredClone(s.rulers[0].family.children[0])),s=>s.rulers[0].family.children[0].marriedTo=3]){const g=fresh();mutate(g.s);assert.throws(()=>valid(g));}
+});
+test('Advisor reward estimates identify useless gold, full loyalty, horse stock, and writings prerequisites',()=>{
+ const g=fresh(false),p=g.province(9);g.ruler().advisor=33;g.officer(33).int=100;g.officer(0).charm=80;g.officer(34).loyalty=50;assert(orderInsight(g,'Reward · Gold',34,{amount:1}).includes('at least 5 gold'));assert(orderInsight(g,'Reward · Gold',34,{amount:50}).includes('50 → 60–61'));g.officer(34).loyalty=100;assert(orderInsight(g,'Reward · Gold',34,{amount:50}).includes('fully loyal'));g.officer(34).loyalty=50;p.horses=0;assert(orderInsight(g,'Reward · Horse',34,{amount:1}).includes('no horse'));g.officer(34).int=99;assert(orderInsight(g,'Reward · Writings',34,{amount:1}).includes('two fewer'));g.officer(34).int=60;assert(orderInsight(g,'Reward · Writings',34,{amount:1}).includes('60 → 61'));assert(orderInsight(g,'Give food to the people',34,{amount:1000}).includes('Popular loyalty'));
+});
+{
+ const events={};globalThis.document={hidden:false,addEventListener:(key,fn)=>events[key]=fn,removeEventListener:()=>{}};globalThis.Audio=class{constructor(src){this.src=src;this.paused=true;this.currentTime=0;}play(){this.paused=false;return Promise.resolve();}pause(){this.paused=true;}};
+}
+const {AudioBus}=await import('../mjs/audio.mjs');const bus=new AudioBus();bus.unlock();bus.setActive(true);const council=bus.track;bus.setTheme('battle');assert(council.paused);assert(bus.track.src.endsWith('/battle-music-v17.mp3'));bus.track.currentTime=3;bus.setTheme('battle');assert.equal(bus.track.currentTime,3);bus.setTheme('triumph');assert(!bus.track.loop);bus.configure({music:false});assert(bus.track.paused);bus.configure({music:true});document.hidden=true;bus.sync();assert(bus.track.paused);bus.destroy();count++;console.log('PASS Music switches themes, honours mute and visibility, and does not restart on every render');
+console.log(`${count} v15 regression groups passed.`);

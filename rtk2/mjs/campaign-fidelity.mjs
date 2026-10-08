@@ -1,4 +1,4 @@
-import {FUTURE_OFFICERS} from './future-officers.mjs';
+import {FUTURE_OFFICERS} from './future-officers.mjs?v=17';
 export const arrivalRecords=s=>FUTURE_OFFICERS[s.scenarioId??s.id]||[];
 export function processArrivals(g,report){
  const s=g.s;s.arrivalsDone??=[];

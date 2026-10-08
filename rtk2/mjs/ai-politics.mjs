@@ -8,7 +8,8 @@ export function aiPolitics(g,p,ready,ai){
  let args={province:p.id,officer:envoy.id},type='diplomaticMission';
  if(cursor===0&&rivals.length)args={...args,mode:'alliance',target:target.id};
  else if(cursor===1&&p.gold>=100)args={...args,mode:'gift',target:target.id,amount:100};
- else if(cursor===2&&me.hasDaughter!==false&&me.daughterGivenTo===undefined)args={...args,mode:'marriage',target:target.id};
+ else if(cursor===2&&g.s.familyMode==='expanded'){const partner=others.find(r=>r.family&&!r.family.spouse&&g.s.year-g.officer(r.leader).birth+1>=16&&eligibleRoyalChildren(g.s,me,r).length);if(!partner)return false;args={...args,mode:'marriage',target:partner.id,child:eligibleRoyalChildren(g.s,me,partner)[0].id};}
+ else if(cursor===2&&g.s.familyMode!=='expanded'&&me.hasDaughter!==false&&me.daughterGivenTo===undefined)args={...args,mode:'marriage',target:target.id};
  else if(cursor===3&&leader.ambition>=60&&rivals.length)args={...args,mode:'threat',target:target.id};
  else if(cursor===4&&allies.length){const ally=allies[0],enemy=hostile.find(q=>q.neighbors.some(id=>g.province(id).owner===me.id)&&q.neighbors.some(id=>g.province(id).owner===ally.id)&&!ally.alliances.includes(q.owner));if(!enemy)return false;args={...args,mode:'joint',target:ally.id,enemy:enemy.id};}
  else if(cursor===5&&weak){type='recruitMethod';args={...args,target:weak.o.id,method:envoy.int>envoy.charm?'letter':'attention'};}
@@ -20,3 +21,4 @@ export function aiPolitics(g,p,ready,ai){
  else return false;
  try{g.execute(type,args);return true;}catch{return false;}
 }
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=17';

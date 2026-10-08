@@ -52,4 +52,22 @@ test('Personal units cannot override the approach in a saved deployment',()=>{co
 test('Forged allegiance and remote origins cannot be restored; legitimate bribery still can',()=>{for(const field of ['betrayed','side','origin']){const {g,b,v}=arena();if(field==='betrayed')v.betrayed='yes';else if(field==='side')v.side='attack';else{const remote=g.s.provinces.find(p=>p.id!==b.target&&!g.province(b.target).neighbors.includes(p.id)&&p.officers.length);remote.owner=b.attacker;for(const id of remote.officers)g.officer(id).owner=b.attacker;g.normalize();v.origin=remote.id;v.id=remote.officers[0];v.side=v.originalSide='attack';}assert.throws(()=>validateSave(g.s,scenarios,g.terrains),field==='origin'?/connected province/:field==='side'?/betrayal record/:/allegiance/);}const {g,u,v}=arena();g.battleAction('bribe',{unit:u.id,target:v.id,gold:100});assert.equal(validateSave(g.s,scenarios,g.terrains).battle.units.find(x=>x.id===v.id).betrayed,true);});
 test('A defeated charge target is occupied in every direction even when breakthrough would fail',()=>{for(const q of [5,6])for(let i=0;i<6;i++){const {g,b,u,f,v,king}=arena();Object.assign(u,{q,r:6,war:0});Object.assign(f,{q:0,r:0});Object.assign(king,{q:0,r:1});Object.assign(v,{...direction(q,6,i),soldiers:1});const dest={q:v.q,r:v.r};g.random=()=>.999;g.battleAction('charge',{unit:u.id,target:v.id});assert.equal(v.soldiers,0);assert.deepEqual({q:u.q,r:u.r},dest);validateSave(g.s,scenarios,g.terrains);}});
 test('A surviving-defender breakthrough uses attacker War rather than a fixed fifty-percent roll',()=>{for(const war of [0,100]){const {g,u,v}=arena(),start={q:u.q,r:u.r},i=DIRECTIONS.findIndex((_,i)=>{const x=direction(u.q,u.r,i);return x.q===v.q&&x.r===v.r;}),beyond=direction(v.q,v.r,i);u.war=war;g.random=()=>.75;g.battleAction('charge',{unit:u.id,target:v.id});assert(v.soldiers>0);assert.deepEqual({q:u.q,r:u.r},war===100?beyond:start);}});
+
+test('Army equipment changes actual combat losses and purchasing equips a recipient without creating soldiers',()=>{
+ const bare=arena(),armed=arena(),partial=arena();bare.u.weapons=0;partial.u.weapons=2500;
+ for(const x of [bare,partial,armed])x.g.battleAction('attack',{unit:x.u.id,target:x.v.id});
+ assert(bare.v.soldiers>partial.v.soldiers);assert(partial.v.soldiers>armed.v.soldiers);
+ const g=fresh(),p=g.province(9),buyer=g.officer(34),recipient=g.officer(33);g.s.monthlyReview=null;p.merchant=true;buyer.acted=false;recipient.weapons=0;const men=recipient.soldiers,gold=p.gold;
+ g.execute('trade',{province:p.id,officer:buyer.id,recipient:recipient.id,mode:'arms',amount:17});
+ assert.equal(p.gold,gold-17);assert.equal(recipient.weapons,1700);assert.equal(recipient.soldiers,men);assert(buyer.acted);validateSave(g.s,scenarios,terrains);
+});
+test('Battle HUD weapons validate atomically and persist through settlement and suspended wars',()=>{
+ const x=arena();x.g.cheat('battle',x.u.id,{weapons:1234});assert.equal(x.u.weapons,1234);const before=JSON.stringify(x.g.s);assert.throws(()=>x.g.cheat('battle',x.u.id,{weapons:10001}));assert.equal(JSON.stringify(x.g.s),before);
+ const y=arena();y.u.weapons=2345;y.b.suspended=true;y.g.suspendBattle();assert.equal(y.g.officer(y.u.id).weapons,2345);assert.equal(validateSave(y.g.s,scenarios,y.g.terrains).wars[0].units.find(u=>u.id===y.u.id).weapons,2345);
+ const z=arena();z.u.weapons=3456;z.b.outcome={winner:'attack',reason:'Test victory'};z.g.resolveBattle();assert.equal(z.g.officer(z.u.id).weapons,3456);validateSave(z.g.s,scenarios,z.g.terrains);
+});
+test('A terminal commander charge keeps the occupation coordinate in the victory report',()=>{
+ const {g,b,u,f,v,king}=arena();Object.assign(f,{q:0,r:0});Object.assign(v,{q:0,r:2});Object.assign(king,{q:7,r:6,soldiers:1});b.leaders.defend=king.id;const target={q:king.q,r:king.r};
+ g.battleAction('charge',{unit:u.id,target:king.id});assert.equal(king.soldiers,0);assert.deepEqual({q:u.q,r:u.r},target);assert.equal(g.s.battle,null);assert(g.s.triumph);assert.equal(g.s.lastBattle.chargeLanding.kind,'occupation');assert.deepEqual({q:g.s.lastBattle.chargeLanding.q,r:g.s.lastBattle.chargeLanding.r},target);validateSave(g.s,scenarios,g.terrains);
+});
 console.log(checks+' revised battle checks passed.');

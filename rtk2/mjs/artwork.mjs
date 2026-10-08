@@ -14,7 +14,7 @@ export function paintAtlas(canvas, image, columns, rows, cell, pixelRatio=1) {
  return rect;
 }
 export function createArtwork(assets) {
- const observed=new Set(),paint=node=>{const key=node.dataset.atlas;if(!assets[key])return;paintAtlas(node,assets[key],key==='launch'?1:key==='courier'?4:key==='portraits'||key.startsWith('officers')?4:2,key==='launch'||key==='courier'?1:key==='portraits'||key.startsWith('officers')?4:2,Number(node.dataset.cell)||0,Math.min(globalThis.devicePixelRatio||1,2));};
+ const observed=new Set(),paint=node=>{const key=node.dataset.atlas;if(!assets[key])return;paintAtlas(node,assets[key],key==='launch'||key==='triumph'?1:key==='courier'?4:key==='portraits'||key.startsWith('officers')?4:2,key==='launch'||key==='triumph'||key==='courier'?1:key==='portraits'||key.startsWith('officers')?4:2,Number(node.dataset.cell)||0,Math.min(globalThis.devicePixelRatio||1,2));};
  const observer=new ResizeObserver(entries=>{for(const entry of entries||[])paint(entry.target);});
  return {refresh(){for(const node of observed)if(!node.isConnected){observer.unobserve?.(node);observed.delete(node);}for(const node of document.querySelectorAll('canvas[data-atlas]')){paint(node);if(!observed.has(node)){observed.add(node);observer.observe(node);}}}};
 }

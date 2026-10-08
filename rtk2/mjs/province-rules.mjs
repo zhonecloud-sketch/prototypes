@@ -1,8 +1,9 @@
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs';
-import {clamp} from './engine.mjs';
-import {disaster,monthNumber} from './monthly-events.mjs';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=17';
+import {clamp} from './engine.mjs?v=17';
+import {disaster,monthNumber} from './monthly-events.mjs?v=17';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=17';
 
-export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing']);
+export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
 export const rulerPresent=(g,p)=>p.officers.includes(g.ruler().leader);
 export function hireCapacity(g,p){const people=Math.floor(p.population/100),men=Math.floor(p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)/100),space=Math.floor(p.officers.reduce((n,id)=>n+10000-g.officer(id).soldiers,0)/100);return Math.max(0,Math.floor(Math.min(people-500,(people-men)/2,p.food/100,p.gold/10,space)));}
@@ -30,7 +31,8 @@ export function spyChance(g,envoy,target,mode,second=null,other=null){const me=g
 
 function applyOrder(g,type,args){
  const p=g.owned(args.province),me=g.ruler();let text='';
- if(['hireArmy','reassignArmy'].includes(type)){
+ if(type==='courtMarriage'){homeOnly(g,p);text=courtMarriage(g,p);}
+ else if(['hireArmy','reassignArmy'].includes(type)){
   const officer=g.ready(p,args.officer),hundreds=type==='hireArmy'?g.amount(args.hundreds,hireCapacity(g,p)):0,hired=hundreds*100,total=p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)+hired,alloc=args.allocations;
   if(!alloc||typeof alloc!=='object'||Array.isArray(alloc)||Object.keys(alloc).length!==p.officers.length||Object.keys(alloc).some(id=>!p.officers.includes(Number(id))))throw Error('Assign men only to the generals serving in this province.');
   const assigned=p.officers.reduce((n,id)=>n+g.amount(alloc[id],10000,0),0),remaining=total-assigned;if(remaining<0)throw Error('The assignments exceed the available men.');if(remaining&&args.disband!==true)throw Error(`Confirm disbanding the ${remaining} remaining men before quitting.`);if(p.population-hired+remaining>3000000)throw Error('The province cannot receive that many disbanded men.');
@@ -69,14 +71,14 @@ function applyOrder(g,type,args){
   else{
    const envoy=g.ready(p,args.officer);if(['alliance','joint','marriage','threat'].includes(mode))homeOnly(g,p);if(mode==='alliance'&&me.alliances.includes(target.id))throw Error('This ruler is already an ally.');
    let enemy=null,amount=0;if(mode==='joint'){if(!me.alliances.includes(target.id))throw Error('A joint invasion requires an ally.');enemy=g.province(args.enemy);if(enemy.owner===255||[me.id,target.id].includes(enemy.owner)||me.alliances.includes(enemy.owner)||target.alliances.includes(enemy.owner)||!enemy.neighbors.some(id=>g.province(id).owner===me.id)||!enemy.neighbors.some(id=>g.province(id).owner===target.id))throw Error('Choose an enemy province bordering both allied realms.');}
-   if(mode==='marriage'&&me.hasDaughter===false)throw Error('You have no daughters.');if(mode==='marriage'&&me.daughterGivenTo!==undefined)throw Error('Each ruler can offer one daughter in marriage.');if(mode==='gift')amount=g.amount(args.amount,p.gold,100);
+   if(mode==='marriage'){if(g.s.familyMode==='expanded')checkRoyalProposal(g,me,target,args.child);else{if(me.hasDaughter===false)throw Error('You have no daughters.');if(me.daughterGivenTo!==undefined)throw Error('Each ruler can offer one daughter in marriage.');}}if(mode==='gift')amount=g.amount(args.amount,p.gold,100);
    const success=g.random()*100<missionChance(g,p,envoy,target,mode);envoy.acted=true;
    if(mode==='gift'&&success){p.gold-=amount;const capital=g.province(target.home);capital.gold=Math.min(30000,capital.gold+amount);relation(me,target,(me.relations[target.id]??50)-Math.floor(Math.sqrt(amount)*envoy.charm/30));text=`${envoy.name} delivered ${amount} gold to ${target.name}; mutual hostility is ${me.relations[target.id]}.`;}
    else if(!success){relation(me,target,(me.relations[target.id]??50)+(mode==='threat'?20:5));text=`${target.name} refused ${envoy.name}’s ${mode==='joint'?'joint invasion proposal':mode==='marriage'?'marriage proposal':mode==='threat'?'demand to surrender':'alliance proposal'}.`;}
    else if(mode==='alliance'){ally(me,target);pruneJointPlans(g);relation(me,target,Math.min(30,me.relations[target.id]??50));text=`${target.name} accepted an alliance with ${me.name}.`;}
    else if(mode==='joint'&&g.isHuman(target.id)){text=askJointConsent(g,me,target,enemy);}
    else if(mode==='joint'){g.s.jointPlans??=[];g.s.jointPlans=g.s.jointPlans.filter(x=>x.ruler!==me.id||x.enemy!==enemy.id);g.s.jointPlans.push({ruler:me.id,ally:target.id,enemy:enemy.id,expires:monthNumber(g.s)+1});text=`${target.name} agreed to support an invasion of ${enemy.name}. The agreement lasts one month.`;}
-   else if(mode==='marriage'){me.daughterGivenTo=target.id;target.daughtersReceived??=[];target.daughtersReceived.push(me.id);relation(me,target,(me.relations[target.id]??50)-30);text=`${target.name} accepted your daughter’s marriage proposal; mutual hostility fell.`;}
+   else if(mode==='marriage'){if(g.s.familyMode==='expanded')text=acceptRoyalProposal(g,me,target,args.child)+' Mutual hostility fell.';else{me.daughterGivenTo=target.id;target.daughtersReceived??=[];target.daughtersReceived.push(me.id);text=`${target.name} accepted your daughter’s marriage proposal; mutual hostility fell.`;}relation(me,target,(me.relations[target.id]??50)-30);}
    else{text=surrenderRealm(g,target,envoy);}
   }
  }else if(type==='spyMission'){
