@@ -1,9 +1,9 @@
-import {provinceChoice,provinceLabel} from './province-choice.mjs?v=24';
-import {orderUnavailable} from './order-availability.mjs?v=24';
-import {adviceTopic} from './advice-topics.mjs?v=24';
-import {orderInsight,generalStats} from './game-ui.mjs?v=24';
-import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=24';
-import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=24';
+import {provinceChoice,provinceLabel} from './province-choice.mjs?v=25';
+import {orderUnavailable} from './order-availability.mjs?v=25';
+import {adviceTopic} from './advice-topics.mjs?v=25';
+import {orderInsight,generalStats} from './game-ui.mjs?v=25';
+import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=25';
+import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=25';
 export function createProvinceCommands(c){
  const $=id=>document.getElementById(id),g=()=>c.getGame(),p=()=>c.getSelected(),me=()=>g().ruler(),e=c.esc,n=c.num;
  let allocation=null;

@@ -4,7 +4,7 @@
 @media(max-height:500px){#provincePanel{grid-template-rows:100px 88px minmax(0,1fr)}#generalFrame{padding:7px;gap:8px;grid-template-columns:72px minmax(0,1fr)}.province-heading{position:relative;display:block;padding-right:34px}.province-heading button{position:absolute;top:-3px;right:0;margin:0}.province-heading h1{font-size:var(--text-heading);line-height:1.15}.province-heading .eyebrow{font-size:var(--text-meta);line-height:1.2}.general-line{margin-top:2px;line-height:1.2}.resources{padding-top:3px;margin-top:3px}.resources strong{font-size:var(--text-ui);line-height:1.15}.resources span{line-height:1.2}.command{min-height:48px}.event-copy{gap:2px}#eventText{-webkit-line-clamp:2;font-size:var(--text-meta)}.map-tip{display:none}}
 @media(max-height:350px){#provincePanel{grid-template-rows:84px 36px minmax(0,1fr)}.general-line{display:none}#eventText{display:none}.event-copy{justify-content:center;padding:3px 8px;background:#0b161591}#eventTitle{padding-right:32px}.event-read{bottom:10px}.launch-art .seal{display:none}.launch-art h1{font-size:var(--text-title)}}
 .direction-pad{display:grid;grid-template-columns:repeat(3,48px);gap:4px;justify-content:center;margin:10px auto}.direction-pad button{min-width:48px;min-height:44px;font-size:var(--text-heading);padding:0}.direction-pad [data-direction="-1"]{font-size:var(--text-meta)}
-.primary-battle{grid-template-columns:repeat(3,minmax(0,1fr))}.battle-submenu{margin-top:8px;grid-template-columns:repeat(2,minmax(0,1fr))}.direction-pad .hold-position{grid-column:1/4;font-size:var(--text-ui)}.direction-pad{grid-template-columns:repeat(3,48px)}
+.primary-battle{grid-template-columns:repeat(3,minmax(0,1fr))}.battle-submenu{margin-top:8px;grid-template-columns:repeat(3,minmax(0,1fr))}.direction-pad .hold-position{grid-column:1/4;font-size:var(--text-ui)}.direction-pad{grid-template-columns:repeat(3,48px)}
 @media(max-height:500px){}
 
 /* The map occupies two fifths; information and orders occupy three fifths. */
@@ -243,3 +243,5 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 #messageSpeed button{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px}
 .chronicle-item{display:flex;flex-direction:column;text-align:left;width:100%;gap:5px;padding:10px;margin-bottom:6px}
 #toast{white-space:normal;line-height:1.3}
+
+#provinceNavigation:has(#reviewCaptives){grid-template-columns:repeat(4,minmax(0,1fr))}

@@ -1,4 +1,4 @@
-import {battleRationMen} from './war-provisions.mjs?v=24';
+import {battleRationMen} from './war-provisions.mjs?v=25';
 // Abstract combat deliberately has no hex placement, pathfinding, action messages or tactical AI.
 // DOS has a separate aggregate resolver (0x21418 -> 0x21138), bounded by six exchanges.
 // Attribute/fort/casualty coefficients below remain remaster approximations.

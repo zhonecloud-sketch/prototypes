@@ -1,9 +1,9 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=24';
-import {provinceLabel} from './province-choice.mjs?v=24';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=24';
-import {clamp} from './engine.mjs?v=24';
-import {disaster,monthNumber} from './monthly-events.mjs?v=24';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=24';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=25';
+import {provinceLabel} from './province-choice.mjs?v=25';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=25';
+import {clamp} from './engine.mjs?v=25';
+import {disaster,monthNumber} from './monthly-events.mjs?v=25';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=25';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
@@ -93,7 +93,7 @@ function applyOrder(g,type,args){
    const target=g.officer(args.target);if((g.s.wars||[]).some(b=>b.units.some(u=>u.id===target.id)))throw Error('This general is committed to an ongoing battle.');const province=g.s.provinces.find(q=>q.officers.includes(target.id));if(!province||province.owner===me.id||province.owner===255||target.id===g.ruler(province.owner).leader)throw Error('Choose a rival’s subordinate general.');const enemy=g.ruler(province.owner);if(mode==='wolf'&&province.governor!==target.id)throw Error('Tiger and wolf targets a rival governor.');if(mode==='wolf'&&g.s.rulers.length===16&&g.s.rulers.every(r=>g.s.provinces.some(q=>q.owner===r.id)))throw Error('No ruler slot is available for a new rebellion.');
    const chance=spyChance(g,envoy,target,mode),success=g.random()*100<chance;envoy.acted=true;
    if(!success)text=`${envoy.name}’s ${mode==='wolf'?'tiger and wolf':mode==='forged'?'forged letter':'betrayal'} mission failed.`;
-   else if(mode==='wolf'){target.loyalty=clamp(target.loyalty-20);const report={events:[],details:[]};disaster(g,province,'rebellion',report);text=report.events.join(' ');}
+   else if(mode==='wolf'){if((g.s.wars||[]).some(b=>[b.source,b.target,...b.units.map(u=>u.origin)].includes(province.id)))throw Error('This province has generals committed to an ongoing battle.');target.loyalty=clamp(target.loyalty-20);const report={events:[],details:[]};disaster(g,province,'rebellion',report);text=report.events.join(' ');}
    else{target.loyalty=clamp(target.loyalty-20);if(mode==='betrayal'){target.betrayalFor=me.id;target.betrayalUntil=monthNumber(g.s)+3;text=`${target.name} agreed to betray their ruler during an invasion by your army. The pact lasts three months.`;}else text=`The forged letter lowered ${target.name}’s loyalty to ${target.loyalty}.`;}
   }
  }

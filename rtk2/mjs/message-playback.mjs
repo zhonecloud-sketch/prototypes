@@ -1,5 +1,5 @@
 export const MESSAGE_SPEEDS=[[3000,'Slow'],[2000,'Normal'],[1000,'Fast'],[500,'Very Fast']];
-export const messageDuration=state=>MESSAGE_SPEEDS.some(([n])=>n===state?.settings?.messageSpeed)?state.settings.messageSpeed:2000;
+export const messageDuration=state=>{const ms=state?.speed??state?.settings?.messageSpeed;return MESSAGE_SPEEDS.some(([n])=>n===ms)?ms:2000;};
 // One queue owns one timer. Pausing retains unread time; cancellation invalidates stale callbacks.
 export function createMessagePlayer({show,hide=()=>{},duration=()=>2000,onIdle=()=>{},clock={now:()=>performance.now(),setTimeout:(fn,ms)=>setTimeout(fn,ms),clearTimeout:id=>clearTimeout(id)}}){
  let queue=[],current=null,timer=null,remaining=0,total=0,started=0,paused=false,generation=0;

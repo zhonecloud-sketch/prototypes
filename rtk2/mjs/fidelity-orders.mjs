@@ -1,5 +1,5 @@
-import {clamp} from './engine.mjs?v=24';
-import {detachOfficer} from './campaign-decisions.mjs?v=24';
+import {clamp} from './engine.mjs?v=25';
+import {detachOfficer} from './campaign-decisions.mjs?v=25';
 export const FIDELITY_ORDERS=new Set(['moveParty','appointRealm','demoteAdvisor','recruitMethod','spyControl','buildFort']);
 const home=(g,p)=>{if(!p.officers.includes(g.ruler().leader))throw Error('Issue this order where your ruler is staying.');};
 export function recruitMethodChance(g,p,envoy,target,method){

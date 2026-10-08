@@ -1,6 +1,6 @@
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=24';
-import {provinceDirection} from './geography.mjs?v=24';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=24';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=25';
+import {provinceDirection} from './geography.mjs?v=25';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=25';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.

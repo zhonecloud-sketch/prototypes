@@ -2,9 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v24
+## Latest update — v25
 
-Council and governance reports now wait for the full selected Message Speed independently of Game Speed. Hidden spectator battles resolve by equations without tactical UI. Daily food uses the verified DOS formula, including defending reserves, and AI provisions use actual troop counts with a tunable 75-day reserve. Native abstract combat coefficients remain partly unrecovered; see [differences.md](differences.md).
+Navigation now uses equal **Events / Province / Orders** buttons. Epidemic replaces the anachronistic event name. **Game Speed** controls both advancement and message playback at 3 / 2 / 1 / 0.5 seconds. Water costs five mobility points; daily movement restores the native training allowance, Wait banks one up to six, and fire damage is random below 30% rather than a forced 30%. See [differences.md](differences.md) for verified executable offsets and remaining approximations.
+
+Council and governance reports honour the unified Game Speed. Hidden spectator battles resolve by equations without tactical UI. Daily food uses the verified DOS formula, including defending reserves, and AI provisions use actual troop counts with a tunable 75-day reserve. Native abstract combat coefficients remain partly unrecovered; see [differences.md](differences.md).
 
 Message Speed provides 3 / 2 / 1 / 0.5-second playback. Monthly reports advance automatically; Chronicle entries replay with artwork. Battle actions queue named messages before AI proceeds. Red attacking and blue defending armies display soldier counts, commander stars and named flags. DOS evidence confirms immediate defeat at zero food and carrying zero through available stock, up to 3,000,000. See [ai-tuning.md](ai-tuning.md) for the dedicated AI modules and editable parameters.
 

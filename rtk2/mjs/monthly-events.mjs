@@ -1,5 +1,5 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=24';
-import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=24';
+import {retireRulerFamily} from './ruler-family.mjs?v=25';
+import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=25';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Probabilities and loss amounts are remaster rules, not recovered DOS formulas.
 export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council'];
@@ -30,7 +30,7 @@ const add=(report,title,text,province=null,officer=null,kind='month',art='counci
 };
 function reduceTroops(game,p,fraction){let lost=0;for(const id of p.officers){if((game.s.wars||[]).some(b=>b.units.some(u=>u.id===id)))continue;const o=game.officer(id),n=Math.ceil(o.soldiers*fraction);o.soldiers-=n;lost+=n;}return lost;}
 export function disaster(game,p,type,report){
- const titles={locust:'蝗蟲 · Locust swarm',flood:'房子泡湯了 · Flood',typhoon:'天眼 / 風颱 · Typhoon',epidemic:'COVID-189 · Plague',uprising:'揭竿而起 · Popular uprising',rebellion:'Governor rebellion'};
+ const titles={locust:'蝗蟲 · Locust swarm',flood:'房子泡湯了 · Flood',typhoon:'天眼 / 風颱 · Typhoon',epidemic:'瘟疫 · Epidemic',uprising:'揭竿而起 · Popular uprising',rebellion:'Governor rebellion'};
  const before={food:p.food,gold:p.gold,population:p.population},protection=1-p.flood/100;
  let extra='';
  if(type==='locust'){p.food=Math.floor(p.food*.75);p.gold=Math.floor(p.gold*.85);p.famineUntil=monthNumber(game.s)+12;extra=' Famine reduces gold and food income by 25% for one year.';p.land=bound(p.land-10);p.loyalty=bound(p.loyalty-8);}
@@ -160,6 +160,7 @@ export function runMonthlyEvents(game,report,{initial=false}={}){
  return report;
 }
 export function validateMonthlyState(s){
+ for(const e of [s.lastEvent,...(s.lastReport?.details||[]),...(s.log||[]),...(s.log||[]).map(e=>e.event)])if(e)for(const key of ['title','text'])if(typeof e[key]==='string')e[key]=e[key].replaceAll('COVID-189','瘟疫 · Epidemic');
  s.monthlyState??={applied:null,history:[],disasters:[]};const m=s.monthlyState;
  if((m.applied!==null&&typeof m.applied!=='string')||!Array.isArray(m.history)||m.history.length>100||m.history.some(y=>!Number.isInteger(y)||y<189||y>999)||!Array.isArray(m.disasters)||m.disasters.length>82)throw Error('Invalid monthly event state.');
  m.omens??=[];m.special??=[];if(!Array.isArray(m.omens)||m.omens.length>255||m.omens.some(x=>!Number.isInteger(x.officer)||!s.officers[x.officer]||!Number.isInteger(x.due)||x.due<0)||!Array.isArray(m.special)||m.special.some(x=>!['tiger','chain'].includes(x))||new Set(m.special).size!==m.special.length)throw Error('Invalid special event state.');

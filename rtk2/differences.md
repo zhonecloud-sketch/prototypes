@@ -2,12 +2,30 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-08 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v24; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v23, commit `e2bbd5c24bc4fcd3d5a2a7fbe7072f701152d1b2`
+Latest implementation: v25; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v24, commit `97b41a743babe6cd651925a0d92830472dbfb803`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V25 epidemic naming, compact navigation and native battle costs
+
+The plague event is now **瘟疫 · Epidemic**, including report titles retained in older saves. The normal navigation row contains three equally sized buttons: **Events, Province, Orders**, on every settled-province screen. The Messenger shortcut is removed: journey/interception decisions continue to appear automatically, and their results remain in Events/Chronicle. A pending captive decision can still be reopened through its separate Captives control. The province-heading dropdown (the “V” control) is removed; provinces remain selectable on the map and through View.
+
+**Game Speed now controls both game advancement and all message queues:** Slow 3 seconds, Normal 2 seconds, Fast 1 second, Very Fast 0.5 seconds. The independent Message Speed selector is removed. Earlier saves migrate their old Game Speed labels to these exact durations; a conflicting independent Message Speed is overwritten. Opening controls still pauses active queued reading time. V23/V24 statements about independent speed settings are superseded by this change.
+
+| Battle question | Supplied DOS executable evidence | Result |
+|---|---|---|
+| Is 30% fire loss correct? | Fire caller `0x22e58` passes mode zero to `0x24752`. At `0x24774`, zero selects a 30% bound; the percentage helper at `0x49f2` and random helper at `0x4b38` produce an integer strictly below that bound. The branch at `0x2475c` defeats burning units with fewer than 100 soldiers. | Removed fixed 30% damage, the mandatory 100-soldier loss and the unrelated 20-point morale reduction. Fire now loses a random integer from zero through `floor(men × 30 / 100) − 1`; below 100 men the unit is defeated. A loss near 30% is possible, but is not guaranteed each day. |
+| Water movement | Native terrain-cost bytes at load-image `0x3b12c` (DS `0xb6cc`) are `2, 3, 3, 0, 5, 3, 3`; `0x25aa1` checks mobility and `0x25abd` subtracts the cost. | Water entry costs five; plain two; forest, hill, fort and palace three; mountains remain impassable. Pathfinding, highlights and actual moves use the same table. |
+| New turn and Wait | Unit-entry routine `0x226ce` invokes `0x24a6e`: mobility becomes the maximum of existing mobility and `2 + floor(max(0, training − 1) / 20)`. Wait at `0x2262a` adds one only below six. Officer training is offset `0x16`; mobility is `0x17`. | Spent mobility restores to the native allowance when the side becomes active, including a resumed siege. Banked points carry forward. With training 0–20, a spent move restores two, then successive Waits produce three, four, five and six. High training gives a larger starting allowance; this is verified native behaviour. |
+
+The earlier mounted +1 starting-mobility possession rule remains an explicitly documented remaster choice. The daily training allowance is a maximum/floor restoration, **not** a fresh addition every day, preventing repeated Wait from double-counting new-turn points. Implicit Wait from End turn uses the same six-point cap.
+
+The campaign regression also exposed Tiger-and-Wolf forcing a rebellion in a province with an ongoing siege, invalidating its field-army ownership. That order now rejects a province whose origin/target troops remain committed, consistent with the existing war reservation rule. Exact native handling of that exceptional plot/war interaction remains unverified.
+
+`original-v25-checks.json` records **35 static native byte checks**. These are disassembly checks, not execution in a DOS emulator. Dedicated V25 action tests cover spent Move → new-turn restoration → repeated Wait, actual five-point water entry, training thresholds, bounded fire casualties and unified save migration. Older test assertions and help text have been updated to the corrected rules. All 251 unit/campaign checks pass, including the six-scenario 15,000-action Hard/all-battles run (103 battle starts). All 37 DOM/Canvas interface checks pass. Physical-handset layout and audible playback remain unverified.
 
 ## V24 report timing, food provisions and hidden battles
 

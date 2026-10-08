@@ -1,7 +1,7 @@
-import {invasionFoodPlan} from './war-provisions.mjs?v=24';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=24';
-import {aiPolitics} from './ai-politics.mjs?v=24';
-import {hireCapacity} from './province-rules.mjs?v=24';
+import {invasionFoodPlan} from './war-provisions.mjs?v=25';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=25';
+import {aiPolitics} from './ai-politics.mjs?v=25';
+import {hireCapacity} from './province-rules.mjs?v=25';
 // One governance action per scheduler step; game validation remains authoritative.
 export function aiGovernance(g){const tuning=g.rules.ai?.governance??DEFAULT_AI.governance,ai=g.aiFor(),provinces=g.s.provinces.filter(p=>p.owner===g.s.player),smart=ai.intelligence>=tuning.smartIntelligence;
  for(const p of provinces){let ready=p.officers.map(id=>g.officer(id)).filter(o=>{try{g.ready(p,o.id);return true;}catch{return false;}});if(!ready.length)continue;ready.sort((a,b)=>smart?b.int-a.int:0);const o=smart?ready[0]:ready[g.int(0,ready.length-1)];if(g.s.familyMode==='expanded'&&p.officers.includes(g.ruler().leader)&&!g.ruler().family?.spouse&&!g.officer(g.ruler().leader).acted&&p.gold>=100&&g.random()<tuning.courtMarriageChance){try{g.execute('courtMarriage',{province:p.id});return true;}catch{}}if(aiPolitics(g,p,ready,ai))return true;const army=ready.filter(o=>o.soldiers>0).sort((a,b)=>b.soldiers-a.soldiers).slice(0,Math.min(tuning.maxInvaders,p.officers.length-1));const strength=army.reduce((n,o)=>n+o.soldiers*(.5+o.training/100),0);const enemies=p.neighbors.map(id=>g.province(id)).filter(q=>q.owner!==255&&q.owner!==p.owner&&!g.ruler().alliances.includes(q.owner)&&!g.s.wars.some(w=>[w.source,w.target,...w.units.map(u=>u.origin)].includes(q.id))).sort((a,b)=>a.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)-b.officers.reduce((n,id)=>n+g.officer(id).soldiers,0));
