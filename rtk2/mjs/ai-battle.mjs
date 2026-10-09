@@ -1,6 +1,7 @@
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=31';
-import {provinceDirection} from './geography.mjs?v=31';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=31';
+import {combatPower,nativeCasualty} from './native-combat.mjs?v=32';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=32';
+import {provinceDirection} from './geography.mjs?v=32';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=32';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.
@@ -16,13 +17,13 @@ export function planBattleRoute(b,u,enemies=living(b).filter(v=>v.side!==u.side&
 }
 // Separate objectives: invasion takes the palace; defence retains its garrison.
 export function palaceGuard(b){const defenders=living(b).filter(u=>u.side==='defend'&&u.placed),occupant=at(b,b.palace.q,b.palace.r);return occupant?.side==='defend'?occupant:defenders.find(u=>u.id===b.leaders.defend)||defenders.sort((a,z)=>distance(a,b.palace)-distance(z,b.palace)||z.soldiers-a.soldiers)[0]||null;}
-export function minimumStrikeLoss(b,u,target){const cover=[1,.72,.8,0,1.15,.6,.5][b.terrain[target.r*13+target.q]]??1,power=u.soldiers*(.4+u.war/100)*(.45+u.training/100)*(.4+u.morale/100)*weaponPower(u);return Math.min(target.soldiers,Math.max(30,Math.floor(power*.13*cover*.85)));}
+export function minimumStrikeLoss(b,u,target){return Math.min(target.soldiers,nativeCasualty(combatPower(target),combatPower(u),u.soldiers,b.terrain[target.r*13+target.q],1,0,0));}
 export function aiAttackTarget(b,u,adjacent){return [...adjacent].sort((a,z)=>{
  const priority=v=>(v.id===b.leaders[v.side]&&minimumStrikeLoss(b,u,v)>=v.soldiers?100:0)+(u.side==='attack'&&distance(v,b.palace)===0?50:0)+(v.id===b.leaders[v.side]?10:0)+(b.terrain[v.r*13+v.q]===4?5:0);
  return priority(z)-priority(a)||a.soldiers-z.soldiers;
 })[0];}
 // Tactical policy uses only visible opponents and legal movement cells.
-export const armyPower=u=>u.soldiers*(.4+u.war/100)*(.45+u.training/100)*(.4+u.morale/100)*weaponPower(u);
+export const armyPower=u=>u.soldiers*combatPower(u)/500;
 export function safeFireTarget(b,u,enemies){
  if(b.weather==='rain')return null;
  const friends=living(b).filter(v=>v.side===u.side&&v.placed),hazards=spot=>{

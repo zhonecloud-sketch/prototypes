@@ -2,11 +2,11 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v31
+## Latest update — v32
 
-Clan destruction and violent succession now have dedicated panoramic event artwork. Surviving heirs inherit 100% hostility toward the killer; a released landless ruler can still continue in exile. Incoming human diplomatic proposals wait for Accept/Refuse, while spectator mode resolves them automatically. Battlefield counters explicitly label Field and Reserve; wind shows No wind or direction. Defender AI forecasts routes to the palace to choose interception forests. Initial invasions are limited to five commanders, with a ten-unit field reinforcement cap.
+Cultiv and Flood now use the supplied native equation, including full difficulty subtraction. Melee uses native War/training/equipment power, two-sided casualties and the palace assault penalty. Unsupported morale defeats are removed. All 186 province approaches use their five original province-specific slots; initial defenders use their 20-zone cells. The main invading contingent remains capped at five, with up to five allied units.
 
-The source pack includes [all 41 recorded map prompts and terrain guides](artwork/battlefield-generation-prompts.md), [v31 artwork prompts](artwork-v31.md), and `config/release.json` with hashes of the active enlarged v30 images and new v31 events. **Menu → About** identifies v31. Older artwork filenames remain for provenance; the release manifest identifies the images currently used. [differences.md](differences.md) documents native evidence and remaining unverified mechanics.
+Watched spectator results open Events and retain their cause through save/load and tactical-log eviction. HUD labels the province's Flood protection. See [differences.md](differences.md) for all nine requests and [battle-equations-v32.md](battle-equations-v32.md) for equations, native evidence, examples and reproduction instructions. The pack includes the 1,300 native arithmetic cases and all 41 map-generation prompts. Active artwork remains the enlarged v30 atlases and v31 clan/heir images, verified by `config/release.json`. Menu → About identifies **v32**.
 
 ## V30 update
 

@@ -1,8 +1,8 @@
-import {battleRationMen} from './war-provisions.mjs?v=31';
+import {battleRationMen} from './war-provisions.mjs?v=32';
 // Abstract combat deliberately has no hex placement, pathfinding, action messages or tactical AI.
 // DOS has a separate aggregate resolver (0x21418 -> 0x21138), bounded by six exchanges.
 // Attribute/fort/casualty coefficients below remain remaster approximations.
-export const abstractArmyPower=(b,side,forts=0)=>b.units.filter(u=>u.side===side&&u.soldiers>0&&!u.routed&&!u.fled&&!u.captured).reduce((n,u)=>n+u.soldiers*(.5+u.war/100)*(.5+u.training/100)*(.5+u.morale/100)*(.65+.35*Math.min(1,u.weapons/Math.max(1,u.soldiers))),0)*(side==='defend'?1+forts/200:1);
+export const abstractArmyPower=(b,side,forts=0)=>b.units.filter(u=>u.side===side&&u.soldiers>0&&!u.routed&&!u.fled&&!u.captured).reduce((n,u)=>n+u.soldiers*(.5+u.war/100)*(.5+u.training/100)*(.65+.35*Math.min(1,u.weapons/Math.max(1,u.soldiers))),0)*(side==='defend'?1+forts/200:1);
 const men=(b,side)=>b.units.filter(u=>u.side===side&&!u.routed&&!u.fled&&!u.captured).reduce((n,u)=>n+u.soldiers,0);
 function casualties(b,side,loss){const units=b.units.filter(u=>u.side===side&&u.soldiers>0&&!u.routed&&!u.fled&&!u.captured),total=units.reduce((n,u)=>n+u.soldiers,0);let remaining=Math.min(total,Math.max(0,Math.floor(loss)));for(const [i,u]of units.entries()){const n=i===units.length-1?Math.min(u.soldiers,remaining):Math.min(u.soldiers,Math.floor(loss*u.soldiers/Math.max(1,total)),remaining);u.soldiers-=n;remaining-=n;}}
 export function resolveAbstractBattle(game,b){

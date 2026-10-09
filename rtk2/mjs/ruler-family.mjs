@@ -1,4 +1,4 @@
-import {zeroImpact,withImpact} from './event-impact.mjs?v=31';
+import {zeroImpact,withImpact} from './event-impact.mjs?v=32';
 // The supplied DOS game stores one daughter-availability flag, not ages or a birth schedule.
 export const daughterStatus=r=>({count:r.hasDaughter===false?0:1,eligible:r.hasDaughter!==false&&r.daughterGivenTo===undefined,marriedTo:r.daughterGivenTo??null});
 export function retireRulerFamily(s,r){

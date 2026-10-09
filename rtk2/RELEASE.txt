@@ -1,6 +1,6 @@
-RTK2 Remastered v31 — 2026-10-09
+RTK2 Remastered v32 — 2026-10-09
 
-This pack contains the same committed game files as the v31 release.
+This pack contains the same committed game files as the v32 release.
 Menu > About identifies the runtime version.
 SOURCE-COMMIT.txt identifies the packaged source commit.
 config/release.json identifies and hashes the ACTIVE event artwork.
@@ -14,3 +14,6 @@ All 41 original map-generation prompts, exact terrain grids and semantic
 reference diagrams are under docs/artwork/.
 Native verification, fixes and remaining differences: docs/differences.md.
 Shared ../lib dependencies are intentionally excluded, as requested.
+
+V32: native domestic/melee arithmetic, exact 186 deployment approaches,
+corrected main invasion quota, explicit result reasons and spectator Events.

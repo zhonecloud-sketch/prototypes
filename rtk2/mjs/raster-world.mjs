@@ -1,10 +1,10 @@
-import {provinceCurrentEvents} from './event-chronicle.mjs?v=31';
-import {activeBattleUnit} from './battle-presentation.mjs?v=31';
-import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=31';
-import {provinceTerrain} from './campaign-fidelity.mjs?v=31';
-import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=31';
-import {pointFor,project,provinceDirection} from './geography.mjs?v=31';
-import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=31';
+import {provinceCurrentEvents} from './event-chronicle.mjs?v=32';
+import {activeBattleUnit} from './battle-presentation.mjs?v=32';
+import {battlefieldKey,battlefieldFile,paintBattlefield} from './battlefield-art.mjs?v=32';
+import {provinceTerrain} from './campaign-fidelity.mjs?v=32';
+import {ownershipCells,layoutCityBadges} from './terrain-mask.mjs?v=32';
+import {pointFor,project,provinceDirection} from './geography.mjs?v=32';
+import {tilePoint,reachable,living,visibleUnit,TERRAIN,placementCells} from './battle.mjs?v=32';
 const palette=['#e0b65e','#88b19c','#8faecc','#d98f79','#c0a377','#b78251','#d0be83','#81989e','#c687a4','#a995c5','#83a664','#9aafc1','#a0be7c','#d8a18a','#75b0ac','#cfb24b'];
 export async function loadRasterAssets(){const assets={};await Promise.all(['clan','heir','history','courier','portraits','events','army','launch','relief','capitals','weather','disasters','omens','stories','officersHistoric','triumph',...Array.from({length:22},(_,i)=>'officers'+i),...Array.from({length:41},(_,i)=>battlefieldKey(i+1))].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{assets[key]=im;resolve();};im.onerror=()=>reject(Error('Artwork could not load: '+key));const file=key.startsWith('battlefield')?battlefieldFile(Number(key.slice(11))).replace(/\.webp$/,''):{clan:'clan-destroyed-v31',heir:'heir-vows-vengeance-v31',triumph:'triumph-v17',officersHistoric:'officers-historic-v30',history:'history-v30',disasters:'disasters-v30',omens:'omens-v30',stories:'stories-v30',terrain:'terrain-v15',army:'army-v23',launch:'launch-v9',relief:'china-relief-v9',capitals:'capitals-v9'}[key]||key;im.src='./assets/'+file+'.webp';})));return assets;}
 const tileCell=t=>({0:0,1:1,2:2,3:3,4:4,5:5,6:6})[t]??0;
@@ -37,7 +37,7 @@ export function createRasterWorld(canvas,labels,game,map,terrains,assets,mode,on
  }
 
  function hex(c,q,r){const p=screen(tilePoint(q,r));c.beginPath();for(let i=0;i<6;i++){const a=i*Math.PI/3,x=p.x+Math.cos(a)*scale,y=p.y+Math.sin(a)*scale;i?c.lineTo(x,y):c.moveTo(x,y);}c.closePath();return p;}
- function province(time){const b=game.s.battle,p=game.province(b?.target||game.s.selected),tiles=b?.terrain||provinceTerrain(p,terrains[p.id-1]),selected=b?.units.find(u=>u.id===b.selected),preview=!b&&game.mapApproachProvince&&p.neighbors.includes(game.mapApproachProvince)?{terrain:tiles,units:[],fire:{},entryDirection:provinceDirection(p,game.province(game.mapApproachProvince))}:null,reach=b?(b.phase==='deployment'?placementCells(b,b.side,selected):game.battlePlacementSide?placementCells(b,game.battlePlacementSide,null,game.battlePlacementDirection):selected&&selected.side===b.side?reachable(b,selected):[]):preview?placementCells(preview,'attack'):[];ctx.fillStyle='#283b2e';ctx.fillRect(0,0,width,height);
+ function province(time){const b=game.s.battle,p=game.province(b?.target||game.s.selected),tiles=b?.terrain||provinceTerrain(p,terrains[p.id-1]),selected=b?.units.find(u=>u.id===b.selected),preview=!b&&game.mapApproachProvince&&p.neighbors.includes(game.mapApproachProvince)?{target:p.id,terrain:tiles,units:[],fire:{},entryDirection:provinceDirection(p,game.province(game.mapApproachProvince))}:null,reach=b?(b.phase==='deployment'?placementCells(b,b.side,selected):game.battlePlacementSide?placementCells(b,game.battlePlacementSide,null,game.battlePlacementDirection):selected&&selected.side===b.side?reachable(b,selected):[]):preview?placementCells(preview,'attack'):[];ctx.fillStyle='#283b2e';ctx.fillRect(0,0,width,height);
  // A single province painting replaces the former terrain atlas and blending code.
  paintBattlefield(ctx,assets[battlefieldKey(p.id)],scale,screen);
  for(let index=0;index<tiles.length;index++){const kind=tiles[index];if(kind!==5&&kind!==6)continue;const pos=screen(tilePoint(index%13,Math.floor(index/13))),im=assets.capitals,sw=im.width/4,sh=im.height/2,cell=kind===6?0:1,h=scale*(kind===6?1.9:1.5);ctx.drawImage(im,cell%4*sw,Math.floor(cell/4)*sh,sw,sh,pos.x-h*(sw/sh)/2,pos.y-h*.6,h*(sw/sh),h);}

@@ -1,5 +1,5 @@
-import {zeroImpact,withImpact} from './event-impact.mjs?v=31';
-import {FUTURE_OFFICERS} from './future-officers.mjs?v=31';
+import {zeroImpact,withImpact} from './event-impact.mjs?v=32';
+import {FUTURE_OFFICERS} from './future-officers.mjs?v=32';
 export const arrivalRecords=s=>FUTURE_OFFICERS[s.scenarioId??s.id]||[];
 export function processArrivals(g,report){
  const s=g.s;s.arrivalsDone??=[];

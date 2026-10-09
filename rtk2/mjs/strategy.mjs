@@ -1,20 +1,20 @@
-import {checkRealmDestruction,replaceRemovedRuler} from './ruler-lifecycle.mjs?v=31';
-import {zeroImpact,withImpact} from './event-impact.mjs?v=31';
-import {beginWarReport,extendWarReport,finishWarReport,validateWarHistory,migrateActiveWarReports} from './event-chronicle.mjs?v=31';
-import {resolveAbstractBattle} from './auto-battle.mjs?v=31';
-import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=31';
-import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=31';
-import {aiGovernance} from './ai-governance.mjs?v=31';
-import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=31';
-import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=31';
-import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=31';
-import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=31';
-import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,answerProposal,validateDecisions} from './campaign-decisions.mjs?v=31';
-import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=31';
-import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=31';
-import {applyGeography} from './geography.mjs?v=31';
-import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=31';
-import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=31';
+import {checkRealmDestruction,replaceRemovedRuler} from './ruler-lifecycle.mjs?v=32';
+import {zeroImpact,withImpact} from './event-impact.mjs?v=32';
+import {beginWarReport,extendWarReport,finishWarReport,validateWarHistory,migrateActiveWarReports} from './event-chronicle.mjs?v=32';
+import {resolveAbstractBattle} from './auto-battle.mjs?v=32';
+import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=32';
+import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=32';
+import {aiGovernance} from './ai-governance.mjs?v=32';
+import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=32';
+import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=32';
+import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=32';
+import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=32';
+import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,answerProposal,validateDecisions} from './campaign-decisions.mjs?v=32';
+import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=32';
+import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=32';
+import {applyGeography} from './geography.mjs?v=32';
+import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=32';
+import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=32';
 export {DEFAULT_RULES};export const AI_DEFAULTS={intelligence:60,aggression:55};
 const clone=v=>JSON.parse(JSON.stringify(v));
 export const activeRulers=s=>s.rulers.filter(r=>s.provinces.some(p=>p.owner===r.id)||(s.roaming||[]).some(p=>p.owner===r.id));
@@ -84,7 +84,7 @@ export class Game extends Domestic{
  else if(kind==='officer'){const o=this.officer(id),bounds={int:100,war:100,charm:100,loyalty:100,training:100,soldiers:10000,weapons:10000,compatibility:255,virtue:100,ambition:100};for(const [key,v]of Object.entries(values)){if(key==='acted')o.acted=!!v;else if(key in bounds)o[key]=integer(key,v,bounds[key]);else throw Error('Unknown officer attribute.');}}
  else if(kind==='province'){const p=this.province(id),bounds={gold:30000,food:3000000,population:3000000,land:100,flood:100,loyalty:100,castle:100,horses:100,ricePrice:120};for(const [key,v]of Object.entries(values)){if(key==='owner'){const owner=Number(v);if(owner!==255&&!this.s.rulers.some(r=>r.id===owner))throw Error('Choose an existing ruler.');if(owner===255){for(const oid of p.officers){this.officer(oid).owner=255;p.unclaimed.push(oid);}p.officers=[];p.governor=null;}else{if(!p.officers.length){const oid=p.unclaimed.shift()??p.hidden.shift();if(oid===undefined)throw Error('Place an officer here before assigning a ruler.');p.officers.push(oid);p.governor=oid;}for(const oid of p.officers)this.officer(oid).owner=owner;}p.owner=owner;
  }else if(key==='merchant')p.merchant=!!v;else if(key==='resetActions'){if(v){for(const oid of p.officers)this.officer(oid).acted=false;p.taxed=false;}}else if(key in bounds)p[key]=integer(key,v,bounds[key],key==='ricePrice'?1:0);else throw Error('Unknown province attribute.');}}
- else if(kind==='battle'){const b=this.s.battle;if(!b)throw Error('No active battle.');for(const [key,v]of Object.entries(values)){if(key==='weather'){if(!Object.hasOwn(WEATHER,v))throw Error('Choose a listed weather condition.');setWeather(b,v);}else if(key==='wind')b.wind=integer(key,v,6);else if(key==='windStrength')b.windStrength=integer(key,v,3);else if(key==='challengeWar')b.challengeWar=integer(key,v,100);else if(key==='day'){b.day=integer(key,v,30,1);b.completedDays=b.day-1;}else if(key==='ordered'){const u=b.units.find(u=>u.id===Number(id));if(!u)throw Error('Choose a battle unit.');u.ordered=!!v;u.orderDay=u.ordered?b.day:0;}else if(key==='attackFood'||key==='defendFood')b.food[key==='attackFood'?'attack':'defend']=integer(key,v,3000000);else{const u=b.units.find(u=>u.id===Number(id));if(!u||!['soldiers','weapons','morale','mobility','war','int'].includes(key))throw Error('Choose a battle unit and attribute.');u[key]=integer(key,v,['soldiers','weapons'].includes(key)?10000:['morale','war','int'].includes(key)?100:1000);u.routed=u.soldiers===0||u.morale<=10;}}if(b.wind===0)b.windStrength=0;validateBattle(b,this.s,this.terrains);outcome(b);if(b.outcome)this.resolveBattle();}
+ else if(kind==='battle'){const b=this.s.battle;if(!b)throw Error('No active battle.');for(const [key,v]of Object.entries(values)){if(key==='weather'){if(!Object.hasOwn(WEATHER,v))throw Error('Choose a listed weather condition.');setWeather(b,v);}else if(key==='wind')b.wind=integer(key,v,6);else if(key==='windStrength')b.windStrength=integer(key,v,3);else if(key==='challengeWar')b.challengeWar=integer(key,v,100);else if(key==='day'){b.day=integer(key,v,30,1);b.completedDays=b.day-1;}else if(key==='ordered'){const u=b.units.find(u=>u.id===Number(id));if(!u)throw Error('Choose a battle unit.');u.ordered=!!v;u.orderDay=u.ordered?b.day:0;}else if(key==='attackFood'||key==='defendFood')b.food[key==='attackFood'?'attack':'defend']=integer(key,v,3000000);else{const u=b.units.find(u=>u.id===Number(id));if(!u||!['soldiers','weapons','morale','mobility','war','int'].includes(key))throw Error('Choose a battle unit and attribute.');u[key]=integer(key,v,['soldiers','weapons'].includes(key)?10000:['morale','war','int'].includes(key)?100:1000);u.routed=u.soldiers===0;}}if(b.wind===0)b.windStrength=0;validateBattle(b,this.s,this.terrains);outcome(b);if(b.outcome)this.resolveBattle();}
  else throw Error('Unknown cheat panel.');if(this.s.battle&&['province','officer'].includes(kind))throw Error('During battle, edit units and supplies from the Battle tab.');this.normalize();this.record(`Testing HUD updated ${kind} ${id}.`,'cheat');return true;
  }catch(e){this.s=before;throw e;}}
 }

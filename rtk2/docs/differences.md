@@ -2,13 +2,48 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-09 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v31; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v30, commit `c59646d5f52b72b94247db93f4a40ac7a0b42aca`
+Latest implementation: v32; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v31, commit `ae1133ecdcbc5b8b9d7641bfe9776cf1f87af4d0`
+Earlier implementation: v30, commit `c59646d5f52b72b94247db93f4a40ac7a0b42aca`
 Earlier implementation: v29, commit `cbc1c275b19c8bce334de1285228e631e1d1e8eb`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+## V32 native domestic equations, melee and deployment audit
+
+This section supersedes earlier approximations for **Cultiv, Flood, normal melee, charge strike count, simultaneous counterattack factors and deployment zones**. The supplied English `main.exe` remains authoritative. Native verification now includes **97 exact byte checks** and **1,300 isolated 16-bit arithmetic cases**: 500 domestic, 100 army-power and 700 casualty cases. The arithmetic routines execute unchanged in a bounded emulator; random calls are replaced with specified rolls. This does **not** execute DOS, emulate a complete battle or redistribute the executable. Evidence and reproduction commands: [battle-equations-v32.md](battle-equations-v32.md), [original-v32-checks.json](original-v32-checks.json), [native-equation-vectors-v32.json](native-equation-vectors-v32.json).
+
+| Request | Finding and change | Original evidence / boundary |
+| --- | --- | --- |
+| 1. Cultiv attribute and equation | **INT + floor(CHA / 2)** affects development. The existing equation incorrectly subtracted half the difficulty at the end; it now subtracts the **full difficulty** with a zero floor. Spending and final Land remain capped at 100. Advisor forecasts use the corrected equation and name both attributes. | Shared routine `0x10750`; cultivation wrapper `0x107EC`, province byte `+0x16`. Python subtracts half difficulty and conflicts with the supplied executable. |
+| 2. Flood attribute and equation | The same equation, using current **Flood protection** instead of Land. INT and CHA both matter. This rating is protection, not flood damage. | Wrapper `0x107C6`, province byte `+0x18`, calls the same `0x10750`. |
+| 3. All-battles result in Events | The independent war chronicle already held results, but spectator view returned to the turn artwork and every AI faction change reset an open Events pane. Completed watched spectator battles now open **Events**, and that pane persists during governance turns. Every completed summary records and displays its actual result reason. Full tactical-log eviction and save/load tests retain the result. | Remaster presentation repair; no claim of a newly recovered original logging equation. Summaries retain one row per war/month and captive outcomes. |
+| 4. Flood in Province HUD | The editable field existed under **Dikes**. Its label is now **Flood protection**, range 0–100. Province attributes still show **Flood**. | Naming/visibility correction, not a new resource field. |
+| 5. Attacker placement in all 41 provinces | Replaced broad edge strips with **the actual five province-specific slots for each of 186 directed connections**. Several maps shift individual slots inward; a single directional template is insufficient. Initial defenders use their 20 designated province-zone cells. Province Map highlights, AI, touch placement, reinforcements and validation share these zones. | Native `0x2709E` loads the 156-byte province zone map at resource offset `41 × 156 + provinceIndex × 156`; `0x23992` requires a cell's zone to equal the origin province number. [deployment-v32.json](deployment-v32.json) contains every approach and resource SHA. Zone bytes come from JuQiang's original `Hexdata.dat`; no English `Hexdata.dat` was supplied, so cross-edition byte identity is not asserted. Its 41 terrain maps match current terrain data exactly and every neighboring origin has five passable slots. |
+| 6. 1,000 casualties in one melee | There is no fixed 1,000-man damage. Replaced the remaster's multiplicative soldier/War/training/morale damage and weak after-loss retaliation with the recovered **two-sided signed integer calculation**. A sufficiently disadvantaged 1,000-man army in water can legitimately be annihilated in one exchange. Losses are capped by men present. | Power `0x23702`; casualty helper `0x2375A`; normal caller `0x26216` → `0x24C58`. Both rolls use pre-exchange forces. Weapons are reduced proportionally on both sides. |
+| 7. Water versus palace and morale | Both terrain divisors now participate. Assaulting a selected palace defender applies the native **divisor-5 penalty to the acting unit's own losses**; the palace defender retains its divisor 20. Equipment coverage, War and training determine power. **No morale loss or morale rout appears in this melee path**; the earlier percentage-morale model and automatic `morale ≤ 10` defeat were remaster inventions and are removed. Morale is retained only as an unused legacy save field; it is no longer shown in battle HUD/inspection or used by tactical/abstract power. | `0x23790` selects the assault penalty; divisor table at `0x3ADD6`: 10,10,12,10,8,15,20,5. Officer word `+0x14` is **weapons**, not morale. Percentage helper `0x0533E` measures weapons per soldier; `0x235A8`/`0x235C4` remove proportional weapons. This conclusion covers the recovered paths; it does not assert that every event/strategy branch has been decoded. |
+| 8. Defender loses with troops remaining | One unsupported cause was commander morale routing; it is removed. Original food exhaustion is immediate even with men remaining. Commander defeat/capture, commander flight, ruler capture and palace occupation remain battle-ending conditions. Events now preserve the cause. Without the affected save, no single cause can be assigned to the reported occurrence. Legacy ongoing morale-only routes are repaired when the unit is alive, uncaptured and not fleeing; already settled defeats are not rewritten. | Food `0x22DBC`/`0x22DD0`; commander removal `0x25207` and `0x2521F`. Native result flags do not require all army soldiers to die. Duel/capture/flight probabilities remain approximations. |
+| 9. Five initial attackers and remaining five | **Five main invading commanders** is confirmed. The ongoing-war capacity helper also caps the attacking main contingent at five, while a same-ruler defence branch has ten. It therefore does **not** permit ordinary same-ruler neighboring reinforcements to grow the main invasion to ten. Main reinforcement options now cap at five, exclude the original source, and use another connected friendly province to fill vacancies; allied invasion support is separately capped at five, total invading field ten. | Initial `0x128A0`; ongoing `0x1F044` tests ruler equality with the defending province, then chooses ten (`CB72`) or five (`CB86`) and subtracts field/pending troops. `0x1EBD2` assigns the attacking ruler/source to `CB86/CB88`. Tactical Reinforce at `0x2CCFC` calls the local reinforcement picker only for the defending role; attackers get “Can't use that command!”. The remaster retains a convenience tactical neighbor-reinforcement interface, with the corrected main quota; it does not reproduce the original monthly dispatch UI or exact allied arrival scheduling. Bribes/secret defections retain their separate ten-unit limit. |
+
+The domestic gain is:
+
+```text
+V = current Land or Flood protection; G = gold (1–100); D = difficulty (1–5)
+A = INT + floor(CHA / 2)
+B = floor((100 - floor(V / 2)) × G / 100)
+C = floor(sqrt(B × A))
+H = floor((D + 1) / 2)
+gain = max(0, floor(sqrt(floor(C / H))) - D)
+new rating = min(100, V + gain)
+```
+
+Each successful order still uses the selected general's action and spends the selected gold. At 100 it cannot improve. Melee's full equation, examples, Lu Bu's recovered bonus, simultaneous factors and controlled native test method are in [battle-equations-v32.md](battle-equations-v32.md). **Charge performs 1–10 exchanges**, replacing the old fixed three; defeating the target still occupies its tile immediately, without a surviving-target breakthrough.
+
+Remaining combat differences include the original hidden-ambush trigger/damage context, challenge equations, capture/retreat probabilities, AI policy, abstract auto-resolution coefficients, ally scheduling and the complete native initial-defender selection UI. The recovered normal-melee coefficients must not be interpreted as verification of those systems.
+
+Validation: **315 gameplay/data/artwork groups, 45 emulated DOM/native-Canvas interface groups, 97 native byte checks and 1,300 bounded native arithmetic cases pass.** This includes the actual all-battles spectator scheduler returning to Events with a food-defeat reason, all 41 deployment maps/186 approaches, native casualty examples, charge occupation, five-unit main reinforcement limits and legacy-save migration. Full `npm test` and `npm run test:ui` exit successfully. Physical handset layout, audible playback and a complete DOS playthrough remain unverified.
 
 ## V31 clan events, diplomatic audiences and battlefield review
 

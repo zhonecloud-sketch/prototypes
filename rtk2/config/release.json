@@ -1,5 +1,5 @@
 {
-  "version": 31,
+  "version": 32,
   "date": "2026-10-09",
   "activeEventArt": [
     {
@@ -33,5 +33,7 @@
   ],
   "historicalAssets": "v29 files are retained only for regression/provenance; the live game loads v30 widescreen atlases.",
   "mapPromptIndex": "docs/artwork/battlefield-generation-prompts.md",
-  "battlefieldMaps": 41
+  "battlefieldMaps": 41,
+  "nativeEquationCases": 1300,
+  "provinceApproaches": 186
 }

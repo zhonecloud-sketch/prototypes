@@ -1,6 +1,6 @@
-import {zeroImpact,provinceSnapshot,provinceImpact,withImpact} from './event-impact.mjs?v=31';
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=31';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=31';
+import {zeroImpact,provinceSnapshot,provinceImpact,withImpact} from './event-impact.mjs?v=32';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=32';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=32';
 function provinceReport(report,p,text,impact=zeroImpact()){text=withImpact(text,impact);report.events.push(text);report.details??=[];report.details.push({kind:'month',title:`Supply report · #${p.id} ${p.name}`,text,province:p.id,art:'council',officer:p.governor,impact});}
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};
@@ -23,7 +23,7 @@ export class Game{
  amount(value,max,min=1){const n=Number(value);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error(`Choose a whole number from ${min} to ${Math.max(min,max)}.`);return n;}
  spend(p,field,n){if(p[field]<n)throw Error(`Not enough ${field==='food'?'rice':field}.`);p[field]-=n;}
  record(text,type='order'){this.s.log.unshift({month:this.s.month,year:this.s.year,turn:this.s.turn,text,type});this.s.log=this.s.log.slice(0,160);return text;}
- development(p,o,amount,field){const value=p[field];if(value>=100)return 0;const v1=Math.floor(Math.sqrt(Math.floor((100-Math.floor(value/2))*amount/100)*(Math.floor(o.charm/2)+o.int)));const d=Math.floor((this.s.difficulty+1)/2);return Math.max(0,Math.floor(Math.sqrt(Math.floor(v1/d)))-d);}
+ development(p,o,amount,field){const value=p[field];if(value>=100)return 0;const v1=Math.floor(Math.sqrt(Math.floor((100-Math.floor(value/2))*amount/100)*(Math.floor(o.charm/2)+o.int)));const d=Math.floor((this.s.difficulty+1)/2);return Math.max(0,Math.floor(Math.sqrt(Math.floor(v1/d)))-this.s.difficulty);}
  relief(p,o,amount){const leader=this.officer(this.ruler(p.owner).leader);return Math.floor(Math.floor(Math.sqrt(amount))*Math.floor((leader.charm+o.charm)/2)/((6+this.s.difficulty)*Math.floor(Math.sqrt(p.population/100))));}
  preview(type,pid,oid,amount=100){const p=this.province(pid),o=this.officer(oid);if(type==='develop'||type==='flood')return Math.min(100-p[type==='develop'?'land':'flood'],this.development(p,o,amount,type==='develop'?'land':'flood'));if(type==='relief')return Math.min(100-p.loyalty,this.relief(p,o,amount));if(type==='reward')return Math.min(100-o.loyalty,Math.floor(this.officer(p.governor).charm*amount/400));return 0;}
  route(source,target){const visited=new Set([source]);const q=[[source]];while(q.length){const path=q.shift();if(path.at(-1)===target)return path;for(const id of this.province(path.at(-1)).neighbors){if(!visited.has(id)&&this.province(id).owner===this.s.player){visited.add(id);q.push([...path,id]);}}}return null;}

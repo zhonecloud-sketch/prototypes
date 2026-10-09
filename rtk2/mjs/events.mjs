@@ -1,4 +1,4 @@
-import {cleanEventLanguage,withImpact} from './event-impact.mjs?v=31';
+import {cleanEventLanguage,withImpact} from './event-impact.mjs?v=32';
 export function eventFor(game){const s=game.s;if(s.eventPreview)return {...s.eventPreview,preview:true};if(s.monthlyReview&&s.lastReport?.details?.[s.monthlyReview.index])return s.lastReport.details[s.monthlyReview.index];if(s.battle&&game.battleDetailed()){const b=s.battle;return {kind:'war',province:b.target,title:`${game.province(b.target).name} · ${b.phase==='deployment'?'Deployment':'Day '+b.day}`,text:b.events[0]||`${game.ruler(b.attacker).name} has invaded.`,officer:b.selected};}if(s.lastEvent)return s.lastEvent;const entry=s.log[0];return {kind:entry?.type==='war'?'war':'council',title:entry?'The chronicle':'The council awaits',text:entry?.text||'Select a province, then choose an order.',officer:game.province(s.selected).governor};}
 export const eventCell=kind=>({diplomacy:0,prison:1,war:2,council:3,order:3,month:3,cheat:3})[kind]??3;
 // Each requested event has a separate scene; ordinary council/diplomacy retain their original art.

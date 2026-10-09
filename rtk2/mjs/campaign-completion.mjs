@@ -1,10 +1,10 @@
-import {endRealm} from './ruler-lifecycle.mjs?v=31';
-import {invasionFoodPlan} from './war-provisions.mjs?v=31';
-import {clamp} from './engine.mjs?v=31';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=31';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=31';
-import {provinceDirection} from './geography.mjs?v=31';
-import {hireCapacity} from './province-rules.mjs?v=31';
+import {endRealm} from './ruler-lifecycle.mjs?v=32';
+import {invasionFoodPlan} from './war-provisions.mjs?v=32';
+import {clamp} from './engine.mjs?v=32';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=32';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=32';
+import {provinceDirection} from './geography.mjs?v=32';
+import {hireCapacity} from './province-rules.mjs?v=32';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},
@@ -86,7 +86,7 @@ export function answerAlly(g,accept,args={}){
   if(!g.ruler(x.requester).alliances.includes(x.owner)||g.province(x.province).owner===255||[x.requester,x.owner].includes(g.province(x.province).owner))throw Error('The joint invasion is no longer valid.');
   g.s.jointPlans=g.s.jointPlans.filter(p=>p.ruler!==x.requester||p.enemy!==x.province);g.s.jointPlans.push({ruler:x.requester,ally:x.owner,enemy:x.province,expires:g.s.year*12+g.s.month,officers:ids,food,gold,supplyProvince:home.id});
  }else{
-  const b=g.s.battle;if(!b||b.target!==x.province||ownerFor(b,x.side)!==x.requester)throw Error('This battle is no longer awaiting support.');if(living(b).filter(u=>u.side===x.side).length+ids.length>10)throw Error('A battlefield side has room for ten units.');
+  const b=g.s.battle;if(!b||b.target!==x.province||ownerFor(b,x.side)!==x.requester)throw Error('This battle is no longer awaiting support.');if(x.side==='attack'&&living(b).filter(u=>u.side===x.side&&u.allyOwner!==undefined&&!u.betrayed).length+ids.length>5)throw Error('The allied invading contingent has room for five units.');if(living(b).filter(u=>u.side===x.side).length+ids.length>10)throw Error('A battlefield side has room for ten units.');
   const additions=[];for(const id of ids){const origin=available.find(y=>y.id===id).province,entry=provinceDirection(g.province(b.target),g.province(origin)),spot=placementCells({...b,units:[...b.units,...additions]},x.side,null,entry)[0];if(!spot)throw Error('This approach has no vacant entry hex.');additions.push({...newUnit(g,id,x.side,origin),...spot,placed:true,allyOwner:x.owner,entryDirection:entry});}
   if(b.food[x.side]+food>3000000||b.gold[x.side]+gold>30000)throw Error('The field stores would overflow.');home.food-=food;home.gold-=gold;b.food[x.side]+=food;b.gold[x.side]+=gold;b.initialStores??={attack:{gold:b.gold.attack-(x.side==='attack'?gold:0),food:b.food.attack-(x.side==='attack'?food:0)},defend:{gold:b.gold.defend-(x.side==='defend'?gold:0),food:b.food.defend-(x.side==='defend'?food:0)}};b.initialStores[x.side].gold+=gold;b.initialStores[x.side].food+=food;b.contributions??=[];b.contributions.push({owner:x.owner,province:home.id,side:x.side,gold,food});b.units.push(...additions);for(const id of ids)g.officer(id).acted=true;
  }

@@ -1,8 +1,8 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=31';
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=31';
-import {recordWarFate} from './event-chronicle.mjs?v=31';
-import {retireRulerFamily} from './ruler-family.mjs?v=31';
-import {clamp} from './engine.mjs?v=31';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=32';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=32';
+import {recordWarFate} from './event-chronicle.mjs?v=32';
+import {retireRulerFamily} from './ruler-family.mjs?v=32';
+import {clamp} from './engine.mjs?v=32';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}

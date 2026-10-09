@@ -1,4 +1,4 @@
-"""Static v31 checks on supplied packed English main.exe and scenario.dat.
+"""Static v32 checks on supplied packed English main.exe and scenario.dat.
 Unpacks the binary's own backwards RLE stream in memory. Does not execute DOS,
 modify inputs or redistribute executable bytes. Offsets are unpacked load-image offsets.
 """
@@ -125,6 +125,7 @@ def main():
       'disaster_skip_field_army_province':(0xed9a,'ff76069a9200420583c4020bc0756d'),
       'native_percentage_floor_helper':(0x49ca,'558bec837e0a007507b8ffff8be55dcb8b460a2bd252508b4608f7660652509a183800008be55dcb'),
     })
+    checks.update({'development_actor_int_plus_half_charm': (67414, '8b5e068a4706d0e80247048846fe'), 'development_diminishing_and_percent': (67428, '8a460ad0e82ae42d6400f7d850ff76089a32009c04'), 'development_final_subtract_full_difficulty': (67502, '8846fea0b333508d46fe509a6c009c04'), 'flood_native_field_and_shared_formula': (67529, '8b1e9a33807f18647207'), 'cultivate_native_field_and_shared_formula': (67567, '8b1e9a33807f16647207'), 'melee_power_training_war_equipment': (145171, '8b5e068a47162ae48946fa539aee00250583c4022ae48946fc8b5e068a47058946fe817f1aa30075048346fe14'), 'combat_divisor_table': (241110, '0a000a000c000a0008000f0014000500'), 'palace_assault_divisor_index_seven': (145296, '0bc07404c6460a07'), 'melee_random_bound300': (145304, 'b82c01509a78019c04'), 'casualty_no_power_advantage_fallback1to30': (145362, '0bc07c0fb81e00509a78019c0483c402f7d848'), 'charge_count_one_through_ten': (156569, 'b00a509afa007c0583c4022ae4408946fa'), 'deployment_zone_resource_offset': (159966, '81c6fc1813c85156ff369ecb9acc020000'), 'local_reinforce_only_defending_side': (183548, 'ff36e6b89a0405332383c402fec875080ee8bcfd')})
     for name,(offset,hexbytes) in checks.items():
         expected=bytes.fromhex(hexbytes);assert image[offset:offset+len(expected)]==expected,name
     scenario=(args.inputs/'scenario.dat').read_bytes();ptr=struct.unpack_from('<H',scenario,0x2dc4-0x42+3*35+2)[0];names=[]

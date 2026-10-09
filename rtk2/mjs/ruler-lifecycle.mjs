@@ -1,4 +1,4 @@
-import {retireRulerFamily} from './ruler-family.mjs?v=31';
+import {retireRulerFamily} from './ruler-family.mjs?v=32';
 // Native succession prefers the most loyal officer sharing the deceased's blood mask.
 export function successorCandidates(g,owner,old){
  const ids=g.s.provinces.filter(p=>p.owner===owner).flatMap(p=>p.officers).filter(id=>id!==old.id&&!g.officer(id).dead&&g.officer(id).prisonerOf===undefined);

@@ -1,4 +1,4 @@
-import {hexPoint,reachable,at,TERRAIN,living} from './battle.mjs?v=31';
+import {hexPoint,reachable,at,TERRAIN,living} from './battle.mjs?v=32';
 export function createProvinceWorld(T,canvas,labels,game,terrains,onHex){
  const renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;const scene=new T.Scene();scene.background=new T.Color('#91a69e');scene.fog=new T.Fog('#91a69e',35,80);const camera=new T.PerspectiveCamera(42,1,.1,120),target=new T.Vector3(0,0,0);let dist=34,desired=34,running=true,last=0,frames=0,group=new T.Group();scene.add(group);
  scene.add(new T.HemisphereLight('#c9e4ed','#4d553b',2));const sun=new T.DirectionalLight('#ffe3b7',3);sun.position.set(-15,30,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-20,right:20,top:20,bottom:-20});scene.add(sun);
