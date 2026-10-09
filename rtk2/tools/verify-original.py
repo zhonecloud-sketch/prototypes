@@ -1,4 +1,4 @@
-"""Static v29 checks on supplied packed English main.exe and scenario.dat.
+"""Static v31 checks on supplied packed English main.exe and scenario.dat.
 Unpacks the binary's own backwards RLE stream in memory. Does not execute DOS,
 modify inputs or redistribute executable bytes. Offsets are unpacked load-image offsets.
 """
@@ -32,6 +32,15 @@ def main():
     assert sha==EXPECTED,'This verifier applies to the supplied English binary only.'
     image,blocks=unpack(data)
     checks={
+      'clan_announcement_retirement':(0x8052,'c70700008b1ecc40c64722ffa1d840051c0050b8a140509ae806ef03'),
+      'execution_hostility100':(0x9b6f,'ff76089a0600250583c4022ae48bf08b5ef8c6400e64'),
+      'successor_blood_and_loyalty':(0x7aaf,'8b4410854710741a8a4709a2e13fa0e03f3806e13f760b'),
+      'initial_invasion_five':(0x128a0,'b005cb'),
+      'invasion_capacity_passed_to_picker':(0x156e2,'9a480351128846fc0ac07503e920ffa19acaa336358a46fc500ee8f5fb'),
+      'ongoing_war_capacity_ten_or_five':(0x1f06e,'c70680c90000c746fe72cbc646fa0aeb0a90c746fe86cbc646fa05'),
+      'reinforcement_capacity_ten':(0x2cad3,'c746f872cb2bc050ff3676cb9aca09c52383c4048846f23c0a7203e988018b5ef8ff77029ac601332383c4020bc07503e97301b00a2a46f28846f6'),
+      'wind_no_wind_or_direction':(0x240a9,'837e0606750fb86fb4509ac006ef038be58be55dcbb878b4509ac006ef038be5'),
+      'wind_direction_table':(0x240cd,'8b5e06d1e3ffb79eb4'),
       'daily_rations_divide_by_30_minimum_one':(0x22e7b,'b8010050b81e00995250ff7608ff76069a18380000509a9c01610583c404'),
       'ration_linked_list_sums_soldiers':(0x245f7,'8bd88b47122bd20146fc1156fe'),
       'defender_reserve_rations_added':(0x22f4c,'807efa0075182bc0508b1e74cbff77029a8c09c52383c4040146fc1156fe'),
@@ -83,8 +92,6 @@ def main():
       'fire_damage_random_percentage_bound':(0x24774,'837e08011ac0241904052ae450ff77129a32009c0483c404509a78019c04'),
       'burning_unit_uses_fire_loss_mode_zero':(0x22e58,'2bc050ff76069a02007524'),
       'random_bound_is_exclusive':(0x4b48,'0ee8b2ff2bd2f776068bc2')})
-    for name,(offset,hexbytes) in checks.items():
-        expected=bytes.fromhex(hexbytes);assert image[offset:offset+len(expected)]==expected,name
     checks.update({
       'enemy_recruit_shared_blood_gate':(0x12ee4,'8b441085471075228bde'),
       'enemy_recruit_loyalty_100_gate':(0x12eee,'807f0b64741a'),
@@ -93,11 +100,38 @@ def main():
       'recruit_gate_battle_command_call':(0x16682,'9a08068a12'),
       'recruit_gate_covert_allegiance_branch':(0x12eb2,'f6470202741cff36'),
     })
+    checks.update({
+      'disaster_percent_floor':(0x49da,'8b460a2bd252508b4608f7660652509a18380000'),
+      'disaster_dispatch_four_branches':(0xee31,'8a46062ae40bc07418487503e9be00487503e91a01487503e9f201'),
+      'locust_loyalty_retained_70_to_90':(0xee52,'b81500509a78019c0483c402054600508b5e'),
+      'locust_land_retained_50_to_70':(0xee79,'b81500509a78019c0483c402053200508b5e'),
+      'locust_food_half_plus_random_percent':(0xeea0,'b80200995250ff770cff770a9a18380000'),
+      'epidemic_population_retained_75_to_90_plus_one':(0xef25,'b81000509a78019c0483c402054b00508b5efeff770e9a32009c0483c404408b5efe89470eb0'),
+      'epidemic_troops_base_80_and_sickness':(0xef4a,'b00a50b8010050530ee83efe83c406'),
+      'disaster_troops_base_plus_zero_to_five':(0xedb6,'b80600509a78019c0483c4028a4e0a2aed03c1054600508b5efeff77129a32009c04'),
+      'epidemic_sickness_zero_to_three':(0xedf2,'8b5efe8067030fb004509afa007c0583c4028b5efe084703'),
+      'flood_troop_control_quarter':(0xef60,'8b5efe8a4718d0e8d0e8502bc050530ee821fe83c406'),
+      'flood_population_control_fifth':(0xef76,'b80600509a78019c0483c4028b5efe8bc88a4718b3052ae4f6f32ae403c883c14b518b5efeff770e9a32009c0483c40440'),
+      'flood_control_retained_75_to_90':(0xf014,'b81000509a78019c0483c402054b00508b5efe8a47182ae4509a3200'),
+      'typhoon_loyalty_retained_90_to_99':(0xf03e,'b80a00509a78019c0483c402055a00508b5e'),
+      'typhoon_control_retained_60_to_80':(0xf09c,'b81500509a78019c0483c402053c00508b5efe8a47182ae4509a32009c04'),
+      'locust_flood_exchange_rate_floor':(0xe1dc,'558becb85000508b5e068a471b2ae4509a32009c048be550b005509afa007c0583c4022ae4050a00509a9c0161058b5e0688471b8be55dcb'),
+    })
+    checks.update({
+      'uprising_loyalty_retained_10_to_30':(0xeaca,'b81500509a78019c0483c402050a00508b'),
+      'uprising_gold_retained_50_to_70':(0xeb18,'b81500509a78019c0483c402053200508b5e06ff77089a32009c04'),
+      'uprising_troops_retained_60_to_80':(0xeb94,'b81500509a78019c0483c402053c00508b5efeff77129a32009c0483c404'),
+      'uprising_population_refugee_transfer':(0xebcf,'8b5e068b470e8946fcb91500518bf09a78019c0483c402053c0050569a32009c0483c404408b5e0689470eb83075508b46fc2b470e50539a28049d0583c402509afa007c0583c4028ad82affd1e38b8762ca050e00509a8c009c0483c4068b5e06804f1330'),
+      'disaster_skip_field_army_province':(0xed9a,'ff76069a9200420583c4020bc0756d'),
+      'native_percentage_floor_helper':(0x49ca,'558bec837e0a007507b8ffff8be55dcb8b460a2bd252508b4608f7660652509a183800008be55dcb'),
+    })
+    for name,(offset,hexbytes) in checks.items():
+        expected=bytes.fromhex(hexbytes);assert image[offset:offset+len(expected)]==expected,name
     scenario=(args.inputs/'scenario.dat').read_bytes();ptr=struct.unpack_from('<H',scenario,0x2dc4-0x42+3*35+2)[0];names=[]
     while ptr:
         at=ptr-0x42;names.append(scenario[at+28:at+41].split(b'\0')[0].decode('ascii'));ptr=struct.unpack_from('<H',scenario,at)[0]
     assert names==['Liu Bei','Guan Yu','Zhang Fei']
-    result=dict(recruitmentProtection='Hostile recruitment tests shared officer blood-mask word (+0x10) with their serving ruler, then loyalty byte (+0x0b) against 100. Either branches to a zero result. A covert-allegiance special branch precedes these tests. Calls appear in linked-list and battle-command paths. No separate named-character never-recruit flag has been established. Full capture/recruit coefficients remain approximations.',method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},rations='Daily food is max(1, integer(total soldiers / 30)); defending non-field reserves are added. Monthly estimate multiplies daily food by 30. Native AI forms carried food from five times selected soldiers divided by two or four plus random up to half the men; the choice condition remains untraced. Abstract combat has a separate six-exchange routine and food helper dividing total men by six plus five. Exact abstract combat coefficients are not fully ported.',food='DOS food exhaustion tests the army rice store against one and writes the winning side and food outcome codes immediately; it does not wait for morale. Invasion input uses full province stock as its upper bound. Province stores clamp at 0x002dc6c0 = 3,000,000. Static disassembly, not DOS execution.',messengers='Rival Tigers requires at least two ready officers; separate calls to the same candidate selector store two officers and dispatch two journeys, one per rival. Other inspected spy/diplomatic entry points use one selector. Exact probabilities remain remaster approximations.',charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',battleMobility='Terrain cost table: 2,3,3,impassable,5,3,3. Unit activation restores max(current mobility, 2 + floor(max(0, training - 1) / 20)); Wait adds one only below six.',fireDamage='Fire mode zero chooses a 30 percent random bound. The RNG returns an integer strictly below floor(soldiers * 30 / 100); a burning unit below 100 soldiers is defeated. No mandatory 30 percent or 100-soldier daily loss.',liuBei189=names)
+    result=dict(disasters='Verified four-way native dispatcher: 0 locust, 1 epidemic, 2 flood, 3 typhoon. The percentage helper floors value times retained percentage / 100; random upper bounds are exclusive. Native population uses 100-person units and adds one unit after retention. Typhoon does not directly modify population, soldiers, stored gold or food; flood leaves stored gold and food unchanged; locust leaves stored gold/population/soldiers unchanged. Epidemic troop helper writes a random sickness period 0..3. Locust/flood also lower food exchange rate to max(floor(old*80/100), random integer 10..14). Timing/spread, persistent famine penalty, governor rebellion and miscellaneous event mechanics remain remaster approximations. Popular uprising losses and adjacent refugee transfer use the recovered branch at 0xeac2.',recruitmentProtection='Hostile recruitment tests shared officer blood-mask word (+0x10) with their serving ruler, then loyalty byte (+0x0b) against 100. Either branches to a zero result. A covert-allegiance special branch precedes these tests. Calls appear in linked-list and battle-command paths. No separate named-character never-recruit flag has been established. Full capture/recruit coefficients remain approximations.',method='Static unpacking, disassembly and exact byte checks; no DOS runtime execution',originalSha256=sha,unpackedSha256=hashlib.sha256(image).hexdigest(),unpackedBytes=len(image),compressionBlocks=blocks,offsets='Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses',checks={name:hex(offset) for name,(offset,_) in checks.items()},rations='Daily food is max(1, integer(total soldiers / 30)); defending non-field reserves are added. Monthly estimate multiplies daily food by 30. Native AI forms carried food from five times selected soldiers divided by two or four plus random up to half the men; the choice condition remains untraced. Abstract combat has a separate six-exchange routine and food helper dividing total men by six plus five. Exact abstract combat coefficients are not fully ported.',food='DOS food exhaustion tests the army rice store against one and writes the winning side and food outcome codes immediately; it does not wait for morale. Invasion input uses full province stock as its upper bound. Province stores clamp at 0x002dc6c0 = 3,000,000. Static disassembly, not DOS execution.',messengers='Rival Tigers requires at least two ready officers; separate calls to the same candidate selector store two officers and dispatch two journeys, one per rival. Other inspected spy/diplomatic entry points use one selector. Exact probabilities remain remaster approximations.',charge='Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.',daughters='One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.',battleMobility='Terrain cost table: 2,3,3,impassable,5,3,3. Unit activation restores max(current mobility, 2 + floor(max(0, training - 1) / 20)); Wait adds one only below six.',fireDamage='Fire mode zero chooses a 30 percent random bound. The RNG returns an integer strictly below floor(soldiers * 30 / 100); a burning unit below 100 soldiers is defeated. No mandatory 30 percent or 100-soldier daily loss.',liuBei189=names)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(f'{len(checks)} binary checks passed; Liu Bei 189: {len(names)} officers. {args.output}')
 if __name__=='__main__':main()

@@ -1,7 +1,8 @@
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=29';
-import {recordWarFate} from './event-chronicle.mjs?v=29';
-import {retireRulerFamily} from './ruler-family.mjs?v=29';
-import {clamp} from './engine.mjs?v=29';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=31';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=31';
+import {recordWarFate} from './event-chronicle.mjs?v=31';
+import {retireRulerFamily} from './ruler-family.mjs?v=31';
+import {clamp} from './engine.mjs?v=31';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
@@ -9,9 +10,6 @@ export function takeCaptive(g,id,owner,province,formerOwner,kind='battle',role='
  const o=g.officer(id);detachOfficer(g,id);o.owner=255;o.prisonerOf=owner;o.acted=true;delete o.inTransit;
  g.province(province).unclaimed.push(id);g.s.captiveDecisions??=[];
  if(!g.s.captiveDecisions.some(c=>c.officer===id))g.s.captiveDecisions.push({officer:id,owner,province,formerOwner,kind,role});
-}
-function replaceRuler(g,oldOwner,id){const r=g.ruler(oldOwner);if(!r||r.leader!==id)return;const candidates=g.s.provinces.filter(p=>p.owner===oldOwner).flatMap(p=>p.officers).filter(x=>x!==id&&!g.officer(x).dead);
- retireRulerFamily(g.s,r);if(candidates.length){candidates.sort((a,b)=>g.officer(b).charm+g.officer(b).int-g.officer(a).charm-g.officer(a).int);if(g.officer(id).dead){r.succession??=[];if(!r.succession.includes(id))r.succession.push(id);}else{r.displacedLeaders??=[];if(!r.displacedLeaders.includes(id))r.displacedLeaders.push(id);g.officer(id).formerRuler=oldOwner;g.officer(id).formerRulers??=[];if(!g.officer(id).formerRulers.includes(oldOwner))g.officer(id).formerRulers.push(oldOwner);}r.leader=candidates[0];r.name=g.officer(r.leader).name;r.zh=g.officer(r.leader).zh;r.home=g.s.provinces.find(p=>p.officers.includes(r.leader)).id;g.province(r.home).governor=r.leader;}
 }
 export function decideCaptive(g,id,action){
  const c=g.s.captiveDecisions?.find(c=>c.officer===Number(id));if(!c)throw Error('This captive has already been decided.');
@@ -21,9 +19,9 @@ export function decideCaptive(g,id,action){
   if(c.recruitTried)throw Error('This captive has already refused recruitment.');c.recruitTried=true;
   const protection=isRuler?null:recruitmentProtection(g.s,o,c.formerOwner,c.owner),host=g.officer(p.governor??r.leader),chance=protection?0:clamp(host.charm/2+r.trust/3-o.loyalty/3+25,5,95);
   if(g.random()*100>=chance){g.record(`${o.name} refused recruitment. Decide whether to set them free or behead them.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return false;}
-  detachOfficer(g,o.id);p.officers.push(o.id);o.owner=c.owner;o.loyalty=clamp(60-Math.floor(o.loyalty/3),20,60);o.serviceSince=g.s.year;replaceRuler(g,c.formerOwner,o.id);
+  detachOfficer(g,o.id);p.officers.push(o.id);o.owner=c.owner;o.loyalty=clamp(60-Math.floor(o.loyalty/3),20,60);o.serviceSince=g.s.year;replaceRemovedRuler(g,c.formerOwner,o.id,{reason:'entered another ruler’s service'});
  }else if(action==='behead'){
-  detachOfficer(g,o.id);o.owner=255;o.soldiers=0;o.weapons=0;o.dead=true;o.deathYear=g.s.year;o.deathReason='execution';replaceRuler(g,c.formerOwner,o.id);r.trust=clamp(r.trust-5);
+  detachOfficer(g,o.id);o.owner=255;o.soldiers=0;o.weapons=0;o.dead=true;o.deathYear=g.s.year;o.deathReason='execution';replaceRemovedRuler(g,c.formerOwner,o.id,{killer:c.owner,reason:'was beheaded'});r.trust=clamp(r.trust-5);
  }else{
   detachOfficer(g,o.id);o.owner=255;
   const home=g.s.provinces.find(q=>q.owner===c.formerOwner&&q.id!==c.province);
@@ -57,7 +55,7 @@ export function interceptJourney(g,choice){
  if(choice==='behead')decideCaptive(g,o.id,'behead');cancelJourney(g,`${o.name} was ${choice==='behead'?'beheaded':'captured'} in Province ${c.province}. The mission was cancelled.`,c.province);resolveAICaptives(g);
 }
 export function advanceJourney(g){
- const j=g.s.journey;if(!j)return false;if(j.interception)return false;const leg=j.legs[j.leg];
+ const j=g.s.journey;if(!j)return false;if(j.interception||j.proposal)return false;const leg=j.legs[j.leg];
  if(leg.index<leg.route.length-1){
   const from=leg.route[leg.index],to=leg.route[++leg.index],p=g.province(to),o=g.officer(leg.officer);g.journeyMotion={from,to,start:performance.now()};j.visited.push(to);if(j.type==='transport'&&j.phase==='outbound'&&j.cargo&&(j.cargo.gold||j.cargo.food)&&g.random()*100<clamp(12-(o.int+o.war)/25,2,12)){const fraction=.1+g.random()*.3,lostGold=Math.ceil(j.cargo.gold*fraction),lostFood=Math.ceil(j.cargo.food*fraction);j.cargo.gold-=lostGold;j.cargo.food-=lostFood;j.losses??={gold:0,food:0};j.losses.gold+=lostGold;j.losses.food+=lostFood;g.record(`Bandits attacked ${o.name}'s convoy: ${lostGold} gold and ${lostFood} food were stolen.`,'prison');}
   if(p.owner!==255&&p.owner!==j.owner&&!g.ruler(j.owner).alliances.includes(p.owner)){
@@ -67,14 +65,25 @@ export function advanceJourney(g){
  }
  if(j.leg<j.legs.length-1){j.leg++;return true;}
  if(j.phase==='outbound'){
-  for(const leg of j.legs){const o=g.officer(leg.officer);o.acted=false;delete o.inTransit;}
+  if(j.type==='diplomaticMission'&&['alliance','marriage','joint','threat','gift'].includes(j.args.mode)&&g.isHuman(Number(j.args.target))){
+   j.proposal={owner:Number(j.args.target),mode:j.args.mode};g.record(`${g.ruler(j.owner).name}'s ${j.args.mode==='joint'?'joint invasion':j.args.mode==='marriage'?'royal marriage':j.args.mode} proposal arrived. ${g.ruler(j.proposal.owner).name} must respond.`,'diplomacy',{province:g.ruler(j.proposal.owner).home});return true;
+  }
+  return deliverJourney(g);
+ }
+ for(const leg of j.legs)delete g.officer(leg.officer).inTransit;g.s.journey=null;g.record(j.result||'The messenger returned.','diplomacy');return true;
+}
+function deliverJourney(g){
+ const j=g.s.journey,leg=j.legs[j.leg];
+ for(const leg of j.legs){const o=g.officer(leg.officer);o.acted=false;delete o.inTransit;}
   const player=g.s.player;g.s.player=j.owner;const source=g.province(j.source);if(j.cargo){for(const k of ['gold','food','horses'])source[k]+=j.cargo[k];if(j.type==='transport'){j.args.gold=j.cargo.gold;j.args.food=j.cargo.food;}j.cargo=null;}
   try{j.result=g.applyMission(j.type,j.args);j.delivered=true;}catch(e){j.result='Mission could not be completed: '+e.message;for(const leg of j.legs)g.officer(leg.officer).acted=true;}finally{g.s.player=player;}
   // An infiltrator stays at the destination after successfully entering service.
   if(j.type==='spyMission'&&j.args.mode==='infiltrate'&&g.officer(leg.officer).spyFor===j.owner){g.s.journey=null;return true;}
   j.phase='return';j.leg=0;for(const leg of j.legs){leg.route.reverse();leg.index=0;g.officer(leg.officer).inTransit=true;}return true;
- }
- for(const leg of j.legs)delete g.officer(leg.officer).inTransit;g.s.journey=null;g.record(j.result||'The messenger returned.','diplomacy');return true;
+}
+export function answerProposal(g,accept){
+ const j=g.s.journey;if(!j?.proposal||!g.isHuman(j.proposal.owner))throw Error('No human diplomatic audience is waiting.');if(typeof accept!=='boolean')throw Error('Accept or refuse the proposal.');
+ g.missionAnswer=accept;try{delete j.proposal;return deliverJourney(g);}finally{delete g.missionAnswer;}
 }
 export function validateDecisions(s){
  s.captiveDecisions??=[];s.roaming??=[];s.journey??=null;const owners=new Set(s.rulers.map(r=>r.id)),ids=new Set();
@@ -85,6 +94,7 @@ export function validateDecisions(s){
  if(s.journey){const j=s.journey;if(!owners.has(j.owner)||!['diplomaticMission','spyMission','transport','recruitMethod'].includes(j.type)||!Array.isArray(j.legs)||!j.legs.length||j.legs.length>2||!Number.isInteger(j.leg)||!j.legs[j.leg]||!['outbound','return'].includes(j.phase)||Number(j.args?.province)!==j.source||!s.provinces[j.source-1])throw Error('Invalid messenger journey.');
   if(j.legs.length!==(j.type==='spyMission'&&j.args.mode==='rival'?2:1)||new Set(j.legs.map(leg=>leg.officer)).size!==j.legs.length||j.legs[0].officer!==Number(j.args.officer)||j.legs.length===2&&j.legs[1].officer!==Number(j.args.second))throw Error('Invalid messenger assignments.');
   for(const leg of j.legs){if(!s.officers[leg.officer]||!Array.isArray(leg.route)||!leg.route.length||leg.route.length>41||!Number.isInteger(leg.index)||leg.index<0||leg.index>=leg.route.length)throw Error('Invalid messenger route.');for(let i=0;i<leg.route.length;i++){const p=s.provinces[leg.route[i]-1];if(!p||i&&!s.provinces[leg.route[i-1]-1].neighbors.includes(p.id))throw Error('Invalid messenger route edge.');}}
+  if(j.proposal&&(!['alliance','marriage','joint','threat','gift'].includes(j.proposal.mode)||j.type!=='diplomaticMission'||j.proposal.mode!==j.args.mode||j.proposal.owner!==Number(j.args.target)||!s.humanRulers.includes(j.proposal.owner)||j.phase!=='outbound'||j.leg!==j.legs.length-1||j.legs.some(leg=>leg.index!==leg.route.length-1)||j.interception))throw Error('Invalid diplomatic audience.');
   if(j.cargo&&(['gold','food','horses'].some(k=>!Number.isInteger(j.cargo[k])||j.cargo[k]<0||j.cargo[k]>(k==='food'?3000000:k==='gold'?30000:100))))throw Error('Invalid messenger cargo.');
   if(j.interception&&(!owners.has(j.interception.owner)||j.interception.owner===j.owner||s.provinces[j.interception.province-1]?.owner!==j.interception.owner||j.interception.province!==j.legs[j.leg].route[j.legs[j.leg].index]||j.interception.officer!==j.legs[j.leg].officer))throw Error('Invalid interception.');
  }

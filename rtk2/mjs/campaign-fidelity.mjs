@@ -1,4 +1,5 @@
-import {FUTURE_OFFICERS} from './future-officers.mjs?v=29';
+import {zeroImpact,withImpact} from './event-impact.mjs?v=31';
+import {FUTURE_OFFICERS} from './future-officers.mjs?v=31';
 export const arrivalRecords=s=>FUTURE_OFFICERS[s.scenarioId??s.id]||[];
 export function processArrivals(g,report){
  const s=g.s;s.arrivalsDone??=[];
@@ -11,8 +12,8 @@ export function processArrivals(g,report){
   else Object.assign(o,record,{pendingArrival:false});
   o.pendingArrival=false;s.arrivalsDone.push(record.record);
   const p=g.province(record.arrivalProvince);if(!p.unclaimed.includes(o.id))p.unclaimed.push(o.id);
-  const text=`${o.name} arrived in Province ${p.id} · ${p.name}.`;
-  report.events.push(text);report.details.push({kind:'month',title:'A new general arrives',text,province:p.id,officer:o.id,art:'council'});
+  const impact=zeroImpact(),text=withImpact(`${o.name} arrived in ${p.name}.`,impact);
+  report.events.push(text);report.details.push({kind:'month',title:'A new general arrives',text,province:p.id,officer:o.id,art:'council',impact});
  }
 }
 export function validateFidelity(s){
@@ -27,8 +28,9 @@ export function chooseSuccessor(g,owner,id){
  if(!pending||!pending.candidates.includes(Number(id)))throw Error('Choose an eligible successor.');
  const r=g.ruler(Number(owner)),next=g.officer(Number(id)),p=g.s.provinces.find(p=>p.owner===r.id&&p.officers.includes(next.id));
  if(!p||next.dead)throw Error('This successor no longer serves the realm.');
+ if(pending.killer!==null&&pending.killer!==undefined){r.relations[pending.killer]=100;r.enemy=pending.killer;}
  r.leader=next.id;r.name=next.name;r.zh=next.zh;r.home=p.id;p.governor=next.id;if(r.advisor===next.id)r.advisor=null;
- g.s.successorDecisions=g.s.successorDecisions.filter(x=>x!==pending);g.normalize();return g.record(`${next.name} was chosen to succeed ${pending.name}.`,'month');
+ g.s.successorDecisions=g.s.successorDecisions.filter(x=>x!==pending);g.normalize();g.record(`${next.name} was chosen to succeed ${pending.name}.${pending.killer!==null&&pending.killer!==undefined?' Hostility toward '+g.ruler(pending.killer).name+' is 100%.':''}`,'month',{nationwide:true});Object.assign(g.s.lastEvent,{art:pending.killer!==null&&pending.killer!==undefined?'heir':'death',nationwide:true});g.s.log[0].event={...g.s.lastEvent};return g.s.lastEvent.text;
 }
 export function validateSuccessors(s){
  s.successorDecisions??=[];

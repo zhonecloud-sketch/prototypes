@@ -1,6 +1,7 @@
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=29';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=29';
-function provinceReport(report,p,text){report.events.push(text);report.details??=[];report.details.push({kind:'month',title:`Supply report · #${p.id} ${p.name}`,text,province:p.id,art:'council',officer:p.governor});}
+import {zeroImpact,provinceSnapshot,provinceImpact,withImpact} from './event-impact.mjs?v=31';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=31';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=31';
+function provinceReport(report,p,text,impact=zeroImpact()){text=withImpact(text,impact);report.events.push(text);report.details??=[];report.details.push({kind:'month',title:`Supply report · #${p.id} ${p.name}`,text,province:p.id,art:'council',officer:p.governor,impact});}
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};
 export const clamp=(x,min=0,max=100)=>Math.max(min,Math.min(max,x));
@@ -90,9 +91,9 @@ export class Game{
   this.s.month++;this.s.turn++;if(this.s.month>12){this.s.month=1;this.s.year++;}
   for(const p of this.s.provinces){p.taxed=false;if(p.owner===255)continue;const own=p.owner===this.s.player,r=this.ruler(p.owner);const fieldIds=new Set((this.s.wars||[]).flatMap(b=>b.units.map(u=>u.id))),garrison=p.officers.filter(id=>!fieldIds.has(id));const soldiers=garrison.reduce((n,id)=>n+this.officer(id).soldiers,0);const wages=garrison.length*this.rules.wagePerOfficer+Math.floor(soldiers/200);const rice=Math.floor(soldiers/this.rules.troopFoodDivisor);const beforeGold=p.gold,beforeFood=p.food;p.gold=Math.max(0,p.gold-wages);p.food=Math.max(0,p.food-rice);
    if(this.s.month===1)p.gold=Math.min(30000,p.gold+Math.floor(p.population/this.rules.januaryTaxDivisor*(.5+p.loyalty/100)*incomeFactor(this.s,p)));
-   if(this.s.month===7){const harvest=Math.floor(p.population/this.rules.julyHarvestDivisor*(.3+p.land/100)*incomeFactor(this.s,p));p.food=Math.min(3000000,p.food+harvest);if(own)provinceReport(report,p,`${p.name} harvested ${harvest.toLocaleString()} rice.`);}
-   if(beforeGold<wages){for(const id of p.officers){const o=this.officer(id);if(o.id!==r?.leader)o.loyalty=clamp(o.loyalty-3);}if(own)provinceReport(report,p,`${p.name} cannot cover wages; officer loyalty fell.`);}
-   if(beforeFood<rice){p.loyalty=clamp(p.loyalty-8);p.population=Math.floor(p.population*.99);for(const id of p.officers)this.officer(id).soldiers=Math.floor(this.officer(id).soldiers*.95);if(own)provinceReport(report,p,`Rice shortage in ${p.name}. Population and garrison declined.`);}
+   if(this.s.month===7){const impactBefore=provinceSnapshot(this,p),harvest=Math.floor(p.population/this.rules.julyHarvestDivisor*(.3+p.land/100)*incomeFactor(this.s,p));p.food=Math.min(3000000,p.food+harvest);provinceReport(report,p,`${p.name} harvested ${harvest.toLocaleString()} rice.`,provinceImpact(this,p,impactBefore));}
+   if(beforeGold<wages){for(const id of p.officers){const o=this.officer(id);if(o.id!==r?.leader)o.loyalty=clamp(o.loyalty-3);}provinceReport(report,p,`${p.name} cannot cover wages; officer loyalty fell.`,{...zeroImpact(),gold:-Math.min(beforeGold,wages)});}
+   if(beforeFood<rice){const impactBefore=provinceSnapshot(this,p);p.loyalty=clamp(p.loyalty-8);p.population=Math.floor(p.population*.99);for(const id of p.officers)this.officer(id).soldiers=Math.floor(this.officer(id).soldiers*.95);provinceReport(report,p,`Rice shortage in ${p.name}. Population and garrison declined.`,provinceImpact(this,p,impactBefore));}
 
    p.population=Math.min(3000000,Math.floor(p.population*(1+this.rules.populationGrowth*(p.loyalty/100))));p.ricePrice=clamp(p.ricePrice+this.int(-2,2),15,120);p.merchant=this.random()<.8;
    // Peaceful rival development is a remaster addition, with no territorial attacks.

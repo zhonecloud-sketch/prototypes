@@ -1,10 +1,10 @@
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=29';
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=29';
-import {provinceLabel} from './province-choice.mjs?v=29';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=29';
-import {clamp} from './engine.mjs?v=29';
-import {disaster,monthNumber} from './monthly-events.mjs?v=29';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=29';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=31';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=31';
+import {provinceLabel} from './province-choice.mjs?v=31';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=31';
+import {clamp} from './engine.mjs?v=31';
+import {disaster,monthNumber} from './monthly-events.mjs?v=31';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=31';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
@@ -76,9 +76,9 @@ function applyOrder(g,type,args){
    const envoy=g.ready(p,args.officer);if(['alliance','joint','marriage','threat'].includes(mode))homeOnly(g,p);if(mode==='alliance'&&me.alliances.includes(target.id))throw Error('This ruler is already an ally.');
    let enemy=null,amount=0;if(mode==='joint'){if(!me.alliances.includes(target.id))throw Error('A joint invasion requires an ally.');enemy=g.province(args.enemy);if(enemy.owner===255||[me.id,target.id].includes(enemy.owner)||me.alliances.includes(enemy.owner)||target.alliances.includes(enemy.owner)||!enemy.neighbors.some(id=>g.province(id).owner===me.id)||!enemy.neighbors.some(id=>g.province(id).owner===target.id))throw Error('Choose an enemy province bordering both allied realms.');}
    if(mode==='marriage'){if(g.s.familyMode==='expanded')checkRoyalProposal(g,me,target,args.child);else{if(me.hasDaughter===false)throw Error('You have no daughters.');if(me.daughterGivenTo!==undefined)throw Error('Each ruler can offer one daughter in marriage.');}}if(mode==='gift')amount=g.amount(args.amount,p.gold,100);
-   const success=g.random()*100<missionChance(g,p,envoy,target,mode);envoy.acted=true;
+   const success=typeof g.missionAnswer==='boolean'?g.missionAnswer:g.random()*100<missionChance(g,p,envoy,target,mode);envoy.acted=true;
    if(mode==='gift'&&success){p.gold-=amount;const capital=g.province(target.home);capital.gold=Math.min(30000,capital.gold+amount);relation(me,target,(me.relations[target.id]??50)-Math.floor(Math.sqrt(amount)*envoy.charm/30));text=`${envoy.name} delivered ${amount} gold to ${target.name}; mutual hostility is ${me.relations[target.id]}.`;}
-   else if(!success){relation(me,target,(me.relations[target.id]??50)+(mode==='threat'?20:5));text=`${target.name} refused ${envoy.name}’s ${mode==='joint'?'joint invasion proposal':mode==='marriage'?'marriage proposal':mode==='threat'?'demand to surrender':'alliance proposal'}.`;}
+   else if(!success){relation(me,target,(me.relations[target.id]??50)+(mode==='threat'?20:5));text=`${target.name} refused ${envoy.name}’s ${mode==='joint'?'joint invasion proposal':mode==='marriage'?'marriage proposal':mode==='threat'?'demand to surrender':mode==='gift'?'gift':'alliance proposal'}.`;}
    else if(mode==='alliance'){ally(me,target);pruneJointPlans(g);relation(me,target,Math.min(30,me.relations[target.id]??50));text=`${target.name} accepted an alliance with ${me.name}.`;}
    else if(mode==='joint'&&g.isHuman(target.id)){text=askJointConsent(g,me,target,enemy);}
    else if(mode==='joint'){g.s.jointPlans??=[];g.s.jointPlans=g.s.jointPlans.filter(x=>x.ruler!==me.id||x.enemy!==enemy.id);g.s.jointPlans.push({ruler:me.id,ally:target.id,enemy:enemy.id,expires:monthNumber(g.s)+1});text=`${target.name} agreed to support an invasion of ${enemy.name}. The agreement lasts one month.`;}

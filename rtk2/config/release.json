@@ -1,0 +1,37 @@
+{
+  "version": 31,
+  "date": "2026-10-09",
+  "activeEventArt": [
+    {
+      "file": "assets/history-v30.webp",
+      "sha256": "2241b7b681ebc53be982919f69e1f41480b06672b539bfa80af8c7cc106d615b"
+    },
+    {
+      "file": "assets/disasters-v30.webp",
+      "sha256": "b856ef5fd9197ead47eda7eae5b106dba1c631afb9fdbe4c9eb33deacae591a1"
+    },
+    {
+      "file": "assets/omens-v30.webp",
+      "sha256": "0b985c74bd34b37b9ba780c1af93271a2e54330ea4714ad3d7703758c9ee1f40"
+    },
+    {
+      "file": "assets/stories-v30.webp",
+      "sha256": "434f0076507324c4e2c5627185fd43c64c26b0b4d422e079693f506d1eb22037"
+    },
+    {
+      "file": "assets/officers-historic-v30.webp",
+      "sha256": "5f2d74568e92e036aba357ca287067a9eb441e9454370436cb985355c2184997"
+    },
+    {
+      "file": "assets/clan-destroyed-v31.webp",
+      "sha256": "c14dd8d9ebba412b737017d7e6838ccbd8a20e7ccfe72d63c34cb85055ea779a"
+    },
+    {
+      "file": "assets/heir-vows-vengeance-v31.webp",
+      "sha256": "e0344238e7802d4bbc47a2452b010baf0deea65d905481ad8d44af76f6f0f9b5"
+    }
+  ],
+  "historicalAssets": "v29 files are retained only for regression/provenance; the live game loads v30 widescreen atlases.",
+  "mapPromptIndex": "docs/artwork/battlefield-generation-prompts.md",
+  "battlefieldMaps": 41
+}

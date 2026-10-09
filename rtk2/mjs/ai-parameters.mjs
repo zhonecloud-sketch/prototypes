@@ -12,6 +12,7 @@ export const DEFAULT_AI={
     "ambushAdvanceEveryDays": 3,
     "terrainSearchRadius": 4,
     "jungleWeight": 7,
+    "routeAmbushWeight": 12,
     "riverBankWeight": 6
   },
   "governance": {
@@ -36,4 +37,4 @@ export const DEFAULT_AI={
     "battleAllyChance": 0.05
   }
 };
-export function validateAIConfig(input={}){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!Object.hasOwn(DEFAULT_AI,k)))throw Error('Invalid AI tuning configuration.');const out=structuredClone(DEFAULT_AI);for(const group of Object.keys(out)){if(input[group]!==undefined&&(!input[group]||typeof input[group]!=='object'))throw Error('Invalid AI tuning group.');for(const [key,value] of Object.entries(input[group]||{})){if(!(key in out[group])||!Number.isFinite(value)||value<0||value>100000)throw Error(`Invalid AI tuning: ${group}.${key}`);if(/EveryDays|ProvisionDays|Radius|Invaders|Hundreds/.test(key)&&(!Number.isInteger(value)||value<1))throw Error(`AI tuning requires a positive integer: ${key}`);if(key==='maxInvaders'&&value>10)throw Error('AI invasions allow at most ten commanders.');if(/Chance/.test(key)&&value>1)throw Error(`AI chance exceeds one: ${key}`);out[group][key]=value;}}return out;}
+export function validateAIConfig(input={}){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!Object.hasOwn(DEFAULT_AI,k)))throw Error('Invalid AI tuning configuration.');const out=structuredClone(DEFAULT_AI);for(const group of Object.keys(out)){if(input[group]!==undefined&&(!input[group]||typeof input[group]!=='object'))throw Error('Invalid AI tuning group.');for(const [key,value] of Object.entries(input[group]||{})){if(!(key in out[group])||!Number.isFinite(value)||value<0||value>100000)throw Error(`Invalid AI tuning: ${group}.${key}`);if(/EveryDays|ProvisionDays|Radius|Invaders|Hundreds/.test(key)&&(!Number.isInteger(value)||value<1))throw Error(`AI tuning requires a positive integer: ${key}`);if(key==='maxInvaders'&&value>5)throw Error('AI invasions allow at most five initial commanders.');if(/Chance/.test(key)&&value>1)throw Error(`AI chance exceeds one: ${key}`);out[group][key]=value;}}return out;}

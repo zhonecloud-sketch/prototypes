@@ -1,0 +1,16 @@
+RTK2 Remastered v31 — 2026-10-09
+
+This pack contains the same committed game files as the v31 release.
+Menu > About identifies the runtime version.
+SOURCE-COMMIT.txt identifies the packaged source commit.
+config/release.json identifies and hashes the ACTIVE event artwork.
+
+Active enlarged art: officers-historic-v30.webp, history-v30.webp,
+disasters-v30.webp, omens-v30.webp, stories-v30.webp.
+New events: clan-destroyed-v31.webp, heir-vows-vengeance-v31.webp.
+Older v29 images are retained for provenance and regression tests.
+
+All 41 original map-generation prompts, exact terrain grids and semantic
+reference diagrams are under docs/artwork/.
+Native verification, fixes and remaining differences: docs/differences.md.
+Shared ../lib dependencies are intentionally excluded, as requested.

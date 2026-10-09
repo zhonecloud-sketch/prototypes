@@ -1,9 +1,10 @@
-import {invasionFoodPlan} from './war-provisions.mjs?v=29';
-import {clamp} from './engine.mjs?v=29';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=29';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=29';
-import {provinceDirection} from './geography.mjs?v=29';
-import {hireCapacity} from './province-rules.mjs?v=29';
+import {endRealm} from './ruler-lifecycle.mjs?v=31';
+import {invasionFoodPlan} from './war-provisions.mjs?v=31';
+import {clamp} from './engine.mjs?v=31';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=31';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=31';
+import {provinceDirection} from './geography.mjs?v=31';
+import {hireCapacity} from './province-rules.mjs?v=31';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},
@@ -69,7 +70,7 @@ export function surrenderRealm(g,target,envoy){
  if(g.random()*100<chance){o.owner=me.id;o.loyalty=clamp(o.loyalty,40,80);o.serviceSince=g.s.year;p.officers.push(id);}
  else{o.owner=255;p.unclaimed.push(id);p.population=Math.min(3000000,p.population+o.soldiers);o.soldiers=0;o.weapons=0;refused.push(o.name);}}
  p.governor=p.officers[0]??null;if(!p.officers.length)p.owner=255;
- }for(const r of g.s.rulers)r.alliances=r.alliances.filter(id=>id!==old);target.alliances=[];target.advisor=null;target.surrenderedTo=me.id;target.displacedLeaders??=[];g.officer(target.leader).formerRuler=old;g.s.jointPlans=g.s.jointPlans.filter(x=>![x.ally,x.ruler].includes(old));return `${target.name} submitted. ${refused.length?refused.join(', ')+' refused service and became free generals.':'Their followers joined your realm.'}`;
+ }for(const r of g.s.rulers)r.alliances=r.alliances.filter(id=>id!==old);target.alliances=[];target.advisor=null;target.surrenderedTo=me.id;target.displacedLeaders??=[];g.officer(target.leader).formerRuler=old;g.s.jointPlans=g.s.jointPlans.filter(x=>![x.ally,x.ruler].includes(old));endRealm(g,target,`${target.name} surrendered to ${me.name}'s diplomatic threat.`);return `${target.name} submitted. ${refused.length?refused.join(', ')+' refused service and became free generals.':'Their followers joined your realm.'}`;
 }
 export function askJointConsent(g,me,ally,enemy){
  g.s.allyDecisions??=[];g.s.allyDecisions.push({kind:'joint',owner:ally.id,requester:me.id,province:enemy.id});return `${ally.name} is considering the joint invasion request.`;

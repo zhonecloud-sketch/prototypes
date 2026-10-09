@@ -1,6 +1,6 @@
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=29';
-import {provinceDirection} from './geography.mjs?v=29';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=29';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=31';
+import {provinceDirection} from './geography.mjs?v=31';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=31';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.
@@ -26,25 +26,45 @@ export const armyPower=u=>u.soldiers*(.4+u.war/100)*(.45+u.training/100)*(.4+u.m
 export function safeFireTarget(b,u,enemies){
  if(b.weather==='rain')return null;
  const friends=living(b).filter(v=>v.side===u.side&&v.placed),hazards=spot=>{
-  const cells=[spot];if(b.wind&&b.windStrength)for(let n=1;n<=b.windStrength;n++){const next=direction(cells.at(-1).q,cells.at(-1).r,b.wind-1);if(!inside(next.q,next.r)||[3,4,9,99].includes(b.terrain[next.r*13+next.q]))break;cells.push(next);}
-  if(b.wind&&b.windStrength>=2)for(const offset of [-1,1])cells.push(direction(spot.q,spot.r,WIND_CLOCKWISE[(WIND_CLOCKWISE.indexOf(b.wind-1)+offset+6)%6]));
+  const cells=[spot];if(b.wind){const next=direction(spot.q,spot.r,b.wind-1);if(inside(next.q,next.r)&&![3,4,9,99].includes(b.terrain[next.r*13+next.q]))cells.push(next);}
   return cells;
  };
  const candidates=neighbors(u.q,u.r).filter(c=>inside(c.q,c.r)&&![3,4,9,99].includes(b.terrain[c.r*13+c.q])&&!b.fire[c.r*13+c.q]);
  return candidates.map(c=>{const cone=hazards(c);if(cone.some(x=>distance(x,b.palace)===0&&u.side==='defend'||friends.some(v=>distance(v,x)===0)))return null;const hits=enemies.filter(v=>cone.some(x=>distance(v,x)===0));let score=hits.reduce((n,v)=>n+v.soldiers,0);if(!hits.length&&enemies.some(v=>distance(v,c)<=2)&&distance(c,b.palace)<distance(u,b.palace))score=200;return {...c,score};}).filter(c=>c&&c.score>0).sort((a,z)=>z.score-a.score)[0]||null;
 }
+// Project visible invaders' least-cost approach to the palace without today's
+// movement budget or defender contact stopping the forecast. Mountains, water,
+// fire and traffic influence the route. Hidden attackers are never consulted.
+export function projectedAttackRoutes(b,enemies){
+ return enemies.filter(u=>u.side==='attack'&&visibleUnit(b,u,'defend')).map(u=>{
+  const start=u.r*13+u.q,goal=b.palace.r*13+b.palace.q,traffic=new Set(enemies.filter(v=>v.id!==u.id).map(v=>v.r*13+v.q)),costs=new Map([[start,0]]),paths=new Map([[start,[]]]),queue=[{...u,cost:0}];
+  while(queue.length){queue.sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q);const n=queue.shift(),i=n.r*13+n.q;if(n.cost!==costs.get(i))continue;if(i===goal)return {unit:u,path:paths.get(i),cost:n.cost,weight:u.soldiers*(u.id===b.leaders.attack?1.5:1)};
+   for(const next of neighbors(n.q,n.r)){const j=next.r*13+next.q,cost=n.cost+terrainCost(b.terrain[j])+(traffic.has(j)?2:0);if(!Number.isFinite(cost)||b.fire[j]||cost>=(costs.get(j)??Infinity))continue;costs.set(j,cost);paths.set(j,[...paths.get(i),next]);queue.push({...next,cost});}
+  }return null;
+ }).filter(Boolean);
+}
+export function ambushLaneScore(c,routes){
+ const total=routes.reduce((n,x)=>n+x.weight,0);if(!total)return 0;
+ return routes.reduce((n,x)=>{const gap=Math.min(...x.path.map(p=>distance(c,p)));return n+x.weight*(gap===0?1:gap===1?.65:0);},0)/total;
+}
 export function tacticalPosition(b,u,enemies,moves,weak,tuning=DEFAULT_AI.battle){
  if(!enemies.length)return null;
- const nearest=c=>Math.min(...enemies.map(v=>distance(c,v))),score=c=>{
+ const routes=u.side==='defend'?projectedAttackRoutes(b,enemies):[],nearest=c=>Math.min(...enemies.map(v=>distance(c,v))),score=c=>{
   const tile=b.terrain[c.r*13+c.q];if(tile===4||b.fire[c.r*13+c.q])return -Infinity;
-  const near=nearest(c);if(near>tuning.terrainSearchRadius)return -Infinity;
-  const jungle=tile===1&&enemies.some(v=>distance(c,v)<=3),bank=neighbors(c.q,c.r).some(n=>inside(n.q,n.r)&&b.terrain[n.r*13+n.q]===4)&&enemies.some(v=>b.terrain[v.r*13+v.q]===4||distance(c,v)<=3);
+  const near=nearest(c),lane=ambushLaneScore(c,routes);if(near>tuning.terrainSearchRadius&&!(u.side==='defend'&&lane>0))return -Infinity;
+  const jungle=tile===1&&(u.side==='defend'?lane>0:enemies.some(v=>distance(c,v)<=3)),bank=neighbors(c.q,c.r).some(n=>inside(n.q,n.r)&&b.terrain[n.r*13+n.q]===4)&&enemies.some(v=>b.terrain[v.r*13+v.q]===4||distance(c,v)<=3);
   if(!jungle&&!bank)return -Infinity;
   // Do not send defenders away from the palace to seek remote cover.
-  if(u.side==='defend'&&distance(c,b.palace)>distance(u,b.palace)+1)return -Infinity;
-  return (jungle?tuning.jungleWeight:0)+(bank?tuning.riverBankWeight:0)+(tile===5?2:0)-Math.abs(near-2)*2-(weak&&near===1?5:0)-distance(u,c)*.2;
+  if(u.side==='defend'&&lane===0&&distance(c,b.palace)>distance(u,b.palace)+1)return -Infinity;
+  return (jungle?tuning.jungleWeight+(u.side==='defend'?lane*tuning.routeAmbushWeight:0):0)+(bank?tuning.riverBankWeight+(u.side==='defend'?lane*tuning.routeAmbushWeight:0):0)+(tile===5?2:0)-Math.abs(Math.min(near,u.side==='defend'&&lane>0?3:near)-2)*2-(weak&&near===1?5:0)-distance(u,c)*.2;
  };
  const current=score(u),best=moves.map(c=>({...c,score:score(c)})).sort((a,z)=>z.score-a.score)[0];
+ if(u.side==='defend'&&routes.length){
+  const occupied=new Set(living(b).filter(v=>v.placed&&v.id!==u.id).map(v=>v.r*13+v.q));
+  const candidates=b.terrain.flatMap((t,i)=>t===1&&!occupied.has(i)?[{q:i%13,r:Math.floor(i/13)}]:[]).map(c=>({...c,score:score(c)})).filter(c=>c.score>current+.5).sort((a,z)=>z.score-a.score||distance(u,a)-distance(u,z));
+  for(const c of candidates){const route=planBattleRoute(b,u,enemies,[c]);if(!route)continue;let spent=0,last=null;for(const step of route.path){spent+=terrainCost(b.terrain[step.r*13+step.q]);if(spent>u.mobility)break;last=step;}const spot=last&&moves.find(p=>p.q===last.q&&p.r===last.r);return spot?{...spot,ambushGoal:c}:current>0?{wait:true}:{wait:true,ambushGoal:c};}
+ }
+
  if(best&&best.score>current+.5&&best.score>0)return best;
  // Attackers wait briefly for an ambush, then resume their objective to avoid indefinite camping.
  if(current>0&&(u.side==='defend'||b.day%tuning.ambushAdvanceEveryDays!==0))return {wait:true};return null;

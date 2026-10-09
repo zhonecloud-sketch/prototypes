@@ -4,7 +4,7 @@
     "name": "Cao Cao",
     "zh": "曹操",
     "birth": 155,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 3,
     "scenarios": [
       {
@@ -37,7 +37,7 @@
     "name": "Liu Bei",
     "zh": "劉備",
     "birth": 161,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 2,
     "scenarios": [
       {
@@ -736,7 +736,7 @@
     "name": "Xiahou Dun",
     "zh": "夏侯惇",
     "birth": 157,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 5,
     "scenarios": [
       {
@@ -895,7 +895,7 @@
     "name": "Guan Yu",
     "zh": "關羽",
     "birth": 162,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 7,
     "scenarios": [
       {
@@ -928,7 +928,7 @@
     "name": "Zhang Fei",
     "zh": "張飛",
     "birth": 168,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 8,
     "scenarios": [
       {
@@ -1269,7 +1269,7 @@
     "name": "Lu Bu",
     "zh": "呂布",
     "birth": 155,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 9,
     "scenarios": [
       {
@@ -1358,7 +1358,7 @@
     "name": "Sun Ce",
     "zh": "孫策",
     "birth": 175,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 13,
     "scenarios": [
       {
@@ -4049,7 +4049,7 @@
     "name": "Zhou Yu",
     "zh": "周瑜",
     "birth": 175,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 10,
     "scenarios": [
       {
@@ -4260,7 +4260,7 @@
     "name": "Dian Wei",
     "zh": "典韋",
     "birth": 160,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 6,
     "scenarios": [
       {
@@ -4649,7 +4649,7 @@
     "name": "Zhao Yun",
     "zh": "趙雲",
     "birth": 156,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 1,
     "scenarios": [
       {
@@ -5636,7 +5636,7 @@
     "name": "Sun Quan",
     "zh": "孫權",
     "birth": 182,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 4,
     "scenarios": [
       {
@@ -5763,7 +5763,7 @@
     "name": "Sima Yi",
     "zh": "司馬懿",
     "birth": 179,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 11,
     "scenarios": [
       {
@@ -5936,7 +5936,7 @@
     "name": "Xu Chu",
     "zh": "許褚",
     "birth": 170,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 14,
     "scenarios": [
       {
@@ -6461,7 +6461,7 @@
     "name": "Zhuge Liang",
     "zh": "諸葛亮",
     "birth": 181,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 0,
     "scenarios": [
       {
@@ -6788,7 +6788,7 @@
     "name": "Huang Zhong",
     "zh": "黃忠",
     "birth": 148,
-    "portraitAtlas": "officers-historic-v29.webp",
+    "portraitAtlas": "officers-historic-v30.webp",
     "portraitCell": 12,
     "scenarios": [
       {

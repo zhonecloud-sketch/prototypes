@@ -2,7 +2,17 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v29
+## Latest update — v31
+
+Clan destruction and violent succession now have dedicated panoramic event artwork. Surviving heirs inherit 100% hostility toward the killer; a released landless ruler can still continue in exile. Incoming human diplomatic proposals wait for Accept/Refuse, while spectator mode resolves them automatically. Battlefield counters explicitly label Field and Reserve; wind shows No wind or direction. Defender AI forecasts routes to the palace to choose interception forests. Initial invasions are limited to five commanders, with a ten-unit field reinforcement cap.
+
+The source pack includes [all 41 recorded map prompts and terrain guides](artwork/battlefield-generation-prompts.md), [v31 artwork prompts](artwork-v31.md), and `config/release.json` with hashes of the active enlarged v30 images and new v31 events. **Menu → About** identifies v31. Older artwork filenames remain for provenance; the release manifest identifies the images currently used. [differences.md](differences.md) documents native evidence and remaining unverified mechanics.
+
+## V30 update
+
+Liu Bei now uses the same close portrait framing as the other principal generals. Historical, disaster, omen and story scenes fill their entire wide frames. Province event messages use English without repeated number prefixes, report people/soldiers/gold/food/land/flood-control impacts, and record sickness onset as well as recovery. Direct disaster losses now use recovered calculations from the supplied main.exe; remaining approximations are listed in [differences.md](differences.md).
+
+## V29 update
 
 War summaries distinguish actual commanders from rulers on other fronts. Shortages and unpaid wages stay in numbered province Events. Liu Bei now has a mature portrait with long earlobes, aligned with his four historical scenes; every live event illustration uses the same wide frame. Verified native shared-blood and LOY-100 protection now blocks hostile and captive recruitment, without a gold bonus bypass. See [differences.md](differences.md) for the conditional allegiance rule and remaining approximations.
 

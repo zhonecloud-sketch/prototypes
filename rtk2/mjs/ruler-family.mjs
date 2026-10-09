@@ -1,3 +1,4 @@
+import {zeroImpact,withImpact} from './event-impact.mjs?v=31';
 // The supplied DOS game stores one daughter-availability flag, not ages or a birth schedule.
 export const daughterStatus=r=>({count:r.hasDaughter===false?0:1,eligible:r.hasDaughter!==false&&r.daughterGivenTo===undefined,marriedTo:r.daughterGivenTo??null});
 export function retireRulerFamily(s,r){
@@ -68,7 +69,7 @@ export function courtMarriage(g,p){
 }
 export function royalFamilyUpkeep(g,report){
  if(g.s.familyMode!=='expanded')return;initializeRoyalFamilies(g.s);const stamp=now(g.s);
- const add=(r,title,text)=>{const event={kind:'month',art:'council',title,text,province:r.home,officer:r.leader};report.details.push(event);report.events.push(text);};
+ const add=(r,title,text)=>{const impact=zeroImpact();text=withImpact(text,impact);const event={kind:'month',art:'council',title,text,province:r.home,officer:r.leader,impact};report.details.push(event);report.events.push(text);};
  for(const r of g.s.rulers.filter(r=>active(g.s,r)&&!g.officer(r.leader).dead)){
   const f=r.family;if(!f)continue;
   for(const c of f.children)if(!c.eligibleNotified&&childAge(g.s,c)>=16){c.eligibleNotified=true;add(r,'Royal child comes of age',`${c.name} is 16 and eligible for royal marriage.`);}

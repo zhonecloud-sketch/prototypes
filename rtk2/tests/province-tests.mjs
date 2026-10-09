@@ -5,7 +5,7 @@ import {hireCapacity,provinceAdvice,provinceRumours,covertUpkeep,updateVisitors}
 import {aiBattle,living,placementCells,unitOwner} from '../mjs/battle.mjs';
 const scenarios=JSON.parse(fs.readFileSync('config/scenarios.json')),terrains=JSON.parse(fs.readFileSync('config/province-terrain.json'));
 let count=0;const test=(label,fn)=>{fn();count++;console.log('PASS',label);};
-const fresh=()=>{const g=new Game(createCampaign(scenarios[0],[0]),{},structuredClone(terrains));g.s.monthlyReview=null;g.random=()=>0;const execute=g.execute.bind(g);g.execute=(type,args)=>{const result=execute(type,args);let steps=0;while(g.s.journey){if(g.s.journey.interception)g.interceptJourney('free');else g.advanceJourney();if(++steps>200)throw Error('Journey did not finish');}return result;};return g;};
+const fresh=()=>{const g=new Game(createCampaign(scenarios[0],[0]),{},structuredClone(terrains));g.s.monthlyReview=null;g.random=()=>0;const execute=g.execute.bind(g);g.execute=(type,args)=>{const result=execute(type,args);let steps=0;while(g.s.journey){if(g.s.journey.proposal)g.answerProposal(true);else if(g.s.journey.interception)g.interceptJourney('free');else g.advanceJourney();if(++steps>200)throw Error('Journey did not finish');}return result;};return g;};
 const valid=g=>validateSave(structuredClone(g.s),scenarios,g.terrains);
 const assignments=(g,p)=>Object.fromEntries(p.officers.map(id=>[id,g.officer(id).soldiers]));
 const atomic=(g,fn)=>{const before=JSON.stringify(g.s);assert.throws(fn);assert.equal(JSON.stringify(g.s),before);};

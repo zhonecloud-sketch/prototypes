@@ -11,7 +11,8 @@
     "ambushAdvanceEveryDays": 3,
     "terrainSearchRadius": 4,
     "jungleWeight": 7,
-    "riverBankWeight": 6
+    "riverBankWeight": 6,
+    "routeAmbushWeight": 12
   },
   "governance": {
     "smartIntelligence": 50,

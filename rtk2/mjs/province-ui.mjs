@@ -1,10 +1,10 @@
-import {moveForecast,moveTeamInsight} from './move-forecast.mjs?v=29';
-import {provinceChoice,provinceLabel} from './province-choice.mjs?v=29';
-import {orderUnavailable} from './order-availability.mjs?v=29';
-import {adviceTopic} from './advice-topics.mjs?v=29';
-import {orderInsight,generalStats} from './game-ui.mjs?v=29';
-import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=29';
-import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=29';
+import {moveForecast,moveTeamInsight} from './move-forecast.mjs?v=31';
+import {provinceChoice,provinceLabel} from './province-choice.mjs?v=31';
+import {orderUnavailable} from './order-availability.mjs?v=31';
+import {adviceTopic} from './advice-topics.mjs?v=31';
+import {orderInsight,generalStats} from './game-ui.mjs?v=31';
+import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=31';
+import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=31';
 export function createProvinceCommands(c){
  const $=id=>document.getElementById(id),g=()=>c.getGame(),p=()=>c.getSelected(),me=()=>g().ruler(),e=c.esc,n=c.num;
  let allocation=null;
