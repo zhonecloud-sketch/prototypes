@@ -1,10 +1,11 @@
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=32';
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=32';
-import {provinceLabel} from './province-choice.mjs?v=32';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=32';
-import {clamp} from './engine.mjs?v=32';
-import {disaster,monthNumber} from './monthly-events.mjs?v=32';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=32';
+import {trainingGain} from './native-combat.mjs?v=34';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=34';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=34';
+import {provinceLabel} from './province-choice.mjs?v=34';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=34';
+import {clamp} from './engine.mjs?v=34';
+import {disaster,monthNumber} from './monthly-events.mjs?v=34';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=34';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);
@@ -44,7 +45,7 @@ function applyOrder(g,type,args){
   p.gold-=hundreds*10;p.food-=hired;p.population=p.population-hired+remaining;
   for(const id of p.officers){const o=g.officer(id),next=Number(alloc[id]);if(type==='hireArmy'&&next>o.soldiers)o.training=average;o.soldiers=next;}officer.acted=true;text=`${officer.name} ${hired?'hired '+hired.toLocaleString()+' men and ':''}reassigned the army.${remaining?' '+remaining.toLocaleString()+' remaining men were disbanded.':''}`;
  }else if(type==='trainArmy'){
-  const officer=g.ready(p,args.officer),men=p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0);if(!men)throw Error('This province has no soldiers to train.');if(p.officers.every(id=>g.officer(id).training===100))throw Error('The army is already fully trained.');const gain=Math.floor(officer.war*2/Math.floor(Math.sqrt(Math.floor(men/100)+1)));for(const id of p.officers){const o=g.officer(id);if(o.soldiers)o.training=clamp(o.training+gain);}officer.acted=true;text=`${officer.name} trained every army in ${p.name}; training increased by up to ${gain}.`;
+  const officer=g.ready(p,args.officer),men=p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0);if(!men)throw Error('This province has no soldiers to train.');if(p.officers.every(id=>g.officer(id).training===100))throw Error('The army is already fully trained.');const gain=trainingGain(officer,p.officers.map(id=>g.officer(id)));for(const id of p.officers){const o=g.officer(id);o.training=clamp(o.training+gain);}officer.acted=true;text=`${officer.name} trained every army in ${p.name}; training increased by up to ${gain}.`;
  }else if(['rewardGold','rewardHorse','rewardWritings'].includes(type)){
   g.ready(p,p.governor);const target=g.officer(args.officer);if(!p.officers.includes(target.id)||target.id===me.leader)throw Error('Choose a subordinate serving in this province.');const amount=type==='rewardGold'?g.amount(args.amount,Math.min(100,p.gold)):100;
   if(type==='rewardHorse'&&p.horses<1)throw Error('No horse is available.');

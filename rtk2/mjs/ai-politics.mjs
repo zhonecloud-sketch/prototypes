@@ -1,4 +1,4 @@
-import {DEFAULT_AI} from './ai-parameters.mjs?v=32';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=34';
 // Heuristic coverage of the diplomatic and covert repertoire; not decoded DOS AI.
 export function aiPolitics(g,p,ready,ai){
  const tuning=g.rules.ai?.governance??DEFAULT_AI.governance;
@@ -23,4 +23,4 @@ export function aiPolitics(g,p,ready,ai){
  else return false;
  try{g.execute(type,args);return true;}catch{return false;}
 }
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=32';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=34';

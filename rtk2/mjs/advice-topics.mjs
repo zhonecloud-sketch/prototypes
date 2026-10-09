@@ -1,5 +1,5 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=32';
-import {provinceLabel} from './province-choice.mjs?v=32';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=34';
+import {provinceLabel} from './province-choice.mjs?v=34';
 export function adviceTopic(g,p,topic){
  const r=g.ruler(),advisor=r.advisor===null?null:g.officer(r.advisor);if(!advisor||!p.officers.includes(advisor.id))return 'Your advisor must be present in this province.';
  if(!canAdvise(g.s,r,advisor,topic))return `${advisor.name}: ${ADVICE_UNAVAILABLE}`;

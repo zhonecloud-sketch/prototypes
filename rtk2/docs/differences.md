@@ -2,14 +2,50 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-09 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v32; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v31, commit `ae1133ecdcbc5b8b9d7641bfe9776cf1f87af4d0`
+Latest implementation: v34; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
+Previous implementation: v33, commit `44db3fa70ecee13c75af583ca8e324e395b7cfff`
+Earlier implementation: v32, commit `42544e46a69bdf4d5a33dcb1595e9859f41cd2e9`
+Earlier implementation: v31, commit `ae1133ecdcbc5b8b9d7641bfe9776cf1f87af4d0`
 Earlier implementation: v30, commit `c59646d5f52b72b94247db93f4a40ac7a0b42aca`
 Earlier implementation: v29, commit `cbc1c275b19c8bce334de1285228e631e1d1e8eb`
 Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+
+## V34 — compulsory field retreat and exile slot protection
+
+This supersedes v33's remaining compulsory **field-unit** withdrawal difference. Main.exe `0x2CFBE` processes each defeated officer, builds adjacent friendly/unoccupied destinations through `0x25810`, captures immediately if no destination exists, and otherwise calls the same `0x25670`/`0x25566` flight test as voluntary Flee. V34 uses this for the defeated field list on either side. Captured/killed/already-fled units are skipped, and dispositions cannot reroll on save/load or repeated result processing.
+
+Humans see the win/defeat status while the map remains visible, then choose a retreat province for each surviving general. Success/capture messages play at Game Speed. Final status precedes settlement. AI selection follows `0x2574C`: prefer the original province if eligible, otherwise the first friendly neighbour, otherwise a random unoccupied choice. A horse does not bypass the requirement for a valid destination. Hidden abstract wars keep their separate existing resolution.
+
+A long campaign found that governor rebellion could reuse the ruler ID of a roaming exile because it only checked provinces. The allocator now reserves active exile and captive-ruler IDs, preserving their leader/party identity. This fixes an invalid save checkpoint; it does not alter advising.
+
+**Still open:** non-field provincial reserve capture, prisoner troop/resource spoils, secret-pact distinctions, full strategic/delegated AI and remaining governance/duel/recruit/abstract-battle equations. The comprehensive order audit below remains applicable. [V34 retreat evidence](compulsory-retreat-v34.md). AI ambush changes remain discussion only.
+
+## V33 — captured rulers, automatic ambush, flight and battle presentation
+
+This section supersedes earlier eight-cell ambush and voluntary-flight approximations. **115 native byte witnesses and 812 new controlled native cases** are included alongside v32's 1,300 arithmetic cases. The supplied English main.exe remains authoritative. [Native evidence and formulas](native-battle-v33.md), [byte checks](original-v33-checks.json), [native vectors](native-battle-vectors-v33.json).
+
+| Current request | V33 implementation / verification |
+| --- | --- |
+| 1. Captured ruler; heir and hatred | Ruler captivity offers Set free / Behead, never Recruit. The observed native ruler menu has no remaining-province gate, so this applies to landless rulers too. Execution retains the heir/clan event and 100 hostility toward the killer. Ordinary captives remain before the defeated commander. |
+| 2. Commander star | Star is on the general's name flag. The label below the formation contains the soldier count alone. |
+| 3. Battle HUD | Unit attributes, battle day/weather and army supplies are grouped in labeled sections. Adds training and both gold stores; their native capacities are enforced atomically. |
+| 4. Automatic jungle ambush | Native three forward hexes trigger while an enemy moves/taunts/charges into range. Native triple loss, no retaliation, INT ≥90 immunity and human/AI difficulty factor replace the old generic strike. An already ordered jungle unit can ambush without spending mobility or another order. Concealment/secret-pact substates remain incomplete. |
+| 5. Centered status | Battle messages and wind/status text are centered; final result is centered over the field. |
+| 6. Flee / retreat | Voluntary general flight and commander whole-army withdrawal now use the verified native probability, horse guarantee and adjacent friendly/unoccupied destinations. Each unit chooses a destination and rolls separately. Compulsory post-defeat retreat/AI destination selection and reserve capture settlement are still outstanding; this is not full retreat parity. |
+| 7. Governance priorities | Local military/personnel/domestic dispatch uses the native policy tables, governor ambition selection, random starting point and difficulty retry counts. Strategic war/diplomacy prelude, delegated ordering and parts of local eligibility/actor choice remain remaster policies. |
+| 8. Governance mechanics / equations | Corrected Train's denominator and its zero-men update; Give now uses local governor CHA. Existing verified Cultiv/Flood, reward/merchant costs, recruitment protection and native imported attributes are retained. The full order audit below still contains untraced coefficients; complete native governance parity is not claimed. |
+| 9. Advising mechanism | Availability/cache/topic/generic order-advice sources are preserved; `advice-preservation-v33.json` records v32 hashes. Only numeric results change where native Train/Give arithmetic is corrected. |
+| 10. Escape/capture status | Voluntary flight announces each general's successful destination or capture, and retains the battlefield during message playback. |
+| 11. Zero-men unit | The formation disappears immediately; melee/charge/ambush report capture. Fire depletion reports death, as in the native burning-unit defeat path. Zero-men charge still occupies the defeated tile. |
+| 12. Win status before governance | Watched battles retain their field and pause AI while action/outcome messages play at Game Speed. A centered Attacker/Defender won/defeated status precedes settlement and governance. Pending outcomes survive save/load. Unwatched battles still use immediate abstract resolution. |
+
+**AI ambush brainstorming only:** [ai-ambush-proposal-v33.md](ai-ambush-proposal-v33.md) proposes scoring useful jungle positions against terrain-aware predicted routes and the actual three-cell trigger arc. Reposition only on a legal defender activation, never as a free move during the enemy's turn. `ai-battle.mjs` has no new strategy changes in this release.
+
+**Open native work:** compulsory retreat integration, strategic/delegated AI, exact order eligibility and all remaining audit coefficients, duel/capture/recruit formulas, abstract battle coefficients and historical/random event scheduling. A verified equation or dispatch table does not prove those surrounding systems. The current advisor mechanism remains deliberately unchanged.
 
 ## V32 native domestic equations, melee and deployment audit
 
@@ -41,7 +77,7 @@ new rating = min(100, V + gain)
 
 Each successful order still uses the selected general's action and spends the selected gold. At 100 it cannot improve. Melee's full equation, examples, Lu Bu's recovered bonus, simultaneous factors and controlled native test method are in [battle-equations-v32.md](battle-equations-v32.md). **Charge performs 1–10 exchanges**, replacing the old fixed three; defeating the target still occupies its tile immediately, without a surviving-target breakthrough.
 
-Remaining combat differences include the original hidden-ambush trigger/damage context, challenge equations, capture/retreat probabilities, AI policy, abstract auto-resolution coefficients, ally scheduling and the complete native initial-defender selection UI. The recovered normal-melee coefficients must not be interpreted as verification of those systems.
+V32 remaining combat list (updated by v33): challenge equations, compulsory post-defeat retreat/capture settlement, strategic AI, abstract auto-resolution coefficients, ally scheduling and the complete native initial-defender selection UI. V33 replaces the hidden-ambush arithmetic/trigger and voluntary-flight probabilities. The recovered normal-melee coefficients must not be interpreted as verification of those systems.
 
 Validation: **315 gameplay/data/artwork groups, 45 emulated DOM/native-Canvas interface groups, 97 native byte checks and 1,300 bounded native arithmetic cases pass.** This includes the actual all-battles spectator scheduler returning to Events with a food-defeat reason, all 41 deployment maps/186 approaches, native casualty examples, charge occupation, five-unit main reinforcement limits and legacy-save migration. Full `npm test` and `npm run test:ui` exit successfully. Physical handset layout, audible playback and a complete DOS playthrough remain unverified.
 

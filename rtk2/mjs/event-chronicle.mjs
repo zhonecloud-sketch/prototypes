@@ -1,6 +1,6 @@
 // Strategic history is independent of the short tactical playback queue.
 export const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-import {presentEvent} from './events.mjs?v=32';
+import {presentEvent} from './events.mjs?v=34';
 const commander=(g,id)=>{const o=g.officer(id);return {id:o.id,name:o.name,zh:o.zh||o.name};};
 const snapshot=(g,id,leader)=>{const r=g.ruler(id),o=g.officer(leader??r.leader);return {id,name:o.name,zh:o.zh||o.name,leader:o.id};};
 export function prepareWarHistory(s){s.warChronicle??=[];s.warSerial??=0;}

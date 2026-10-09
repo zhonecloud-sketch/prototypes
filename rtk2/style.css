@@ -253,3 +253,11 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
 .province-label.has-event::after{content:'!';position:absolute;right:-5px;top:-6px;width:12px;height:12px;border-radius:50%;background:#e8ba61;color:#282115;font-size:10px;line-height:12px;box-shadow:0 0 0 1px #302819}
 
 .chronology-art{height:33.59px;aspect-ratio:1983/793}
+
+/* v33: keep status messages inside the battlefield and centered. */
+#game.battle-active #toast{left:50%;right:auto;width:min(90%,660px);bottom:6%;text-align:center;transform:translate(-50%,6px)}
+#game.battle-active #toast.show{transform:translate(-50%,0)}
+#game.battle-active #toast.battle-result{top:50%;bottom:auto;transform:translate(-50%,-50%);font-size:var(--text-heading);padding:20px;background:#182520f5;border:2px solid var(--gold)}
+#battleStatus,#battleWind{text-align:center}#battleStatus p{justify-content:center}
+.hud-section{border:1px solid var(--line);margin:12px 0;padding:10px;min-width:0}.hud-section legend{color:var(--gold);padding:0 6px}.hud-section .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.army-flag.commander{color:#ffe49a;border-color:#eac16b}

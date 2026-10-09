@@ -1,10 +1,11 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=32';
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=32';
-import {recordWarFate} from './event-chronicle.mjs?v=32';
-import {retireRulerFamily} from './ruler-family.mjs?v=32';
-import {clamp} from './engine.mjs?v=32';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=34';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=34';
+import {recordWarFate} from './event-chronicle.mjs?v=34';
+import {retireRulerFamily} from './ruler-family.mjs?v=34';
+import {clamp} from './engine.mjs?v=34';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
+export const captiveActions=(g,c)=>g.ruler(c.formerOwner)?.leader===c.officer?['free','behead']:c.recruitTried?['free','behead']:['recruit','free','behead'];
 export function detachOfficer(g,id){for(const p of g.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(x=>x!==id);for(const r of g.s.rulers)if(r.advisor===id)r.advisor=null;}
 export function takeCaptive(g,id,owner,province,formerOwner,kind='battle',role='General'){
  const o=g.officer(id);detachOfficer(g,id);o.owner=255;o.prisonerOf=owner;o.acted=true;delete o.inTransit;
@@ -15,6 +16,7 @@ export function decideCaptive(g,id,action){
  const c=g.s.captiveDecisions?.find(c=>c.officer===Number(id));if(!c)throw Error('This captive has already been decided.');
  if(!['recruit','free','behead'].includes(action))throw Error('Choose Recruit, Set free, or Behead.');
  const o=g.officer(c.officer),r=g.ruler(c.owner),p=g.province(c.province),isRuler=g.ruler(c.formerOwner)?.leader===o.id;
+ if(action==='recruit'&&isRuler)throw Error('A captured ruler may only be set free or beheaded.');
  if(action==='recruit'){
   if(c.recruitTried)throw Error('This captive has already refused recruitment.');c.recruitTried=true;
   const protection=isRuler?null:recruitmentProtection(g.s,o,c.formerOwner,c.owner),host=g.officer(p.governor??r.leader),chance=protection?0:clamp(host.charm/2+r.trust/3-o.loyalty/3+25,5,95);
@@ -32,7 +34,7 @@ export function decideCaptive(g,id,action){
  recordWarFate(g,c,action);delete o.prisonerOf;delete o.inTransit;g.s.captiveDecisions=g.s.captiveDecisions.filter(x=>x!==c);g.normalize();
  g.record(`${o.name}: ${action==='recruit'?'recruited with loyalty '+o.loyalty:action==='free'?'set free':'beheaded'}.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return true;
 }
-export function resolveAICaptives(g){for(const c of [...(g.s.captiveDecisions||[])])if(!g.isHuman(c.owner)){if(g.officer(c.officer).int+g.officer(c.officer).war>=90){if(!decideCaptive(g,c.officer,'recruit'))decideCaptive(g,c.officer,'free');}else decideCaptive(g,c.officer,'free');}}
+export function resolveAICaptives(g){for(const c of [...(g.s.captiveDecisions||[])])if(!g.isHuman(c.owner)){if(captiveActions(g,c).includes('recruit')&&g.officer(c.officer).int+g.officer(c.officer).war>=90){if(!decideCaptive(g,c.officer,'recruit'))decideCaptive(g,c.officer,'free');}else decideCaptive(g,c.officer,'free');}}
 
 export function realmRoute(g,from,to){const queue=[[from]],seen=new Set([from]);while(queue.length){const path=queue.shift(),last=path.at(-1);if(last===to)return path;for(const id of g.province(last).neighbors)if(!seen.has(id)){seen.add(id);queue.push([...path,id]);}}throw Error('No route connects these provinces.');}
 function destination(g,type,args){if(type==='recruitMethod')return g.s.provinces.find(p=>p.officers.includes(Number(args.target))||p.unclaimed.includes(Number(args.target)))?.id;if(type==='transport')return g.province(args.target).id;if(type==='diplomaticMission')return g.ruler(Number(args.target)).home;if(args.mode==='rival')return g.ruler(Number(args.target)).home;if(args.mode==='infiltrate')return g.province(args.target).id;return g.s.provinces.find(p=>p.officers.includes(Number(args.target)))?.id;}

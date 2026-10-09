@@ -13,13 +13,13 @@ function win(empty=false,strong=false){const g=fresh(),target=g.province(8),sour
  if(empty){const p=g.province(target.neighbors.find(id=>id!==source.id));for(const id of p.officers){g.officer(id).owner=255;p.unclaimed.push(id);}p.officers=[];p.owner=255;p.governor=null;g.normalize();}
  for(const p of target.neighbors.map(id=>g.province(id)))if(p.owner===255&&!empty){const id=source.officers.find(id=>id!==0);source.officers=source.officers.filter(x=>x!==id);p.officers=[id];p.owner=0;p.governor=id;}
  for(const id of ids){g.officer(id).int=strong?100:0;g.officer(id).war=strong?100:0;}
- g.random=()=>.5;g.invade({province:9,target:8,governor:33,officers:[0],food:10000});g.s.battle.outcome={winner:'attack',reason:'Palace occupied'};g.resolveBattle();assert(g.s.triumph);g.acknowledgeTriumph();return {g,former,ids};
+ g.random=()=>.5;g.invade({province:9,target:8,governor:33,officers:[0],food:10000});for(const u of g.s.battle.units.filter(u=>u.side==='defend'))Object.assign(u,{training:strong?100:0,mobility:strong?20:0,soldiers:strong?u.soldiers:100});g.s.battle.outcome={winner:'attack',reason:'Palace occupied'};g.resolveBattle();assert(g.s.triumph);g.acknowledgeTriumph();return {g,former,ids};
 }
 test('No empty adjacent province captures every defending officer, including ruler/governor; checkpoint retains decisions',()=>{
  const {g,ids}=win();assert.deepEqual(new Set(g.s.captiveDecisions.map(c=>c.officer)),new Set(ids));assert(g.s.captiveDecisions.some(c=>c.role==='Ruler'));assert.equal(g.s.battle,null);assert.throws(()=>g.finishFactionTurn(),/captives/);
  const restored=new Game(validateSave(g.s,scenarios,terrain),{},terrain);assert.deepEqual(restored.s.captiveDecisions,g.s.captiveDecisions);check(restored);
 });
-test('With an empty escape province, high INT/WAR can escape and low attributes increase capture',()=>{
+test('With an empty escape province, native WAR/training/mobility distinguish strong and weak field escape',()=>{
  const strong=win(true,true),weak=win(true,false);assert.equal(strong.g.s.captiveDecisions.length,0);assert.equal(weak.g.s.captiveDecisions.length,weak.ids.length);
  assert(strong.ids.every(id=>strong.g.s.provinces.some(p=>p.id!==8&&p.officers.includes(id))));check(strong.g);check(weak.g);
 });
@@ -27,8 +27,8 @@ test('Recruitment refusal leaves a choice; beheading removes an officer permanen
  const {g,ids}=win(),id=ids.find(id=>g.s.captiveDecisions.find(c=>c.officer===id).role!=='Ruler');g.random=()=>.999;assert.equal(g.decideCaptive(id,'recruit'),false);assert(g.officer(id).prisonerOf!==undefined);assert.throws(()=>g.decideCaptive(id,'recruit'),/already refused/);
  assert(g.decideCaptive(id,'behead'));assert(g.officer(id).dead);assert(!g.s.provinces.some(p=>['officers','hidden','unclaimed'].some(k=>p[k].includes(id))));assert.throws(()=>g.decideCaptive(id,'free'),/already/);check(g);
 });
-test('Recruiting a captured ruler replaces its surviving realm leader without invalidating saves',()=>{
- const {g}=win();const c=g.s.captiveDecisions.find(c=>c.role==='Ruler');g.random=()=>0;g.decideCaptive(c.officer,'recruit');assert.equal(g.officer(c.officer).owner,0);check(g);
+test('A captured ruler cannot be recruited and rejection does not spend RNG or alter the campaign',()=>{
+ const {g}=win();const c=g.s.captiveDecisions.find(c=>c.role==='Ruler'),before=JSON.stringify(g.s);assert.throws(()=>g.decideCaptive(c.officer,'recruit'),/only be set free or beheaded/);assert.equal(JSON.stringify(g.s),before);g.decideCaptive(c.officer,'free');check(g);
 });
 test('A released landless ruler continues in exile, moves through connected provinces and settles',()=>{
  const {g,former}=win();g.s.humanRulers.push(former);for(const c of [...g.s.captiveDecisions])g.decideCaptive(c.officer,'free');const party=g.s.roaming.find(p=>p.owner===former);assert(party);assert(activeRulers(g.s).some(r=>r.id===former));check(g);

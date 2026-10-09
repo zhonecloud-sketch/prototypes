@@ -2,11 +2,13 @@
 
 A playable HTML5 / Canvas 2D strategy sandbox for phones in **landscape**. Portrait shows an illustrated, animated rotation prompt. Fullscreen and orientation locking are attempted from a user gesture; unsupported browsers retain the prompt.
 
-## Latest update — v32
+## Latest update — v34
 
-Cultiv and Flood now use the supplied native equation, including full difficulty subtraction. Melee uses native War/training/equipment power, two-sided casualties and the palace assault penalty. Unsupported morale defeats are removed. All 186 province approaches use their five original province-specific slots; initial defenders use their 20-zone cells. The main invading contingent remains capped at five, with up to five allied units.
+V34 adds individual compulsory field retreat after defeat, native AI destination preference and no-exit capture. It also protects active exile ruler IDs from governor-rebellion slot reuse. See [retreat evidence](compulsory-retreat-v34.md).
 
-Watched spectator results open Events and retain their cause through save/load and tactical-log eviction. HUD labels the province's Flood protection. See [differences.md](differences.md) for all nine requests and [battle-equations-v32.md](battle-equations-v32.md) for equations, native evidence, examples and reproduction instructions. The pack includes the 1,300 native arithmetic cases and all 41 map-generation prompts. Active artwork remains the enlarged v30 atlases and v31 clan/heir images, verified by `config/release.json`. Menu → About identifies **v32**.
+Captured rulers now have Set free / Behead only, with existing succession and 100 hostility toward the killer. Automatic jungle ambush and voluntary flight use recovered native geometry and arithmetic. Battle escape/capture and win/defeat messages retain the battlefield until playback completes. Commander stars are beside names, and Battle HUD groups attributes, weather and supplies.
+
+Local governance priorities use the original dispatch tables; Train/Give arithmetic is corrected. Advisor availability and advice sources are preserved. Read [differences.md](differences.md) and [native-battle-v33.md](native-battle-v33.md) for verified scope and remaining native differences. [AI ambush proposal](ai-ambush-proposal-v33.md) is discussion only. The pack includes 115 byte checks, 812 new native cases, v32's 1,300 cases and all 41 map-generation prompts. Active art remains v30/v31, identified by `config/release.json`. Menu → About identifies v34.
 
 ## V30 update
 

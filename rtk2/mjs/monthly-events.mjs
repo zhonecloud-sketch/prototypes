@@ -1,7 +1,7 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=32';
-import {zeroImpact,provinceSnapshot,provinceImpact,withImpact,cleanEventLanguage} from './event-impact.mjs?v=32';
-import {retireRulerFamily} from './ruler-family.mjs?v=32';
-import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=32';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=34';
+import {zeroImpact,provinceSnapshot,provinceImpact,withImpact,cleanEventLanguage} from './event-impact.mjs?v=34';
+import {retireRulerFamily} from './ruler-family.mjs?v=34';
+import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=34';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Disaster timing/spread remain remaster rules; four loss branches use the supplied DOS formulas (v30).
 export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council','history','clan','heir'];
@@ -45,7 +45,7 @@ export function disaster(game,p,type,report){
  else if(type==='rebellion'){
   const ids=[...p.officers],governor=p.governor,oldOwner=p.owner,general=game.officer(governor);
   let slot=Array.from({length:16},(_,i)=>i).find(id=>!game.s.rulers.some(r=>r.id===id));
-  if(slot===undefined)slot=game.s.rulers.find(r=>!game.s.provinces.some(q=>q.owner===r.id)&&!game.s.humanRulers?.includes(r.id))?.id;
+  if(slot===undefined)slot=game.s.rulers.find(r=>!game.s.provinces.some(q=>q.owner===r.id)&&!game.s.roaming?.some(p=>p.owner===r.id)&&!game.s.captiveDecisions?.some(c=>c.formerOwner===r.id&&c.officer===r.leader)&&!game.s.humanRulers?.includes(r.id))?.id;
   const retired=slot===undefined?null:game.s.rulers.find(r=>r.id===slot);if(retired)retireRulerFamily(game.s,retired);
   p.officers=[];p.owner=slot??255;p.governor=slot===undefined?null:governor;
   for(const id of ids){const o=game.officer(id),follows=slot!==undefined&&(id===governor||o.loyalty<70);o.owner=follows?slot:255;if(follows){p.officers.push(id);o.loyalty=id===governor?100:60;}else p.unclaimed.push(id);}

@@ -1,6 +1,6 @@
-RTK2 Remastered v32 — 2026-10-09
+RTK2 Remastered v34 — 2026-10-09
 
-This pack contains the same committed game files as the v32 release.
+This pack contains the same committed game files as the v34 release.
 Menu > About identifies the runtime version.
 SOURCE-COMMIT.txt identifies the packaged source commit.
 config/release.json identifies and hashes the ACTIVE event artwork.
@@ -15,5 +15,10 @@ reference diagrams are under docs/artwork/.
 Native verification, fixes and remaining differences: docs/differences.md.
 Shared ../lib dependencies are intentionally excluded, as requested.
 
-V32: native domestic/melee arithmetic, exact 186 deployment approaches,
-corrected main invasion quota, explicit result reasons and spectator Events.
+V33: native jungle ambush and voluntary flight; ruler captivity gate;
+centered result playback before governance; commander name star; battle HUD;
+native local governance priority tables; corrected Train and Give arithmetic.
+V34: compulsory field retreat prompts/native flight, AI exit preference,
+no-exit capture and protection of active exile ruler slots.
+Unrecovered strategic AI, reserve capture and order probabilities are
+explicitly listed in docs/differences.md. Advisor sources are preserved.
