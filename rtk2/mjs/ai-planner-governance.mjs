@@ -1,4 +1,4 @@
-import {hireCapacity} from './province-rules.mjs?v=44';
+import {hireCapacity} from './province-rules.mjs?v=49';
 import {invasionFoodPlan} from './war-provisions.mjs?v=44';
 import {forkAI,observationSeed,weighted,applyAIOrder} from './ai-simulation.mjs?v=44';
 const power=o=>o.soldiers*(.35+.35*o.training/100+.3*Math.min(1,o.weapons/Math.max(1,o.soldiers)))*(.5+o.war/100);
@@ -17,7 +17,7 @@ export function governanceCandidates(g,weights){
    if(p.loyalty<95&&p.food>Math.max(5000,men*2)){const amount=Math.min(3000,p.food-Math.max(5000,men*2));add('relief',{...args,amount},weights.loyalty*g.preview('relief',p.id,o.id,amount)/100);}
    if(men&&p.officers.some(id=>g.officer(id).training<100))add('trainArmy',args,weights.army*men/10000*(100-o.training)/100*(.2+o.war/100)*(border?2:1));
    if(o.war>=45&&o.soldiers<7000&&p.food>men*2+10000){const hundreds=Math.min(10,Math.floor((7000-o.soldiers)/100),hireCapacity(g,p),Math.floor(Math.max(0,p.gold-100)/10),Math.floor((p.food-men*2-10000)/100));if(hundreds>0){const allocations=Object.fromEntries(p.officers.map(id=>[id,g.officer(id).soldiers]));allocations[o.id]+=hundreds*100;add('hireArmy',{...args,hundreds,allocations},weights.army*hundreds/100*(.5+o.war/100)*(border?2:1));}}
-   if(p.merchant){const need=Math.max(10000,men*3)-p.food,buy=Math.min(10000,need,Math.max(0,p.gold-100)*p.ricePrice-1,3000000-p.food);if(buy>0)add('trade',{...args,mode:'buy',amount:buy},weights.food*buy/Math.max(10000,men*3));const target=p.officers.map(id=>g.officer(id)).sort((a,b)=>power(b)-power(a))[0],lots=target&&Math.min(Math.max(0,p.gold-100),Math.ceil(Math.max(0,target.soldiers-target.weapons)/100),Math.floor((10000-target.weapons)/100));if(lots>0)add('trade',{...args,mode:'arms',recipient:target.id,amount:lots},weights.army*lots/100*(border?2:1));}
+   if(p.merchant){const need=Math.max(10000,men*3)-p.food,buy=Math.min(10000,need,Math.max(0,p.gold-100)*p.ricePrice-1,3000000-p.food);if(buy>0)add('trade',{...args,mode:'buy',amount:buy},weights.food*buy/Math.max(10000,men*3));const target=p.officers.map(id=>g.officer(id)).sort((a,b)=>power(b)-power(a))[0],lots=target&&Math.min(Math.max(0,p.gold-100),Math.ceil(Math.max(0,target.soldiers-target.weapons)/100),100-Math.floor(target.weapons/100));if(lots>0)add('trade',{...args,mode:'arms',recipient:target.id,amount:lots},weights.army*lots/100*(border?2:1));}
    if(p.gold>=200)for(const id of [...p.unclaimed].sort((a,b)=>g.officer(b).war+g.officer(b).int-g.officer(a).war-g.officer(a).int).slice(0,2))add('recruit',{...args,target:id},weights.officers*g.recruitChance(p,o,g.officer(id))/100);
    if(p.officers.length>1&&o.id!==p.governor)for(const id of p.neighbors.filter(id=>g.province(id).owner===255))add('move',{...args,target:id,gold:Math.min(200,p.gold),food:Math.min(5000,p.food)},weights.territory);
   }

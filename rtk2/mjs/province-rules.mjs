@@ -2,8 +2,8 @@ import {trainingGain} from './native-combat.mjs?v=44';
 import {recruitmentProtection} from './campaign-fidelity.mjs?v=44';
 import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=44';
 import {provinceLabel} from './province-choice.mjs?v=44';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=44';
-import {clamp} from './engine.mjs?v=44';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=49';
+import {clamp} from './engine.mjs?v=49';
 import {disaster,monthNumber} from './monthly-events.mjs?v=44';
 import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=44';
 
@@ -24,7 +24,7 @@ export function updateVisitors(g){const key=monthNumber(g.s);if(g.s.visitors?.mo
 export function provinceAdvice(g,p){
  const r=g.ruler(),advisor=r.advisor===null?null:g.officer(r.advisor);if(!advisor||!p.officers.includes(advisor.id))return 'Your advisor must be in this province to give advice.';
  if(!canAdvise(g.s,r,advisor,'general'))return `${advisor.name}: ${ADVICE_UNAVAILABLE}`;
- const month=monthNumber(g.s),key=`${month}:${p.id}`;g.s.adviceReports=Object.fromEntries(Object.entries(g.s.adviceReports||{}).filter(([key])=>key.startsWith(month+':')));if(g.s.adviceReports[key])return g.s.adviceReports[key];
+ const month=monthNumber(g.s),key=`${month}:${p.id}`;g.s.adviceReports=Object.fromEntries(Object.entries(g.s.adviceReports||{}).filter(([key])=>key.startsWith(month+':')));
  const accurate=true,men=p.officers.reduce((n,id)=>n+g.officer(id).soldiers,0),enemy=p.neighbors.map(id=>g.province(id)).filter(q=>q.owner!==255&&q.owner!==p.owner&&!r.alliances.includes(q.owner)).sort((a,b)=>a.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)-b.officers.reduce((n,id)=>n+g.officer(id).soldiers,0))[0];
  const available=p.unclaimed.map(id=>g.officer(id)).sort((a,b)=>b.int+b.war+b.charm-a.int-a.war-a.charm)[0];
  let text=!accurate?'I see no immediate opportunity. Strengthen your forces and be cautious.':p.food<men/2?`Our ${men.toLocaleString()} soldiers have only ${p.food.toLocaleString()} food. Buy or send food before going to war.`:available?`${available.name} is available here. Their abilities are INT ${available.int}, WAR ${available.war}, CHA ${available.charm}; consider recruiting them.`:enemy&&enemy.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)<men/3?`${provinceLabel(g,enemy)} has fewer than one third of our soldiers. It is a promising target, provided we take enough food.`:p.loyalty<70?`Popular loyalty is ${p.loyalty}. Give food to the people before imposing another tax.`:p.flood<60?`Flood protection is ${p.flood}. Build dikes to reduce summer losses.`:p.land<80?`Land development is ${p.land}. Cultivation will improve the harvest.`:'Our province is stable. Keep supplies ready and examine neighbouring governors for weaknesses.';

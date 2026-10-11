@@ -2,7 +2,7 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-11 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v48. The complete downloadable project includes source, artwork, tests, optional trained policies and the shared YAML library.
+Latest implementation: v49. The complete downloadable project includes source, artwork, tests, optional trained policies and the shared YAML library.
 Previous implementation: v35, commit `3c8a0af9135c8ec655146fbaa04534f3fe80c7cd`
 Earlier implementation: v34, commit `3c7ebbc1725e53a46016b20e9a55465da935f413`
 Earlier implementation: v33, commit `44db3fa70ecee13c75af583ca8e324e395b7cfff`
@@ -14,6 +14,14 @@ Earlier implementation: v11, commit `4dde4a55523318fc085d494c0fe2da1db359b3b7`
 Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a11319e88bd9`
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
+
+
+## V49 governance, portraits and native tactical corrections
+
+[The v49 fixes note](fixes-v49.html) addresses the twelve latest reports, explains the verified rules, and links current training profiles and reports. It supersedes earlier descriptions of supply refunds, automatic adjacent jungle revelation, Move enemy, partial weapon lots and palace fire below; the older sections remain as implementation history. Every current profile is retrained under the v49 fingerprint; archived v44/v45 profiles remain incompatible.
+
+Remaining field supplies land at the battlefield province on either outcome. Native weapons prices do not depend on INT. The daily burning-palace store penalty applies even when empty. Human enemy pulling follows actor movement with no selection or enemy MP cost; AI pulls opportunistically after ordinary movement. Native adjacent-attack AI can read hidden jungle occupancy; the remaster intentionally removes that advantage. The full original AI path field is still unreconstructed. Unique portraits, eight custom-ruler options, sorting, capped spending advice, actual neighbouring-tile effects and event alignment are detailed in the current note.
+
 
 
 ## V44 optional AI training extensions

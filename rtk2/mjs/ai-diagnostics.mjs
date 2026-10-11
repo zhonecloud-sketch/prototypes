@@ -1,5 +1,5 @@
-import {planBattleRoute,palaceGuard,nextAIUnit,armyPower,projectedAttackRoutes,ambushLaneScore,tacticalPosition,fireEscapeOrder} from './ai-battle.mjs?v=44';
-import {living,visibleUnit,reachable,terrainCost,distance,tilePoint,ownerFor} from './battle.mjs?v=44';
+import {planBattleRoute,palaceGuard,nextAIUnit,armyPower,projectedAttackRoutes,ambushLaneScore,tacticalPosition,fireEscapeOrder,palaceReturnOrder} from './ai-battle.mjs?v=49';
+import {living,visibleUnit,reachable,terrainCost,distance,tilePoint,ownerFor} from './battle.mjs?v=49';
 import {DEFAULT_AI} from './ai-parameters.mjs?v=44';
 
 // Inspection only: never execute an order, write campaign state or consume RNG.
@@ -25,6 +25,7 @@ export function battleAIDiagnostics(game,requested='auto'){
  const position=!guard&&smart&&(u.side==='defend'||weak)?tacticalPosition(b,u,enemies,moves,weak,tuning):null;
  let route=null,goal=null,reason='Route preview; other orders can take priority.';
  if(escape){reason=escape.action==='move'?'Leaving fire for dry ground.':escape.action==='attack'?'Burning unit targets a weak enemy commander.':'No affordable dry neighbour; waiting in fire.';if(escape.action==='move')route=planBattleRoute(b,u,enemies,[escape]);}
+ else if(palaceReturnOrder(b)?.unit===u.id){route=planBattleRoute(b,u,enemies,[b.palace]);reason='Return to the empty, dry palace before ordinary attacks.';}
  else if(jungleWait)reason='Water is worse cover than jungle; waiting for mobility.';
  else if(holding)reason='Palace guard holds position.';
  else if(adjacent)reason='Adjacent attack takes priority over movement.';

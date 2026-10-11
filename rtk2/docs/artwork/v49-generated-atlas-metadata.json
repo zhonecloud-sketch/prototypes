@@ -1,0 +1,161 @@
+{
+  "rawSource": "/workspace/scratch/242db664fc4f/generated_images/exec-0c628bf5-5a76-4d41-94d7-19779e73487d.png",
+  "finalPNG": "/workspace/sites/rtk2-remastered/dist/rtk2/assets/generated/officers-custom-v49.png",
+  "runtimeWebP": "/workspace/sites/rtk2-remastered/dist/rtk2/assets/officers-custom-v49.webp",
+  "size": [
+    1256,
+    1256
+  ],
+  "tile": 314,
+  "columns": 4,
+  "rows": 4,
+  "normalization": "Measured generated row boundaries. Crop each source cell to a square without changing aspect ratio, retaining top/headgear; resize each square to 314px. No face/clothes painting or synthesis outside built-in tool.",
+  "rects": [
+    {
+      "cell": 0,
+      "sourceRect": [
+        0,
+        0,
+        314,
+        314
+      ]
+    },
+    {
+      "cell": 1,
+      "sourceRect": [
+        314,
+        0,
+        627,
+        313
+      ]
+    },
+    {
+      "cell": 2,
+      "sourceRect": [
+        627,
+        0,
+        941,
+        314
+      ]
+    },
+    {
+      "cell": 3,
+      "sourceRect": [
+        941,
+        0,
+        1254,
+        313
+      ]
+    },
+    {
+      "cell": 4,
+      "sourceRect": [
+        0,
+        314,
+        314,
+        628
+      ]
+    },
+    {
+      "cell": 5,
+      "sourceRect": [
+        314,
+        314,
+        627,
+        627
+      ]
+    },
+    {
+      "cell": 6,
+      "sourceRect": [
+        627,
+        314,
+        941,
+        628
+      ]
+    },
+    {
+      "cell": 7,
+      "sourceRect": [
+        941,
+        314,
+        1254,
+        627
+      ]
+    },
+    {
+      "cell": 8,
+      "sourceRect": [
+        14,
+        628,
+        300,
+        914
+      ]
+    },
+    {
+      "cell": 9,
+      "sourceRect": [
+        327,
+        628,
+        613,
+        914
+      ]
+    },
+    {
+      "cell": 10,
+      "sourceRect": [
+        641,
+        628,
+        927,
+        914
+      ]
+    },
+    {
+      "cell": 11,
+      "sourceRect": [
+        954,
+        628,
+        1240,
+        914
+      ]
+    },
+    {
+      "cell": 12,
+      "sourceRect": [
+        0,
+        914,
+        314,
+        1228
+      ]
+    },
+    {
+      "cell": 13,
+      "sourceRect": [
+        314,
+        914,
+        627,
+        1227
+      ]
+    },
+    {
+      "cell": 14,
+      "sourceRect": [
+        627,
+        914,
+        941,
+        1228
+      ]
+    },
+    {
+      "cell": 15,
+      "sourceRect": [
+        941,
+        914,
+        1254,
+        1227
+      ]
+    }
+  ],
+  "pngSha256": "2b51ea0da58d0d8be5aed9d3d244303211e4f136d919d7b96ef2b49097cec747",
+  "webpSha256": "453dde1d2e133079ec42a07107e658723923464a20ecf109a43c824affd8d773"
+}

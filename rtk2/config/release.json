@@ -1,5 +1,5 @@
 {
-  "version": 48,
+  "version": 49,
   "date": "2026-10-11",
   "activeEventArt": [
     {
@@ -93,12 +93,16 @@
     {
       "file": "assets/history-v36/default.webp",
       "sha256": "5d44d150dface9b4ee8c3500dcc03a506213ae75b3baa60678e03082a2af6b6c"
+    },
+    {
+      "file": "assets/officers-custom-v49.webp",
+      "sha256": "453dde1d2e133079ec42a07107e658723923464a20ecf109a43c824affd8d773"
     }
   ],
   "historicalAssets": "Scheduled history uses 15 standalone native 1983x793 v36 scenes plus a fallback, loaded on demand. v30 remains active for disasters, omens, stories and portraits; old history atlases remain for provenance/regression.",
   "mapPromptIndex": "docs/artwork/battlefield-generation-prompts.md",
   "battlefieldMaps": 41,
-  "nativeEquationCases": 1300,
+  "nativeEquationCases": 1608,
   "provinceApproaches": 186,
   "eventAudio": [
     "assets/gallop.mp3",

@@ -1,10 +1,10 @@
 import {endRealm} from './ruler-lifecycle.mjs?v=44';
 import {invasionFoodPlan} from './war-provisions.mjs?v=44';
-import {clamp} from './engine.mjs?v=44';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=44';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=44';
+import {clamp} from './engine.mjs?v=49';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=49';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=49';
 import {provinceDirection} from './geography.mjs?v=44';
-import {hireCapacity} from './province-rules.mjs?v=44';
+import {hireCapacity} from './province-rules.mjs?v=49';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},
@@ -107,9 +107,9 @@ export function requestBattleAlly(g,allyId){
 export function aiAlly(g){const x=g.s.allyDecisions?.[0];if(!x||g.isHuman(x.owner))return false;if(x.route&&x.index<x.route.length-1){x.index++;return true;}const available=supportCandidates(g,x),ids=available.slice(0,Math.min(2,Math.max(0,10-(g.s.battle?living(g.s.battle).filter(u=>u.side===x.side).length:0)))).map(o=>o.id),p=available[0]&&g.province(available[0].province),food=invasionFoodPlan(ids.reduce((n,id)=>n+g.officer(id).soldiers,0),p?.food??0,g.rules.ai?.governance);try{answerAlly(g,ids.length>0&&food!==null&&g.random()*100<(g.ruler(x.owner).trust+50)/2,{officers:ids,food:food??0,gold:0});}catch{answerAlly(g,false);}return true;}
 export function createCustomRuler(s,args){
  const p=s.provinces[Number(args.province)-1];if(!p||p.owner!==255)throw Error('Choose an empty starting province.');if(s.customOfficers?.length)throw Error('Only one custom ruler and follower can be created.');const id=Array.from({length:16},(_,i)=>i).find(id=>!s.rulers.some(r=>r.id===id));if(id===undefined)throw Error('No ruler slot is available.');
- const specs=[{name:args.name,age:Number(args.age??25),sex:args.sex??'male',int:Number(args.int??70),war:Number(args.war??70),charm:Number(args.charm??70)},{name:args.follower||'Companion',age:25,sex:'male',int:60,war:60,charm:60}];
+ const specs=[{name:args.name,age:Number(args.age??25),sex:args.sex??'male',customPortrait:Number(args.customPortrait??(args.sex==='female'?4:0)),int:Number(args.int??70),war:Number(args.war??70),charm:Number(args.charm??70)},{name:args.follower||'Companion',age:25,sex:'male',customPortrait:8,int:60,war:60,charm:60}];
  for(const spec of specs)if(typeof spec.name!=='string'||!spec.name.trim()||spec.name.trim().length>12||!Number.isInteger(spec.age)||spec.age<1||spec.age>99||!['male','female'].includes(spec.sex)||['int','war','charm'].some(k=>!Number.isInteger(spec[k])||spec[k]<1||spec[k]>100))throw Error('Use a name of 1–12 characters, age 1–99, and abilities 1–100.');if(specs[0].int+specs[0].war+specs[0].charm>250)throw Error('The ruler has 250 total ability points.');
- const ids=[];s.customOfficers=[];for(const spec of specs){const oid=s.officers.length,o={...spec,name:spec.name.trim(),id:oid,zh:spec.name.trim(),birth:s.year-spec.age+1,owner:id,loyalty:100,training:50,soldiers:1000,weapons:1000,acted:false,sick:false,compatibility:75,virtue:70,benevolence:70,ambition:50,blood:32768,serviceSince:s.year,custom:true};s.officers.push(o);s.customOfficers.push({...o});p.officers.push(oid);ids.push(oid);}
+ if(!Number.isInteger(specs[0].customPortrait)||specs[0].customPortrait<0||specs[0].customPortrait>7||(specs[0].customPortrait<4)!==(specs[0].sex==='male'))throw Error('Choose a portrait matching the selected sex.');const ids=[];s.customOfficers=[];for(const spec of specs){const oid=s.officers.length,o={...spec,name:spec.name.trim(),id:oid,zh:spec.name.trim(),birth:s.year-spec.age+1,owner:id,loyalty:100,training:50,soldiers:1000,weapons:1000,acted:false,sick:false,compatibility:75,virtue:70,benevolence:70,ambition:50,blood:32768,serviceSince:s.year,custom:true};s.officers.push(o);s.customOfficers.push({...o});p.officers.push(oid);ids.push(oid);}
  p.owner=id;p.governor=ids[0];p.gold=Math.max(1000,p.gold);p.food=Math.max(20000,p.food);p.delegate='manual';const r={id,leader:ids[0],founder:ids[0],name:specs[0].name.trim(),zh:specs[0].name.trim(),home:p.id,trust:70,advisor:null,alliances:[],relations:Object.fromEntries(s.rulers.map(r=>[r.id,50])),custom:true};for(const other of s.rulers)other.relations[id]=50;s.rulers.push(r);return id;
 }
 export function conditionalHistory(g,report){
@@ -130,7 +130,7 @@ export function validateCompletion(s){
  if(!Array.isArray(s.provinceCompleted)||new Set(s.provinceCompleted).size!==s.provinceCompleted.length||s.provinceCompleted.some(id=>!s.provinces[id-1]))throw Error('Invalid province turn completion.');
  if(!Array.isArray(s.historyScripts)||s.historyScripts.length>100||s.historyScripts.some(x=>typeof x!=='string'||x.length>80))throw Error('Invalid historical scripts.');
  for(const p of s.provinces)if(p.delegation){const d=p.delegation;if(!['full','internal','military','personnel'].includes(d.policy)||![d.supply,d.attack].every(id=>Number.isInteger(id)&&id>=0&&id<=41)||d.supply===p.id||d.attack&&!p.neighbors.includes(d.attack))throw Error('Invalid delegation targets.');}
- if(s.customOfficers){if(!Array.isArray(s.customOfficers)||s.customOfficers.length!==2||s.customOfficers.some(o=>!s.officers[o.id]?.custom||typeof o.name!=='string'||!o.name.trim()||o.name.length>12||!Number.isInteger(o.birth)||o.birth<90||o.birth>s.year||['int','war','charm'].some(k=>!Number.isInteger(o[k])||o[k]<1||o[k]>100)))throw Error('Invalid custom officers.');}
+ if(s.customOfficers){if(Array.isArray(s.customOfficers))for(const [i,o]of s.customOfficers.entries()){const live=s.officers[o.id];if(live){o.customPortrait??=i===0?(o.sex==='female'?4:0):8;live.customPortrait??=o.customPortrait;}}if(!Array.isArray(s.customOfficers)||s.customOfficers.length!==2||s.customOfficers.some(o=>!s.officers[o.id]?.custom||typeof o.name!=='string'||!o.name.trim()||o.name.length>12||!Number.isInteger(o.birth)||o.birth<90||o.birth>s.year||!Number.isInteger(o.customPortrait)||o.customPortrait<0||o.customPortrait>11||s.officers[o.id].customPortrait!==o.customPortrait||['int','war','charm'].some(k=>!Number.isInteger(o[k])||o[k]<1||o[k]>100)))throw Error('Invalid custom officers.');if(new Set(s.customOfficers.map(o=>o.customPortrait)).size!==2)throw Error('Custom officers need distinct portraits.');}
 }
 export function refundAlliedStores(g,b){
  const remaining={attack:{gold:b.gold.attack,food:b.food.attack},defend:{gold:b.gold.defend,food:b.food.defend}};

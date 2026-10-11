@@ -412,3 +412,8 @@ button.order-unavailable:hover{color:#d0d5cb!important;border-color:#b4bea680!im
  #game .province-heading{min-height:var(--command-height)}
  #game .province-summary{margin-top:1px;line-height:1.1}
 }
+
+/* v49: historical event text shares the event list's left alignment. */
+#game .strategic-chronology .realm-event button>span{flex:1;min-width:0;text-align:left;align-self:flex-start}
+#dialogBody>p,#eventText{text-align:left}
+.battle-actions .battle-notice{grid-column:1/-1;text-align:left;line-height:1.4}

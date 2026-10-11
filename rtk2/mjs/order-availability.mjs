@@ -1,4 +1,4 @@
-import {hireCapacity} from './province-rules.mjs?v=44';
+import {hireCapacity} from './province-rules.mjs?v=49';
 import {eligibleRoyalChildren} from './ruler-family.mjs?v=44';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.
@@ -77,7 +77,7 @@ export function orderUnavailable(g,p,id){
   if(mode==='sell'&&(p.food<p.ricePrice||p.gold>=30000))return 'There is insufficient food to sell or the gold store is full.';
   if(mode==='buy'&&(p.gold*p.ricePrice<2||p.food>=3000000))return 'There is insufficient gold to buy food or the food store is full.';
   if(mode==='horse'&&(p.gold<100||p.horses>=100))return 'Buying a horse requires 100 gold and room in the horse stock.';
-  if(mode==='arms'&&(!p.gold||p.officers.every(id=>g.officer(id).weapons>9900)))return 'There is no gold or space for 100 weapons.';
+  if(mode==='arms'&&(!p.gold||p.officers.every(id=>g.officer(id).weapons>=10000)))return 'There is no gold or every general already has 10,000 weapons.';
  }
  if(['enlist','military:hire'].includes(id)&&hireCapacity(g,p)<1)return 'Population, gold, food or army capacity is insufficient to hire 100 men.';
  if(['train','military:train'].includes(id))return !p.officers.some(id=>g.officer(id).soldiers)?'This province has no soldiers to train.':p.officers.every(id=>g.officer(id).training===100)?'The army is already fully trained.':null;

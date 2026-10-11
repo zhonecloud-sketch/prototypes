@@ -1,5 +1,5 @@
 import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=44';
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=44';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible} from './battle.mjs?v=49';
 import {provinceDirection} from './geography.mjs?v=44';
 import {DEFAULT_AI} from './ai-parameters.mjs?v=44';
 // Plan across the whole field, independent of today's mobility. Enemy contact
@@ -17,7 +17,12 @@ export function planBattleRoute(b,u,enemies=living(b).filter(v=>v.side!==u.side&
  return best(enemies.flatMap(v=>neighbors(v.q,v.r)));
 }
 // Separate objectives: invasion takes the palace; defence retains its garrison.
-export function palaceGuard(b){const defenders=living(b).filter(u=>u.side==='defend'&&u.placed),occupant=at(b,b.palace.q,b.palace.r);return occupant?.side==='defend'?occupant:defenders.find(u=>u.id===b.leaders.defend)||defenders.sort((a,z)=>distance(a,b.palace)-distance(z,b.palace)||z.soldiers-a.soldiers)[0]||null;}
+export function palaceGuard(b){const defenders=living(b).filter(u=>u.side==='defend'&&u.placed),occupant=at(b,b.palace.q,b.palace.r);return occupant?.side==='defend'?occupant:defenders.sort((a,z)=>Number(a.ordered)-Number(z.ordered)||distance(a,b.palace)-distance(z,b.palace)||z.soldiers-a.soldiers)[0]||null;}
+export function palaceReturnOrder(b){
+ if(b.side!=='defend'||b.fire[b.palace.r*13+b.palace.q]||at(b,b.palace.q,b.palace.r))return null;
+ const candidates=living(b).filter(u=>u.side==='defend'&&u.placed&&!u.ordered&&!b.fire[u.r*13+u.q]).map(u=>({u,move:reachable(b,u).find(c=>distance(c,b.palace)===0)})).filter(x=>x.move).sort((a,z)=>a.move.cost-z.move.cost||z.u.soldiers-a.u.soldiers);
+ const best=candidates[0];return best?{action:'move',unit:best.u.id,q:b.palace.q,r:b.palace.r}:null;
+}
 export function minimumStrikeLoss(b,u,target){return Math.min(target.soldiers,nativeCasualty(combatPower(target),combatPower(u),u.soldiers,b.terrain[target.r*13+target.q],1,0,0));}
 export function aiAttackTarget(b,u,adjacent){return [...adjacent].sort((a,z)=>{
  const priority=v=>(v.id===b.leaders[v.side]&&minimumStrikeLoss(b,u,v)>=v.soldiers?100:0)+(u.side==='attack'&&distance(v,b.palace)===0?50:0)+(v.id===b.leaders[v.side]?10:0)+(b.terrain[v.r*13+v.q]===4?5:0);
@@ -83,11 +88,12 @@ export function fireEscapeOrder(b,u,enemies){
  if(!palace&&!b.fire[b.palace.r*13+b.palace.q]&&terrainCost(6)<=u.mobility){const route=planBattleRoute(b,u,enemies,[b.palace]),step=route?.path[0],cell=step&&cells.find(c=>distance(c,step)===0);if(cell)return {action:'move',q:cell.q,r:cell.r};}
  const cell=cells.find(c=>distance(c,b.palace)===1)||cells[0];return cell?{action:'move',q:cell.q,r:cell.r}:{action:'wait'};
 }
-export function nextAIUnit(game,intelligence=game.aiFor(game.battleOwner()).intelligence){const b=game.s.battle,units=living(b).filter(u=>u.side===b.side&&u.placed&&!u.ordered);return units.sort((a,z)=>intelligence>=(game.rules.ai?.battle??DEFAULT_AI.battle).smartIntelligence?z.war-a.war:0)[0]??null;}
+export function nextAIUnit(game,intelligence=game.aiFor(game.battleOwner()).intelligence){const b=game.s.battle,returning=palaceReturnOrder(b),units=living(b).filter(u=>u.side===b.side&&u.placed&&!u.ordered);return units.find(u=>u.id===returning?.unit)??units.sort((a,z)=>intelligence>=(game.rules.ai?.battle??DEFAULT_AI.battle).smartIntelligence?z.war-a.war:0)[0]??null;}
 export function aiBattle(game,intelligence=60){const b=game.s.battle,tuning=game.rules.ai?.battle??DEFAULT_AI.battle;if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);const guard=v.side==='defend'&&palaceGuard(b)?.id===v.id;return act(game,'challengeResponse',{accept:v.war>u.war+tuning.safeDuelWarMargin});}if(b.phase==='deployment'){const u=living(b).find(u=>u.side===b.side&&!u.placed);if(!u)return act(game,'deploy');const cells=placementCells(b,u.side,u).sort((a,z)=>distance(a,b.palace)-distance(z,b.palace));return act(game,'place',{unit:u.id,...cells[0]});}
- const units=living(b).filter(u=>u.side===b.side&&!u.ordered);if(!units.length)return act(game,'end');const u=nextAIUnit(game,intelligence);b.selected=u.id;const enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),adjacent=enemies.filter(v=>distance(u,v)===1),guard=u.side==='defend'&&palaceGuard(b)?.id===u.id,holding=guard&&distance(u,b.palace)===0;
+ rememberVisible(b);const returnOrder=palaceReturnOrder(b);if(returnOrder){const {action,...args}=returnOrder;return act(game,action,args);}const units=living(b).filter(u=>u.side===b.side&&!u.ordered);if(!units.length)return act(game,'end');const u=nextAIUnit(game,intelligence);b.selected=u.id;const enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),adjacent=enemies.filter(v=>distance(u,v)===1),guard=u.side==='defend'&&palaceGuard(b)?.id===u.id,holding=guard&&distance(u,b.palace)===0;
  const escape=fireEscapeOrder(b,u,enemies);if(escape){const {action,...args}=escape;return act(game,action,{unit:u.id,...args});}
  if(adjacent.length&&adjacent.every(v=>b.terrain[v.r*13+v.q]===1)&&COMBAT_DIVISORS[b.terrain[u.r*13+u.q]]<COMBAT_DIVISORS[1])return act(game,'wait',{unit:u.id});
+ const blind=!adjacent.length?blindAttackOrder(b,u):null;if(blind){const {action,...args}=blind;return act(game,action,{unit:u.id,...args});}
  if(b.day===1&&intelligence>=tuning.expertIntelligence&&u.war>=b.challengeWar&&b.challengeIssued.length===0){const opponent=enemies.find(v=>guard?v.id===b.leaders.attack&&u.war>=v.war+tuning.safeDuelWarMargin:v.war<u.war-tuning.safeDuelWarMargin);if(opponent)return act(game,'challenge',{unit:u.id,target:opponent.id});}
  const ownPower=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+armyPower(v),0),enemyPower=enemies.reduce((n,v)=>n+armyPower(v),0),weak=ownPower<enemyPower*tuning.outnumberedPowerRatio;
  const fire=intelligence>=tuning.expertIntelligence&&u.int>=tuning.fireMinimumIntelligence&&(weak||holding&&adjacent.length>1)?safeFireTarget(b,u,enemies):null;

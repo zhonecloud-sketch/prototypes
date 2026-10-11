@@ -2,7 +2,7 @@ import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=44';
 import {recruitmentProtection} from './campaign-fidelity.mjs?v=44';
 import {recordWarFate} from './event-chronicle.mjs?v=44';
 import {retireRulerFamily} from './ruler-family.mjs?v=44';
-import {clamp} from './engine.mjs?v=44';
+import {clamp} from './engine.mjs?v=49';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export const captiveActions=(g,c)=>g.ruler(c.formerOwner)?.leader===c.officer?['free','behead']:c.recruitTried?['free','behead']:['recruit','free','behead'];

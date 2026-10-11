@@ -1,6 +1,6 @@
-RTK2 Remastered v47 — 2026-10-11
+RTK2 Remastered v49 — 2026-10-11
 
-This complete download contains the editable v47 game, all previous completed changes,
+This complete download contains the editable v49 game, all previous completed changes,
 and its local lib/js-yaml.js dependency. Unzip rtk2/ and lib/ together, install Python 3,
 then run start-game.bat (Windows) or sh start-game.sh (macOS/Linux).
 Menu > About identifies the runtime version.
@@ -91,3 +91,18 @@ V47: Governor display, ownership palette and every-battle triumph review
   survive save/load. Existing combat/trained AI rules and earlier fixes remain.
 - Native display witness: docs/native-display-v47.md and its JSON report.
 - Browser/physical-phone visual inspection remains unverified in this environment.
+
+V48: timed spectator triumphs and battlefield tile messages, no tile info during
+governance, compact injury text, separate animations for multiple jungle ambushes,
+and charging march/overlap/strike/return presentation.
+
+V49: explicit loyalty advice and capped minimum-cost Give/Reward forecasts;
+all field stores settle at the battlefield on victory or defeat; native fixed
+weapons prices and final partial lots; alphabetically ordered officer/province
+choices; stable attribute-based attire and 352 unique canonical portraits; eight
+custom-ruler choices; shared jungle concealment and remembered blind attacks;
+actual neighbouring-terrain information; empty-palace daily store damage; native
+human/AI enemy-pull mechanics and guidance; palace reoccupation; left-aligned history.
+281 economy and 27 tactical native witnesses are included. Current optional AI
+profiles were retrained under the corrected rules; they remain experimental.
+Details, evidence, download links for profiles and limits: docs/fixes-v49.html.
