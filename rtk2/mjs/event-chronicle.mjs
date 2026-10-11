@@ -1,11 +1,44 @@
 // Strategic history is independent of the short tactical playback queue.
 export const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-import {presentEvent} from './events.mjs?v=34';
+import {presentEvent} from './events.mjs?v=44';
 const commander=(g,id)=>{const o=g.officer(id);return {id:o.id,name:o.name,zh:o.zh||o.name};};
 const snapshot=(g,id,leader)=>{const r=g.ruler(id),o=g.officer(leader??r.leader);return {id,name:o.name,zh:o.zh||o.name,leader:o.id};};
 export function prepareWarHistory(s){s.warChronicle??=[];s.warSerial??=0;}
+// Current-month reports only. Active battles and pending decisions carry their
+// report forward so save validation and captive outcomes keep the same war ID.
+export function prunePastEvents(s){
+ const current=x=>x.year===s.year&&x.month===s.month;
+ s.log=(s.log||[]).filter(current);s.currentReports=(s.currentReports||[]).filter(current);if(s.lastRoundEvents&&s.lastRoundEvents.year*12+s.lastRoundEvents.month!==s.year*12+s.month-1)delete s.lastRoundEvents;
+ const required=new Set([...(s.wars||[]),...(s.battle?[s.battle]:[]),...(s.captiveDecisions||[]).map(c=>({chronicleWar:c.warId}))].map(b=>b.chronicleWar).filter(id=>id!==undefined));
+ const rows=s.warChronicle||[],kept=rows.filter(current);
+ for(const war of required){
+  let row=kept.find(x=>x.war===war);
+  if(!row){row=rows.findLast(x=>x.war===war);if(!row)continue;row.year=s.year;row.month=s.month;if(['ongoing','extended'].includes(row.status))row.status='ongoing';kept.push(row);}
+  for(const c of s.captiveDecisions||[])if(c.warId===war){c.warYear=s.year;c.warMonth=s.month;}
+ }
+ s.warChronicle=kept;
+ if(s.lastReport&&!current(s.lastReport))s.lastReport=null;
+ if(s.lastEvent&&!s.log.some(x=>x.text===s.lastEvent.text)&&!s.monthlyReview)delete s.lastEvent;
+}
+// The short animation log stays bounded at 160. Reports have their own ledger,
+// so AI orders and battles cannot evict meaningful events before human review.
+export const reportWorthy=item=>!tactical(item.text)&&!fateText(item.text)&&!insignificant(item.text)&&!!cleanLocal(item.text)&&item.type!=='cheat';
+export function validateCurrentReports(s){
+ const valid=x=>x&&Number.isInteger(x.year)&&Number.isInteger(x.month)&&x.month>=1&&x.month<=12&&typeof x.text==='string'&&x.text.length<=6000&&['order','war','history','diplomacy','prison','month'].includes(x.type);
+ const list=rows=>Array.isArray(rows)&&rows.length<=8192&&rows.every(valid);
+ s.currentReports??=[];if(!list(s.currentReports))throw Error('Invalid current event reports.');
+ if(s.lastRoundEvents){const r=s.lastRoundEvents;if(!Number.isInteger(r.year)||!Number.isInteger(r.month)||r.year*12+r.month!==s.year*12+s.month-1||!list(r.log)||!Array.isArray(r.wars)||r.wars.length>420||r.wars.some(x=>typeof x.text!=='string'||x.text.length>6000||!x.event))throw Error('Invalid completed-round reports.');}
+}
+export function completeEventRound(g){
+ const s=g.s,seen=new Set(),log=[...(s.currentReports||[]),...s.log].filter(x=>x.year===s.year&&x.month===s.month&&reportWorthy(x)).filter(x=>{const key=x.type+':'+x.text;if(seen.has(key))return false;seen.add(key);return true;});
+ const wars=(s.warChronicle||[]).filter(x=>x.year===s.year&&x.month===s.month&&['won','defeated'].includes(x.status)&&!x.fates.some(f=>f.action==='pending')).map(x=>({year:x.year,month:x.month,war:x.war,text:warReportText(s,x),event:{kind:'war',title:'Campaign summary',province:x.target,art:x.status==='won'?'occupation':'war'}}));
+ return {year:s.year,month:s.month,log:structuredClone(log),wars};
+}
+const reportItems=s=>[...(s.currentReports||[]),...(s.lastRoundEvents?.log||[]),...s.log];
+const treasureAward=item=>/received .+; (?:INT|WAR|CHARM|CHA|TRUST|MEDICAL|mounted mobility) \+\d+/i.test(item.text||'');
+const nationalLocal=(g,item)=>treasureAward(item)||(['order','war','diplomacy','prison'].includes(item.type)&&(item.ai===true||item.ai===undefined&&eventProvinceIds(g,item).some(id=>g.province(id).owner!==255&&!g.isHuman(g.province(id).owner))));
 export function beginWarReport(g,b,date=g.s){
- prepareWarHistory(g.s);if(!b.chronicleWar)b.chronicleWar=++g.s.warSerial;
+ prepareWarHistory(g.s);prunePastEvents(g.s);if(!b.chronicleWar)b.chronicleWar=++g.s.warSerial;
  let row=g.s.warChronicle.find(x=>x.war===b.chronicleWar&&x.year===date.year&&x.month===date.month);
  if(!row){row={war:b.chronicleWar,year:date.year,month:date.month,source:b.source,target:b.target,attacker:snapshot(g,b.attacker,b.rulers?.attack),defender:snapshot(g,b.defender,b.rulers?.defend),commanders:{attack:commander(g,b.leaders?.attack??b.units.find(u=>u.side==='attack')?.id??g.ruler(b.attacker).leader),defend:commander(g,b.leaders?.defend??g.province(b.target).governor??g.ruler(b.defender).leader)},status:'ongoing',rulerResult:'pending',rulerPresent:{attack:b.units.some(u=>u.side==='attack'&&u.id===(b.rulers?.attack??g.ruler(b.attacker).leader)),defend:g.province(b.target).officers.includes(b.rulers?.defend??g.ruler(b.defender).leader)||b.units.some(u=>u.side==='defend'&&u.id===(b.rulers?.defend??g.ruler(b.defender).leader))},fates:[]};g.s.warChronicle.push(row);if(g.s.warChronicle.length>400){const active=new Set([...(g.s.wars||[]),...(g.s.battle?[g.s.battle]:[])].map(b=>b.chronicleWar));const latest=new Set([...active].map(id=>g.s.warChronicle.findLast(x=>x.war===id)));const i=g.s.warChronicle.findIndex(x=>!latest.has(x)&&x.status!=='ongoing'&&!x.fates.some(f=>f.action==='pending'));if(i>=0)g.s.warChronicle.splice(i,1);}}
  return row;
@@ -34,12 +67,13 @@ export function warReportText(s,row){
  const side=row.status==='won'?'defend':'attack',opposition=row.status==='won'?'The opposing':'The attacking',isRuler=row.commanders?row.commanders[side]?.id===row.losingRuler:row.rulerResult!=='absent'&&row.rulerPresent?.[side]!==false,label=isRuler?'ruler':'commander',result=isRuler?row.rulerResult:row.commanderResult??row.fates.find(f=>f.officer===row.losingCommander)?.action??'absent';
  const disposition=(label,result)=>({killed:label+' was killed in battle',pending:label+'’s fate awaits a decision',free:label+' was set free',behead:label+' was beheaded',recruit:label+' was recruited',returned:label+(label==='commander'&&row.status==='won'?' was not captured':' returned unharmed'),absent:label+(label==='commander'&&row.status==='defeated'?' returned unharmed':' was not captured')})[result];
  const ruler=disposition(label,result);
- const generals=row.fates.filter(f=>f.formerOwner===row.losingOwner&&f.officer!==row.losingRuler),list=action=>[...new Set(generals.filter(f=>f.action===action).map(f=>officerName(s,f)))].join(', ')||'none';
- let text=prefix+(row.status==='won'?'Won. ':'Defeated. ')+opposition+' '+ruler+'. '+opposition+' generals were recruited — '+list('recruit')+'. '+opposition+' generals were set free — '+list('free')+'. '+opposition+' generals were beheaded — '+list('behead')+'.';
+ const generals=row.fates.filter(f=>f.formerOwner===row.losingOwner&&f.officer!==row.losingRuler),list=action=>[...new Set(generals.filter(f=>f.action===action).map(f=>officerName(s,f)))].join(', ');
+ let text=prefix+(row.status==='won'?'Won. ':'Defeated. ')+opposition+' '+ruler+'.';
+ for(const [action,verb,separator]of [['recruit','recruited',': '],['free','set free',' — '],['behead','beheaded',' — ']]){const names=list(action);if(names)text+=' '+opposition+' generals were '+verb+separator+names+'.';}
  if(!isRuler&&(row.rulerPresent?.[side]&&row.rulerResult==='returned'||['pending','free','behead','recruit'].includes(row.rulerResult)))text+=' '+opposition+' '+disposition('ruler',row.rulerResult)+'.';
  const pending=generals.filter(f=>f.action==='pending');if(pending.length)text+=' Awaiting decisions — '+pending.map(f=>officerName(s,f)).join(', ')+'.';
  const allies=row.fates.filter(f=>f.formerOwner!==row.losingOwner);if(allies.length)text+=' Allied captives — '+allies.map(f=>officerName(s,f)+': '+({free:'set free',behead:'beheaded',recruit:'recruited',pending:'awaiting decision'}[f.action])).join(', ')+'.';
- if(row.reason)text+=' Result: '+row.reason;return text;
+ return text;
 }
 const tactical=text=>/^(Day \d+:|Province \d+: extended warfare resumes)| (moved to \d+,\d+|waited without moving|threw a fireball|attacked:|lost \d+ soldiers to fire|initiated simultaneous|called .*reinforce this army)/.test(text);
 const fateText=text=>/refused recruitment\. Decide whether|: (set free|beheaded|recruited with loyalty)/.test(text);
@@ -57,17 +91,19 @@ const strategicBattle=item=>item.type==='war'&&/ won\.|battle continues next mon
 const datedPrefix=/^(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \d{3,4} AD:\s*)+/i;
 export function datedEventText(item){return `${MONTHS[item.month-1]} ${item.year} AD: `+item.text.replace(datedPrefix,'');}
 export function acrossChinaChronology(g){
- const s=g.s,rows=(s.warChronicle||[]).map((row,index)=>({year:row.year,month:row.month,text:warReportText(s,row),order:index+1000,event:{kind:'war',title:`#${row.target} · Campaign summary`,province:row.target,art:row.status==='won'?'occupation':'war'}}));
- // Only strategic nationwide history belongs here; local diplomatic, treasure and mission reports live under their province.
- for(const [index,item]of s.log.entries()){
+ const s=g.s,rows=(s.warChronicle||[]).filter(row=>row.year===s.year&&row.month===s.month).map((row,index)=>({year:row.year,month:row.month,text:warReportText(s,row),order:index+1000,event:{kind:'war',title:`#${row.target} · Campaign summary`,province:row.target,art:row.status==='won'?'occupation':'war'}}));
+ // AI actions and named treasure awards join the national current report. Local disasters also retain province cards.
+ for(const [index,item]of reportItems(s).entries()){
+  if((item.year!==s.year||item.month!==s.month)&&!(item.year===s.lastRoundEvents?.year&&item.month===s.lastRoundEvents?.month))continue;
   if(tactical(item.text)||fateText(item.text)||insignificant(item.text)||!cleanLocal(item.text)||item.battleOutcome||item.warId!==undefined)continue;
-  if(eventProvinceIds(g,item).length&&!strategicBattle(item))continue;
-  if(['war','history','diplomacy','prison','month'].includes(item.type)){const event=presentEvent(g,{kind:item.type,title:item.type==='history'?`Historical chronicle · ${item.year}`:'Across China',...item.event,text:item.text,historyYear:item.type==='history'?item.year:item.event?.historyYear});rows.push({...item,event,order:999-index});}
+  if(eventProvinceIds(g,item).length&&!strategicBattle(item)&&!nationalLocal(g,item))continue;
+  if(['war','history','diplomacy','prison','month'].includes(item.type)||nationalLocal(g,item)){const event=presentEvent(g,{kind:item.type,title:item.type==='history'?`Historical chronicle · ${item.year}`:'Across China',...item.event,text:item.text,historyYear:item.type==='history'?item.year:item.event?.historyYear});rows.push({...item,event,order:999-index});}
  }
+ for(const row of s.lastRoundEvents?.wars||[])if(!(s.warChronicle||[]).some(x=>x.war===row.war))rows.push({...row,order:0});
  const seen=new Set();return rows.sort((a,b)=>b.year-a.year||b.month-a.month||b.order-a.order).filter(row=>{const key=datedEventText(row);if(seen.has(key))return false;seen.add(key);return true;});
 }
 export function provinceCurrentEvents(g){
- const s=g.s,report=s.lastReport?.year===s.year&&s.lastReport.month===s.month?s.lastReport:null,items=[...(report?.details||[]),...s.log.filter(x=>x.year===s.year&&x.month===s.month&&['order','war','diplomacy','prison','month'].includes(x.type)&&!x.battleOutcome&&x.warId===undefined&&!strategicBattle(x))];
+ const s=g.s,report=s.lastReport?.year===s.year&&s.lastReport.month===s.month?s.lastReport:null,items=[...(report?.details||[]),...reportItems(s).filter(x=>['order','war','diplomacy','prison','month'].includes(x.type)&&!x.battleOutcome&&x.warId===undefined&&!strategicBattle(x)&&!treasureAward(x))];
  return s.provinces.map(p=>{const seen=new Set(),events=[];for(const x of items){if(tactical(x.text)||fateText(x.text)||insignificant(x.text)||!eventProvinceIds(g,x).includes(p.id))continue;const text=cleanLocal(x.text);if(!text||seen.has(text))continue;seen.add(text);events.push(presentEvent(g,{kind:x.kind||x.type,...x.event,...x,text,province:p.id}));}return {province:p,events};});
 }
 export function validateWarHistory(s){

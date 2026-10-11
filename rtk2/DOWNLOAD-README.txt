@@ -1,0 +1,1 @@
+Unzip both rtk2/ and lib/ into the same folder. Install Python 3, then run rtk2/start-game.bat on Windows or sh rtk2/start-game.sh on macOS/Linux. The game opens at http://localhost:8080/rtk2/. Editable source, artwork, training profiles, reports and tests are included. Node.js is needed only for development and training, not to play.

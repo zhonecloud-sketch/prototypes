@@ -1,0 +1,14 @@
+{
+  "sha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "checks": {
+    "treasure_sets_loyalty100": "0xa68e",
+    "treasure_rng_plus5": "0xa695",
+    "treasure_capped_gain": "0xa52c",
+    "heavenbook_native_record": "0x341bc"
+  },
+  "arithmeticStatus": "Not run: optional unicorn dependency is unavailable.",
+  "limitations": [
+    "Static bytes and disassembly establish allegiance=100, random(0, bonus-1)+5 and cap=100.",
+    "Acquisition probability, recipient AI, compatibility change and messenger interception probability are not verified."
+  ]
+}

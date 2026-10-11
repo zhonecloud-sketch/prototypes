@@ -1,9 +1,11 @@
 # RTK2 Remastered — differences from the original game
 
-Initial audit: 2026-10-07 UTC; updated 2026-10-09 (Asia/Kuala_Lumpur)
+Initial audit: 2026-10-07 UTC; updated 2026-10-11 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v34; exact packaged source SHA is recorded in `SOURCE-COMMIT.txt` in the game pack.
-Previous implementation: v33, commit `44db3fa70ecee13c75af583ca8e324e395b7cfff`
+Latest implementation: v48. The complete downloadable project includes source, artwork, tests, optional trained policies and the shared YAML library.
+Previous implementation: v35, commit `3c8a0af9135c8ec655146fbaa04534f3fe80c7cd`
+Earlier implementation: v34, commit `3c7ebbc1725e53a46016b20e9a55465da935f413`
+Earlier implementation: v33, commit `44db3fa70ecee13c75af583ca8e324e395b7cfff`
 Earlier implementation: v32, commit `42544e46a69bdf4d5a33dcb1595e9859f41cd2e9`
 Earlier implementation: v31, commit `ae1133ecdcbc5b8b9d7641bfe9776cf1f87af4d0`
 Earlier implementation: v30, commit `c59646d5f52b72b94247db93f4a40ac7a0b42aca`
@@ -13,6 +15,126 @@ Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a1
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
 
+
+## V44 optional AI training extensions
+
+Legacy remains the default and its governance/battlefield policy logic is preserved. Optional numerical profiles rank existing legal officer/order pairs through copied-state simulations; they do not alter original combat/economy equations. HUD supports import, global/per-ruler selection, independent mode choices and read-only comparisons. The reusable offline optimizer and game adapters are described in [the beginner manual](ai-training-manual.md). Profiles are engine-fingerprint checked, and obsolete saved profiles revert to Legacy. Trained deployment/challenge, political and covert strategies remain limited; these are documented experimental extensions, not recovered original AI or proven general improvements. [The v44 evaluation note](ai-training-v44-results.md) records paired holdout results.
+
+## v43 — fire timing, battlefield controls and native checks
+
+Fireball ignition now applies the native mode-one loss (randomly below 5%); an acting unit remaining in fire receives mode-zero loss (randomly below 30%). Human and AI use the same resolver. View and a simple army handoff do not burn a unit. Finishing army orders explicitly makes unused units Wait, including their after-order fire check. Rain clears the fire map before day-end spread. V43 replaces the earlier end-of-day casualty check; there is no second universal daily fire charge.
+
+Fire sprites have 50% opacity and continuous size flicker. Normal/Simultaneous animate all participants for five cycles, Charge for ten. Casualties and RNG are resolved once. The active AI selection, hex frame, blink and automatic HUD actor share `nextAIUnit`.
+
+Deployment confirmation sits at bottom right with equal-size Yes/No controls; No resets the current army. Portrait inspection is immediate for friendly generals; enemies require a 100-gold Yes/No confirmation. The extra View unit button is removed. Reachable human movement cells show total route costs; tile taps show terrain, movement and combat effects without spending an additional order. Existing tap-to-move behavior is retained.
+
+Nine bounded checks execute original movement, fire, rain, deployment branches and simultaneous action flags. Five mobility points traverse plain then jungle in the native Move routine. Simultaneous friendly participants spend their order. Original defender deployment has palace-first, forward-position and supply/strength branches; the remaster's nearest-palace deployment remains simplified. See [native evidence and limits](native-turns-v43.md).
+
+The reported five-captives/three-decisions mismatch was not reproduced. A regression case creates five captives, checks five pending decisions across save/load, and resolves all five. Victory now lists captured names and the pending count. No capture arithmetic was changed without a reproduced defect.
+
+## v42 — active orders, combat playback, fire and AI visibility
+
+Completed orders select the next ready general. The interface also repairs missing/exhausted selections on load or render. View/cancel/close restores ordinary map selection; inspection preserves order flags and mobility. The reported loss of all available orders was a control/selection issue, not View spending teammates' turns.
+
+Normal, Charge and simultaneous attacks retain the pre-combat participating units, including the target. All animate together for three 600 ms cycles. Casualties and RNG resolve once; status playback, further orders and AI steps wait for the visual sequence. HUD, dialogs and background visibility pause the sequence. Defeated targets remain visible during it, and Charge landing appears afterwards.
+
+A generated transparent flame sprite overlays burning cells, with continuous opacity and size flicker until the fire map clears that cell. Rendering does not advance fire damage, spread or expiration. The asset and prompt are recorded in ARTWORK.md.
+
+Burning units now apply recovered fire-goal priorities before ordinary palace holding. Twelve bounded native executable checks establish dry-palace/adjacent escape and the >3,000 versus <1,000 commander exception. The complete DOS AI and blocked-escape fallback remain unverified; see [native-fire-v42.md](native-fire-v42.md).
+
+Hidden-enemy occupancy/contact leaked into whole-map routing, reachable-cell previews and forest occupancy. These now use visible information. Actual movement can discover an enemy and stop or trigger the existing ambush. Adjacency itself reveals jungle enemies. Against adjacent jungle enemies, equal/better cover permits attack; water waits to bank mobility. This preference is a remaster policy. AI still reads visible enemies' attributes without the human inspection fee; this update removes hidden-position planning leaks, not every information asymmetry.
+
+Validation includes full gameplay and mounted native-Canvas interface checks, three shared animation cycles and delayed status, HUD pause/resume, post-View controls, continuous flame draws/extinguishing, hidden-position invariance, and twelve controlled native fire-goal cases. Physical handset/browser rendering remains unverified. No downloadable package was created.
+
+## v41 — Fireball selection, placement and HUD closing
+
+Successful and failed Fireball orders spend only the throwing general’s daily order. The reported problem was reproduced in the interface: Fireball targeting remained active after the throw, so tapping another friendly general tried to throw again with the exhausted general. Completed throws now return to normal selection, allowing teammates to use their remaining orders. Combat probabilities, turn flags and AI policy are unchanged.
+
+Mobile placement now hides the generated general-card board together with its hidden selector, retaining the existing centered Confirm placement button. Unit selection remains available in Menu → Battle controls. This removes the overlapping and clipped cards shown in the supplied screenshot.
+
+One AI action closes HUD before attempting a step and keeps AI paused afterward. If a human must act, the explanation appears in the game status text. Resume AI retains its existing automatic close and resumes scheduling; both buttons are checked for an actually hidden HUD. Runtime About and the release manifest identify v41; the changed app and stylesheet have fresh cache URLs.
+
+Verification covers successful and failed throws, unchanged teammate order flags, selecting and ordering the next general, generated placement-card visibility, HUD closing on human and AI turns, and paused single-step behavior. Interface checks use the actual app in an emulated DOM with native Canvas. Browser and physical handset layout remain unverified. Downloadable packaging remains deferred.
+
+## v40 — compact battlefield status and turn announcements
+
+Battle status now has natural text height, four-pixel vertical padding, no border, no radius and no shadow. Its top position is explicitly unset in battle mode, preventing the governance top anchor and battlefield bottom anchor from stretching it across a mobile screen. Results remain centered and also have no frame.
+
+Confirming placement announces **Defender’s turn**. After both armies place their units, new combat follows defender → attacker each day, matching the KOEI NES booklet’s defender-first rule (PDF page 20). This is manual-based behavior, not a newly verified DOS-binary branch. Daily food/fire/weather processing and the 30-day suspension occur only after the second army completes the day. New wars retain this order when resumed next month. Mid-combat saves from earlier releases keep their existing attacker-first cycle to avoid discarding or repeating daily orders; older deployment saves use defender-first combat when confirmed.
+
+Side switches announce **Defender’s turn** or **Attacker’s turn**, followed by the selected ready general for a human-controlled army. AI announcements use the general actually chosen by its policy. Each unit action, including automatic Wait on End turn and challenge responses, receives a general-turn announcement before action/casualty text. These status lines use the existing reading-speed/pause queue. Presentation does not execute another order or consume random numbers. Combat formulas and AI tactical choices are unchanged.
+
+The repository root `AGENTS.md` contains the four requested coding sections. No downloadable pack was created; packaging remains deferred. Runtime About and the release manifest identify v40.
+
+Verification covers defender-first deployment, once-per-day food/fire updates, 30 full days and resumption, legacy save/load, rejected orders, general/action message ordering, and mounted mobile controls/cascade. Browser and physical handset layout remain unverified; interface checks use the actual app in emulated DOM with native Canvas.
+
+## v39 — read-only HUD AI route and jungle inspection
+
+HUD → AI adds **Planned path** and **Jungle scores**, with an optional inspected-unit selector and the existing centered command widths/heights. Cyan routes use `planBattleRoute` (including cover goals chosen by `tacticalPosition`); the affordable prefix is solid and later steps dashed. Forest numbers use the current weighted `ambushLaneScore` directly. Dotted gold paths show visible attackers' predicted approaches. Occupied/burning forests are marked ×; preferred cover receives a gold outline.
+
+Inspection runs no order and consumes no campaign RNG. It is kept outside save state, remains visible after closing the paused HUD, refreshes after edits/single steps and clears on Resume AI or a new campaign. Placement, results and unwatched battles have no overlay. A route is an inspection preview, not a promise that movement will supersede an attack/challenge/fire action. Lane scores are proximity measures, not ambush chance or final position score; original directional ambush geometry and INT immunity remain unchanged.
+
+The active AI/governance/combat/advisor rules are unchanged except uniform cache revision. The retired WebGL files removed in the workspace cleanup remain absent. Runtime About and `config/release.json` identify v39; artwork hashes and the 41 terrain guides remain unchanged. Downloadable packaging is deferred.
+
+Verification: seven focused inspection groups cover immutable state/RNG, next-unit selection, middle-vs-off-route forests, hidden attackers, mountain detours, movement budgets, nonmovement priorities, unavailable phases and real canvas drawing. Mounted UI checks exercise both independent buttons, explicit unit selection, unchanged state/seed, paused full-field inspection and clearing on resume; mobile checks verify the existing shared dimensions, fonts and alignment. Physical handset layout remains unverified.
+
+## v38 — current report regression, messenger travel and mobile alignment
+
+The published Sites version 37 contained runtime v36. This release makes the runtime and publication version agree at v38. Prior audit entries below remain historical evidence; this section supersedes v28/v35 treasure routing and strict current-calendar-month pruning.
+
+| Requested correction | Implementation and evidence |
+| --- | --- |
+| AI reports missing from Across China | Ordinary AI actions were excluded by both the province filter and the type whitelist. Records now snapshot their acting faction and AI status. AI orders, diplomatic actions and mission outcomes appear nationally; local outcomes retain province cards. Old records without an actor use their known province owner as a fallback. |
+| Reports disappear after AI turns | The 160-entry playback log could evict significant reports, and month rollover deleted the just-finished round before the player could review it. A separate current-report ledger retains meaningful records. At rollover, one completed-round snapshot replaces the previous snapshot. Events shows the ongoing round and latest completed round with their real dates; older rounds are removed, including from saves. Completed war summaries also survive this window. This is a current reporting window, not accumulated campaign history. |
+| Missing/squashed map status | The China-map legend had an unclosed `div`, making the toast a child of a narrow legend. The status is now a direct child of the map, with its own width, wrapping and bounded overflow. |
+| Route legend and colour boxes | Routes sit immediately above Province map / Ownership. Ownership swatches share one left anchor and no neutral-swatch indentation. |
+| Courier size and route anchors | The map sprite is 20px high, exactly one quarter of the previous 80px. Interpolation uses the projected source/destination city anchors; a stale motion from another route leg cannot move the sprite. An intercepted courier stops at the intercept province. |
+| Outbound versus return interception | Only outbound travel tests interception. Return travel consumes no interception RNG and cannot create another detention. The existing outbound probability remains an approximation; this release does not claim a newly recovered native capture equation. |
+| Galloping | A single looping effect runs only during an actual 650ms map movement. It stops for an interception, arrival, idle travel prompt, mute, exit or hidden page. Opening, freeing or deciding a messenger does not start a gallop. Dialog courier art is stationary. Physical sound quality still requires listening on the user's device. |
+| Mobile initial placement | Commander portraits, comparisons, weather/status and unit selectors are hidden during initial placement. The right pane keeps only Confirm placement. Legal hex placement and automatic next-unit selection remain unchanged. Normal battle information returns when placement ends. |
+| HUD | AI / Officers / Province / Battle use four equal columns in one row, including on mobile. |
+| Treasure loyalty and INT | Native treasure dispatcher `0xA860–0xA886` calls recipient handling for types 0–3. The confirmed award branch sets LOY to 100 at `0xA68E`. It obtains a random number below the table's bonus and adds five at `0xA695–0xA6A6`. Helper `0xA514` caps the actual stat gain to `100 − old stat`. Book of Heaven's native type/bonus record is `00 05` at `0x341BC`: INT +5…+9, capped at 100. Books, swords, charm treasures and treasure mounts now set loyalty to 100. The announced gain and possessions ledger store the actual gain. Existing possessions show the prior stored fixed bonus; no old save is retroactively given another stat increase or loyalty reset. Medical and seal side effects remain their existing implementations. |
+| Treasure event routing | Named treasure awards, including Province 10 / Li Su / Book of Heaven, belong to Across China. They are removed from province cards. Plunder and ordinary local human diplomatic/mission reports remain local. |
+| General / other order alignment | View → Generals has a shared six-column header/row grid: portrait, name, Position, INT, WAR, CHA. Long names wrap without shifting numeric columns. Related officer cards preserve a flexible content column and natural height. Existing shared choice-card and order-grid behavior remains in place. |
+
+Native evidence: [original-v38-checks.json](original-v38-checks.json), [native-treasure-v38.json](native-treasure-v38.json), and `tools/verify-native-treasures.py`. The supplied binary passes 118 existing byte checks plus four new treasure checks. Optional Unicorn arithmetic execution is unavailable in this environment; new treasure arithmetic is established by static bytes/disassembly and remaster regression checks, not a claimed executed-DOS comparison. Original treasure acquisition probability, recipient AI, compatibility changes and messenger interception probabilities remain unverified.
+
+Validation: **350 gameplay/data/artwork groups, 49 interface/layout groups, and 122 native byte checks pass.**
+
+Regression coverage includes actual AI governance, log eviction, rollover, second-rollover deletion, save/load, Book of Heaven recipients and the 100 cap, outbound capture/return RNG, travel-only audio, mounted general grids, four HUD tabs and mobile deployment. Browser/physical handset and audible playback QA remain unverified; the interface suite mounts the actual app using emulated DOM and native Canvas.
+
+## V36 — event layout, confirmations, map captions, sound and historical artwork
+
+This update changes presentation and confirmation controls. Native combat, governance, advising and AI equations remain as in v35; the four advising source files still match the preserved v33 hashes after cache-version normalization.
+
+| Request | Implementation |
+| --- | --- |
+| Triumph/defeat Continue and ad-hoc actions | Dialog footer and comparable action rows use centred flex wrapping. Buttons have one fixed responsive width and the common command height; lone Continue is centred without stretching. Choice cards and command grids retain their own selection layout. |
+| Across China cards | History thumbnails use a proportional panoramic frame; the clickable card grows with its image and wrapped text. Fixed mobile command height no longer clips card content. |
+| Campaign text | Only nonempty recruited, released and beheaded lists appear. Redundant `Result: …` is omitted from the public summary. Actual cause remains in the war record, lastBattle and battlefield result. Pending decisions and allied captive outcomes remain visible. |
+| Province toggle | Repeated Province taps switch between province attributes and the default Governance view. Active timed messages still finish at the selected speed before the resting image returns. |
+| Order confirmation | Pure confirm steps show the question with Cancel / Back / Confirm order, without a duplicate Yes/No selector. Shared flow covers Reward, Hire, Move, Appoint, Dismiss, Tax, Healing, cancel alliance, court marriage and self-exile. Actual payload choices, such as taking all generals into exile, remain selectable. |
+| China map captions | One left-aligned `Jan · 189AD · Spring 春` line. Two left-aligned legend rows, Your provinces and Unclaimed. China/city-count/tap instructions are hidden in China view; Province map retains identifying labels. |
+| Messenger and bad omens | Smaller courier canvas, four-hoof galloping effect, and distinct flood, locust, typhoon, epidemic, uprising, meteor and death effects. Existing sound preferences and visibility rules apply. Effects are original synthesized nonverbal textures, not sampled recordings. |
+| Historical scenes | All 15 scheduled scenes plus a fallback regenerated separately at native 1983×793, four times the pixels of the former atlas cell. They load on demand and preserve aspect ratio. Prompt set, actual dimensions and correction notes are in artwork-v36.md and artwork/history-generation-v36.json. All new images are in the versioned pack. |
+
+Verification: engine/native regression suite, mounted-interface tests and mobile CSS/height-budget checks. Native Canvas verifies whole-scene rendering and asset dimensions. No browser/physical handset QA was available; the final phone layout and playback sound still need device inspection. This release does not claim unrecovered original-game formulas have been resolved.
+
+
+## V35 — mobile GUI, current-month events and screen dimming
+
+This is a presentation and event-retention update. Native order, combat, advising and AI equations are unchanged. The existing battle stat-label font (Georgia/Times serif, `.75rem`) is now used throughout mobile battle, governance, HUD and decision dialogs, preserving colors, text alignment and established pane locations.
+
+| Request | Implementation |
+| --- | --- |
+| Battle command size | Root commands, tactics, Strategy suborders, Back and End turn share a three-column grid and one responsive height. Seven root commands fit three rows without a command-area vertical scrollbar. Simultaneous has a discretionary wrap point on narrow screens. Deployment keeps its separate placement selector. |
+| F/R | The abbreviated label replaces Field / Reserve. Values use `3/2`. Attacker counts living, placed original-province units / living, placed reinforcements from other provinces. Officers left at home and troops not yet placed are excluded. Defender retains field units / local reserves. Hover/accessibility text explains the different meanings. |
+| Mobile imagery | Event, triumph and courier/dialog artwork receives viewport-bounded space. The shared `paintAtlas` renderer uses a single contain scale and centers the artwork, retaining its aspect ratio. Portraits and long selection cards remain content-sized; command buttons have the shared height. |
+| Governance scene | The resting middle pane displays Governance (events atlas cell 3). Monthly review and active AI/order messages temporarily show their matching art, including when a detail/order screen was open. On timeout, the default scene or the intentionally selected details/orders returns. Province attributes and command screens retain their existing positions. |
+| Across China | The heading is Current, not Chronology. Only current-month nationwide reports and campaign summaries are listed. Old completed logs/reports are pruned from checkpoints and imported saves. Ongoing war or pending captive reports carry their war IDs forward into the current month; history-trigger memory is retained to prevent duplicate scripted events. Province events remain current. The Menu entry is Current events. |
+| Screen dimming | `Allow screen dimming` defaults off. The game requests the browser Screen Wake Lock while visible, releases it on Exit/pagehide/hidden state or when the option is enabled, and reacquires on visibility return or a later tap. Preference survives save/load; older saves default off. Unsupported/declined/device-released locks show their status in Menu. The browser/OS may deny this capability, especially under device power policies. |
+
+Validation: **342 gameplay/data/artwork checks** pass, including nine new current-event, F/R and wake-lock regression groups. Emulated DOM/native-Canvas interface checks cover timed return to Governance, the mobile typography cascade, shared three-column tactical controls, Menu preference, event replay, triumph, diplomacy and courier decisions. Physical handset layout, actual device wake-lock permission and audible playback still require device verification; no browser QA capability was available in this session. Prior native-binary evidence remains applicable; no new original-game parity claim is made.
 
 ## V34 — compulsory field retreat and exile slot protection
 
@@ -500,7 +622,7 @@ Names and nearby type/value bytes were rechecked in the uploaded `main.exe` at `
 | Hua Tuo’s medical book | Native type 4, value 0; requested one-month recovery |
 | Hereditary seal | Native type 5, value 0; remaster trust +10 |
 
-**Remaining fidelity differences:** precise arrival slot/month semantics; whole-realm versus local exile followers/resources and rebel encounters; original succession loyalty; combat/economic/capture/event probabilities; original historic/fiction affinity/stat behavior; complete conditional historical scripts and lifespans; initial/transfer treasure flags; court/imperial-capital logic; defender selection/first-turn and five-attacker limits that are established for NES but not this DOS binary; exact deployment masks, seasonal salary/population scheduling and device behavior. None is relabelled “fixed.” The accepted overrides in section 8 remain intentional. This is the evidence-based boundary of the completed comparison.
+**Remaining fidelity differences:** precise arrival slot/month semantics; whole-realm versus local exile followers/resources and rebel encounters; original succession loyalty; combat/economic/capture/event probabilities; original historic/fiction affinity/stat behavior; complete conditional historical scripts and lifespans; initial/transfer treasure flags; court/imperial-capital logic; defender selection and DOS confirmation of the manual-based first-turn rule and five-attacker limits; exact deployment masks, seasonal salary/population scheduling and device behavior. None is relabelled “fixed.” The accepted overrides in section 8 remain intentional. This is the evidence-based boundary of the completed comparison.
 
 **Complete portable game pack:** playable game, all art/audio, six scenarios and arrivals, local JavaScript libraries/licenses, source, tests, import/decode tools, this report, launchers and source commit. No build or internet connection is needed once extracted; Python serves the files locally. Development tests additionally need Node/npm. Original DOS executable and unmodified commercial resource files are not redistributed.
 
@@ -746,7 +868,7 @@ V12 Exile explicitly checks the ruler’s readiness. The ordinary home-governor 
 | ID | Original reference | Current implementation / difference | Evidence / status |
 | --- | --- | --- | --- |
 | B01 | DOS next-month continuation message [X06]; thirty-day boundary [M23]. | V12 preserves unresolved battles as suspended wars after day 30, permits other campaign orders/factions, and resumes after the next monthly council. Multiple pending wars are saved. | Continuation branch fixed; original siege-supply scheduler remains unverified. |
-| B02 | Defender acts first [M20]. | Attackers deploy first and receive the first combat turn. Allied units share their side's turn; generals may act in any order. | NES comparison; `spawnBattle/act('deploy')/advance`. |
+| B02 | Defender acts first [M20]. | V40 retains attacker-first placement and starts new combat with the defender. Allied units share their side’s turn; generals may act in any order. Earlier mid-combat saves retain their current cycle. | NES manual-based correction; DOS first-turn branch remains untraced. `spawnBattle/act('deploy')/advance`. |
 | B03 | Attacker five; defender ten [M20]. | Up to ten active units on either side. Defense automatically selects the strongest ten troop-bearing officers with leader/governor preference, rather than player selection. | NES comparison; DOS limits still unverified. |
 | B04 | Training-dependent mobility, maximum six [M20/M22]. | Every unit starts at two. Points persist and can accumulate to 1,000; training does not increase movement allowance. | Current rule is distinct. Earlier conversation may have authorized this model; preserve pending discussion. |
 | B05 | Water costs five [M20]. | Water costs three, like forest/hill/fort/capital; plains cost two. Mountains are impassable. | NES comparison. Other terrain values require edition-specific verification. |
@@ -998,3 +1120,24 @@ The complete release passes 203 gameplay/asset checks (`npm test`), 30 emulated 
 The complete release passes **207 gameplay/data/artwork checks**, **31 emulated DOM/native-Canvas interface groups**, and **17 supplied-binary checks**. Governor election rejects missing/departing candidates atomically, preserves the chosen governor through battle save/load, and restores ruler governance after return. The actual War form leaves the election empty and refuses March until selection; candidate advice updates without spending RNG. Map route buttons/highlights share the native graph, including Province 9’s six connections and its single available Move destination in scenario 189. Two-messenger Rival Tigers saves enforce distinct assignments and correct destinations. Existing battle, courier, slider, victory and 41-painted-map checks still pass. Native Canvas China/battlefield art was inspected. Browser/physical handset layout, audible playback and DOS runtime execution remain unverified.
 
 V19 verification: 211 gameplay/data/artwork checks, 33 emulated DOM/native-Canvas interface groups; the previous 17 supplied-binary checks remain applicable. Tests cover alphabetical/numeric province choices, stable monthly advice after retries/save/load, INT endpoints and rollover, legacy-save migration, malformed ledger rejection, and fort navigation. Real handset/browser layout and audible playback remain unverified.
+
+## V47 governor, ownership and battle-result presentation
+
+Governor data remains the explicitly appointed officer, including ID zero. A
+serving-officer fallback and full-width summary prevent a blank/clipped value;
+HUD now uses the heading's reserved space. Ruler, Trust and Governor share fonts.
+
+The original ruler colour lookup is recovered from the supplied executable.
+Solid fills and borders are the averages of its original two-row patterns,
+with 16 distinct ruler assignments. Number labels are white with black outlines.
+Selection and headquarters use separate markers. See native-display-v47.md.
+
+Every completed war record receives triumph artwork, both ruler names, province
+number/name and the losing commander's recorded fate, for spectators and humans
+in both battle-view modes. Human decisions produce a final-fate follow-up.
+Review stamps survive save/load; combat and AI/training equations remain unchanged.
+Earlier completed wars in saves without review stamps may be shown once.
+
+Static executable verification and 418 gameplay checks pass. Mounted interface
+checks cover all mode/outcome combinations; actual browser/handset visuals and
+audible playback remain unverified.

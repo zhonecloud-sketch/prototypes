@@ -1,5 +1,13 @@
 # Raster artwork
 
+## V42 flame overlay
+
+`assets/fire-v42.webp` is a new built-in image-generation asset made on 10 October 2026. The generated 1273 × 1236 RGBA PNG was encoded as WebP at its original dimensions with alpha preserved. `config/release.json` records its hash. The battlefield draws it over burning ground and units, continuously varying opacity and size; deleting/extinguishing the fire cell removes the overlay.
+
+Generation prompt:
+
+> Use case: stylized-concept. Asset type: transparent flame sprite overlay for an isometric painted historical strategy battlefield. Create ONE compact, unmistakable cluster of roaring fire: tall bright yellow-white flame tongues with rich orange and red outer edges, a wide glowing ember base and a few flying sparks. Readable at 50–90 pixels tall against green jungle, tan hills, water banks and palace artwork. Hand-painted game sprite with crisp silhouette and strong contrast, slight isometric ground footprint. Centered fully inside the image with generous transparent margins, flame height about 1.3 times base width. No building, soldiers, landscape, text, border, smoke cloud, checkerboard, or background. Genuine alpha transparency; preserve warm flame colour and soft glow around its edges.
+
 The original four atlases were generated with the built-in image-generation tool for this project. No original DOS graphic was used.
 
 Original-generation assets: `assets/portraits.webp`, `events.webp`, `terrain.webp`, `army.webp`. The terrain and single-soldier army sheets are superseded by v9 at runtime. The PNG originals are retained in the same folder. WebP copies keep the original dimensions and alpha; they are encoding optimizations.

@@ -1,10 +1,10 @@
-import {endRealm} from './ruler-lifecycle.mjs?v=34';
-import {invasionFoodPlan} from './war-provisions.mjs?v=34';
-import {clamp} from './engine.mjs?v=34';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=34';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=34';
-import {provinceDirection} from './geography.mjs?v=34';
-import {hireCapacity} from './province-rules.mjs?v=34';
+import {endRealm} from './ruler-lifecycle.mjs?v=44';
+import {invasionFoodPlan} from './war-provisions.mjs?v=44';
+import {clamp} from './engine.mjs?v=44';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=44';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=44';
+import {provinceDirection} from './geography.mjs?v=44';
+import {hireCapacity} from './province-rules.mjs?v=44';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},
@@ -34,7 +34,15 @@ export function decideSpoils(g,mode,officer){
  let text='The victorious army protected the inhabitants.';
  if(mode==='plunder'){const gold=Math.min(500,Math.floor(p.population/1000),30000-p.gold),food=Math.min(20000,Math.floor(p.population/20),3000000-p.food);p.gold+=gold;p.food+=food;p.loyalty=clamp(p.loyalty-20);r.trust=clamp(r.trust-10);text=`The army plundered ${gold} gold and ${food} food. Popular loyalty fell by 20; trust fell by 10.`;}
  else{p.loyalty=clamp(p.loyalty+5);r.trust=clamp(r.trust+1);}
- if(x.item){const item=ITEMS.find(i=>i.id===x.item),o=g.officer(Number(officer));g.s.items??=[];g.s.items.push({item:item.id,officer:o.id});if(item.stat==='trust')r.trust=clamp(r.trust+item.bonus);else if(['war','int','charm'].includes(item.stat))o[item.stat]=clamp(o[item.stat]+item.bonus);else if(item.stat==='medical'){o.medicalBook=true;if(o.sick||o.injured)o.illMonths=1;}else o.hasHorse=true;text+=` ${o.name} received ${item.name}${item.stat==='mobility'?'; mounted mobility +1':`; ${item.stat.toUpperCase()} +${item.bonus}`} .`;}
+ if(x.item){const item=ITEMS.find(i=>i.id===x.item),o=g.officer(Number(officer)),before=o.loyalty;g.s.items??=[];const award={item:item.id,officer:o.id};g.s.items.push(award);
+  if(['war','int','charm'].includes(item.stat)){const gain=Math.min(100-o[item.stat],5+g.int(0,item.bonus-1));o[item.stat]+=gain;award.gain=gain;}
+  else if(item.stat==='trust'){const old=r.trust;r.trust=clamp(old+item.bonus);award.gain=r.trust-old;}
+  else if(item.stat==='medical'){o.medicalBook=true;if(o.sick||o.injured)o.illMonths=1;}
+  else o.hasHorse=true;
+  if(['war','int','charm','mobility'].includes(item.stat))o.loyalty=100;
+  text+=` ${o.name} received ${item.name}${item.stat==='mobility'?'; mounted mobility +1':award.gain!==undefined?`; ${item.stat.toUpperCase()} +${award.gain}`:''}. Loyalty ${before} → ${o.loyalty}.`;
+ }
+
  g.s.spoils.shift();return g.record(`Province ${p.id}: ${text}`,'war');
 }
 export function resolveAISpoils(g){while(g.s.spoils?.length&&!g.isHuman(g.s.spoils[0].owner)){const x=g.s.spoils[0],p=g.province(x.province);decideSpoils(g,g.officer(g.ruler(x.owner).leader).benevolence>=50?'protect':'plunder',p.governor);}}
@@ -116,7 +124,7 @@ export function conditionalHistory(g,report){
 export function validateCompletion(s){
  const owners=new Set(s.rulers.map(r=>r.id));s.spoils??=[];s.items??=[];s.allyDecisions??=[];s.provinceCompleted??=[];s.historyScripts??=[];
  if(!Array.isArray(s.spoils)||s.spoils.length>41||s.spoils.some(x=>!owners.has(x.owner)||s.provinces[x.province-1]?.owner!==x.owner||x.item!==null&&!ITEMS.some(i=>i.id===x.item)))throw Error('Invalid battle spoils.');
- if(!Array.isArray(s.items)||s.items.length>ITEMS.length||new Set(s.items.map(x=>x.item)).size!==s.items.length||s.items.some(x=>!ITEMS.some(i=>i.id===x.item)||!s.officers[x.officer]))throw Error('Invalid treasure inventory.');
+ if(!Array.isArray(s.items)||s.items.length>ITEMS.length||new Set(s.items.map(x=>x.item)).size!==s.items.length||s.items.some(x=>!ITEMS.some(i=>i.id===x.item)||!s.officers[x.officer]||x.gain!==undefined&&(!Number.isInteger(x.gain)||x.gain<0||x.gain>100)))throw Error('Invalid treasure inventory.');
  const treasures=[...s.items.map(x=>x.item),...s.spoils.filter(x=>x.item).map(x=>x.item)];if(new Set(treasures).size!==treasures.length)throw Error('Duplicate treasure reward.');
  if(!Array.isArray(s.allyDecisions)||s.allyDecisions.length>16)throw Error('Invalid allied decisions.');for(const x of s.allyDecisions){if(!owners.has(x.owner)||!owners.has(x.requester)||x.owner===x.requester||!s.provinces[x.province-1]||!['joint','battle'].includes(x.kind)||!s.rulers.find(r=>r.id===x.requester).alliances.includes(x.owner))throw Error('Invalid allied request.');if(x.kind==='battle'){if(!s.battle||s.battle.target!==x.province||ownerFor(s.battle,x.side)!==x.requester||!Array.isArray(x.route)||!Number.isInteger(x.index)||x.index<0||x.index>=x.route.length)throw Error('Invalid support messenger.');for(let i=0;i<x.route.length;i++)if(!s.provinces[x.route[i]-1]||i&&!s.provinces[x.route[i-1]-1].neighbors.includes(x.route[i]))throw Error('Invalid support route.');}}
  if(!Array.isArray(s.provinceCompleted)||new Set(s.provinceCompleted).size!==s.provinceCompleted.length||s.provinceCompleted.some(id=>!s.provinces[id-1]))throw Error('Invalid province turn completion.');

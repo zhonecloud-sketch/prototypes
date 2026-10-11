@@ -1,18 +1,19 @@
-import {combatPower,nativeCasualty} from './native-combat.mjs?v=34';
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=34';
-import {provinceDirection} from './geography.mjs?v=34';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=34';
+import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=44';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable} from './battle.mjs?v=44';
+import {provinceDirection} from './geography.mjs?v=44';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=44';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.
 export function planBattleRoute(b,u,enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),goals=null){
- const start=u.r*13+u.q,occupied=new Set(living(b).filter(v=>v.placed&&v.id!==u.id).map(v=>v.r*13+v.q)),hostile=living(b).filter(v=>v.side!==u.side&&v.placed),contact=new Set(hostile.flatMap(v=>neighbors(v.q,v.r).map(p=>p.r*13+p.q))),costs=new Map([[start,0]]),paths=new Map([[start,[]]]),queue=[{q:u.q,r:u.r,cost:0}];
+ enemies=enemies.filter(v=>visibleUnit(b,v,u.side));
+ const known=living(b).filter(v=>v.placed&&visibleUnit(b,v,u.side)),start=u.r*13+u.q,occupied=new Set(known.filter(v=>v.id!==u.id).map(v=>v.r*13+v.q)),hostile=known.filter(v=>v.side!==u.side),contact=new Set(hostile.flatMap(v=>neighbors(v.q,v.r).map(p=>p.r*13+p.q))),costs=new Map([[start,0]]),paths=new Map([[start,[]]]),queue=[{q:u.q,r:u.r,cost:0}];
  while(queue.length){queue.sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q);const n=queue.shift(),index=n.r*13+n.q;if(n.cost!==costs.get(index))continue;if(index!==start&&contact.has(index))continue;
   for(const next of neighbors(n.q,n.r)){const key=next.r*13+next.q,cost=n.cost+terrainCost(b.terrain[key]);if(!Number.isFinite(cost)||occupied.has(key)||b.fire[key]||cost>=(costs.get(key)??Infinity))continue;costs.set(key,cost);paths.set(key,[...paths.get(index),next]);queue.push({...next,cost});}
  }
  const best=goals=>goals.map(p=>({...p,cost:costs.get(p.r*13+p.q),path:paths.get(p.r*13+p.q)})).filter(p=>p.path?.length).sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q)[0]||null;
  if(goals)return best(goals);
- if(u.side==='attack'){const palace=at(b,b.palace.q,b.palace.r),route=best(palace?neighbors(b.palace.q,b.palace.r):[b.palace]);if(route)return route;}
+ if(u.side==='attack'){const palace=known.find(v=>distance(v,b.palace)===0),route=best(palace?neighbors(b.palace.q,b.palace.r):[b.palace]);if(route)return route;}
  return best(enemies.flatMap(v=>neighbors(v.q,v.r)));
 }
 // Separate objectives: invasion takes the palace; defence retains its garrison.
@@ -37,6 +38,7 @@ export function safeFireTarget(b,u,enemies){
 // movement budget or defender contact stopping the forecast. Mountains, water,
 // fire and traffic influence the route. Hidden attackers are never consulted.
 export function projectedAttackRoutes(b,enemies){
+ enemies=enemies.filter(u=>u.side==='attack'&&visibleUnit(b,u,'defend'));
  return enemies.filter(u=>u.side==='attack'&&visibleUnit(b,u,'defend')).map(u=>{
   const start=u.r*13+u.q,goal=b.palace.r*13+b.palace.q,traffic=new Set(enemies.filter(v=>v.id!==u.id).map(v=>v.r*13+v.q)),costs=new Map([[start,0]]),paths=new Map([[start,[]]]),queue=[{...u,cost:0}];
   while(queue.length){queue.sort((a,z)=>a.cost-z.cost||a.r*13+a.q-z.r*13-z.q);const n=queue.shift(),i=n.r*13+n.q;if(n.cost!==costs.get(i))continue;if(i===goal)return {unit:u,path:paths.get(i),cost:n.cost,weight:u.soldiers*(u.id===b.leaders.attack?1.5:1)};
@@ -49,6 +51,7 @@ export function ambushLaneScore(c,routes){
  return routes.reduce((n,x)=>{const gap=Math.min(...x.path.map(p=>distance(c,p)));return n+x.weight*(gap===0?1:gap===1?.65:0);},0)/total;
 }
 export function tacticalPosition(b,u,enemies,moves,weak,tuning=DEFAULT_AI.battle){
+ enemies=enemies.filter(v=>visibleUnit(b,v,u.side));
  if(!enemies.length)return null;
  const routes=u.side==='defend'?projectedAttackRoutes(b,enemies):[],nearest=c=>Math.min(...enemies.map(v=>distance(c,v))),score=c=>{
   const tile=b.terrain[c.r*13+c.q];if(tile===4||b.fire[c.r*13+c.q])return -Infinity;
@@ -61,7 +64,7 @@ export function tacticalPosition(b,u,enemies,moves,weak,tuning=DEFAULT_AI.battle
  };
  const current=score(u),best=moves.map(c=>({...c,score:score(c)})).sort((a,z)=>z.score-a.score)[0];
  if(u.side==='defend'&&routes.length){
-  const occupied=new Set(living(b).filter(v=>v.placed&&v.id!==u.id).map(v=>v.r*13+v.q));
+  const occupied=new Set(living(b).filter(v=>v.placed&&v.id!==u.id&&visibleUnit(b,v,u.side)).map(v=>v.r*13+v.q));
   const candidates=b.terrain.flatMap((t,i)=>t===1&&!occupied.has(i)?[{q:i%13,r:Math.floor(i/13)}]:[]).map(c=>({...c,score:score(c)})).filter(c=>c.score>current+.5).sort((a,z)=>z.score-a.score||distance(u,a)-distance(u,z));
   for(const c of candidates){const route=planBattleRoute(b,u,enemies,[c]);if(!route)continue;let spent=0,last=null;for(const step of route.path){spent+=terrainCost(b.terrain[step.r*13+step.q]);if(spent>u.mobility)break;last=step;}const spot=last&&moves.find(p=>p.q===last.q&&p.r===last.r);return spot?{...spot,ambushGoal:c}:current>0?{wait:true}:{wait:true,ambushGoal:c};}
  }
@@ -70,13 +73,26 @@ export function tacticalPosition(b,u,enemies,moves,weak,tuning=DEFAULT_AI.battle
  // Attackers wait briefly for an ambush, then resume their objective to avoid indefinite camping.
  if(current>0&&(u.side==='defend'||b.day%tuning.ambushAdvanceEveryDays!==0))return {wait:true};return null;
 }
+// Recovered fire priorities: finish a weak adjacent commander, seek the dry
+// palace/its neighbouring ground, then take another affordable dry neighbour.
+export function fireEscapeOrder(b,u,enemies){
+ if(!b.fire[u.r*13+u.q])return null;
+ const commander=enemies.find(v=>v.id===b.leaders[v.side]&&distance(u,v)===1&&v.soldiers<1000);
+ if(u.soldiers>3000&&commander)return {action:'attack',target:commander.id};
+ const cells=reachable(b,u).filter(c=>c.path.length===1),palace=at(b,b.palace.q,b.palace.r);
+ if(!palace&&!b.fire[b.palace.r*13+b.palace.q]&&terrainCost(6)<=u.mobility){const route=planBattleRoute(b,u,enemies,[b.palace]),step=route?.path[0],cell=step&&cells.find(c=>distance(c,step)===0);if(cell)return {action:'move',q:cell.q,r:cell.r};}
+ const cell=cells.find(c=>distance(c,b.palace)===1)||cells[0];return cell?{action:'move',q:cell.q,r:cell.r}:{action:'wait'};
+}
+export function nextAIUnit(game,intelligence=game.aiFor(game.battleOwner()).intelligence){const b=game.s.battle,units=living(b).filter(u=>u.side===b.side&&u.placed&&!u.ordered);return units.sort((a,z)=>intelligence>=(game.rules.ai?.battle??DEFAULT_AI.battle).smartIntelligence?z.war-a.war:0)[0]??null;}
 export function aiBattle(game,intelligence=60){const b=game.s.battle,tuning=game.rules.ai?.battle??DEFAULT_AI.battle;if(b.challenge){const u=b.units.find(u=>u.id===b.challenge.challenger),v=b.units.find(u=>u.id===b.challenge.target);const guard=v.side==='defend'&&palaceGuard(b)?.id===v.id;return act(game,'challengeResponse',{accept:v.war>u.war+tuning.safeDuelWarMargin});}if(b.phase==='deployment'){const u=living(b).find(u=>u.side===b.side&&!u.placed);if(!u)return act(game,'deploy');const cells=placementCells(b,u.side,u).sort((a,z)=>distance(a,b.palace)-distance(z,b.palace));return act(game,'place',{unit:u.id,...cells[0]});}
- const units=living(b).filter(u=>u.side===b.side&&!u.ordered);if(!units.length)return act(game,'end');const u=units.sort((a,z)=>intelligence>=tuning.smartIntelligence?z.war-a.war:0)[0],enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),adjacent=enemies.filter(v=>distance(u,v)===1),guard=u.side==='defend'&&palaceGuard(b)?.id===u.id,holding=guard&&distance(u,b.palace)===0;
+ const units=living(b).filter(u=>u.side===b.side&&!u.ordered);if(!units.length)return act(game,'end');const u=nextAIUnit(game,intelligence);b.selected=u.id;const enemies=living(b).filter(v=>v.side!==u.side&&v.placed&&visibleUnit(b,v,u.side)),adjacent=enemies.filter(v=>distance(u,v)===1),guard=u.side==='defend'&&palaceGuard(b)?.id===u.id,holding=guard&&distance(u,b.palace)===0;
+ const escape=fireEscapeOrder(b,u,enemies);if(escape){const {action,...args}=escape;return act(game,action,{unit:u.id,...args});}
+ if(adjacent.length&&adjacent.every(v=>b.terrain[v.r*13+v.q]===1)&&COMBAT_DIVISORS[b.terrain[u.r*13+u.q]]<COMBAT_DIVISORS[1])return act(game,'wait',{unit:u.id});
  if(b.day===1&&intelligence>=tuning.expertIntelligence&&u.war>=b.challengeWar&&b.challengeIssued.length===0){const opponent=enemies.find(v=>guard?v.id===b.leaders.attack&&u.war>=v.war+tuning.safeDuelWarMargin:v.war<u.war-tuning.safeDuelWarMargin);if(opponent)return act(game,'challenge',{unit:u.id,target:opponent.id});}
  const ownPower=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+armyPower(v),0),enemyPower=enemies.reduce((n,v)=>n+armyPower(v),0),weak=ownPower<enemyPower*tuning.outnumberedPowerRatio;
  const fire=intelligence>=tuning.expertIntelligence&&u.int>=tuning.fireMinimumIntelligence&&(weak||holding&&adjacent.length>1)?safeFireTarget(b,u,enemies):null;
  if(fire&&!adjacent.some(v=>v.id===b.leaders[v.side]&&minimumStrikeLoss(b,u,v)>=v.soldiers))return act(game,'fireball',{unit:u.id,q:fire.q,r:fire.r});
- if(adjacent.length){const target=aiAttackTarget(b,u,adjacent);if(holding)return act(game,'attack',{unit:u.id,target:target.id});if(intelligence>=tuning.smartIntelligence&&jointAttackers(b,u,target).length>1)return act(game,'simultaneous',{unit:u.id,target:target.id});if(intelligence>=tuning.expertIntelligence&&!weak&&u.id!==b.leaders[u.side]&&u.soldiers>target.soldiers*tuning.chargeMenRatio)return act(game,'charge',{unit:u.id,target:target.id});return act(game,'attack',{unit:u.id,target:target.id});}
+ if(adjacent.length){const favorable=adjacent.filter(v=>b.terrain[v.r*13+v.q]!==1||COMBAT_DIVISORS[b.terrain[u.r*13+u.q]]>=COMBAT_DIVISORS[1]);if(!favorable.length)return act(game,'wait',{unit:u.id});const target=aiAttackTarget(b,u,favorable);if(holding)return act(game,'attack',{unit:u.id,target:target.id});if(intelligence>=tuning.smartIntelligence&&jointAttackers(b,u,target).length>1)return act(game,'simultaneous',{unit:u.id,target:target.id});if(intelligence>=tuning.expertIntelligence&&!weak&&u.id!==b.leaders[u.side]&&u.soldiers>target.soldiers*tuning.chargeMenRatio)return act(game,'charge',{unit:u.id,target:target.id});return act(game,'attack',{unit:u.id,target:target.id});}
  const own=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+v.soldiers,0),hostile=enemies.reduce((n,v)=>n+v.soldiers,0);if(intelligence>=tuning.expertIntelligence&&own<hostile*tuning.reinforceMenRatio&&b.units.length<40&&living(b).filter(v=>v.side===u.side).length<10){const option=reinforcementOptions(game,u.side).filter(o=>placementCells(b,u.side,null,o.province===b.target?null:provinceDirection(game.province(b.target),game.province(o.province))).length).sort((a,z)=>z.soldiers-a.soldiers)[0];if(option&&placementCells(b,u.side).length)return act(game,'reinforce',{unit:u.id,...option,food:Math.min(option.food,tuning.reinforceFood,3000000-b.food[u.side])});}
  if(holding)return act(game,'wait',{unit:u.id});
  const moves=reachable(b,u);if(!guard&&intelligence<tuning.smartIntelligence&&moves.length)return act(game,'move',{unit:u.id,...moves[game.int(0,moves.length-1)]});

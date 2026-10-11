@@ -1,11 +1,14 @@
-RTK2 Remastered v34 — 2026-10-09
+RTK2 Remastered v47 — 2026-10-11
 
-This pack contains the same committed game files as the v34 release.
+This complete download contains the editable v47 game, all previous completed changes,
+and its local lib/js-yaml.js dependency. Unzip rtk2/ and lib/ together, install Python 3,
+then run start-game.bat (Windows) or sh start-game.sh (macOS/Linux).
 Menu > About identifies the runtime version.
 SOURCE-COMMIT.txt identifies the packaged source commit.
 config/release.json identifies and hashes the ACTIVE event artwork.
 
-Active enlarged art: officers-historic-v30.webp, history-v30.webp,
+Active enlarged art: assets/history-v36/ (16 standalone 1983x793 scenes),
+officers-historic-v30.webp,
 disasters-v30.webp, omens-v30.webp, stories-v30.webp.
 New events: clan-destroyed-v31.webp, heir-vows-vengeance-v31.webp.
 Older v29 images are retained for provenance and regression tests.
@@ -13,7 +16,8 @@ Older v29 images are retained for provenance and regression tests.
 All 41 original map-generation prompts, exact terrain grids and semantic
 reference diagrams are under docs/artwork/.
 Native verification, fixes and remaining differences: docs/differences.md.
-Shared ../lib dependencies are intentionally excluded, as requested.
+The complete download includes the required sibling lib/js-yaml.js.
+The source-only packaging option still permits excluding shared libraries.
 
 V33: native jungle ambush and voluntary flight; ruler captivity gate;
 centered result playback before governance; commander name star; battle HUD;
@@ -22,3 +26,68 @@ V34: compulsory field retreat prompts/native flight, AI exit preference,
 no-exit capture and protection of active exile ruler slots.
 Unrecovered strategic AI, reserve capture and order probabilities are
 explicitly listed in docs/differences.md. Advisor sources are preserved.
+
+V35: shared mobile typography and three-column battle commands, correct attacker F/R,
+current-month Events, timed governance art and default screen wake lock with a Menu toggle.
+
+V36: centred equal-width dialog controls, content-sized event cards, compact
+campaign summaries, Province toggle, simplified map labels, smaller courier,
+gallop/bad-omen sounds and standalone higher-resolution historical paintings.
+Prompts and audio details: docs/artwork-v36.md.
+
+V38: current-round AI report ledger and one replaced completed-round snapshot;
+no report eviction by tactical playback. Fixed map-status HTML nesting, route
+legend/swatches, four HUD columns, mobile placement controls, travel-only gallop
+and outbound-only interception. Native treasure recipient LOY=100, capped
+random stat gains, national treasure reports and aligned general columns.
+Native evidence and verification limits: docs/differences.md.
+
+V39: read-only HUD AI planned-path and jungle-lane overlays, inspected-unit
+selector, movement budget, visible-attacker forecasts and shared centred buttons.
+
+V40: compact frameless battlefield status; defender-first new battles; side
+and general turn announcements before actions. Root AGENTS.md adds the
+requested coding guidance. Downloadable packaging remains deferred.
+
+V41: Fireball returns to selection, compact mobile placement, HUD closes after AI action.
+V42: ready-unit auto-selection; three synchronized combat cycles before status;
+continuous flame overlay; recovered fire escape; hidden-position planning fixes
+and terrain-based jungle attack/Wait preference. See docs/native-fire-v42.md.
+
+V43: 50% fire opacity, native ignition/after-order fire losses and rain timing;
+five Normal/Simultaneous cycles and ten Charge cycles; shared active AI actor;
+bottom-right deployment Yes/No reset; direct portrait inspection with enemy
+gold confirmation; human movement costs and tile effects; named captive review.
+Nine bounded native checks are recorded in docs/native-turns-v43.json.
+Five reported captives produce five decisions in the regression scenario.
+Remaster deployment remains a documented simplified policy, not full parity.
+
+V44: optional governance/battlefield numerical policy profiles; Legacy default;
+HUD import, independent policy selection, per-ruler overrides and comparisons;
+reusable offline trainer and paired Legacy benchmarks. Profiles are tied to
+the engine fingerprint and obsolete profiles fall back to Legacy.
+Beginner instructions: docs/ai-training-manual.md (also available as HTML).
+Bundled profiles are exploratory examples; see docs/ai-training-v44-results.md.
+
+V45: goal-driven backward governance training, Finish/Expand/Opening curriculum,
+abstract-only battles and capped support measures. Experimental conquest profile,
+full independent Legacy/v44 comparison and beginner training manual are included.
+
+V46: restored mobile landscape 三國 branding, title/label spacing, 75% launch
+button width and height, and a custom-ruler portrait tile beside Liu Yao.
+The gender-neutral silhouette uses the same portrait frame and button typography.
+Complete downloadable packaging is now available. Browser/handset layout remains
+unverified; mounted interface and compact-layout checks cover the changes.
+
+V47: Governor display, ownership palette and every-battle triumph review
+- Governor labels retain serving names (including officer ID zero) and consistent
+  typography; the summary no longer loses width to the HUD button.
+- All 41 province badges have solid matching border/fill colours from main.exe's
+  ruler-indexed map patterns, sharp white text and black outlines. Selection and
+  headquarters markers preserve faction colours; map/legend use the same palette.
+- Every human/spectator and personal/all-battles result shows triumph artwork,
+  attacker versus defender, numbered province and the losing commander's fate.
+  Human captivity decisions trigger a final-fate follow-up; completed reviews
+  survive save/load. Existing combat/trained AI rules and earlier fixes remain.
+- Native display witness: docs/native-display-v47.md and its JSON report.
+- Browser/physical-phone visual inspection remains unverified in this environment.

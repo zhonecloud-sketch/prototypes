@@ -1,9 +1,9 @@
-"""Package rtk2 exactly as deployed; shared ../lib files are excluded."""
+"""Package rtk2 exactly as deployed; optionally include its shared runtime library."""
 from pathlib import Path
 import argparse, subprocess, zipfile, json, hashlib
 APP=Path(__file__).resolve().parents[1]
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('output',type=Path);args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('output',type=Path);parser.add_argument('--include-shared',action='store_true',help='Include lib/js-yaml.js for a complete runnable download.');args=parser.parse_args()
     repo=next((p for p in [APP,*APP.parents] if (p/'.git').exists()),None)
     if repo:
         if subprocess.check_output(['git','status','--porcelain'],cwd=repo).strip():raise SystemExit('Commit the checked source before packaging.')
@@ -19,16 +19,23 @@ def main():
     assert len(prompts['maps'])==41
     for item in prompts['maps']:
         assert hashlib.sha256((APP/'docs/artwork'/item['guide']).read_bytes()).hexdigest()==item['guideSha256']
+    shared=APP.parent/'lib/js-yaml.js'
+    if args.include_shared and not shared.is_file():raise SystemExit('The complete download requires lib/js-yaml.js.')
     with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
         for file in sorted(APP.rglob('*')):
             if file.is_file() and not any(p in ['node_modules','__pycache__','.git'] for p in file.relative_to(APP).parts):archive.write(file,'rtk2/'+file.relative_to(APP).as_posix())
         archive.writestr('rtk2/SOURCE-COMMIT.txt',commit+'\n')
+        if args.include_shared:
+            archive.write(shared,'lib/js-yaml.js')
+            archive.writestr('rtk2/DOWNLOAD-README.txt','Unzip both rtk2/ and lib/ into the same folder. Install Python 3, then run rtk2/start-game.bat on Windows or sh rtk2/start-game.sh on macOS/Linux. The game opens at http://localhost:8080/rtk2/. Editable source, artwork, training profiles, reports and tests are included. Node.js is needed only for development and training, not to play.\n')
     with zipfile.ZipFile(output) as archive:
         assert archive.testzip() is None
         names=set(archive.namelist())
         assert {'rtk2/index.html','rtk2/mjs/battle.mjs','rtk2/docs/differences.md','rtk2/tests/ui-tests.mjs','rtk2/config/scenarios.json','rtk2/start-game.bat','rtk2/tools/serve-game.py'}<=names
-        assert all(n.startswith('rtk2/') for n in names)
-        assert not any(n.endswith(('three.module.js','three.core.js','three-core.js','js-yaml.js')) for n in names)
+        assert all(n.startswith('rtk2/') or args.include_shared and n=='lib/js-yaml.js' for n in names)
+        assert ('lib/js-yaml.js' in names)==args.include_shared
+        assert not any(n.endswith(('three.module.js','three.core.js','three-core.js')) for n in names)
+        if args.include_shared:assert archive.read('lib/js-yaml.js')==shared.read_bytes()
         assert 'rtk2/RELEASE.txt' in names
         assert json.loads(archive.read('rtk2/config/release.json'))['version']==release['version']
         for asset in release['activeEventArt']:

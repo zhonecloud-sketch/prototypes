@@ -1,4 +1,4 @@
-import {direction} from './battle.mjs?v=34';
+import {direction} from './battle.mjs?v=44';
 
 // Six bits use the same direction ordering as movement and deployment.
 export function terrainMask(tiles,q,r){

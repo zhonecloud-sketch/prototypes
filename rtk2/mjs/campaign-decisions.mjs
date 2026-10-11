@@ -1,8 +1,8 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=34';
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=34';
-import {recordWarFate} from './event-chronicle.mjs?v=34';
-import {retireRulerFamily} from './ruler-family.mjs?v=34';
-import {clamp} from './engine.mjs?v=34';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=44';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=44';
+import {recordWarFate} from './event-chronicle.mjs?v=44';
+import {retireRulerFamily} from './ruler-family.mjs?v=44';
+import {clamp} from './engine.mjs?v=44';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export const captiveActions=(g,c)=>g.ruler(c.formerOwner)?.leader===c.officer?['free','behead']:c.recruitTried?['free','behead']:['recruit','free','behead'];
@@ -60,9 +60,9 @@ export function advanceJourney(g){
  const j=g.s.journey;if(!j)return false;if(j.interception||j.proposal)return false;const leg=j.legs[j.leg];
  if(leg.index<leg.route.length-1){
   const from=leg.route[leg.index],to=leg.route[++leg.index],p=g.province(to),o=g.officer(leg.officer);g.journeyMotion={from,to,start:performance.now()};j.visited.push(to);if(j.type==='transport'&&j.phase==='outbound'&&j.cargo&&(j.cargo.gold||j.cargo.food)&&g.random()*100<clamp(12-(o.int+o.war)/25,2,12)){const fraction=.1+g.random()*.3,lostGold=Math.ceil(j.cargo.gold*fraction),lostFood=Math.ceil(j.cargo.food*fraction);j.cargo.gold-=lostGold;j.cargo.food-=lostFood;j.losses??={gold:0,food:0};j.losses.gold+=lostGold;j.losses.food+=lostFood;g.record(`Bandits attacked ${o.name}'s convoy: ${lostGold} gold and ${lostFood} food were stolen.`,'prison');}
-  if(p.owner!==255&&p.owner!==j.owner&&!g.ruler(j.owner).alliances.includes(p.owner)){
+  if(j.phase==='outbound'&&p.owner!==255&&p.owner!==j.owner&&!g.ruler(j.owner).alliances.includes(p.owner)){
    const hostility=g.ruler(p.owner).relations[j.owner]??50,risk=clamp(35+hostility/5-(o.int+o.war)/4,5,65);
-   if(g.random()*100<risk){j.interception={owner:p.owner,province:to,officer:o.id};if(!g.isHuman(p.owner))interceptJourney(g,g.random()*100<(g.ruler(p.owner).trust+o.charm)/2?'free':'capture');}
+   if(g.random()*100<risk){j.interception={owner:p.owner,province:to,officer:o.id};delete g.journeyMotion;if(!g.isHuman(p.owner))interceptJourney(g,g.random()*100<(g.ruler(p.owner).trust+o.charm)/2?'free':'capture');}
   }return true;
  }
  if(j.leg<j.legs.length-1){j.leg++;return true;}

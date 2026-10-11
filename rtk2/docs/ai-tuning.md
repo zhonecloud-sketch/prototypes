@@ -1,37 +1,69 @@
-# AI tuning
+# AI settings reference
 
-The AI uses deterministic policies and the campaign random generator, rather than a trained model. Edit `config/ai-config.json`, then reload the game. Unspecified values use defaults; invalid or unknown settings are rejected. Old saves use the currently loaded configuration. Game Speed controls scheduling; Message Speed controls how long reports remain visible and delays AI while messages are queued.
+Start with [the beginner guide](ai-editing-guide.md) for examples and the distinction between decisions and rules. This reference describes the **current v39 consumers**, not recovered original strategy equations.
 
-| File | Responsibility |
-|---|---|
-| `mjs/ai-battle.mjs` | Terrain-aware routes, palace defence, attacks, safe fire, jungle and river-bank positioning, challenges and reinforcement decisions. |
-| `mjs/ai-governance.mjs` | Monthly province orders, hiring, equipment, training, development and invasion selection. |
-| `mjs/ai-politics.mjs` | Diplomatic and political choices. |
-| `config/ai-config.json` | Main thresholds, probabilities and spending limits. |
-| `mjs/ai-parameters.mjs` | Defaults and validation. |
-| `mjs/strategy.mjs` | Turn scheduling and legal order execution; `mjs/battle.mjs` retains combat rules. |
+Edit `config/ai-config.json`, then fully reload. `mjs/ai-parameters.mjs` holds matching defaults and `validateAIConfig`. Missing values use defaults; unknown keys, nonnumeric values and values outside 0–100000 are rejected. Names ending in `Chance` must be 0–1. The count/day/radius keys matched by the validator require positive integers, and `maxInvaders` cannot exceed five. Follow the meaning of each setting, not only the broad numeric validation range.
 
-Battle parameters include smart/expert intelligence thresholds, safe duel WAR margin, outnumbered power ratio, minimum fire intelligence, reinforcement and charge ratios, terrain search radius, jungle/bank weights and bounded ambush waiting. Governance parameters cover maximum invading generals, war strength and food thresholds, loyalty, hiring and equipment/training targets, development spending and political/diplomatic probabilities. Chances range from 0 to 1; day/radius/count settings require positive integers. Defaults include the v31 route-aware defence policy.
+Loaded saves use the configuration loaded at startup. HUD AI intelligence/aggression are separate global/per-ruler values saved with the campaign. Game Speed schedules actions; Message Speed controls playback pauses. Neither changes combat equations.
 
-Change a small group at a time and run `npm test` plus `npm run test:ui` from the game folder. The v20 long campaign and v21/v22 tactical cases test mountain routing, repeated battles, palace guards, safe fire and bounded waiting. Configuration changes must not bypass legal orders or combat outcomes. The original DOS zero-food defeat rule remains independent of tuning. Native AI equations have not been recovered.
+## Governance settings
 
-## V24 provisioning and hidden battle tuning
+| Key under `governance` | Default | Current use |
+| --- | --- | --- |
+| `smartIntelligence` | 50 | Controller intelligence needed for high-INT officer selection and smarter invasion/diplomacy branches. |
+| `maxInvaders` | 5 | Upper limit on selected initial invaders, also constrained by available officers and the retained governor. |
+| `courtMarriageChance` | 0.02 | Chance to consider the expanded-family court-marriage branch when eligible. |
+| `diplomacyChance` | 0.07 | Chance for the smart ruler's additional diplomacy branch when eligible. |
+| `attackStrengthRatio` | 1.25 | Smart AI requires estimated invading strength above this multiple of the chosen defender's strength. |
+| `basicAttackStrengthRatio` | 0.65 | Corresponding threshold for less intelligent AI. |
+| `minimumWarFood` | 5000 | Source stock must exceed this for invasion; also gates relief. Actual carried-food legality is checked separately. |
+| `minimumCarriedFood` | 6000 | Minimum desired carried-food target, capped by available source stock. |
+| `warProvisionDays` | 75 | Desired duration of carried supplies; must be a positive integer. |
+| `loyaltyTarget` | 65 | Consider relief below this popular-loyalty level. |
+| `reliefAmount` | 3000 | Relief food amount, capped by stock. |
+| `recruitTargetMen` | 4000 | Selected officer's recruiting/reassignment target. |
+| `hireHundreds` | 10 | Maximum groups of 100 recruits considered by the hiring branch. |
+| `weaponsCoverageTarget` | 0.8 | Consider buying arms below this weapons-to-soldiers ratio when a merchant is present. |
+| `trainingTarget` | 70 | Consider Train when the selected officer's troops are below this training. |
+| `developmentGold` | 100 | **Unused by current v39 policy**, despite being accepted. Spending is calculated in `ai-governance.mjs`. |
+| `politicsChance` | 0.12 | Chance to enter the political-action selector when its other gates pass. |
+| `politicsMinimumIntelligence` | 40 | Minimum controller intelligence for that selector. |
+| `battleAllyChance` | 0.05 | Chance to ask an eligible ally during the detailed defender-side battle step in `strategy.mjs`. |
 
-`governance.warProvisionDays` defaults to 75 and must be a positive integer. Invasion food is based on actual selected soldiers: native daily rations are `max(1, floor(men / 30))`. AI requires 30 days plus one rice, targets 75 days plus one and at least `minimumCarriedFood`, capped by available source stock. AI allies use the same helper in `mjs/war-provisions.mjs`. Defending province reserves also consume food.
+`ai-governance.mjs` chooses province/officer candidates, considers strategic branches, and then calls the original local dispatch tables in `native-governance-priority.mjs`. `ai-politics.mjs` chooses diplomatic/covert actions. Both use validated game orders. The priority tables are recovered native behavior; the surrounding strategic choices and some eligibility adapters remain remaster policies.
 
-`mjs/auto-battle.mjs` is the separate hidden-battle equation resolver, with six exchanges and native abstract ration accounting. Combat coefficients there remain explicit remaster approximations. `mjs/ai-battle.mjs` controls watched tactical battles; it is not invoked for hidden battles.
+`war-provisions.mjs` uses daily rations `max(1, floor(men / 30))`. Invasion planning requires at least 30 days plus one rice, targets `warProvisionDays` plus one and `minimumCarriedFood`, and caps carried stock at availability. Defending reserves also consume food. Changing this target does not change ration or defeat equations.
 
-## V31 route-aware jungle interception
+## Detailed battlefield settings
 
-Edit `mjs/ai-battle.mjs` for the policy, or `battle.routeAmbushWeight` in `config/ai-config.json` (default **12**) for its emphasis. The main functions are:
+| Key under `battle` | Default | Current use |
+| --- | --- | --- |
+| `smartIntelligence` | 50 | Controller intelligence threshold for WAR ordering, simultaneous attacks and tactical positioning. |
+| `expertIntelligence` | 75 | Threshold for opening challenges, safe fire, charge and reinforcement consideration. |
+| `safeDuelWarMargin` | 20 | Required WAR advantage in challenge selection/acceptance comparisons. |
+| `outnumberedPowerRatio` | 0.85 | Army is considered weak when own estimated power is below visible enemy power times this value. |
+| `fireMinimumIntelligence` | 60 | Minimum acting **unit INT** for the expert fire branch. |
+| `reinforceMenRatio` | 0.7 | Reinforcement consideration when own men are below visible hostile men times this value. |
+| `chargeMenRatio` | 1.5 | Troop advantage required by the expert charge branch; other commander/weakness conditions still apply. |
+| `reinforceFood` | 5000 | Maximum food considered for that reinforcement order, further capped by source and storage. |
+| `ambushAdvanceEveryDays` | 3 | Attacker's bounded terrain-wait rhythm; defenders may hold useful cover. |
+| `terrainSearchRadius` | 4 | Local terrain-search distance; route-relevant defender cover can be considered farther away. |
+| `jungleWeight` | 7 | Base preference score for relevant jungle cover. |
+| `riverBankWeight` | 6 | Base preference score for relevant dry river-bank positions. |
+| `routeAmbushWeight` | 12 | Extra defender score for terrain near predicted attacker lanes. |
 
-| Function | Role |
-| --- | --- |
-| `projectedAttackRoutes(b, enemies)` | Dijkstra forecasts from each visible invading unit to the palace, using terrain mobility costs, fire exclusions and a traffic penalty. It does not stop after today's movement budget. |
-| `ambushLaneScore(cell, routes)` | Weights exact route cells and adjacent ambush positions by expected passing soldiers; the attacking commander's route has extra weight. |
-| `tacticalPosition(b, unit, enemies, moves, weak, tuning)` | Rejects off-route defender forests, scores likely interception cover, then plans a legal route to a worthwhile forest anywhere on the field. It advances the affordable prefix or waits to bank mobility. |
-| `palaceGuard(b)` | Keeps one defender responsible for the palace; that unit does not leave to seek jungle cover. |
+Main policy: `mjs/ai-battle.mjs`. Its `projectedAttackRoutes` forecasts terrain-cost paths to the palace from visible attackers. `ambushLaneScore` weights proximity by expected passing troops, with extra commander weight. `tacticalPosition` chooses useful cover and can plan toward a jungle beyond today's movement budget. `planBattleRoute` follows passable, legal routes; one palace guard retains the defensive objective.
 
-For a northern entry and southern palace, the projected north-to-south paths give the middle forest a higher score than a western forest no attacker is expected to pass. Water still costs five and mountains remain impassable. Existing contact/occupancy rules constrain the defender's actual route. A forest already containing an ally is unavailable, and hidden attackers are excluded from prediction. Increasing routeAmbushWeight strengthens lane selection but cannot override a blocked route or permit an illegal movement.
+The route-lane heuristic does not yet score every movement step's exact native ambush arc. The stronger proposal in [ai-ambush-proposal-v33.md](ai-ambush-proposal-v33.md) remains discussion. Native automatic ambush is independently enforced by `battle.mjs` and `native-combat.mjs`.
 
-`tests/v31-tests.mjs` includes the middle-versus-off-route forest fixture. The v20/v21/v22 cases still cover mountain detours, consecutive battles, palace guards, safe fire and waiting behavior. These are heuristic forecasts, not a recovered original AI equation.
+## Unwatched battles
+
+`mjs/auto-battle.mjs` is separate. It runs up to six aggregate exchanges with native abstract ration accounting; its strength/casualty coefficients remain explicit approximations. It does not call `ai-battle.mjs`, so the tactical settings above do not alter its jungle placement or routes.
+
+## HUD inspection (v39)
+
+HUD → AI has independent **Planned path** and **Jungle scores** toggles plus an inspected-unit selector. Route previews show the affordable prefix; forests show the real lane score (0–1), and visible-attacker forecasts are dotted gold. Inspection is read-only and pauses with the existing HUD. Close HUD to see the full field; One AI action refreshes it and Resume AI clears it. See [the beginner guide](ai-editing-guide.md#inspect-routes-and-jungle-scores-with-hud-v39) for usage and interpretation.
+
+## Verify edits
+
+Run from `dist/rtk2`: `npm test` and `npm run test:ui`, with focused checks chosen from the beginner guide. Tests for v20–v22 cover routing, palace guards, safe fire and waiting; v31 covers route-aware forest selection; v33 covers native local priority tables; v38 protects AI event reporting. Configuration changes must still pass legal order validation and must preserve combat outcomes' rule path and advisor behavior.

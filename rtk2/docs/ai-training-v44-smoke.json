@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "purpose": "CLI integration smoke checks; not strength estimates",
+  "reports": {
+    "governance": {
+      "schema": 1,
+      "profileId": "governance-3001-g1",
+      "rulesId": "65d8573a4f36663d810fff3e2329a58bdeb554e766d1f91bfd16affd91e005d1",
+      "seed": 1500001,
+      "domain": "governance",
+      "comparison": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": -2.587292882843432,
+        "legacyMean": 2.9825808395700086,
+        "meanDifference": -5.5698737224134405,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      },
+      "trained": [
+        {
+          "seed": 4232526100,
+          "owner": 0,
+          "score": -2.587292882843432,
+          "metrics": {
+            "provinces": 1,
+            "officers": 8,
+            "soldiers": 14276,
+            "gold": 705,
+            "food": 16430,
+            "land": 60,
+            "flood": 30,
+            "loyalty": 60
+          },
+          "steps": 133,
+          "decisions": 6,
+          "meanDecisionMs": 95.64505183333334
+        }
+      ],
+      "legacy": [
+        {
+          "seed": 4232526100,
+          "owner": 0,
+          "score": 2.9825808395700086,
+          "metrics": {
+            "provinces": 1,
+            "officers": 10,
+            "soldiers": 21000,
+            "gold": 550,
+            "food": 29000,
+            "land": 60,
+            "flood": 33,
+            "loyalty": 67
+          },
+          "steps": 161,
+          "decisions": 10,
+          "meanDecisionMs": 0.990718100000015
+        }
+      ]
+    },
+    "battlefield": {
+      "schema": 1,
+      "profileId": "battlefield-4001-g1",
+      "rulesId": "65d8573a4f36663d810fff3e2329a58bdeb554e766d1f91bfd16affd91e005d1",
+      "seed": 2300001,
+      "domain": "battlefield",
+      "comparison": {
+        "episodes": 2,
+        "independentSeeds": 1,
+        "trainedMean": 5.063129166666666,
+        "legacyMean": 5,
+        "meanDifference": 0.06312916666666668,
+        "approximateMean95": null,
+        "battles": {
+          "wins": 0,
+          "losses": 0,
+          "draws": 2,
+          "decisiveWinRate": null,
+          "decisiveWinRate95": null,
+          "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+          "scoreRate": 0.5
+        },
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      },
+      "trained": [
+        {
+          "seed": 3601490430,
+          "owner": 9,
+          "side": "attack",
+          "result": 0.5,
+          "score": 4.975,
+          "metrics": {
+            "day": 30,
+            "ownSurvivors": 9500,
+            "enemySurvivors": 12000,
+            "reason": "Thirty-day suspension"
+          },
+          "steps": 181,
+          "decisions": 61,
+          "meanDecisionMs": 7.388249622950823
+        },
+        {
+          "seed": 3601490430,
+          "owner": 1,
+          "side": "defend",
+          "result": 0.5,
+          "score": 5.151258333333334,
+          "metrics": {
+            "day": 30,
+            "ownSurvivors": 10079,
+            "enemySurvivors": 5374,
+            "reason": "Thirty-day suspension"
+          },
+          "steps": 175,
+          "decisions": 115,
+          "meanDecisionMs": 24.87904902608694
+        }
+      ],
+      "legacy": [
+        {
+          "seed": 3601490430,
+          "owner": 9,
+          "side": "attack",
+          "result": 0.5,
+          "score": 4.823433333333333,
+          "metrics": {
+            "day": 30,
+            "ownSurvivors": 5902,
+            "enemySurvivors": 11320,
+            "reason": "Thirty-day suspension"
+          },
+          "steps": 181,
+          "decisions": 61,
+          "meanDecisionMs": 0.06611870491800442
+        },
+        {
+          "seed": 3601490430,
+          "owner": 1,
+          "side": "defend",
+          "result": 0.5,
+          "score": 5.176566666666667,
+          "metrics": {
+            "day": 30,
+            "ownSurvivors": 11320,
+            "enemySurvivors": 5902,
+            "reason": "Thirty-day suspension"
+          },
+          "steps": 181,
+          "decisions": 120,
+          "meanDecisionMs": 0.09231260833332347
+        }
+      ]
+    }
+  }
+}

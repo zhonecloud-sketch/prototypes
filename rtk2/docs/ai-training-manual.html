@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Training the game AI</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#171712;color:#eae6d9;font:17px/1.65 system-ui,sans-serif}main{max-width:980px;margin:auto;padding:28px 22px 70px}a{color:#e5bf66}h1,h2{line-height:1.25;color:#f0cd7b}h1{font-size:2rem}h2{font-size:1.4rem;margin-top:2.4rem}p,li{max-width:80ch}li{padding:4px 0}code{font-size:.88em;background:#292920;padding:2px 4px;border-radius:3px;overflow-wrap:anywhere}pre{padding:16px;background:#24241d;border-left:3px solid #af914a;overflow:auto}pre code{padding:0;background:none;overflow-wrap:normal}table{border-collapse:collapse;width:100%;min-width:520px;font-size:.94rem}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid #49473c}th{color:#f0cd7b;background:#28281f}.table-scroll{overflow:auto}nav{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:28px}@media(max-width:560px){main{padding:20px 16px 50px}body{font-size:16px}h1{font-size:1.65rem}}@media print{body{background:white;color:black}h1,h2,th,a{color:black}main{max-width:none;padding:0}pre,code,th{background:#eee}pre{white-space:pre-wrap}table{min-width:0}.table-scroll{overflow:visible}nav{display:none}}
+</style></head><body><main><nav aria-label="Manual navigation"><a href="../index.html">Return to game</a><a href="ai-training-v45-results.html">Conquest evaluation</a><a href="ai-training-v44-results.html">V44 evaluation</a><a href="ai-training-manual.md">Markdown source</a></nav>
+<h1>Training the game AI</h1>
+<p>Training update 45 · 11 October 2026</p>
+<p>The game now supports optional AI profiles for governance and detailed battlefield orders. A profile is a small JSON file containing numerical priorities. You train it outside the game, compare it with Legacy, and enable it through HUD → AI. <strong>Legacy remains the default.</strong> The engine still applies the same legal orders, movement costs, casualties, turn consumption and victory rules.</p>
+<p>These extensions are appropriate for this project because they are inspectable, run locally, and preserve a comparison with the existing design. They do not guarantee a stronger opponent. Training uses seeded numerical search over simulations, not a neural network, an online service, or a language model. Increasing training time can also produce a policy that overfits its practice situations.</p>
+<h2>1. Understand the four parts</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Plain meaning</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Game engine</td>
+<td>Enforces the rules and changes the campaign after an order.</td>
+<td>Existing <code>mjs/strategy.mjs</code>, <code>mjs/battle.mjs</code> and order modules</td>
+</tr>
+<tr>
+<td>Policy adapter</td>
+<td>Lists possible officer/order pairs and scores short simulated continuations.</td>
+<td><code>mjs/ai-planner-governance.mjs</code>, <code>mjs/ai-planner-battlefield.mjs</code></td>
+</tr>
+<tr>
+<td>Training engine</td>
+<td>Tries different numerical weights and retains a better candidate on the practice cases.</td>
+<td><code>tools/ai-training-engine.mjs</code></td>
+</tr>
+<tr>
+<td>Profile</td>
+<td>Stores learned weights, compatibility identity and training results.</td>
+<td>JSON produced by <code>tools/train-ai.mjs</code></td>
+</tr>
+</tbody></table></div>
+<p>The same training engine serves both modes. The adapters translate the current game into candidates, features and measurable outcomes. When the game design changes, you can reuse the optimizer; new orders or changed APIs may require adapter changes before retraining.</p>
+<p><strong>For the current governance project, use the conquest curriculum in section 10.</strong> It works backward from uniting all 41 provinces and disables detailed battlefield actions during training. The v44 progress trainer and both original example profiles remain available for comparison.</p>
+<p>A <strong>feature</strong> is a measured property, such as food reserves or soldiers surviving. A <strong>weight</strong> says how strongly the planner values that feature. A <strong>seed</strong> makes simulated random events repeatable. An <strong>episode</strong> is one practice campaign segment or battle. A <strong>holdout</strong> is a separate set of episodes reserved for evaluation, never used to choose the weights.</p>
+<h2>2. Prepare your computer</h2>
+<p>Use the editable source checkout, not only a hosted browser session. Open a terminal in <code>dist/rtk2/</code>, the folder containing <code>package.json</code>, <code>mjs/</code>, <code>config/</code> and <code>tools/</code>. Do not delete <code>dist/</code>: it contains this project&#39;s source.</p>
+<p>Install Node.js 24.15 or newer in the 24.x line, then check:</p>
+<pre><code class="language-sh">node --version
+node tools/ai-rules.mjs --check
+</code></pre>
+<p>The training commands use Node&#39;s built-in modules. They need no GPU, external account or npm dependency installation. For the full interface tests, separately run <code>npm ci</code> to install the existing test dependencies.</p>
+<p>Training can take minutes or longer. Leave the terminal running until it prints the output directory and holdout results. Ctrl+C cancels a run. Use a new output directory for every attempt; completed runs are never overwritten.</p>
+<h2>3. Train governance priorities</h2>
+<p>Start with a small run across all six scenario families:</p>
+<pre><code class="language-sh">node tools/train-ai.mjs --domain governance --seed 1001 --holdout-seed 700001 --generations 3 --population 4 --episodes 6 --holdout-episodes 6 --months 2 --out training/governance-run-001
+</code></pre>
+<p>Governance training runs the actual campaign for two months. One faction uses the candidate policy; its opponents use Legacy. The fixed training objective rewards territory, officers, effective army strength, development, flood protection, loyalty, reserves and border safety. That objective stays fixed while the candidate weights change, so candidates cannot win simply by inflating their own scoring weights.</p>
+<p>The planner jointly chooses a province, officer and order. It samples two outcomes and considers a second order. Supported candidates include cultivation, flood control, relief, province-wide training, hiring, food and weapon purchases, recruitment, settlement by movement, gold rewards and invasions. Existing readiness, costs and limits still apply.</p>
+<p>This first extension does not optimize every political, marriage, covert or adviser choice. Legacy handles phases or situations where the planner supplies no order. A trained ruler may favor its supported orders and use those other strategies less often. Governance training uses the existing abstract resolver for unwatched battles; tactical weights do not affect that resolver.</p>
+<h2>4. Train battlefield priorities</h2>
+<pre><code class="language-sh">node tools/train-ai.mjs --domain battlefield --seed 2001 --holdout-seed 800001 --generations 3 --population 4 --episodes 6 --holdout-episodes 6 --out training/battlefield-run-001
+</code></pre>
+<p>The generated cases use actual invasions and existing deployment. Each starting battle is played twice: the candidate controls the attacker once and the defender once, against Legacy. Six starting positions therefore produce twelve episodes.</p>
+<p>The tactical planner compares ready units and orders together. It considers Wait, movement, Normal, Charge, Simultaneous, Fireball and reinforcement. It samples three outcomes, a friendly follow-up and one Legacy enemy reply. Winning or losing dominates its short-horizon score. Training measures final victory/draw/loss and relative survivors, independently of the candidate&#39;s weights.</p>
+<p>Deployment and pending challenges continue through Legacy. The first version does not learn new deployment, duel, bribery or retreat policies. Battles suspended after thirty days count as draws in this benchmark; they are not treated as completed campaign victories.</p>
+<p>The planner sees its own field units and currently visible enemies. It excludes concealed enemy coordinates and previous hidden action coordinates, and uses independent simulated random draws. This prevents previews from knowing the live game&#39;s next random result. It does not implement a learned memory or probability distribution over suspected jungle enemies.</p>
+<h2>5. Read the outputs before importing</h2>
+<p>Each successful run creates:</p>
+<ul>
+<li><code>governance-profile.json</code> or <code>battlefield-profile.json</code>: import this into the game.</li>
+<li><code>report.json</code>: keep this as the evidence for the run. It records seeds, settings, weight-search history, paired results and decision times.</li>
+</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it controls</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--generations</code></td>
+<td>Number of search rounds; default 3.</td>
+</tr>
+<tr>
+<td><code>--population</code></td>
+<td>Weight variants tried per round; default 4. Two weights are perturbed per variant.</td>
+</tr>
+<tr>
+<td><code>--episodes</code></td>
+<td>Generated starting cases; default 6. Battlefield doubles these into paired roles.</td>
+</tr>
+<tr>
+<td><code>--holdout-episodes</code></td>
+<td>Separate evaluation cases; default 6.</td>
+</tr>
+<tr>
+<td><code>--months</code></td>
+<td>Governance horizon, 1–12 months; default 2. Ignored for battlefield play.</td>
+</tr>
+<tr>
+<td><code>--seed</code>, <code>--holdout-seed</code></td>
+<td>Repeatable training and evaluation randomness; they must differ and not overlap.</td>
+</tr>
+<tr>
+<td><code>--from</code></td>
+<td>Previous profile whose weights provide a starting point.</td>
+</tr>
+<tr>
+<td><code>--saves</code>, <code>--holdout-saves</code></td>
+<td>Directories of your own saved positions, replacing generated cases.</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>New or empty directory for this run.</td>
+</tr>
+</tbody></table></div>
+<p><code>meanDifference</code> is trained score minus Legacy score on the same starting cases. Positive favors the candidate on that metric; negative favors Legacy. Governance reports also include territory, soldiers, resources and development. Battlefield reports include wins, losses, draws and <code>scoreRate</code>, where a draw counts as half a win. A decisive win rate excludes draws and can be misleading when nearly every battle is a draw.</p>
+<p>Reports group paired battlefield roles by seed when estimating mean uncertainty. They only show an approximate 95% interval with at least thirty independent seeds. They omit the usual per-match win-rate interval for paired roles. Even a positive interval is evidence about these scenarios and this opponent, not every strategy or player.</p>
+<p>Read both training and holdout results. If practice improves while holdout worsens, the candidate has not earned promotion. Do not repeatedly adjust weights against the same holdout and continue calling it independent. Reserve fresh seeds and saved positions for the final comparison.</p>
+<p>The bundled v44 examples are <strong>experimental</strong>, from one search round with two variants and six starting cases. The exact small-sample results are in <a href="ai-training-v44-results.md">the v44 evaluation note</a>. They demonstrate the workflow, not established superiority. Importing them never enables them automatically.</p>
+<h2>6. Compare and enable in the game</h2>
+<ol>
+<li>Open <strong>HUD → AI</strong>. Opening HUD pauses AI.</li>
+<li>Click <strong>Load examples</strong>, or <strong>Import profile</strong> and select your generated JSON. Files must match the current engine and contain valid bounded weights.</li>
+<li>Leave both policy selectors on <strong>Legacy AI</strong> initially. Importing a profile does not change the selected policy.</li>
+<li>Click <strong>Compare orders</strong>. It previews Legacy&#39;s next order and the trained recommendation on copied state. No live order, gold, mobility or random draw is spent. Scores rank candidate orders; they are not victory probabilities.</li>
+<li>Use the existing <strong>Edit</strong> selector to choose the global policy or one ruler. Governance and battlefield can be switched independently. A ruler can use <strong>Use global choice</strong>, or explicitly override it with Legacy/Trained.</li>
+<li>Select <strong>Trained</strong> for the desired mode. Use <strong>One AI action</strong> to advance one real AI order. It closes HUD and leaves AI paused. Reopen HUD to inspect the result. <strong>Resume AI</strong> closes HUD and resumes playback.</li>
+<li>Select <strong>Legacy AI</strong> to roll back. Profiles and selections travel with saved campaigns; old saves with no extension settings use Legacy.</li>
+</ol>
+<p><strong>Compare recommendations while AI plays</strong> records both recommendations before a real AI step. The selected policy still controls execution. Reopen HUD to see the latest comparison; this is observation, not a second order. It adds simulation work and may slow playback. Turn it off during normal play if necessary.</p>
+<p>Human-controlled factions still require human orders. The trained battlefield policy only runs detailed battles: choose <strong>Menu → Battle view → All battles</strong> when evaluating tactical AI. The existing Planned path/Jungle scores overlays continue to explain the original route and lane heuristics; <strong>Compare orders</strong> is the trained planner&#39;s order preview. Automatic AI unit highlighting follows the selected policy&#39;s actor.</p>
+<h2>7. Test difficult positions and fresh seeds</h2>
+<p>Generated battle cases can produce many draws. Include meaningful saved positions: palace danger, several adjacent opponents, low food, fire, jungle uncertainty, different terrain and unequal armies. Include governance shortages, weak borders, disloyal officers and later campaign economies.</p>
+<p>Use <strong>Menu → Save Game</strong> to export each position. Put governance saves outside active battles, journeys and victory reviews. Put battlefield saves in combat after placement, with no pending challenge or outcome. Use different positions in separate folders, for example <code>training-saves/governance/</code> and <code>holdout-saves/governance/</code>.</p>
+<pre><code class="language-sh">node tools/train-ai.mjs --domain governance --saves training-saves/governance --holdout-saves holdout-saves/governance --seed 1001 --holdout-seed 700001 --months 3 --out training/governance-saved-001
+</code></pre>
+<p>When save directories are supplied, every JSON file in them is used; generated episode counts no longer choose the number of positions. The tool checks separate paths and seeds, but cannot detect a copied duplicate save under another filename. You must keep the situations separate. Do not put profiles or reports in these folders.</p>
+<p>Evaluate a finished candidate against Legacy on a fresh, larger set:</p>
+<pre><code class="language-sh">node tools/benchmark-ai.mjs --profile training/governance-run-001/governance-profile.json --seed 1200001 --episodes 30 --months 3 --out training/governance-fresh-benchmark.json
+node tools/benchmark-ai.mjs --profile training/battlefield-run-001/battlefield-profile.json --seed 1400001 --episodes 30 --out training/battlefield-fresh-benchmark.json
+</code></pre>
+<p>For curated positions, add <code>--saves fresh-test-saves/battlefield</code> or the governance equivalent. Thirty cases are a starting point for reporting uncertainty, not a magic pass mark. Test more diverse positions and different horizons. Both policies receive the same initial state, rules and seed; their different orders can naturally cause later random draws to diverge.</p>
+<p>Before a release, decide concrete acceptance goals: no illegal orders or stalls, no hidden-position dependence, improved holdout outcomes without unacceptable losses of territory/resources, and acceptable decision time on target devices. Observe failures as carefully as wins. Keep Legacy available even after promotion.</p>
+<h2>8. Retrain after the game advances</h2>
+<p>Each profile records <code>rulesId</code>, a hash of engine/policy modules and relevant scenario, terrain and configuration files. Interface-only edits and asset changes do not invalidate it. Rule or policy changes do. Imports with an outdated rules identity are rejected; profiles with an outdated rules identity already in a save are retained for reference and fall back to Legacy.</p>
+<ol>
+<li>Implement and test the new game design through the existing rule modules.</li>
+<li>If order APIs or useful features changed, update the two planner adapters and <code>tools/ai-training-game.mjs</code>. The generic optimizer can stay unchanged. If feature keys or their meanings change, update <code>AI_POLICY_VERSION</code>, the weights/schema validation and existing-save migration in <code>mjs/ai-profile.mjs</code>.</li>
+<li>Regenerate the compatibility identity, then run the checks:</li>
+</ol>
+<pre><code class="language-sh">node tools/ai-rules.mjs --write
+npm test
+npm run test:ui
+</code></pre>
+<ol start="4">
+<li>Train new profiles using fresh train/holdout sets. If the old weight keys still fit the new policy version, use them as a starting point:</li>
+</ol>
+<pre><code class="language-sh">node tools/train-ai.mjs --domain governance --from training/governance-run-001/governance-profile.json --seed 3001 --holdout-seed 900001 --out training/governance-new-rules-001
+</code></pre>
+<p><code>--from</code> allows an old rules identity only as a warm start. The new run must simulate the current engine and produce a current compatible profile. It does not bypass schema or policy-version validation. Do not manually edit an old profile&#39;s <code>rulesId</code> to make it appear retrained.</p>
+<ol start="5">
+<li>Benchmark, inspect in HUD, and explicitly choose whether to enable the candidate. For bundled example updates, copy compatible profiles into <code>config/ai-profiles/governance-v44.json</code> and <code>battlefield-v44.json</code>, update their evidence note, and verify the Load examples control. Use the corresponding release filenames if a later release changes them.</li>
+</ol>
+<p>The fingerprint check runs at the start and end of training. Keep source and configuration unchanged during a run. <code>npm test</code> also detects a stale fingerprint. The offline adapter reads the same flat numeric monthly settings and AI JSON configuration as this release; if the configuration format changes, update its loader alongside the game loader.</p>
+<h2>9. Find the smallest file to change</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Edit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Add a legal candidate or change planner features/lookahead</td>
+<td><code>mjs/ai-planner-governance.mjs</code> or <code>mjs/ai-planner-battlefield.mjs</code></td>
+</tr>
+<tr>
+<td>Change the training objective or construct richer episodes</td>
+<td><code>tools/ai-training-game.mjs</code></td>
+</tr>
+<tr>
+<td>Train governance backward from conquest</td>
+<td><code>tools/governance-conquest.mjs</code>, <code>tools/train-governance.mjs</code></td>
+</tr>
+<tr>
+<td>Change weight search for both modes</td>
+<td><code>tools/ai-training-engine.mjs</code></td>
+</tr>
+<tr>
+<td>Change profile fields, bounds or compatibility version</td>
+<td><code>mjs/ai-profile.mjs</code></td>
+</tr>
+<tr>
+<td>Change import, policy selection or comparison display</td>
+<td>The AI extension functions in <code>mjs/app.mjs</code></td>
+</tr>
+<tr>
+<td>Verify isolation, compatibility and behavior</td>
+<td><code>tests/v44-tests.mjs</code>, <code>tests/v45-tests.mjs</code>, then the full suites</td>
+</tr>
+</tbody></table></div>
+<p>Keep policy changes separate from game-rule changes. The existing <a href="ai-editing-guide.md">AI editing guide</a> explains Legacy and the original HUD overlays. Downloadable packaging remains a separate decision.</p>
+<h2>10. Train governance backward from conquest</h2>
+<p>The target is <strong>be the sole ruler owning all 41 provinces, reliably and quickly</strong>. Building the largest army is a supporting choice, not the victory condition. Soldiers only help when they have capable commanders, training, weapons, supplies and a useful position.</p>
+<p>This is a separate training objective named <code>governance-conquest-v1</code>. The game still executes the existing legal orders. Neither Legacy, the v44 profiles, the detailed battlefield trainer nor the battle formulas are replaced.</p>
+<h3>How the curriculum works</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Stage, in training order</th>
+<th>Starting situation</th>
+<th>What the policy practises</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Finish</td>
+<td>38 owned provinces, two enemy provinces and one unclaimed province</td>
+<td>Finish conquest and settlement without losing the existing realm.</td>
+</tr>
+<tr>
+<td>Expand</td>
+<td>24 owned provinces, 16 enemy provinces and one unclaimed province</td>
+<td>Prepare invasions, maintain supplies and retain gains.</td>
+</tr>
+<tr>
+<td>Opening</td>
+<td>The original six scenario families and existing shortage variants</td>
+<td>Choose early investments that support later expansion.</td>
+</tr>
+</tbody></table></div>
+<p>Finish and Expand are <strong>synthetic practice positions</strong>, not recovered historical campaigns or evidence that a policy reached those positions from an opening. They redistribute existing serving generals and ownership, place spare generals at two fronts, and validate the resulting save against the game. Interior provinces carry the existing internal delegation settings. No new soldiers are created by the setup; practice supplies are adjusted and some cases have food or gold shortages. Historical scripted events are disabled in these synthetic positions. Original openings retain their existing history settings and armies.</p>
+<p>Each stage retains all earlier practice cases. For example, Opening training also revisits Finish and Expand so a useful early-game change cannot freely discard end-game performance. The first two cases in each stage cover two scenario families; use six or more to include all six families. More seeds add repetitions and variations, not automatically new strategic situations.</p>
+<h3>What counts as better</h3>
+<p>The optimizer compares candidates in this order:</p>
+<ol>
+<li>Higher conquest success rate on the practice set.</li>
+<li>Lower average capped time to conquest, when success rates match.</li>
+<li>Fewer eliminated realms, when success and capped time match.</li>
+<li>Higher fixed supporting score, when the earlier measurements match.</li>
+</ol>
+<p>Every failed or unfinished case receives its deadline <strong>plus one month</strong> for capped time. An early defeat cannot look like a fast victory. Victory during the starting campaign month counts as one month; a position already united at the start counts as zero. Actual unfinished durations, losses and remaining provinces are also recorded. Only an engine-confirmed victory owning all 41 provinces is a success.</p>
+<p>The supporting score rewards territory and net expansion, then measures the backward dependencies:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Supporting measurement</th>
+<th>Beginner explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontier readiness</td>
+<td>Can an army with a general left to govern, useful combat strength and food make progress toward an adjacent target? Unclaimed provinces need spare generals and settlement supplies.</td>
+</tr>
+<tr>
+<td>Sustainability</td>
+<td>Can each province pay wages until the next tax and feed its garrison until the next harvest? The weaker of food and gold coverage limits this score.</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Does estimated annual food and gold production cover annual upkeep? This is an approximate planning signal; episodes still apply the actual economy rules.</td>
+</tr>
+<tr>
+<td>Stability</td>
+<td>Are the people and serving generals loyal enough to retain the gains?</td>
+</tr>
+<tr>
+<td>Pullbacks</td>
+<td>Actual province losses, officer losses and province-months with food or wage shortages reduce unfinished scores. Officer losses include captures and deaths; this is not a pure defection count.</td>
+</tr>
+</tbody></table></div>
+<p>Coverage ratios stop improving at “enough.” Extra stockpiles therefore do not earn endless supporting credit. Spending gold or food is not automatically a penalty: an investment can improve readiness or future production. The fixed unfinished score is bounded below any victory score. The optimizer&#39;s explicit comparison order, rather than a large reward constant alone, gives conquest success priority across multiple cases.</p>
+<p>This trainer searches numerical weights; it is not a neural network and does not learn separately after each order. The live governance planner retains its existing candidates and two-order lookahead. Supply transfers between friendly provinces and other unsupported candidate orders still require a separately reviewed planner extension. The new objective does not make those actions available by itself.</p>
+<h3>Detailed battlefield is disabled for these runs</h3>
+<p>The trainer copies each campaign, clears human controllers and forces the existing non-detailed battle setting <strong>before constructing the simulation</strong>. Invasions use the existing abstract battle resolver. An additional guard rejects any detailed battle order, and reports record <code>detailedActions: 0</code> plus the abstract battle count. Zero-soldier garrisons can produce an immediate outcome before either battle mode begins; those are counted separately as <code>instantBattles</code>, even though the existing game labels those records “tactical.” Both counts cover all factions in the episode.</p>
+<p>Battles, casualties, capture, invasion costs and province changes still occur. Only detailed tactical decision-making and battlefield animation are excluded. The player&#39;s current battle-view setting and active campaign are untouched. These results establish governance behavior under the remaster&#39;s abstract resolver, not strength in watched tactical battles.</p>
+<h3>Run training</h3>
+<p>From <code>dist/rtk2/</code>, start a new directory for each run:</p>
+<pre><code class="language-sh">node tools/train-governance.mjs --seed 11001 --holdout-seed 910001 --generations 2 --population 3 --episodes 2 --holdout-episodes 6 --months 3 --evaluation-months 6 --from config/ai-profiles/governance-v44.json --out training/governance-conquest-001
+</code></pre>
+<p>This bounded first run uses two practice cases per stage, three-month practice segments and six independent evaluation cases per stage with six-month deadlines. The curriculum has 2, then 4, then 6 cumulative practice cases. Final evaluation has 18 cases, kept separate by stage and compared against <strong>Legacy and the unchanged v44 governance profile</strong>. It is an experiment, not proof of reliable full-campaign conquest.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--episodes</code></td>
+<td>Practice cases per stage; default 6.</td>
+</tr>
+<tr>
+<td><code>--holdout-episodes</code></td>
+<td>Evaluation cases per stage; default 6.</td>
+</tr>
+<tr>
+<td><code>--months</code></td>
+<td>Practice deadline, 1–120 months; default 3.</td>
+</tr>
+<tr>
+<td><code>--evaluation-months</code></td>
+<td>Independent evaluation deadline, 1–120 months; default 12.</td>
+</tr>
+<tr>
+<td><code>--generations</code>, <code>--population</code></td>
+<td>Search rounds and weight variants per round; defaults 2 and 3.</td>
+</tr>
+<tr>
+<td><code>--from</code></td>
+<td>Compatible governance profile used as the starting weights; otherwise the original default weights.</td>
+</tr>
+<tr>
+<td><code>--compare</code></td>
+<td>Compatible prior governance profile used for comparison; defaults to the unchanged v44 profile.</td>
+</tr>
+<tr>
+<td><code>--seed</code>, <code>--holdout-seed</code></td>
+<td>Independent practice and evaluation randomness. Overlap is rejected.</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>New or empty output directory. Existing results are never overwritten.</td>
+</tr>
+</tbody></table></div>
+<p>The command writes <code>governance-profile.json</code> and <code>report.json</code> only after all stages and comparisons finish. After each completed practice stage it saves <code>checkpoint-profile.json</code>, clearly labelled unfinished. If a later stage fails or you cancel with Ctrl+C, use that checkpoint as <code>--from</code> in a new output directory to retain its weights; the curriculum then runs again from Finish. Checkpoints are not evaluated release profiles. The command checks the engine fingerprint at the beginning and end. Keep the source unchanged while training.</p>
+<p>Read <strong>the Opening results separately</strong>. Success in an artificial near-victory position does not establish that the policy can build that realm from scratch. Reports show wins, elimination, unfinished cases, province counts, shortages, completion time, detailed-action count and results against both baselines. With fewer than 30 independent cases, the existing comparison report does not present a mean confidence interval.</p>
+<p>To evaluate a fixed profile on fresh seeds without tuning it, use zero generations:</p>
+<pre><code class="language-sh">node tools/train-governance.mjs --generations 0 --from training/governance-conquest-001/governance-profile.json --seed 21001 --holdout-seed 1910001 --holdout-episodes 12 --evaluation-months 24 --out training/governance-conquest-fresh-evaluation
+</code></pre>
+<p>The emitted profile has the same weights in this evaluation-only run. Longer deadlines cost more simulation time and still may leave campaigns unfinished. Keep fresh evaluation seeds for final assessment; do not repeatedly tune against those results and call them independent.</p>
+<h3>Import, compare and retrain</h3>
+<p>The <a href="ai-training-v45-results.html">v45 results note</a> links the trained profile and full report. Before importing, select <strong>Legacy for Governance globally and for any ruler overrides</strong>. Download the profile, then use <strong>HUD → AI → Import profile</strong>. Import preserves your selected policy: if Governance was already Trained, importing would replace its active weights immediately. Choose Trained explicitly after inspection; Battlefield can remain Legacy. To compare against the v44 trained policy, select Legacy again, reimport its preserved file and use the same starting campaign. The current HUD keeps one imported profile per domain, so it does not display two governance profiles simultaneously.</p>
+<p>Changing training objectives or practice scenarios does not alter the live game rules or invalidate the v44 profiles. If game rules or the planner later change, follow section 8 to regenerate the fingerprint and retrain. The generic numerical search is shared; the conquest adapter owns the objective and curriculum. For regression checks, run:</p>
+<pre><code class="language-sh">node tests/v45-tests.mjs
+npm test
+</code></pre>
+<p>Legacy remains the default. The new profile is experimental until diverse fresh opening campaigns show improved conquest success and time without unacceptable losses or decision cost.</p>
+</main></body></html>

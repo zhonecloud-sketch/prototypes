@@ -1,7 +1,7 @@
-import {giveFoodGain} from './native-combat.mjs?v=34';
-import {zeroImpact,provinceSnapshot,provinceImpact,withImpact} from './event-impact.mjs?v=34';
-import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=34';
-import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=34';
+import {giveFoodGain} from './native-combat.mjs?v=44';
+import {zeroImpact,provinceSnapshot,provinceImpact,withImpact} from './event-impact.mjs?v=44';
+import {arrivalRecords,validateFidelity} from './campaign-fidelity.mjs?v=44';
+import {runMonthlyEvents,incomeFactor} from './monthly-events.mjs?v=44';
 function provinceReport(report,p,text,impact=zeroImpact()){text=withImpact(text,impact);report.events.push(text);report.details??=[];report.details.push({kind:'month',title:`Supply report · #${p.id} ${p.name}`,text,province:p.id,art:'council',officer:p.governor,impact});}
 export const SAVE_VERSION=1;
 export const LIMITS={gold:30000,food:3000000,horses:100,soldiers:10000,weapons:10000};

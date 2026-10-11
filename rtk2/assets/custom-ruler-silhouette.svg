@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 58">
+ <defs><linearGradient id="cloak" x2="0" y2="1"><stop stop-color="#d8bc7d"/><stop offset="1" stop-color="#84704a"/></linearGradient></defs>
+ <path fill="#17251f" d="M0 0h44v58H0z"/>
+ <path d="M6 24a16 16 0 0 1 32 0" fill="none" stroke="#b49a60" stroke-opacity=".4"/>
+ <path fill="#c9ae75" d="M22 10c-7 0-10 6-10 13 0 5 3 9 6 11v4h8v-4c3-2 6-6 6-11 0-7-3-13-10-13z"/>
+ <path fill="url(#cloak)" d="m18 34-9 6-5 17h36l-5-17-9-6-4 7z"/>
+ <path d="m18 37 4 8 4-8M22 45v12" fill="none" stroke="#17251f" stroke-width="2"/>
+ <circle cx="35" cy="48" r="7" fill="#17251f" stroke="#dbc183"/>
+ <path d="M35 44v8m-4-4h8" stroke="#dbc183" stroke-width="1.5"/>
+</svg>
