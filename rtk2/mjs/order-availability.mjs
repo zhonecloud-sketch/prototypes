@@ -1,6 +1,6 @@
-import {unitOwner} from './battle.mjs?v=52';
-import {hireCapacity} from './province-rules.mjs?v=49';
-import {eligibleRoyalChildren} from './ruler-family.mjs?v=44';
+import {unitOwner} from './battle.mjs?v=54';
+import {hireCapacity} from './province-rules.mjs?v=54';
+import {eligibleRoyalChildren} from './ruler-family.mjs?v=54';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.
 export function orderUnavailable(g,p,id){

@@ -1,5 +1,5 @@
 {
-  "version": 52,
+  "version": 54,
   "date": "2026-10-12",
   "activeEventArt": [
     {
@@ -166,11 +166,16 @@
     "assets/native-music-19.mp3",
     "assets/native-music-20.mp3"
   ],
-  "currentFixes": "docs/fixes-v52.html",
+  "currentFixes": "docs/fixes-v54.html",
   "nativeTurnAudit": "docs/native-turn-witness-v52.json",
   "activeMusic": {
     "council": "assets/council-music.mp3",
     "battle": "assets/battle-music-v17.mp3",
     "triumph": "assets/triumph-music.mp3"
-  }
+  },
+  "bugCoverage": "docs/bug-validation.md",
+  "pendingTests": "docs/pending-test-case-design.md",
+  "nativeJointAudit": "docs/native-joint-witness-v54.json",
+  "nativeCaptiveAudioAudit": "docs/native-captive-audio-v54.json",
+  "nativeAIJointAudit": "docs/native-ai-joint-witness-v54.json"
 }

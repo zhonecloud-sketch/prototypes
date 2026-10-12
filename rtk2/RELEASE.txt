@@ -1,6 +1,6 @@
-RTK2 Remastered v52 — 2026-10-12
+RTK2 Remastered v54 — 2026-10-12
 
-This complete download contains the editable v52 game, all previous completed changes,
+This complete download contains the editable v54 game, all previous completed changes,
 and its local lib/js-yaml.js dependency. Unzip rtk2/ and lib/ together, install Python 3,
 then run start-game.bat (Windows) or sh start-game.sh (macOS/Linux).
 Menu > About identifies the runtime version.
@@ -127,3 +127,7 @@ automatic ambush own orders retained; previously acted simultaneous helpers
 participate with damage, individual loss reports and sequential animation.
 32 original controller witnesses supersede the old cell-readiness interpretation.
 No AI training or renewal ran; archived profiles retain their original identity.
+
+V53: native joint attack, jungle observer concealment, forced arrival ambush/fire, native ignition equation, messenger context/return and original governance effects. Every new bug has behavior coverage or a documented pending test design. No AI training ran.
+
+V54: native captured-ruler menu confirmed; native simultaneous helper direction order and contribution breakdown; compact selected-unit deployment stats; announcement-before-highlight/order; silent ordinary governance selections. No training ran.

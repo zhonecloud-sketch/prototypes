@@ -1,4 +1,4 @@
-import {historyArtworkFile} from './history-art.mjs?v=44';
+import {historyArtworkFile} from './history-art.mjs?v=54';
 // Draw an atlas cell with one scale factor, centred in its available frame.
 export function containRect(sourceWidth, sourceHeight, width, height) {
  const scale=Math.min(width/sourceWidth,height/sourceHeight);

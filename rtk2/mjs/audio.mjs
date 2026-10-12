@@ -6,19 +6,15 @@ export const NATIVE_MUSIC_COUNT=21;
 // Native DS:3C4E, indexed by province region; battlefield adds five.
 const regionMusic=[6,6,6,2,2,2,2,5,2,2,4,4,3,5];
 export const nativeMusicFor=(theme,region,won=true)=>{if(theme==='triumph')return won?15:16;if(theme==='clan')return 14;const id=regionMusic[region]??2;return theme==='battle'?id+5:id;};
-const customEffects=['select','order','battle','fire','month','message','gallop','flood','locust','typhoon','epidemic','uprising','meteor','death','march','train','trade','recruit','retreat'];
+const customEffects=['select','order','battle','fire','month','message','gallop','flood','locust','typhoon','epidemic','uprising','meteor','death','march','train','trade','recruit','retreat','charge-shout'];
 const nativeName=id=>`native-effect-${id}`;
 export function orderSound(type,args={}){
- if(['trainArmy','train','hire','hireTroops','dismissTroops'].includes(type))return 'train';
- if(['trade','merchant','merch','arms','buyWeapons'].includes(type))return 'trade';
- if(['recruitMethod','recruit','search','recruitGovernor'].includes(type))return 'recruit';
- if(['moveParty','move','war','attack','transfer'].includes(type))return 'march';
- if(['selfExile','exile'].includes(type))return 'retreat';
- if(['diplomaticMission','diplomacy','spyMission','courtMarriage','advice'].includes(type))return 'message';
- return 'order';
+ return nativeName(14);
 }
 export function eventSound(event){
  if(!event)return null;const kind=event.art||event.kind,text=event.text||'';
+ if(kind==='prison')return nativeName(7);
+ if(['order','council','diplomacy','message','treasure','marriage','birth'].includes(kind))return nativeName(14);
  if(typeof event.order==='string')return orderSound(event.order,event.args);
  // The original flood and typhoon deliberately share effect #2.
  const mapped={locust:0,epidemic:1,typhoon:2,flood:2,riot:3,meteor:4,rebellion:5,settlement:6,betrayal:7,duel:8,reinforcement:9};
@@ -58,20 +54,21 @@ export class AudioBus{
  constructor(){this.unlocked=false;this.sound=true;this.music=true;this.active=false;this.effects=new Set();this.theme='council';this.battlePlayed=new WeakMap();this.context=null;this.buffers=new Map();this.audioError=null;this.tracks=Object.fromEntries(['council','battle','triumph'].map(theme=>{const a=new Audio(theme==='council'?'./assets/council-music.mp3':theme==='battle'?'./assets/battle-music-v17.mp3':'./assets/triumph-music.mp3');a.loop=theme!=='triumph';a.volume=theme==='battle'?.24:.3;a.preload='auto';return [theme,a];}));this.track=this.tracks.council;this.notice=null;this.courierMoving=false;this.courierEffect=null;this.onVisibility=()=>this.sync();document.addEventListener('visibilitychange',this.onVisibility);this.onGesture=()=>{if(this.active&&this.sound)this.unlock();};document.addEventListener('pointerdown',this.onGesture,{passive:true});}
  configure(settings){this.sound=settings.sound!==false;this.music=settings.music!==false;this.sync();}
  unlock(){this.unlocked=true;const Context=globalThis.AudioContext||globalThis.webkitAudioContext;if(!this.context&&Context)try{this.context=new Context();}catch{}if(this.context){if(this.context.state==='suspended')this.context.resume()?.catch(()=>{});for(const name of [nativeName(13),'fire','march'])this.loadEffect(name).catch(()=>{});}this.sync();}
- loadEffect(name){if(!this.buffers.has(name)){const promise=fetch(`./assets/${name}.mp3${name.startsWith('native-effect-')?'?v=52':''}`).then(r=>{if(!r.ok)throw Error('Sound file could not load.');return r.arrayBuffer();}).then(data=>this.context.decodeAudioData(data));this.buffers.set(name,promise);promise.catch(()=>this.buffers.delete(name));}return this.buffers.get(name);}
+ loadEffect(name){if(!this.buffers.has(name)){const promise=fetch(`./assets/${name}.mp3${name.startsWith('native-effect-')?'?v=54':''}`).then(r=>{if(!r.ok)throw Error('Sound file could not load.');return r.arrayBuffer();}).then(data=>this.context.decodeAudioData(data));this.buffers.set(name,promise);promise.catch(()=>this.buffers.delete(name));}return this.buffers.get(name);}
  reportError(error){if(!this.audioError)this.notice?.('Sound playback failed. Tap Sound in the game menu to retry.');this.audioError=error?.name||error?.message||'Playback failed';}
  playBuffer(name,volume){const context=this.context,a={paused:false,source:null,pause(){this.paused=true;try{this.source?.stop();}catch{}}};this.effects.add(a);Promise.all([this.loadEffect(name),context.state==='suspended'?context.resume():Promise.resolve()]).then(([buffer])=>{if(a.paused||!this.effects.has(a)||!this.active||!this.sound||document.hidden)return;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;gain.gain.value=volume;source.connect(gain);gain.connect(context.destination);a.source=source;source.onended=()=>{this.effects.delete(a);source.disconnect();gain.disconnect();};source.start();this.audioError=null;}).catch(error=>{this.effects.delete(a);if(!a.paused)this.reportError(error);});return a;}
  setActive(active){this.active=active;this.sync();}
  setTheme(theme){if(!this.tracks[theme])theme='council';if(theme===this.theme)return;this.track.pause();this.track.currentTime=0;this.theme=theme;this.track=this.tracks[theme];this.track.currentTime=0;this.sync();}
  sync(){if(this.active&&this.music&&this.unlocked&&!document.hidden){const p=this.track.play();p?.catch(()=>{this.notice?.('Tap Music in the menu to allow playback.');});}else this.track.pause();if(!this.active||!this.sound||document.hidden){for(const a of this.effects)a.pause();this.effects.clear();this.courierEffect=null;}this.syncCourier();}
  setCourierMoving(moving){this.courierMoving=!!moving;this.syncCourier();}
- syncCourier(){const active=this.courierMoving&&this.sound&&this.active&&this.unlocked&&!document.hidden;if(!active){if(this.courierEffect){this.courierEffect.pause();this.effects.delete(this.courierEffect);this.courierEffect=null;}return;}if(this.courierEffect)return;const a=new Audio('./assets/gallop.mp3');a.loop=true;a.volume=.5;this.courierEffect=a;this.effects.add(a);a.play()?.catch(()=>{this.effects.delete(a);if(this.courierEffect===a)this.courierEffect=null;});}
+ syncCourier(){const active=this.courierMoving&&this.sound&&this.active&&this.unlocked&&!document.hidden;if(!active){if(this.courierEffect){this.courierEffect.pause();this.effects.delete(this.courierEffect);this.courierEffect=null;}return;}if(this.courierEffect)return;const a=new Audio('./assets/native-effect-11.mp3?v=54');a.loop=true;a.volume=.5;this.courierEffect=a;this.effects.add(a);a.play()?.catch(error=>{this.effects.delete(a);if(this.courierEffect===a)this.courierEffect=null;if(this.active&&this.sound&&!document.hidden)this.reportError(error);});}
  play(name='select'){
+  if(name==='select')return; // Native ordinary key/menu selection is silent.
   if(!this.sound||!this.unlocked||!this.active||document.hidden)return;
   if(!customEffects.includes(name)&&!Array.from({length:NATIVE_EFFECT_COUNT},(_,id)=>nativeName(id)).includes(name))name='select';
   // Keep fast simultaneous/charge playback bounded, without interrupting courier motion.
   const bursts=[...this.effects].filter(a=>a!==this.courierEffect);if(bursts.length>=8){bursts[0].pause();this.effects.delete(bursts[0]);}
-  const volume=name==='native-effect-13'?.55:name==='battle'?.4:.5;if(this.context)return this.playBuffer(name,volume);const a=new Audio(`./assets/${name}.mp3${name.startsWith('native-effect-')?'?v=52':''}`);a.preload='auto';a.volume=volume;this.effects.add(a);a.onended=()=>this.effects.delete(a);a.onerror=()=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(Error('Sound file could not load.'));};a.play()?.catch(error=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(error);});return a;
+  const volume=name==='native-effect-13'?.55:name==='battle'?.4:.5;if(this.context)return this.playBuffer(name,volume);const a=new Audio(`./assets/${name}.mp3${name.startsWith('native-effect-')?'?v=54':''}`);a.preload='auto';a.volume=volume;this.effects.add(a);a.onended=()=>this.effects.delete(a);a.onerror=()=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(Error('Sound file could not load.'));};a.play()?.catch(error=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(error);});return a;
  }
  playNative(id){if(Number.isInteger(id)&&id>=0&&id<NATIVE_EFFECT_COUNT)return this.play(nativeName(id));}
  playOrder(type,args){return this.play(orderSound(type,args));}
@@ -82,7 +79,7 @@ export class AudioBus{
   this.battlePlayed.set(battle,{sequence:action?.sequence??old.sequence,eventSerial:Math.max(...fresh.map(m=>m.serial))});
   // These cues come from the animation callback for each resolved exchange and
   // queued ambush. The observer covers orders that have no combat animation.
-  if(newAction){if(animated&&['attack','charge','simultaneous','ambush'].includes(action.type)&&action.combatUnits?.length)return;const sound=battleSound(action);if(sound)return this.play(sound);}
+  if(newAction){if(action.type==='charge')this.play('charge-shout');if(animated&&['attack','charge','simultaneous','ambush'].includes(action.type)&&action.combatUnits?.length)return;const sound=battleSound(action);if(sound)return this.play(sound);}
   // View, reset deployment, confirm deployment and End use messages without
   // changing lastAction. Do not replay the previous attack or movement cue.
   const text=fresh.map(m=>m.text).join(' ');

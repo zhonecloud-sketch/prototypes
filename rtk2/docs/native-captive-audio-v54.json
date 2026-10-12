@@ -1,0 +1,968 @@
+{
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "unpackedSha256": "5c3e45a5edb097c8719d65b1678784aaf8412258e2437a26bb89d4b249824506",
+  "cases": [
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 0,
+      "hostility": 0,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 0,
+      "hostility": 50,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 0,
+      "hostility": 80,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 0,
+      "hostility": 100,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 1,
+      "hostility": 0,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 1,
+      "hostility": 50,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 1,
+      "hostility": 80,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 1,
+      "hostility": 100,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 2,
+      "hostility": 0,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 2,
+      "hostility": 50,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 2,
+      "hostility": 80,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Human captured ruler menu remains Set free/Behead independent of surviving province count and hostility",
+      "survivingProvinces": 2,
+      "hostility": 100,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "portrait/text renderer",
+        "input return uses Set free1",
+        "release settlement9FC6: witness proves invocation only",
+        "effect dispatcher records cue7 without audio"
+      ]
+    },
+    {
+      "rule": "Full native captive list defers ruler and uses special menu even with zero provinces",
+      "survivingProvinces": 0,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "governance music598A",
+        "portrait/text render8C26/8CFC/4DE0/45D8",
+        "input chooses release1",
+        "release consequence9FC6",
+        "sound dispatcher73A0 recorded"
+      ]
+    },
+    {
+      "rule": "Full native captive list defers ruler and uses special menu even with zero provinces",
+      "survivingProvinces": 1,
+      "events": [
+        {
+          "textOffset": "0x46a9"
+        },
+        {
+          "effect": 7
+        },
+        {
+          "choiceRange": [
+            1,
+            2
+          ]
+        },
+        {
+          "released": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "governance music598A",
+        "portrait/text render8C26/8CFC/4DE0/45D8",
+        "input chooses release1",
+        "release consequence9FC6",
+        "sound dispatcher73A0 recorded"
+      ]
+    },
+    {
+      "rule": "Ordinary captive Recruit transfers service without acceptance roll or hostility test",
+      "hostility": 0,
+      "events": [
+        {
+          "joinRuler": "0x2b34",
+          "officer": "0x9300"
+        },
+        {
+          "placeProvince": "0x9400",
+          "officer": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "service loyalty initialization5BFE recorded only",
+        "province linked-list mutation5F9E recorded only"
+      ]
+    },
+    {
+      "rule": "Ordinary captive Recruit transfers service without acceptance roll or hostility test",
+      "hostility": 80,
+      "events": [
+        {
+          "joinRuler": "0x2b34",
+          "officer": "0x9300"
+        },
+        {
+          "placeProvince": "0x9400",
+          "officer": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "service loyalty initialization5BFE recorded only",
+        "province linked-list mutation5F9E recorded only"
+      ]
+    },
+    {
+      "rule": "Ordinary captive Recruit transfers service without acceptance roll or hostility test",
+      "hostility": 100,
+      "events": [
+        {
+          "joinRuler": "0x2b34",
+          "officer": "0x9300"
+        },
+        {
+          "placeProvince": "0x9400",
+          "officer": "0x9300"
+        }
+      ],
+      "suppressed": [
+        "service loyalty initialization5BFE recorded only",
+        "province linked-list mutation5F9E recorded only"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 20,
+      "jitter": 0,
+      "newLoyalty": 74,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 20,
+      "jitter": 4,
+      "newLoyalty": 70,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "newLoyalty": 41,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 70,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "newLoyalty": 37,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 20,
+      "jitter": 0,
+      "newLoyalty": 69,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 20,
+      "jitter": 4,
+      "newLoyalty": 65,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "Authentic ordinary captive service change assigns loyalty without hostility gate",
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "random jitter58BA controlled; owner, compatibility, integer square root, loyalty writes and advisor removal retained"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 80,
+      "hostility": 0,
+      "year": 189,
+      "roll": 0,
+      "events": [
+        {
+          "releaseChance": 90,
+          "roll": 0
+        }
+      ],
+      "declinesRelease": false,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 80,
+      "hostility": 100,
+      "year": 189,
+      "roll": 39,
+      "events": [
+        {
+          "releaseChance": 40,
+          "roll": 39
+        }
+      ],
+      "declinesRelease": false,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 80,
+      "hostility": 100,
+      "year": 189,
+      "roll": 40,
+      "events": [
+        {
+          "releaseChance": 40,
+          "roll": 40
+        }
+      ],
+      "declinesRelease": true,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 0,
+      "hostility": 100,
+      "year": 189,
+      "roll": 0,
+      "events": [
+        {
+          "releaseChance": 0,
+          "roll": 0
+        }
+      ],
+      "declinesRelease": true,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 100,
+      "hostility": 100,
+      "year": 189,
+      "roll": 49,
+      "events": [
+        {
+          "releaseChance": 50,
+          "roll": 49
+        }
+      ],
+      "declinesRelease": false,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 100,
+      "hostility": 100,
+      "year": 189,
+      "roll": 50,
+      "events": [
+        {
+          "releaseChance": 50,
+          "roll": 50
+        }
+      ],
+      "declinesRelease": true,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "AI release decision permits positive chance even at100 hostility; no native high-hostility recruit cutoff",
+      "charisma": 80,
+      "hostility": 0,
+      "year": 200,
+      "roll": 0,
+      "events": [
+        {
+          "releaseChance": 90,
+          "roll": 0
+        }
+      ],
+      "declinesRelease": true,
+      "suppressed": [
+        "random percentage589C controlled at requested roll"
+      ]
+    },
+    {
+      "rule": "Original ordinary keyboard selection has no effect dispatch",
+      "key": 49,
+      "effects": [],
+      "suppressed": [
+        "cursor/text display",
+        "BIOS key/poll returns controlled key",
+        "optional callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original ordinary keyboard selection has no effect dispatch",
+      "key": 50,
+      "effects": [],
+      "suppressed": [
+        "cursor/text display",
+        "BIOS key/poll returns controlled key",
+        "optional callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original ordinary keyboard selection has no effect dispatch",
+      "key": 27,
+      "effects": [],
+      "suppressed": [
+        "cursor/text display",
+        "BIOS key/poll returns controlled key",
+        "optional callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original valid and retry numeric-order selection is silent",
+      "keys": [
+        49,
+        13
+      ],
+      "result": 1,
+      "effects": [],
+      "suppressed": [
+        "cursor/character rendering only",
+        "BIOS key/poll returns provided keys",
+        "callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original valid and retry numeric-order selection is silent",
+      "keys": [
+        50,
+        13
+      ],
+      "result": 2,
+      "effects": [],
+      "suppressed": [
+        "cursor/character rendering only",
+        "BIOS key/poll returns provided keys",
+        "callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original valid and retry numeric-order selection is silent",
+      "keys": [
+        51,
+        13
+      ],
+      "result": 3,
+      "effects": [],
+      "suppressed": [
+        "cursor/character rendering only",
+        "BIOS key/poll returns provided keys",
+        "callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Original valid and retry numeric-order selection is silent",
+      "keys": [
+        52,
+        13,
+        49,
+        13
+      ],
+      "result": 1,
+      "effects": [],
+      "suppressed": [
+        "cursor/character rendering only",
+        "BIOS key/poll returns provided keys",
+        "callbacks3530 null"
+      ]
+    },
+    {
+      "rule": "Explicit result notification helper invokes native cue separately from key input",
+      "entry": "0x58e6",
+      "effects": [
+        {
+          "effect": 10
+        }
+      ],
+      "suppressed": [
+        "final message wait/style58CC",
+        "sound dispatch recorded without playback"
+      ]
+    },
+    {
+      "rule": "Explicit result notification helper invokes native cue separately from key input",
+      "entry": "0x591e",
+      "effects": [
+        {
+          "effect": 14
+        }
+      ],
+      "suppressed": [
+        "final message wait/style58CC",
+        "sound dispatch recorded without playback"
+      ]
+    },
+    {
+      "rule": "Native Recruit success message uses14 and refusal message10; neither is ordinary keypress sound",
+      "success": false,
+      "rulerEnvoy": false,
+      "events": [
+        {
+          "textArgument": "0x931c"
+        },
+        {
+          "textArgument": "0x715e"
+        },
+        {
+          "effect": 10
+        }
+      ],
+      "suppressed": [
+        "text buffer append/display recorded",
+        "final timed message pause58CC",
+        "effect dispatch recorded without playback"
+      ]
+    },
+    {
+      "rule": "Native Recruit success message uses14 and refusal message10; neither is ordinary keypress sound",
+      "success": false,
+      "rulerEnvoy": true,
+      "events": [
+        {
+          "textArgument": "0x931c"
+        },
+        {
+          "textArgument": "0x7144"
+        },
+        {
+          "effect": 10
+        }
+      ],
+      "suppressed": [
+        "text buffer append/display recorded",
+        "final timed message pause58CC",
+        "effect dispatch recorded without playback"
+      ]
+    },
+    {
+      "rule": "Native Recruit success message uses14 and refusal message10; neither is ordinary keypress sound",
+      "success": true,
+      "rulerEnvoy": false,
+      "events": [
+        {
+          "textArgument": "0x7106"
+        },
+        {
+          "textArgument": "0x931c"
+        },
+        {
+          "textArgument": "0x712a"
+        },
+        {
+          "effect": 14
+        }
+      ],
+      "suppressed": [
+        "text buffer append/display recorded",
+        "final timed message pause58CC",
+        "effect dispatch recorded without playback"
+      ]
+    },
+    {
+      "rule": "Native Recruit success message uses14 and refusal message10; neither is ordinary keypress sound",
+      "success": true,
+      "rulerEnvoy": true,
+      "events": [
+        {
+          "textArgument": "0x7106"
+        },
+        {
+          "textArgument": "0x931c"
+        },
+        {
+          "textArgument": "0x7110"
+        },
+        {
+          "effect": 14
+        }
+      ],
+      "suppressed": [
+        "text buffer append/display recorded",
+        "final timed message pause58CC",
+        "effect dispatch recorded without playback"
+      ]
+    }
+  ],
+  "count": 49
+}

@@ -1,6 +1,6 @@
-import {hireCapacity} from './province-rules.mjs?v=49';
-import {invasionFoodPlan} from './war-provisions.mjs?v=44';
-import {forkAI,observationSeed,weighted,applyAIOrder} from './ai-simulation.mjs?v=44';
+import {hireCapacity} from './province-rules.mjs?v=54';
+import {invasionFoodPlan} from './war-provisions.mjs?v=54';
+import {forkAI,observationSeed,weighted,applyAIOrder} from './ai-simulation.mjs?v=54';
 const power=o=>o.soldiers*(.35+.35*o.training/100+.3*Math.min(1,o.weapons/Math.max(1,o.soldiers)))*(.5+o.war/100);
 const army=(g,p)=>p.officers.reduce((n,id)=>n+power(g.officer(id)),0);
 export function governanceFeatures(g,owner=g.s.player){

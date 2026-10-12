@@ -17,7 +17,7 @@ The current game release is **v44**, recorded in `dist/rtk2/config/release.json`
 | `dist/index.html` | Redirect from the site root to the game | Yes. |
 | `dist/rtk2/tests/` | Automated gameplay, save, artwork and interface checks | Yes, including older `vNN-tests.mjs` files. They still run in `npm test`. |
 | `dist/rtk2/tools/` | Local launcher, asset builders, original-game verifiers and existing packaging utility | Yes; these explain how to reproduce the project. |
-| `dist/rtk2/docs/` | Editing guides, differences, native evidence, artwork prompts, 41 map guides and license notices | Yes. |
+| `dist/rtk2/docs/` | Editing guides, differences, native evidence, artwork provenance, native evidence and license notices | Yes. |
 | `dist/rtk2/package.json`, `package-lock.json` | Test commands and exact development dependency versions | Yes. |
 | `dist/rtk2/start-game.*`, `START-HERE.html`, `RELEASE.txt` | Existing launch instructions and release description | Yes. |
 | Git history and hosting configuration | Recovery history and existing Site identity | Yes; preserve them during maintenance. |
@@ -84,7 +84,7 @@ No new archive was produced by this cleanup. Possible next deliverables are:
 | --- | --- | --- |
 | Playable game | Someone who only wants to play | Runtime page/modules, config, active and fallback assets, `lib/js-yaml.js`, launcher and required notices. |
 | Developer handoff | Someone who will edit the game | Playable game plus all tests, tools, dependency definitions and guides. |
-| Research/artwork handoff | Someone auditing fidelity or regenerating art | Developer handoff plus all evidence, historical art references, prompts and 41 terrain guides. |
+| Research/artwork handoff | Someone auditing fidelity or regenerating art | Developer handoff plus all evidence, historical art references and active painting provenance. |
 
 These are options, not finalized file lists. A playable-only package needs a dependency audit and its own launch check before removing references. The existing `tools/package-source.py` makes the established `rtk2/` source pack and deliberately excludes shared `lib/`; it is not yet a standalone all-in-one player package. Do not assume it implements the table above.
 

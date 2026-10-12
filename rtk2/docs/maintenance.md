@@ -12,4 +12,4 @@ Treasures: mjs/campaign-completion.mjs applies native recipient/stat gains. View
 
 Before publication run npm test and npm run test:ui from dist/rtk2. The v38 cases cover the reported regressions. Native byte evidence can be reproduced with the supplied original files using tools/verify-original.py and tools/verify-native-treasures.py. Optional native arithmetic needs Unicorn. Emulated UI tests do not replace physical handset or audible checks.
 
-Use the Sites workflow helper to synchronise the tested commit and produce the deployment archive. Then run tools/package-source.py after the commit; it checks active artwork hashes and all 41 terrain guides. Preserve the Site identity and access configuration.
+Use the Sites workflow helper to synchronise the tested commit and produce the deployment archive. Then run tools/package-source.py after the commit; it checks active artwork hashes, required runtime entries and exclusion of private DOS files. Preserve the Site identity and access configuration.

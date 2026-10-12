@@ -1,8 +1,8 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=44';
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=44';
-import {recordWarFate} from './event-chronicle.mjs?v=44';
-import {retireRulerFamily} from './ruler-family.mjs?v=44';
-import {clamp} from './engine.mjs?v=49';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=54';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=54';
+import {recordWarFate} from './event-chronicle.mjs?v=54';
+import {retireRulerFamily} from './ruler-family.mjs?v=54';
+import {clamp} from './engine.mjs?v=54';
 
 export const captureChance=o=>clamp(90-(o.int+o.war)/3,10,90);
 export const captiveActions=(g,c)=>g.ruler(c.formerOwner)?.leader===c.officer?['free','behead']:c.recruitTried?['free','behead']:['recruit','free','behead'];
@@ -16,6 +16,7 @@ export function decideCaptive(g,id,action){
  const c=g.s.captiveDecisions?.find(c=>c.officer===Number(id));if(!c)throw Error('This captive has already been decided.');
  if(!['recruit','free','behead'].includes(action))throw Error('Choose Recruit, Set free, or Behead.');
  const o=g.officer(c.officer),r=g.ruler(c.owner),p=g.province(c.province),isRuler=g.ruler(c.formerOwner)?.leader===o.id;
+ let returnHome=null;const messengerHome=c.kind==='messenger'&&c.source?g.s.provinces.find(q=>q.id===c.source&&q.owner===c.formerOwner)||g.s.provinces.find(q=>q.owner===c.formerOwner):null;if(action==='free'&&messengerHome&&g.s.journey)throw Error('Finish the current messenger journey before releasing this messenger.');
  if(action==='recruit'&&isRuler)throw Error('A captured ruler may only be set free or beheaded.');
  if(action==='recruit'){
   if(c.recruitTried)throw Error('This captive has already refused recruitment.');c.recruitTried=true;
@@ -27,11 +28,13 @@ export function decideCaptive(g,id,action){
  }else{
   detachOfficer(g,o.id);o.owner=255;
   const home=g.s.provinces.find(q=>q.owner===c.formerOwner&&q.id!==c.province);
-  if(isRuler&&home){home.officers.push(o.id);o.owner=c.formerOwner;home.governor=o.id;g.ruler(c.formerOwner).home=home.id;}
+  if(messengerHome){messengerHome.officers.push(o.id);o.owner=c.formerOwner;returnHome=messengerHome.id;}
+  else if(isRuler&&home){home.officers.push(o.id);o.owner=c.formerOwner;home.governor=o.id;g.ruler(c.formerOwner).home=home.id;}
   else if(isRuler){g.s.roaming??=[];g.s.roaming=g.s.roaming.filter(x=>x.owner!==c.formerOwner);g.s.roaming.push({owner:c.formerOwner,province:p.id,officers:[o.id],gold:0,food:0});g.ruler(c.formerOwner).home=p.id;g.ruler(c.formerOwner).exiled=true;}
   else {const destination=p.neighbors.map(i=>g.province(i)).find(q=>q.owner===255)||p;destination.unclaimed.push(o.id);}
  }
  recordWarFate(g,c,action);delete o.prisonerOf;delete o.inTransit;g.s.captiveDecisions=g.s.captiveDecisions.filter(x=>x!==c);g.normalize();
+ if(returnHome){o.inTransit=true;g.s.journey={type:'messengerReturn',args:{province:returnHome,officer:o.id},owner:c.formerOwner,source:returnHome,legs:[{officer:o.id,route:realmRoute(g,c.province,returnHome),index:0}],leg:0,phase:'return',interception:null,visited:[],result:`${o.name} returned to #${returnHome} ${g.province(returnHome).name}. The cancelled mission was not delivered.`};}
  g.record(`${o.name}: ${action==='recruit'?'recruited with loyalty '+o.loyalty:action==='free'?'set free':'beheaded'}.`,'prison',{battleOutcome:c.kind==='battle',warId:c.warId,province:c.province});return true;
 }
 export function resolveAICaptives(g){for(const c of [...(g.s.captiveDecisions||[])])if(!g.isHuman(c.owner)){if(captiveActions(g,c).includes('recruit')&&g.officer(c.officer).int+g.officer(c.officer).war>=90){if(!decideCaptive(g,c.officer,'recruit'))decideCaptive(g,c.officer,'free');}else decideCaptive(g,c.officer,'free');}}
@@ -49,11 +52,15 @@ export function dispatchJourney(g,type,args){
  const purpose=type==='diplomaticMission'?({joint:'joint invasion proposal',marriage:'royal marriage proposal',alliance:'alliance proposal',gift:'diplomatic gift',threat:'surrender demand'}[args.mode]||'diplomatic mission'):type==='spyMission'?'spy mission':type==='transport'?'supply delivery':'recruitment mission';return g.record(`${ids.map(id=>g.officer(id).name).join(' and ')} rode from #${from} ${g.province(from).name} to ${legs.map(leg=>'#'+leg.route.at(-1)+' '+g.province(leg.route.at(-1)).name).join(' and ')} as messengers for ${purpose}.`,'diplomacy',{province:from});
 }
 function cancelJourney(g,text,province=g.s.journey?.source){const j=g.s.journey;for(const leg of j.legs){const o=g.officer(leg.officer);delete o.inTransit;o.acted=true;}g.s.journey=null;g.normalize();g.record(text,'prison',{province});}
+// Native 11302: allied imprisonment of a mission aimed at the interceptor.
+export function interceptionEffects(g,j,c=j.interception){const allied=g.ruler(j.owner).alliances.includes(c.owner),directed=j.type==='recruitMethod'||j.type==='spyMission'&&['wolf','betrayal','forged'].includes(j.args.mode),destination=directed?j.legs[j.leg].route.at(-1):j.type==='diplomaticMission'&&j.args.mode==='joint'?Number(j.args.enemy):null;return {allied,exempt:allied&&destination!==null&&g.province(destination).owner===c.owner};}
 export function interceptJourney(g,choice){
  const j=g.s.journey,c=j?.interception;if(!c)throw Error('No messenger is intercepted.');if(!['free','capture','behead'].includes(choice))throw Error('Choose Set free, Capture, or Behead.');
- const o=g.officer(c.officer);if(choice==='free'){j.interception=null;g.record(`${g.ruler(c.owner).name} allowed ${o.name} to continue.`,'diplomacy',{province:c.province});return;}
+ const o=g.officer(c.officer),sender=g.ruler(j.owner),host=g.ruler(c.owner),{allied,exempt}=interceptionEffects(g,j,c);if(choice==='free'){if(j.type==='transport'){sender.relations[c.owner]=clamp((sender.relations[c.owner]??50)-3);if(allied)host.trust=clamp(host.trust+3);}j.interception=null;g.record(`${g.ruler(c.owner).name} allowed ${o.name} to continue.`,'diplomacy',{province:c.province});return;}
+ sender.relations[c.owner]=clamp((sender.relations[c.owner]??50)+(allied?8:10));if(exempt)host.relations[j.owner]=clamp((host.relations[j.owner]??50)+3);else if(allied)host.trust=clamp(host.trust-5);
  if(j.phase==='outbound'&&j.cargo){const source=g.province(c.province);source.gold=Math.min(30000,source.gold+j.cargo.gold);source.food=Math.min(3000000,source.food+j.cargo.food);source.horses=Math.min(100,source.horses+j.cargo.horses);j.cargo={gold:0,food:0,horses:0};}
  takeCaptive(g,o.id,c.owner,c.province,j.owner,'messenger',o.id===g.ruler(j.owner).leader?'Ruler':'Messenger');
+ g.s.captiveDecisions.find(x=>x.officer===o.id).source=j.source;
  if(choice==='behead')decideCaptive(g,o.id,'behead');cancelJourney(g,`${o.name} was ${choice==='behead'?'beheaded':'captured'} in Province ${c.province}. The mission was cancelled.`,c.province);resolveAICaptives(g);
 }
 export function advanceJourney(g){
@@ -90,10 +97,11 @@ export function answerProposal(g,accept){
 export function validateDecisions(s){
  s.captiveDecisions??=[];s.roaming??=[];s.journey??=null;const owners=new Set(s.rulers.map(r=>r.id)),ids=new Set();
  if(!Array.isArray(s.captiveDecisions)||s.captiveDecisions.length>255)throw Error('Invalid captive decisions.');
- for(const c of s.captiveDecisions){if(!s.officers[c.officer]||ids.has(c.officer)||!owners.has(c.owner)||!owners.has(c.formerOwner)||!s.provinces[c.province-1]||s.officers[c.officer].prisonerOf!==c.owner)throw Error('Invalid captive.');ids.add(c.officer);}
+ for(const c of s.captiveDecisions){if(!s.officers[c.officer]||ids.has(c.officer)||!owners.has(c.owner)||!owners.has(c.formerOwner)||!s.provinces[c.province-1]||s.officers[c.officer].prisonerOf!==c.owner)throw Error('Invalid captive.');if(c.source!==undefined&&(!Number.isInteger(c.source)||!s.provinces[c.source-1]||c.kind!=='messenger'))throw Error('Invalid messenger origin.');ids.add(c.officer);}
  if(!Array.isArray(s.roaming)||s.roaming.length>16||new Set(s.roaming.map(p=>p.owner)).size!==s.roaming.length)throw Error('Invalid roaming parties.');
  for(const p of s.roaming){if(!Number.isInteger(p.gold)||p.gold<0||p.gold>30000||!Number.isInteger(p.food)||p.food<0||p.food>3000000)throw Error('Invalid exile supplies.');if(!owners.has(p.owner)||!s.provinces[p.province-1]||!Array.isArray(p.officers)||!p.officers.includes(s.rulers.find(r=>r.id===p.owner).leader)||p.officers.some(id=>!s.officers[id]||s.officers[id].dead||ids.has(id)))throw Error('Invalid roaming party.');for(const id of p.officers){if(s.provinces.some(q=>['officers','unclaimed','hidden'].some(k=>q[k].includes(id))))throw Error('Roaming officer duplicated.');ids.add(id);}}
- if(s.journey){const j=s.journey;if(!owners.has(j.owner)||!['diplomaticMission','spyMission','transport','recruitMethod'].includes(j.type)||!Array.isArray(j.legs)||!j.legs.length||j.legs.length>2||!Number.isInteger(j.leg)||!j.legs[j.leg]||!['outbound','return'].includes(j.phase)||Number(j.args?.province)!==j.source||!s.provinces[j.source-1])throw Error('Invalid messenger journey.');
+ if(s.journey){const j=s.journey;if(!owners.has(j.owner)||!['diplomaticMission','spyMission','transport','recruitMethod','messengerReturn'].includes(j.type)||!Array.isArray(j.legs)||!j.legs.length||j.legs.length>2||!Number.isInteger(j.leg)||!j.legs[j.leg]||!['outbound','return'].includes(j.phase)||Number(j.args?.province)!==j.source||!s.provinces[j.source-1])throw Error('Invalid messenger journey.');
+  if(j.type==='messengerReturn'&&(j.phase!=='return'||j.cargo||j.proposal||j.interception||j.legs.some(leg=>leg.route.at(-1)!==j.source)))throw Error('Invalid released messenger return.');
   if(j.legs.length!==(j.type==='spyMission'&&j.args.mode==='rival'?2:1)||new Set(j.legs.map(leg=>leg.officer)).size!==j.legs.length||j.legs[0].officer!==Number(j.args.officer)||j.legs.length===2&&j.legs[1].officer!==Number(j.args.second))throw Error('Invalid messenger assignments.');
   for(const leg of j.legs){if(!s.officers[leg.officer]||!Array.isArray(leg.route)||!leg.route.length||leg.route.length>41||!Number.isInteger(leg.index)||leg.index<0||leg.index>=leg.route.length)throw Error('Invalid messenger route.');for(let i=0;i<leg.route.length;i++){const p=s.provinces[leg.route[i]-1];if(!p||i&&!s.provinces[leg.route[i-1]-1].neighbors.includes(p.id))throw Error('Invalid messenger route edge.');}}
   if(j.proposal&&(!['alliance','marriage','joint','threat','gift'].includes(j.proposal.mode)||j.type!=='diplomaticMission'||j.proposal.mode!==j.args.mode||j.proposal.owner!==Number(j.args.target)||!s.humanRulers.includes(j.proposal.owner)||j.phase!=='outbound'||j.leg!==j.legs.length-1||j.legs.some(leg=>leg.index!==leg.route.length-1)||j.interception))throw Error('Invalid diplomatic audience.');

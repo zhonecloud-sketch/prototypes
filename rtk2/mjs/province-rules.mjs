@@ -1,11 +1,11 @@
-import {trainingGain} from './native-combat.mjs?v=44';
-import {recruitmentProtection} from './campaign-fidelity.mjs?v=44';
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=44';
-import {provinceLabel} from './province-choice.mjs?v=44';
-import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=49';
-import {clamp} from './engine.mjs?v=49';
-import {disaster,monthNumber} from './monthly-events.mjs?v=44';
-import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=44';
+import {trainingGain} from './native-combat.mjs?v=54';
+import {recruitmentProtection} from './campaign-fidelity.mjs?v=54';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=54';
+import {provinceLabel} from './province-choice.mjs?v=54';
+import {surrenderRealm,askJointConsent} from './campaign-completion.mjs?v=54';
+import {clamp} from './engine.mjs?v=54';
+import {disaster,monthNumber} from './monthly-events.mjs?v=54';
+import {courtMarriage,checkRoyalProposal,acceptRoyalProposal} from './ruler-family.mjs?v=54';
 
 export const NEW_ORDERS=new Set(['hireArmy','reassignArmy','trainArmy','rewardGold','rewardHorse','rewardWritings','dismiss','diplomaticMission','spyMission','delegateRealm','selfExile','healing','courtMarriage']);
 export const readyOfficers=(g,p)=>p.officers.map(id=>g.officer(id)).filter(o=>!o.acted&&!o.sick&&!o.injured);

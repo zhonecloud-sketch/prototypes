@@ -18,10 +18,6 @@ def main():
     release=json.loads((APP/'config/release.json').read_text())
     for asset in release['activeEventArt']:
         assert hashlib.sha256((APP/asset['file']).read_bytes()).hexdigest()==asset['sha256'],asset['file']
-    prompts=json.loads((APP/'docs/artwork/battlefield-generation-prompts.json').read_text())
-    assert len(prompts['maps'])==41
-    for item in prompts['maps']:
-        assert hashlib.sha256((APP/'docs/artwork'/item['guide']).read_bytes()).hexdigest()==item['guideSha256']
     shared=APP.parent/'lib/js-yaml.js'
     if args.include_shared and not shared.is_file():raise SystemExit('The complete download requires lib/js-yaml.js.')
     with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
@@ -44,6 +40,5 @@ def main():
         assert json.loads(archive.read('rtk2/config/release.json'))['version']==release['version']
         for asset in release['activeEventArt']:
             assert hashlib.sha256(archive.read('rtk2/'+asset['file'])).hexdigest()==asset['sha256']
-        assert len([n for n in names if n.startswith('rtk2/docs/artwork/map-guides/') and n.endswith('.png')])==41
     print(f'{output}: {output.stat().st_size:,} bytes, {len(names)} files, source {commit}')
 if __name__=='__main__':main()

@@ -1,12 +1,12 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=44';
-import {provinceLabel} from './province-choice.mjs?v=44';
-import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=44';
-import {recruitMethodChance} from './fidelity-orders.mjs?v=49';
-import {portraitFrame} from './portraits.mjs?v=49';
-import {missionChance,spyChance} from './province-rules.mjs?v=49';
-import {hireCapacity} from './province-rules.mjs?v=49';
-import {warProvisions} from './war-provisions.mjs?v=44';
-import {trainingGain} from './native-combat.mjs?v=44';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=54';
+import {provinceLabel} from './province-choice.mjs?v=54';
+import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=54';
+import {recruitMethodChance} from './fidelity-orders.mjs?v=54';
+import {portraitFrame} from './portraits.mjs?v=54';
+import {missionChance,spyChance} from './province-rules.mjs?v=54';
+import {hireCapacity} from './province-rules.mjs?v=54';
+import {warProvisions} from './war-provisions.mjs?v=54';
+import {trainingGain} from './native-combat.mjs?v=54';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function relevantAttributes(purpose=''){
  if(/governor/i.test(purpose))return ['loyalty','charm','int','war'];
@@ -63,7 +63,7 @@ export function orderInsight(g,purpose,officer,data={}){
 export function enhanceControls(root,g){
  enhanceNumericControls(root);enhanceTextControls(root);
  for(const select of root.querySelectorAll('select')){
-  if(select.dataset.themed==='true')continue;select.dataset.themed='true';select.classList.add('native-choice');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
+  if(select.dataset.themed==='true'||select.id==='battleQuickUnit'&&select.closest('#deploymentDetails'))continue;select.dataset.themed='true';select.classList.add('native-choice');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
   const board=document.createElement('div');board.className='choice-board';board.setAttribute('role','group');board.setAttribute('aria-label',select.getAttribute('aria-label')||select.previousElementSibling?.textContent||'Choose');select.after(board);
   const purpose=select.dataset.purpose||document.getElementById('dialogTitle')?.textContent||select.getAttribute('aria-label')||'',officerIds=['officer','allocationOfficer','battleUnit','battleQuickUnit','inspectTarget','challengeTarget','bribeTarget','reinforceOfficer'];
   const cards=[];for(const option of select.options){

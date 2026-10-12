@@ -1,0 +1,1715 @@
+{
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "cases": [
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": false,
+      "sourcePalace": false,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": false,
+      "sourcePalace": false,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": false,
+      "sourcePalace": true,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": false,
+      "sourcePalace": true,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": true,
+      "sourcePalace": false,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": true,
+      "sourcePalace": false,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": true,
+      "sourcePalace": true,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 0,
+      "commander": true,
+      "sourcePalace": true,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": false,
+      "sourcePalace": false,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": false,
+      "sourcePalace": false,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": false,
+      "sourcePalace": true,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": false,
+      "sourcePalace": true,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": true,
+      "sourcePalace": false,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": true,
+      "sourcePalace": false,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": true,
+      "sourcePalace": true,
+      "difficulty": 1,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "AI-JOINT-PALACE-PRIORITY",
+      "nativeSide": 2,
+      "commander": true,
+      "sourcePalace": true,
+      "difficulty": 5,
+      "selectedMode": 2,
+      "exchangeCalls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "limits": "Target selection, leader identity, charge predicate and strategic commander-risk predicate controlled; original attack selection, original adjacency and original joint exchange assembly execute unchanged."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 1,
+      "flagsBefore": 1,
+      "flagsAfter": 145,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 1,
+      "flagsBefore": 17,
+      "flagsAfter": 145,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 1,
+      "flagsBefore": 129,
+      "flagsAfter": 145,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 1,
+      "flagsBefore": 145,
+      "flagsAfter": 145,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 4,
+      "flagsBefore": 4,
+      "flagsAfter": 148,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 4,
+      "flagsBefore": 20,
+      "flagsAfter": 148,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 4,
+      "flagsBefore": 132,
+      "flagsAfter": 148,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "JUNGLE-DRAW-NO-TURN-EXCEPTION",
+      "ownSideFlag": 4,
+      "flagsBefore": 148,
+      "flagsAfter": 148,
+      "calls": [
+        {
+          "terrainOnly": [
+            7,
+            4
+          ]
+        }
+      ],
+      "limits": "Executes original draw branch; establishes terrain-only redraw in jungle, not complete visibility state machine."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 99,
+      "alreadyBurning": false,
+      "loss": 99,
+      "menAfter": 0,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "fireDeath": "0x9100"
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 99,
+      "alreadyBurning": true,
+      "loss": 99,
+      "menAfter": 0,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "fireDeath": "0x9100"
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 100,
+      "alreadyBurning": false,
+      "loss": 4,
+      "menAfter": 96,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 5
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 100,
+      "alreadyBurning": true,
+      "loss": 4,
+      "menAfter": 96,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 5
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 101,
+      "alreadyBurning": false,
+      "loss": 4,
+      "menAfter": 97,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 5
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 101,
+      "alreadyBurning": true,
+      "loss": 4,
+      "menAfter": 97,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 5
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 1000,
+      "alreadyBurning": false,
+      "loss": 49,
+      "menAfter": 951,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 50
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 1000,
+      "alreadyBurning": true,
+      "loss": 49,
+      "menAfter": 951,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 50
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 9999,
+      "alreadyBurning": false,
+      "loss": 498,
+      "menAfter": 9501,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 499
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-REIGNITE-NATIVE-5PERCENT",
+      "menBefore": 9999,
+      "alreadyBurning": true,
+      "loss": 498,
+      "menAfter": 9501,
+      "flagsAfter": 36,
+      "calls": [
+        {
+          "randomBound": 499
+        }
+      ],
+      "limits": "Ignition + immediate native casualty arithmetic run unchanged; rendering, death processing, proportional weapon mutation and RNG are hooked."
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 36,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 36,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 36,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 50,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 50,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 50,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 9,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 9,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 9,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 0,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 40,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 40,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 40,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 54,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 54,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 54,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 10,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 10,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 10,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 1,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 32,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 32,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 32,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 46,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 46,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 46,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 8,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 8,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 8,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 2,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 28,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 28,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 28,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 42,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 42,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 42,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 7,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 7,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 7,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 3,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 4,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": []
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 24,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 24,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 24,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 38,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 38,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 38,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 6,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 6,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 6,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 5,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 11,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 11,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 11,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 0,
+      "chance": 25,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 1,
+      "chance": 25,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 2,
+      "chance": 25,
+      "rngBounds": [
+        10,
+        30
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 90,
+      "targetINT": 60,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 0,
+      "chance": 3,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 1,
+      "chance": 3,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 2,
+      "chance": 3,
+      "rngBounds": [
+        10,
+        0
+      ]
+    },
+    {
+      "test": "FIRE-CHANCE-NATIVE-TERRAIN-INT-WEATHER",
+      "terrain": 6,
+      "actorINT": 60,
+      "targetINT": 90,
+      "weather": 3,
+      "chance": null,
+      "rngBounds": [
+        10
+      ]
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "human",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 0,
+      "calls": [],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "human",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 1,
+      "calls": [
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        }
+      ],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "human",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 2,
+      "calls": [
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        },
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            6,
+            3
+          ]
+        }
+      ],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "AI",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 0,
+      "calls": [],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "AI",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 1,
+      "calls": [
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        }
+      ],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    },
+    {
+      "test": "PULL-ENEMY-AUTOAMBUSH",
+      "controller": "AI",
+      "oldEnemyHex": [
+        7,
+        4
+      ],
+      "newEnemyHex": [
+        6,
+        4
+      ],
+      "enemyMobilityUnchanged": 7,
+      "ambushers": 2,
+      "calls": [
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        },
+        {
+          "victim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            6,
+            3
+          ]
+        }
+      ],
+      "limits": "Actual original pull eligibility, relocation, movement direction, skip-puller, forward arc and jungle checks run unchanged; RNG, render and ambush casualty body hooked."
+    }
+  ]
+}

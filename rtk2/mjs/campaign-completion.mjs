@@ -1,10 +1,10 @@
-import {endRealm} from './ruler-lifecycle.mjs?v=44';
-import {invasionFoodPlan} from './war-provisions.mjs?v=44';
-import {clamp} from './engine.mjs?v=49';
-import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=49';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=52';
-import {provinceDirection} from './geography.mjs?v=44';
-import {hireCapacity} from './province-rules.mjs?v=49';
+import {endRealm} from './ruler-lifecycle.mjs?v=54';
+import {invasionFoodPlan} from './war-provisions.mjs?v=54';
+import {clamp} from './engine.mjs?v=54';
+import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=54';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=54';
+import {provinceDirection} from './geography.mjs?v=54';
+import {hireCapacity} from './province-rules.mjs?v=54';
 export const ITEMS=[
  {id:'mengde',name:"Meng De's new treatise",stat:'int',bonus:8},
  {id:'artofwar',name:"Sun Tzu's war manual",stat:'int',bonus:10},

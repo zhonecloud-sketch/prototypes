@@ -1,7 +1,7 @@
-import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=44';
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions} from './battle.mjs?v=52';
-import {provinceDirection} from './geography.mjs?v=44';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=44';
+import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=54';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions} from './battle.mjs?v=54';
+import {provinceDirection} from './geography.mjs?v=54';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=54';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.
@@ -111,7 +111,7 @@ export function aiBattle(game,intelligence=60){const b=game.s.battle,tuning=game
  const ownPower=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+armyPower(v),0),enemyPower=enemies.reduce((n,v)=>n+armyPower(v),0),weak=ownPower<enemyPower*tuning.outnumberedPowerRatio;
  const fire=intelligence>=tuning.expertIntelligence&&u.int>=tuning.fireMinimumIntelligence&&(weak||holding&&adjacent.length>1)?safeFireTarget(b,u,enemies):null;
  if(fire&&!adjacent.some(v=>v.id===b.leaders[v.side]&&minimumStrikeLoss(b,u,v)>=v.soldiers))return act(game,'fireball',{unit:u.id,q:fire.q,r:fire.r});
- if(adjacent.length){const favorable=adjacent.filter(v=>b.terrain[v.r*13+v.q]!==1||COMBAT_DIVISORS[b.terrain[u.r*13+u.q]]>=COMBAT_DIVISORS[1]);if(!favorable.length)return act(game,'wait',{unit:u.id});const target=aiAttackTarget(b,u,favorable);if(holding)return act(game,'attack',{unit:u.id,target:target.id});if(intelligence>=tuning.smartIntelligence&&jointAttackers(b,u,target).length>1)return act(game,'simultaneous',{unit:u.id,target:target.id});if(intelligence>=tuning.expertIntelligence&&!weak&&u.id!==b.leaders[u.side]&&u.soldiers>target.soldiers*tuning.chargeMenRatio)return act(game,'charge',{unit:u.id,target:target.id});return act(game,'attack',{unit:u.id,target:target.id});}
+ if(adjacent.length){const favorable=adjacent.filter(v=>b.terrain[v.r*13+v.q]!==1||COMBAT_DIVISORS[b.terrain[u.r*13+u.q]]>=COMBAT_DIVISORS[1]);if(!favorable.length)return act(game,'wait',{unit:u.id});const target=aiAttackTarget(b,u,favorable);if(jointAttackers(b,u,target).length>1)return act(game,'simultaneous',{unit:u.id,target:target.id});if(intelligence>=tuning.expertIntelligence&&!weak&&u.id!==b.leaders[u.side]&&u.soldiers>target.soldiers*tuning.chargeMenRatio)return act(game,'charge',{unit:u.id,target:target.id});return act(game,'attack',{unit:u.id,target:target.id});}
  const own=living(b).filter(v=>v.side===u.side).reduce((n,v)=>n+v.soldiers,0),hostile=enemies.reduce((n,v)=>n+v.soldiers,0);if(intelligence>=tuning.expertIntelligence&&own<hostile*tuning.reinforceMenRatio&&b.units.length<40&&living(b).filter(v=>v.side===u.side).length<10){const option=reinforcementOptions(game,u.side).filter(o=>placementCells(b,u.side,null,o.province===b.target?null:provinceDirection(game.province(b.target),game.province(o.province))).length).sort((a,z)=>z.soldiers-a.soldiers)[0];if(option&&placementCells(b,u.side).length)return act(game,'reinforce',{unit:u.id,...option,food:Math.min(option.food,tuning.reinforceFood,3000000-b.food[u.side])});}
  if(holding)return act(game,'wait',{unit:u.id});
  const moves=reachable(b,u);if(!guard&&intelligence<tuning.smartIntelligence&&moves.length)return act(game,'move',{unit:u.id,...moves[game.int(0,moves.length-1)]});
