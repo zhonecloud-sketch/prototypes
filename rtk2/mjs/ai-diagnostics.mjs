@@ -1,5 +1,5 @@
-import {planBattleRoute,palaceGuard,nextAIUnit,armyPower,projectedAttackRoutes,ambushLaneScore,tacticalPosition,fireEscapeOrder,palaceReturnOrder} from './ai-battle.mjs?v=49';
-import {living,visibleUnit,reachable,terrainCost,distance,tilePoint,ownerFor} from './battle.mjs?v=49';
+import {planBattleRoute,palaceGuard,nextAIUnit,armyPower,projectedAttackRoutes,ambushLaneScore,tacticalPosition,fireEscapeOrder,palaceReturnOrder} from './ai-battle.mjs?v=52';
+import {living,visibleUnit,reachable,terrainCost,distance,tilePoint,ownerFor} from './battle.mjs?v=52';
 import {DEFAULT_AI} from './ai-parameters.mjs?v=44';
 
 // Inspection only: never execute an order, write campaign state or consume RNG.

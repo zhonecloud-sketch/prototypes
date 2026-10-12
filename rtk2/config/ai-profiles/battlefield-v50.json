@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "policyVersion": 1,
+  "id": "battlefield-v50",
+  "name": "Experimental battlefield v50",
+  "domain": "battlefield",
+  "rulesId": "fb7b99765958b02147e3c87e7a38ead04671e21b31dd98790fc2b70228ac8e0c",
+  "weights": {
+    "men": 3,
+    "enemyLoss": 1.9221877973434665,
+    "palace": 4.547317295997599,
+    "progress": 2,
+    "cover": 1,
+    "fire": 4,
+    "mobility": 0.6605969128914806,
+    "orders": 1,
+    "commander": 3
+  },
+  "training": {
+    "optimizer": "seeded multiplicative hill climbing",
+    "seed": 51001,
+    "holdoutSeed": 951001,
+    "generations": 1,
+    "population": 1,
+    "trainingEpisodes": 4,
+    "holdoutEpisodes": 4,
+    "months": 1,
+    "training": {
+      "episodes": 4,
+      "independentSeeds": 2,
+      "trainedMean": 5.1711479166666665,
+      "legacyMean": 5,
+      "meanDifference": 0.1711479166666665,
+      "approximateMean95": null,
+      "battles": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 4,
+        "decisiveWinRate": null,
+        "decisiveWinRate95": null,
+        "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+        "scoreRate": 0.5
+      },
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    },
+    "holdout": {
+      "episodes": 4,
+      "independentSeeds": 2,
+      "trainedMean": 5.104515773809524,
+      "legacyMean": 5,
+      "meanDifference": 0.1045157738095237,
+      "approximateMean95": null,
+      "battles": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 4,
+        "decisiveWinRate": null,
+        "decisiveWinRate95": null,
+        "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+        "scoreRate": 0.5
+      },
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    },
+    "automaticActivation": false
+  }
+}

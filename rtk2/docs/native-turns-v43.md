@@ -13,7 +13,7 @@ These findings come from the supplied English `main.exe`. The nine controlled ch
 | Finish army orders with unused units | Those units Wait; burning units receive their after-order check. |
 | Rain begins at the day update | Clear fire before the spread update. Orders already completed under the previous weather retain their losses. |
 | Move with 5 MP | Can cross plain (2 MP) then jungle (3 MP) in one order. Enemy contact or other movement restrictions can stop the path sooner. |
-| Simultaneous attack | Participating friendly units consume their current daily order. Other friendly units remain available. The opposing unit receives its own army's normal turn. |
+| Simultaneous attack | Units consume their order when they exchange damage; unused helpers remain ready. V50 also verifies that a completed simultaneous loop consumes the opposing unit's readiness. |
 
 Damage can be zero. A burning unit with fewer than 100 men is killed by the original damage routine. Weapon losses use the integer armed percentage. Neither visual fire flicker nor repeated attack animation rolls damage again.
 
@@ -42,7 +42,7 @@ The gold active hex and blinking soldier sprite use the same selected AI actor a
 
 Terrain defence numbers compare the native melee casualty divisors with plain ground. For example, hill's divisor 12 versus plain's 10 gives about ×0.83 incoming losses before integer rounding. Damage depends on both armies' WAR, training, equipment and random draws too. Terrain has no separate flat attack bonus; the target's cover determines its losses. Palace assault uses a special divisor 5 for the attacker’s counterattack exposure.
 
-Fire imagery is 50% opaque and continuously changes size until extinguished. Normal and Simultaneous attack animate all involved units for **five 600 ms cycles**; Charge uses **ten**. Status follows the animation. Game rules resolve the attack once.
+Fire imagery is 50% opaque and continuously changes size until extinguished. The v50 audit supersedes the earlier animation counts: the native shared renderer uses **eight source/target cycles**; Simultaneous and Charge invoke it for each actual exchange. The remaster applies this to Normal, Simultaneous, Ambush and Charge. Status follows the animation. Visual playback does not resolve combat again. See [native-combat-v50.md](native-combat-v50.md).
 
 ## Captive-count investigation
 

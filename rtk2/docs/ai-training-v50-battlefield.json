@@ -1,0 +1,321 @@
+{
+  "schema": 1,
+  "rulesId": "fb7b99765958b02147e3c87e7a38ead04671e21b31dd98790fc2b70228ac8e0c",
+  "domain": "battlefield",
+  "seed": 51001,
+  "holdoutSeed": 951001,
+  "generations": 1,
+  "population": 1,
+  "months": 1,
+  "training": {
+    "episodes": 4,
+    "independentSeeds": 2,
+    "trainedMean": 5.1711479166666665,
+    "legacyMean": 5,
+    "meanDifference": 0.1711479166666665,
+    "approximateMean95": null,
+    "battles": {
+      "wins": 0,
+      "losses": 0,
+      "draws": 4,
+      "decisiveWinRate": null,
+      "decisiveWinRate95": null,
+      "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+      "scoreRate": 0.5
+    },
+    "interpretation": "Small exploratory sample; not evidence of general superiority."
+  },
+  "holdout": {
+    "episodes": 4,
+    "independentSeeds": 2,
+    "trainedMean": 5.104515773809524,
+    "legacyMean": 5,
+    "meanDifference": 0.1045157738095237,
+    "approximateMean95": null,
+    "battles": {
+      "wins": 0,
+      "losses": 0,
+      "draws": 4,
+      "decisiveWinRate": null,
+      "decisiveWinRate95": null,
+      "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+      "scoreRate": 0.5
+    },
+    "interpretation": "Small exploratory sample; not evidence of general superiority."
+  },
+  "history": [
+    {
+      "generation": 1,
+      "score": 5.1711479166666665
+    }
+  ],
+  "trainingResults": {
+    "trained": [
+      {
+        "seed": 1135839947,
+        "owner": 9,
+        "side": "attack",
+        "result": 0.5,
+        "score": 4.975,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 9500,
+          "enemySurvivors": 12000,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 181,
+        "decisions": 61,
+        "meanDecisionMs": 9.731449131147537
+      },
+      {
+        "seed": 1135839947,
+        "owner": 1,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.119691666666666,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 7399,
+          "enemySurvivors": 3772,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 148,
+        "decisions": 88,
+        "meanDecisionMs": 19.8252684431818
+      },
+      {
+        "seed": 3599346159,
+        "owner": 13,
+        "side": "attack",
+        "result": 0.5,
+        "score": 5.025792857142857,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 9013,
+          "enemySurvivors": 11896,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 371,
+        "decisions": 60,
+        "meanDecisionMs": 8.976363600000006
+      },
+      {
+        "seed": 3599346159,
+        "owner": 0,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.564107142857143,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 22277,
+          "enemySurvivors": 4630,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 390,
+        "decisions": 330,
+        "meanDecisionMs": 58.58736833636368
+      }
+    ],
+    "legacy": [
+      {
+        "seed": 1135839947,
+        "owner": 9,
+        "side": "attack",
+        "result": 0.5,
+        "score": 4.754791666666667,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 2685,
+          "enemySurvivors": 9107,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 133,
+        "decisions": 48,
+        "meanDecisionMs": 0.04918695833293896
+      },
+      {
+        "seed": 1135839947,
+        "owner": 1,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.245208333333333,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 9107,
+          "enemySurvivors": 2685,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 133,
+        "decisions": 85,
+        "meanDecisionMs": 0.052191282352877726
+      },
+      {
+        "seed": 3599346159,
+        "owner": 13,
+        "side": "attack",
+        "result": 0.5,
+        "score": 5.005907142857143,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 5641,
+          "enemySurvivors": 7732,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 304,
+        "decisions": 61,
+        "meanDecisionMs": 0.04810013114732354
+      },
+      {
+        "seed": 3599346159,
+        "owner": 0,
+        "side": "defend",
+        "result": 0.5,
+        "score": 4.994092857142857,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 7732,
+          "enemySurvivors": 5641,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 304,
+        "decisions": 243,
+        "meanDecisionMs": 0.11226161728403962
+      }
+    ]
+  },
+  "holdoutResults": {
+    "trained": [
+      {
+        "seed": 3600141430,
+        "owner": 9,
+        "side": "attack",
+        "result": 0.5,
+        "score": 4.975,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 9500,
+          "enemySurvivors": 12000,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 181,
+        "decisions": 61,
+        "meanDecisionMs": 8.118992918032864
+      },
+      {
+        "seed": 3600141430,
+        "owner": 1,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.0178416666666665,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 11911,
+          "enemySurvivors": 9569,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 180,
+        "decisions": 120,
+        "meanDecisionMs": 27.933632024999618
+      },
+      {
+        "seed": 1136844676,
+        "owner": 13,
+        "side": "attack",
+        "result": 0.5,
+        "score": 5.001042857142857,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 8418,
+          "enemySurvivors": 11756,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 377,
+        "decisions": 61,
+        "meanDecisionMs": 8.659286754097996
+      },
+      {
+        "seed": 1136844676,
+        "owner": 0,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.4241785714285715,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 23000,
+          "enemySurvivors": 7945,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 387,
+        "decisions": 327,
+        "meanDecisionMs": 55.795798058103834
+      }
+    ],
+    "legacy": [
+      {
+        "seed": 3600141430,
+        "owner": 9,
+        "side": "attack",
+        "result": 0.5,
+        "score": 4.914275,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 6083,
+          "enemySurvivors": 9357,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 144,
+        "decisions": 61,
+        "meanDecisionMs": 0.03007029508122197
+      },
+      {
+        "seed": 3600141430,
+        "owner": 1,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.085725,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 9357,
+          "enemySurvivors": 6083,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 144,
+        "decisions": 83,
+        "meanDecisionMs": 0.033916867468737524
+      },
+      {
+        "seed": 1136844676,
+        "owner": 13,
+        "side": "attack",
+        "result": 0.5,
+        "score": 4.921985714285714,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 4154,
+          "enemySurvivors": 8000,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 301,
+        "decisions": 57,
+        "meanDecisionMs": 0.03175361403580673
+      },
+      {
+        "seed": 1136844676,
+        "owner": 0,
+        "side": "defend",
+        "result": 0.5,
+        "score": 5.078014285714286,
+        "metrics": {
+          "day": 30,
+          "ownSurvivors": 8000,
+          "enemySurvivors": 4154,
+          "reason": "Thirty-day suspension"
+        },
+        "steps": 301,
+        "decisions": 244,
+        "meanDecisionMs": 0.09560135655675502
+      }
+    ]
+  },
+  "elapsedSeconds": 67.253
+}

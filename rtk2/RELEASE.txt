@@ -1,6 +1,6 @@
-RTK2 Remastered v49 — 2026-10-11
+RTK2 Remastered v52 — 2026-10-12
 
-This complete download contains the editable v49 game, all previous completed changes,
+This complete download contains the editable v52 game, all previous completed changes,
 and its local lib/js-yaml.js dependency. Unzip rtk2/ and lib/ together, install Python 3,
 then run start-game.bat (Windows) or sh start-game.sh (macOS/Linux).
 Menu > About identifies the runtime version.
@@ -106,3 +106,24 @@ human/AI enemy-pull mechanics and guidance; palace reoccupation; left-aligned hi
 281 economy and 27 tactical native witnesses are included. Current optional AI
 profiles were retrained under the corrected rules; they remain experimental.
 Details, evidence, download links for profiles and limits: docs/fixes-v49.html.
+
+V50: streamlined War governor cards, complete native audio dispatch catalogue
+and synthesized governance/battle cues, every simultaneous participant loss,
+eight-flash ambushes and spent ambusher readiness, native local withdrawals,
+retreat reservations and compatible experimental training examples. Native
+Reward allows provincial governor self rewards; the ruler is excluded.
+All 21 embedded songs and 16 effects now use the supplied original FM driver.
+Exact hardware waveform equality and full loop endpoints remain unverified.
+See docs/fixes-v50.html.
+
+Resumed v50 correction: simultaneous attack accepts concealed jungle targets;
+attacks at vacated suspected positions miss. No AI training or renewal was run.
+Older profiles retain their compatibility identity and use Legacy on mismatch.
+Private DOS reference COM/DAT/BAT files are excluded from source and packages.
+
+V52: original remaster council/battle/victory music restored; shared unlocked
+audio with animation fallback and missed-frame cue recovery; commander and
+automatic ambush own orders retained; previously acted simultaneous helpers
+participate with damage, individual loss reports and sequential animation.
+32 original controller witnesses supersede the old cell-readiness interpretation.
+No AI training or renewal ran; archived profiles retain their original identity.

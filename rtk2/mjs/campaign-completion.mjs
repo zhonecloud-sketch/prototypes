@@ -2,7 +2,7 @@ import {endRealm} from './ruler-lifecycle.mjs?v=44';
 import {invasionFoodPlan} from './war-provisions.mjs?v=44';
 import {clamp} from './engine.mjs?v=49';
 import {detachOfficer,realmRoute} from './campaign-decisions.mjs?v=49';
-import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=49';
+import {newUnit,placementCells,living,ownerFor} from './battle.mjs?v=52';
 import {provinceDirection} from './geography.mjs?v=44';
 import {hireCapacity} from './province-rules.mjs?v=49';
 export const ITEMS=[
@@ -55,7 +55,7 @@ export function configureDelegation(g,args){
 export function runDelegated(g,owner){
  const saved=g.s.player;g.s.player=owner;try{for(const p of g.s.provinces.filter(p=>p.owner===owner&&p.delegation&&p.delegate!=='manual')){
  const d=p.delegation;let ready=p.officers.map(id=>g.officer(id)).filter(o=>{try{g.ready(p,o.id);return true;}catch{return false;}}).sort((a,b)=>b.int-a.int);
- if(d.attack&&['full','military'].includes(d.policy)&&g.province(d.attack).owner!==255&&g.province(d.attack).owner!==owner&&!g.ruler().alliances.includes(g.province(d.attack).owner)&&!g.s.wars.some(b=>[b.source,b.target].includes(p.id)||[b.source,b.target,...b.units.map(u=>u.origin)].includes(d.attack))){
+ if(d.attack&&['full','military'].includes(d.policy)&&g.province(d.attack).owner!==255&&g.province(d.attack).owner!==owner&&!g.ruler().alliances.includes(g.province(d.attack).owner)&&!g.s.wars.some(b=>[b.source,b.target].includes(p.id)||[b.source,b.target,...b.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(d.attack))){
   const army=ready.filter(o=>o.soldiers>0).sort((a,b)=>b.war-a.war).slice(0,Math.min(5,p.officers.length-1)),men=army.reduce((n,o)=>n+o.soldiers,0),enemy=g.province(d.attack).officers.reduce((n,id)=>n+g.officer(id).soldiers,0);
   const carried=invasionFoodPlan(men,p.food,g.rules.ai?.governance);if(army.length&&men>enemy*1.3&&carried!==null){g.invade({province:p.id,target:d.attack,officers:army.map(o=>o.id),food:carried,gold:Math.min(p.gold,1000)});if(g.s.battle||g.s.spoils.length||g.s.captiveDecisions.length)return false;}
  }

@@ -2,7 +2,7 @@ import {moveForecast,moveTeamInsight} from './move-forecast.mjs?v=44';
 import {provinceChoice,provinceLabel} from './province-choice.mjs?v=44';
 import {orderUnavailable} from './order-availability.mjs?v=49';
 import {adviceTopic} from './advice-topics.mjs?v=49';
-import {orderInsight,generalStats,bestOrderSpend} from './game-ui.mjs?v=49';
+import {orderInsight,generalStats,bestOrderSpend} from './game-ui.mjs?v=50';
 import {readyOfficers,rulerPresent,hireCapacity,provinceAdvice,provinceRumours,updateVisitors} from './province-rules.mjs?v=49';
 import {eligibleRoyalChildren,childAge} from './ruler-family.mjs?v=44';
 export function createProvinceCommands(c){
@@ -24,7 +24,7 @@ export function createProvinceCommands(c){
   c.dialog(title,`${intro?`<p class="dialog-intro">${e(intro)}</p>`:''}<div class="suborder-grid">${items.map(([id,label,fn,invalid])=>`<button data-suborder="${id}" class="${invalid||reason(id)?'order-unavailable':''}">${e(label)}</button>`).join('')}</div>`,`<button id="cancelOrder">Close</button>`,'PROVINCE ORDERS');
   $('cancelOrder').onclick=c.close;items.forEach(([id,label,fn])=>{$('dialogBody').querySelector(`[data-suborder="${id}"]`).onclick=()=>{const why=reason(id);if(why){info(label,why);return;}fn();};});
  }
- function perform(type,args){const message=g().execute(type,{province:p().id,...args});allocation=null;c.close();c.refresh();c.toast(message);if(g().s.campaignEnded)info('The ruler has gone into exile','Your realm has dissolved. Return to launch from Menu to begin or load another campaign.');}
+ function perform(type,args){const message=g().execute(type,{province:p().id,...args});c.onOrder?.(type,args);allocation=null;c.close();c.refresh();c.toast(message);if(g().s.campaignEnded)info('The ruler has gone into exile','Your realm has dissolved. Return to launch from Menu to begin or load another campaign.');}
  function flow(title,steps,action,seed={}){
   let index=0,data={...seed};
   function draw(){const s=steps[index],choices=typeof s.choices==='function'?s.choices(data):s.choices,min=typeof s.min==='function'?s.min(data):s.min,max=typeof s.max==='function'?s.max(data):s.max,empty=s.confirmation?false:choices?choices.length===0:max<min;

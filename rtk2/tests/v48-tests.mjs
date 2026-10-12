@@ -10,16 +10,16 @@ for(const q of [5,6])for(let d=0;d<6;d++){
  const {g,b,u,enemies}=arena(),from={q,r:5},to=direction(q,5,d),cells=ambushCells(from,to).filter(p=>distance(from,p)>1);assert(cells.length>=2);Object.assign(u,from);enemies.forEach((v,i)=>{Object.assign(v,cells[i]);b.terrain[v.r*13+v.q]=1;assert.equal(visibleUnit(b,v),false);});
  const expected={...u};for(const enemy of enemies){const hit=ambushExchange(expected,enemy,0,()=>.5);expected.soldiers-=hit.loss;expected.weapons-=hit.weapons;}
  act(g,'move',{unit:u.id,...to});assert.equal(u.soldiers,expected.soldiers);assert.equal(u.weapons,expected.weapons);const animations=ambushAnimations(b,b.lastAction,id=>g.officer(id).name);assert.equal(animations.length,2);assert.deepEqual(new Set(animations.map(a=>a.unit)),new Set(enemies.map(v=>v.id)));assert(enemies.every(v=>!v.ordered&&v.mobility===10));
- const state=JSON.stringify(g.s),seed=g.s.seed;for(const a of animations){assert.equal(combatAnimationDuration(a),600);combatAnimationPhase(a,300);}assert.equal(JSON.stringify(g.s),state);assert.equal(g.s.seed,seed);
+ const state=JSON.stringify(g.s),seed=g.s.seed;for(const a of animations){assert.equal(combatAnimationDuration(a),3000);combatAnimationPhase(a,300);}assert.equal(JSON.stringify(g.s),state);assert.equal(g.s.seed,seed);
 }
 console.log('PASS two concealed jungle enemies both apply native ambush loss and produce separate animations in all six directions and both column parities');
 for(const from of [{q:6,r:4},{q:7,r:4}])for(let d=0;d<6;d++){
  const target=direction(from.q,from.r,d),action={type:'charge',unit:1,target:2,combatUnits:[{id:1,...from},{id:2,...target}],landing:{...from}};
  assert.equal(combatAnimationDuration(action),7300);assert.deepEqual(chargePosition(action,{id:1},0),{...tilePoint(from.q,from.r),walk:true});const middle=chargePosition(action,{id:1},325),a=tilePoint(from.q,from.r),z=tilePoint(target.q,target.r);assert.equal(middle.x,(a.x+z.x)/2);assert.equal(middle.z,(a.z+z.z)/2);
- for(let cycle=0;cycle<10;cycle++){assert.equal(combatAnimationPhase(action,650+cycle*600).cycle,cycle+1);assert.equal(combatAnimationPhase(action,950+cycle*600).frame,1);assert.deepEqual(chargePosition(action,{id:1},650+cycle*600),{...z,walk:false});}
+ for(let cycle=0;cycle<80;cycle++){assert.equal(combatAnimationPhase(action,650+cycle*75).cycle,cycle+1);assert.equal(combatAnimationPhase(action,688+cycle*75).frame,1);assert.deepEqual(chargePosition(action,{id:1},650+cycle*75),{...z,walk:false});}
  assert.deepEqual(chargePosition(action,{id:1},7300),{...a,walk:true});action.landing={...target};assert.deepEqual(chargePosition(action,{id:1},7300),{...z,walk:false});action.landing=direction(target.q,target.r,d);assert.deepEqual(chargePosition(action,{id:1},7300),{...tilePoint(action.landing.q,action.landing.r),walk:true});
 }
-console.log('PASS charge marches through offset hexes, attacks ten times on the defender tile, returns on failure and follows resolved occupation or breakthrough');
+console.log('PASS charge marches through offset hexes, plays eight flashes per charge exchange on the defender tile, returns on failure and follows resolved occupation or breakthrough');
 {
  const {g,b,u,enemies}=arena(),target=enemies[0];Object.assign(u,{q:6,r:4,war:0});Object.assign(target,{q:7,r:4,war:0});Object.assign(enemies[1],{q:0,r:11});act(g,'charge',{unit:u.id,target:target.id});assert(target.soldiers>0&&u.soldiers>0);assert.deepEqual({q:u.q,r:u.r},{q:6,r:4});assert(!b.lastChargeLanding);const action={...b.lastAction,landing:{q:u.q,r:u.r}};assert.deepEqual(chargePosition(action,u,7300),{...tilePoint(6,4),walk:true});
 }

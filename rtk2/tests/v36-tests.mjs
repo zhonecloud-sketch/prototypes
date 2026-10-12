@@ -23,7 +23,7 @@ await test('Bad omen and gallop effects route through sound preferences and visi
  globalThis.document={hidden:false,addEventListener(){},removeEventListener(){}};
  globalThis.Audio=class{constructor(src){this.src=src;this.plays=0;media.push(this);}play(){this.plays++;return Promise.resolve();}pause(){this.paused=true;}};
  try{const bus=new AudioBus();bus.setActive(true);bus.play('gallop');assert.equal(media.length,3);bus.unlock();
-  for(const cue of ['flood','locust','typhoon','epidemic','uprising','meteor','death']){bus.playEvent({kind:'month',art:cue});assert.equal(media.at(-1).src,'./assets/'+cue+'.mp3');assert(fs.statSync('assets/'+cue+'.mp3').size>30000);}
+  for(const cue of ['flood','locust','typhoon','epidemic','uprising','meteor','death']){bus.playEvent({kind:'month',art:cue});const native={flood:2,locust:0,typhoon:2,epidemic:1,meteor:4};assert.equal(media.at(-1).src,'./assets/'+(cue in native?'native-effect-'+native[cue]+'.mp3?v=52':cue+'.mp3'));assert(fs.statSync('assets/'+cue+'.mp3').size>30000);}
   bus.play('gallop');assert.equal(media.at(-1).src,'./assets/gallop.mp3');const n=media.length;bus.configure({sound:false,music:true});bus.playEvent({art:'flood'});assert.equal(media.length,n);assert([...bus.effects].length===0);
   bus.configure({sound:true,music:false});document.hidden=true;bus.play('gallop');assert.equal(media.length,n);document.hidden=false;bus.setActive(false);bus.play('gallop');assert.equal(media.length,n);bus.destroy();
  }finally{globalThis.Audio=oldAudio;globalThis.document=oldDocument;}

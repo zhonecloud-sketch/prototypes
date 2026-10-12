@@ -2,7 +2,7 @@
 
 Initial audit: 2026-10-07 UTC; updated 2026-10-11 (Asia/Kuala_Lumpur)
 Baseline audited: v10, commit `be59931216ad6a53f17b6fb7f9632aa8faab604a`
-Latest implementation: v49. The complete downloadable project includes source, artwork, tests, optional trained policies and the shared YAML library.
+Latest implementation: v52. [Current fixes](fixes-v52.html) restore remaster BGM, improve battle audio, and correct the previous cell-flag interpretation: simultaneous helpers/targets and automatic ambushers retain their own order; already-acted helpers participate. The complete downloadable project includes source, artwork, tests, optional trained policies and the shared YAML library.
 Previous implementation: v35, commit `3c8a0af9135c8ec655146fbaa04534f3fe80c7cd`
 Earlier implementation: v34, commit `3c7ebbc1725e53a46016b20e9a55465da935f413`
 Earlier implementation: v33, commit `44db3fa70ecee13c75af583ca8e324e395b7cfff`
@@ -15,6 +15,10 @@ Reference checkout: JuQiang/Rotk2_Python, commit `99bdf5a1516e5b7d9ef8def4c935a1
 
 The initial v10 audit was read-only. This completed audit incorporates the supplied DOS files and reconciles the v11/v12/v13/v14/v15/v16/v17/v18/v19/v20/v21 implementations against every finding below. Confirmed branch/data defects have been repaired where specified. Outstanding features, accepted user overrides, edition-specific evidence and unrecovered original formulas remain explicit. **This is a complete differences review, not a claim that all original-game mechanics have been reconstructed.**
 
+
+## V50 native rules and audio audit
+
+[The v50 fixes note](fixes-v50.html) supersedes earlier animation-cycle counts and ambusher readiness descriptions. It records per-unit simultaneous losses, simultaneous attacks on concealed jungle targets, local withdrawal rules, governor self-reward evidence and the complete audio dispatch catalogue, including supplied-driver audio extraction. See that note for remaining native AI differences and verification limits.
 
 ## V49 governance, portraits and native tactical corrections
 

@@ -263,3 +263,9 @@ npm test
 ```
 
 Legacy remains the default. The new profile is experimental until diverse fresh opening campaigns show improved conquest success and time without unacceptable losses or decision cost.
+
+## Current v50 examples
+
+The rules fingerprint changed for local withdrawal, simultaneous readiness and retreat reservations. Archived v49 files remain available for warm starts, but cannot activate under v50. HUD → AI → Load examples loads the separately retrained governance-v50.json and battlefield-v50.json; the backward conquest example is governance-conquest-v50.json. All stay experimental and require explicit selection.
+
+Compatibility smoke training used two governance practice/holdout cases, two battlefield positions in both roles (four episodes each), and one conquest case per backward stage with a one-month horizon. These small reports are not evidence of improved AI or a full-campaign conquest. Governance conquest runs recorded zero detailed battlefield actions. [Release findings](fixes-v50.html) link the current verification, native evidence and retained differences.

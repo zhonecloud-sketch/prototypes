@@ -1,0 +1,525 @@
+{
+  "schema": 1,
+  "objective": "governance-conquest-v1",
+  "rulesId": "fb7b99765958b02147e3c87e7a38ead04671e21b31dd98790fc2b70228ac8e0c",
+  "battleResolution": "abstract",
+  "seed": 52001,
+  "holdoutSeed": 952001,
+  "generations": 1,
+  "population": 1,
+  "episodesPerStage": 1,
+  "holdoutEpisodesPerStage": 1,
+  "months": 1,
+  "evaluationMonths": 1,
+  "initialProfile": "governance-conquest-49023-g1",
+  "previousProfile": "governance-49021-g1",
+  "history": [
+    {
+      "stage": "finish",
+      "ownedProvinces": 38,
+      "episodes": 1,
+      "history": [
+        {
+          "generation": 1,
+          "score": 72.4493212037699
+        }
+      ],
+      "summary": {
+        "episodes": 1,
+        "wins": 0,
+        "losses": 0,
+        "unfinished": 1,
+        "successRate": 0,
+        "meanMonthsToVictory": null,
+        "meanCappedMonths": 2,
+        "meanProvinces": 38,
+        "shortageMonths": 0,
+        "abstractBattles": 1,
+        "instantBattles": 0,
+        "detailedActions": 0
+      }
+    },
+    {
+      "stage": "expand",
+      "ownedProvinces": 24,
+      "episodes": 2,
+      "history": [
+        {
+          "generation": 1,
+          "score": 54.0913813431585
+        }
+      ],
+      "summary": {
+        "episodes": 2,
+        "wins": 0,
+        "losses": 0,
+        "unfinished": 2,
+        "successRate": 0,
+        "meanMonthsToVictory": null,
+        "meanCappedMonths": 2,
+        "meanProvinces": 30,
+        "shortageMonths": 0,
+        "abstractBattles": 12,
+        "instantBattles": 0,
+        "detailedActions": 0
+      }
+    },
+    {
+      "stage": "opening",
+      "ownedProvinces": "original scenario",
+      "episodes": 3,
+      "history": [
+        {
+          "generation": 1,
+          "score": 42.09831222843194
+        }
+      ],
+      "summary": {
+        "episodes": 3,
+        "wins": 0,
+        "losses": 0,
+        "unfinished": 3,
+        "successRate": 0,
+        "meanMonthsToVictory": null,
+        "meanCappedMonths": 2,
+        "meanProvinces": 20.333333333333332,
+        "shortageMonths": 0,
+        "abstractBattles": 32,
+        "instantBattles": 0,
+        "detailedActions": 0
+      }
+    }
+  ],
+  "summaries": {
+    "trained": {
+      "episodes": 3,
+      "wins": 0,
+      "losses": 0,
+      "unfinished": 3,
+      "successRate": 0,
+      "meanMonthsToVictory": null,
+      "meanCappedMonths": 2,
+      "meanProvinces": 20,
+      "shortageMonths": 0,
+      "abstractBattles": 32,
+      "instantBattles": 0,
+      "detailedActions": 0
+    },
+    "legacy": {
+      "episodes": 3,
+      "wins": 0,
+      "losses": 0,
+      "unfinished": 3,
+      "successRate": 0,
+      "meanMonthsToVictory": null,
+      "meanCappedMonths": 2,
+      "meanProvinces": 21.666666666666668,
+      "shortageMonths": 2,
+      "abstractBattles": 35,
+      "instantBattles": 0,
+      "detailedActions": 0
+    },
+    "previous": {
+      "episodes": 3,
+      "wins": 0,
+      "losses": 0,
+      "unfinished": 3,
+      "successRate": 0,
+      "meanMonthsToVictory": null,
+      "meanCappedMonths": 2,
+      "meanProvinces": 20,
+      "shortageMonths": 0,
+      "abstractBattles": 32,
+      "instantBattles": 0,
+      "detailedActions": 0
+    }
+  },
+  "comparisons": {
+    "finish": {
+      "againstLegacy": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 70.10270331528126,
+        "legacyMean": 77.03347203721717,
+        "meanDifference": -6.930768721935905,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      },
+      "againstPrevious": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 70.10270331528126,
+        "legacyMean": 70.09709165304042,
+        "meanDifference": 0.0056116622408382,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      }
+    },
+    "expand": {
+      "againstLegacy": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 37.351406107770046,
+        "legacyMean": 53.32029109948175,
+        "meanDifference": -15.968884991711704,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      },
+      "againstPrevious": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 37.351406107770046,
+        "legacyMean": 37.351406107770046,
+        "meanDifference": 0,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      }
+    },
+    "opening": {
+      "againstLegacy": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 19.394365089341584,
+        "legacyMean": 19.692437967842032,
+        "meanDifference": -0.2980728785004487,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      },
+      "againstPrevious": {
+        "episodes": 1,
+        "independentSeeds": 1,
+        "trainedMean": 19.394365089341584,
+        "legacyMean": 19.394365089341584,
+        "meanDifference": 0,
+        "approximateMean95": null,
+        "battles": null,
+        "interpretation": "Small exploratory sample; not evidence of general superiority."
+      }
+    }
+  },
+  "aggregate": {
+    "againstLegacy": {
+      "episodes": 3,
+      "independentSeeds": 3,
+      "trainedMean": 42.2828248374643,
+      "legacyMean": 50.015400368180316,
+      "meanDifference": -7.732575530716019,
+      "approximateMean95": null,
+      "battles": null,
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    },
+    "againstPrevious": {
+      "episodes": 3,
+      "independentSeeds": 3,
+      "trainedMean": 42.2828248374643,
+      "legacyMean": 42.28095428338401,
+      "meanDifference": 0.0018705540802794,
+      "approximateMean95": null,
+      "battles": null,
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    }
+  },
+  "results": {
+    "trained": [
+      {
+        "seed": 952001,
+        "scenarioId": 0,
+        "stage": "finish",
+        "owner": 0,
+        "initialProvinces": 38,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 70.10270331528126,
+        "metrics": {
+          "provinces": 37,
+          "readiness": 0.6357513966969611,
+          "sustainability": 0.8932496980302886,
+          "production": 0.8196182362912697,
+          "stability": 0.3624324324324325,
+          "soldiers": 242940,
+          "gold": 22757,
+          "food": 929345
+        },
+        "shortageMonths": 0,
+        "provincesLost": 2,
+        "officersLost": 2,
+        "abstractBattles": 2,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 108,
+        "decisions": 103,
+        "meanDecisionMs": 55.63453715534042
+      },
+      {
+        "seed": 17729620,
+        "scenarioId": 0,
+        "stage": "expand",
+        "owner": 0,
+        "initialProvinces": 24,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 37.351406107770046,
+        "metrics": {
+          "provinces": 22,
+          "readiness": 0.31123980254446193,
+          "sustainability": 0.9403614380235549,
+          "production": 0.8278880530565575,
+          "stability": 0.2977272727272726,
+          "soldiers": 101531,
+          "gold": 13297,
+          "food": 433955
+        },
+        "shortageMonths": 0,
+        "provincesLost": 5,
+        "officersLost": 5,
+        "abstractBattles": 15,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 89,
+        "decisions": 37,
+        "meanDecisionMs": 61.406732378378464
+      },
+      {
+        "seed": 4265533338,
+        "scenarioId": 0,
+        "stage": "opening",
+        "owner": 0,
+        "initialProvinces": 1,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 19.394365089341584,
+        "metrics": {
+          "provinces": 1,
+          "readiness": 1,
+          "sustainability": 1,
+          "production": 0.28619009103904897,
+          "stability": 0.5,
+          "soldiers": 13041,
+          "gold": 2014,
+          "food": 38278
+        },
+        "shortageMonths": 0,
+        "provincesLost": 2,
+        "officersLost": 4,
+        "abstractBattles": 15,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 153,
+        "decisions": 6,
+        "meanDecisionMs": 60.935759499998916
+      }
+    ],
+    "legacy": [
+      {
+        "seed": 952001,
+        "scenarioId": 0,
+        "stage": "finish",
+        "owner": 0,
+        "initialProvinces": 38,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 77.03347203721717,
+        "metrics": {
+          "provinces": 38,
+          "readiness": 0.6570206950699218,
+          "sustainability": 0.8864862885180298,
+          "production": 0.8227292207553341,
+          "stability": 0.3750000000000001,
+          "soldiers": 250000,
+          "gold": 24496,
+          "food": 827620
+        },
+        "shortageMonths": 0,
+        "provincesLost": 0,
+        "officersLost": 0,
+        "abstractBattles": 0,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 115,
+        "decisions": 103,
+        "meanDecisionMs": 0.7207468737868165
+      },
+      {
+        "seed": 17729620,
+        "scenarioId": 0,
+        "stage": "expand",
+        "owner": 0,
+        "initialProvinces": 24,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 53.32029109948175,
+        "metrics": {
+          "provinces": 26,
+          "readiness": 0.4,
+          "sustainability": 0.8819676704646742,
+          "production": 0.8535750365655025,
+          "stability": 0.33923076923076934,
+          "soldiers": 104041,
+          "gold": 14827,
+          "food": 502173
+        },
+        "shortageMonths": 2,
+        "provincesLost": 0,
+        "officersLost": 0,
+        "abstractBattles": 14,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 114,
+        "decisions": 37,
+        "meanDecisionMs": 0.4261013783777614
+      },
+      {
+        "seed": 4265533338,
+        "scenarioId": 0,
+        "stage": "opening",
+        "owner": 0,
+        "initialProvinces": 1,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 19.692437967842032,
+        "metrics": {
+          "provinces": 1,
+          "readiness": 0.6386239782016349,
+          "sustainability": 0.47318611987381703,
+          "production": 0.7421844705882352,
+          "stability": 0.68,
+          "soldiers": 21000,
+          "gold": 750,
+          "food": 30000
+        },
+        "shortageMonths": 0,
+        "provincesLost": 0,
+        "officersLost": 0,
+        "abstractBattles": 21,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 197,
+        "decisions": 10,
+        "meanDecisionMs": 1.153514699999505
+      }
+    ],
+    "previous": [
+      {
+        "seed": 952001,
+        "scenarioId": 0,
+        "stage": "finish",
+        "owner": 0,
+        "initialProvinces": 38,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 70.09709165304042,
+        "metrics": {
+          "provinces": 37,
+          "readiness": 0.6405955929828346,
+          "sustainability": 0.8878443355203305,
+          "production": 0.8196182362912697,
+          "stability": 0.3624324324324325,
+          "soldiers": 243940,
+          "gold": 22652,
+          "food": 928012
+        },
+        "shortageMonths": 0,
+        "provincesLost": 2,
+        "officersLost": 2,
+        "abstractBattles": 2,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 108,
+        "decisions": 103,
+        "meanDecisionMs": 56.7181453786413
+      },
+      {
+        "seed": 17729620,
+        "scenarioId": 0,
+        "stage": "expand",
+        "owner": 0,
+        "initialProvinces": 24,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 37.351406107770046,
+        "metrics": {
+          "provinces": 22,
+          "readiness": 0.31123980254446193,
+          "sustainability": 0.9403614380235549,
+          "production": 0.8278880530565575,
+          "stability": 0.2977272727272726,
+          "soldiers": 101531,
+          "gold": 13397,
+          "food": 433955
+        },
+        "shortageMonths": 0,
+        "provincesLost": 5,
+        "officersLost": 5,
+        "abstractBattles": 15,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 89,
+        "decisions": 37,
+        "meanDecisionMs": 65.91859937837856
+      },
+      {
+        "seed": 4265533338,
+        "scenarioId": 0,
+        "stage": "opening",
+        "owner": 0,
+        "initialProvinces": 1,
+        "won": false,
+        "lost": false,
+        "elapsedMonths": 1,
+        "horizon": 1,
+        "cappedMonths": 2,
+        "score": 19.394365089341584,
+        "metrics": {
+          "provinces": 1,
+          "readiness": 1,
+          "sustainability": 1,
+          "production": 0.28619009103904897,
+          "stability": 0.5,
+          "soldiers": 13041,
+          "gold": 2014,
+          "food": 38278
+        },
+        "shortageMonths": 0,
+        "provincesLost": 2,
+        "officersLost": 4,
+        "abstractBattles": 15,
+        "instantBattles": 0,
+        "detailedActions": 0,
+        "steps": 153,
+        "decisions": 6,
+        "meanDecisionMs": 58.724688166668784
+      }
+    ]
+  },
+  "elapsedSeconds": 63.004,
+  "interpretation": "Experimental. Synthetic finish/expand practice is separate from original-opening results. Unfinished cases receive the full deadline plus one month. No automatic promotion."
+}

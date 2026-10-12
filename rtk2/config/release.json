@@ -1,6 +1,6 @@
 {
-  "version": 49,
-  "date": "2026-10-11",
+  "version": 52,
+  "date": "2026-10-12",
   "activeEventArt": [
     {
       "file": "assets/history-v30.webp",
@@ -112,10 +112,65 @@
     "assets/epidemic.mp3",
     "assets/uprising.mp3",
     "assets/meteor.mp3",
-    "assets/death.mp3"
+    "assets/death.mp3",
+    "assets/native-effect-0.mp3",
+    "assets/native-effect-1.mp3",
+    "assets/native-effect-2.mp3",
+    "assets/native-effect-3.mp3",
+    "assets/native-effect-4.mp3",
+    "assets/native-effect-5.mp3",
+    "assets/native-effect-6.mp3",
+    "assets/native-effect-7.mp3",
+    "assets/native-effect-8.mp3",
+    "assets/native-effect-9.mp3",
+    "assets/native-effect-10.mp3",
+    "assets/native-effect-11.mp3",
+    "assets/native-effect-12.mp3",
+    "assets/native-effect-13.mp3",
+    "assets/native-effect-14.mp3",
+    "assets/native-effect-15.mp3",
+    "assets/march.mp3",
+    "assets/train.mp3",
+    "assets/trade.mp3",
+    "assets/recruit.mp3",
+    "assets/retreat.mp3"
   ],
   "activeFireArt": {
     "file": "assets/fire-v42.webp",
     "sha256": "02bd84ce8a7a47512d58a553cd874400db38e43f499df49d289c7b80e7ca1daf"
+  },
+  "nativeAudioCatalog": "docs/native-audio-v50.json",
+  "nativeAudioDriverReport": "docs/native-opl-driver-v50.json",
+  "nativeAudioRegisterTraces": "docs/native-opl-register-traces-v50.zip",
+  "resumedCorrection": "Original remaster music restored; battle audio and own-order/assistance corrections; no AI training.",
+  "nativeMusicAssets": [
+    "assets/native-music-0.mp3",
+    "assets/native-music-1.mp3",
+    "assets/native-music-2.mp3",
+    "assets/native-music-3.mp3",
+    "assets/native-music-4.mp3",
+    "assets/native-music-5.mp3",
+    "assets/native-music-6.mp3",
+    "assets/native-music-7.mp3",
+    "assets/native-music-8.mp3",
+    "assets/native-music-9.mp3",
+    "assets/native-music-10.mp3",
+    "assets/native-music-11.mp3",
+    "assets/native-music-12.mp3",
+    "assets/native-music-13.mp3",
+    "assets/native-music-14.mp3",
+    "assets/native-music-15.mp3",
+    "assets/native-music-16.mp3",
+    "assets/native-music-17.mp3",
+    "assets/native-music-18.mp3",
+    "assets/native-music-19.mp3",
+    "assets/native-music-20.mp3"
+  ],
+  "currentFixes": "docs/fixes-v52.html",
+  "nativeTurnAudit": "docs/native-turn-witness-v52.json",
+  "activeMusic": {
+    "council": "assets/council-music.mp3",
+    "battle": "assets/battle-music-v17.mp3",
+    "triumph": "assets/triumph-music.mp3"
   }
 }

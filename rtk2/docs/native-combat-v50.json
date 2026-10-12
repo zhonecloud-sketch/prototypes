@@ -1,0 +1,920 @@
+{
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "cases": [
+    {
+      "rule": "Ambush spends ambusher readiness before casualty even INT90 evasion",
+      "entry": "0x247C6",
+      "moverINT": 89,
+      "ambusherFlagsBefore": 132,
+      "ambusherFlagsAfter": 4,
+      "ambusherMPAfter": 7,
+      "calls": [
+        {
+          "flash": [
+            6,
+            4,
+            7,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "rule": "Ambush spends ambusher readiness before casualty even INT90 evasion",
+      "entry": "0x247C6",
+      "moverINT": 90,
+      "ambusherFlagsBefore": 132,
+      "ambusherFlagsAfter": 4,
+      "ambusherMPAfter": 7,
+      "calls": [
+        {
+          "flash": [
+            6,
+            4,
+            7,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "rule": "Native forward ambush trigger does not require unused daily order",
+      "entry": "0x24938/0x239D6",
+      "ambusherFlags": 4,
+      "calls": [
+        [
+          6,
+          4,
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "rule": "Native forward ambush trigger does not require unused daily order",
+      "entry": "0x24938/0x239D6",
+      "ambusherFlags": 132,
+      "calls": [
+        [
+          6,
+          4,
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "rule": "Shared combat flash sequence",
+      "entry": "0x250F8/0x250AE",
+      "cycles": 8,
+      "tileFrames": [
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 0,
+      "withdraw": false,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": true,
+      "randomSuccess": 0,
+      "withdraw": false,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 499,
+      "adjacentEnemyMen": 1500,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 500,
+      "adjacentEnemyMen": 1501,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 799,
+      "adjacentEnemyMen": 2400,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 800,
+      "adjacentEnemyMen": 2401,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 0,
+      "men": 499,
+      "adjacentEnemyMen": 1497,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 0,
+      "withdraw": false,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": true,
+      "randomSuccess": 0,
+      "withdraw": false,
+      "calls": [
+        {
+          "chance": 50
+        }
+      ]
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 499,
+      "adjacentEnemyMen": 1500,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 500,
+      "adjacentEnemyMen": 1501,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 799,
+      "adjacentEnemyMen": 2400,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 800,
+      "adjacentEnemyMen": 2401,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 1,
+      "men": 499,
+      "adjacentEnemyMen": 1497,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 0,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": true,
+      "randomSuccess": 0,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 499,
+      "adjacentEnemyMen": 1500,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 500,
+      "adjacentEnemyMen": 1501,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 799,
+      "adjacentEnemyMen": 2400,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 800,
+      "adjacentEnemyMen": 2401,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 2,
+      "men": 499,
+      "adjacentEnemyMen": 1497,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": false,
+      "randomSuccess": 0,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 99,
+      "adjacentEnemyMen": 100,
+      "commander": true,
+      "randomSuccess": 0,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 499,
+      "adjacentEnemyMen": 1500,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 500,
+      "adjacentEnemyMen": 1501,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 799,
+      "adjacentEnemyMen": 2400,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": true,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 800,
+      "adjacentEnemyMen": 2401,
+      "commander": true,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Native AI local flight decision",
+      "entry": "0x2B18A/0x2AB5E",
+      "side": 3,
+      "men": 499,
+      "adjacentEnemyMen": 1497,
+      "commander": false,
+      "randomSuccess": 1,
+      "withdraw": false,
+      "calls": []
+    },
+    {
+      "rule": "Completed simultaneous attack spends attacker and target readiness",
+      "entry": "0x26072",
+      "attackerFlagsBefore": [
+        129,
+        129
+      ],
+      "attackerFlagsAfter": [
+        1,
+        1
+      ],
+      "enemyFlagsBefore": 132,
+      "enemyFlagsAfter": 4
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 0,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": true
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 0,
+      "men": 3000,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 0,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": false,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 0,
+      "men": 99,
+      "burning": false,
+      "noAffordableHex": true,
+      "noProvinceExit": true,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 1,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": true
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 1,
+      "men": 3000,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 1,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": false,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 1,
+      "men": 99,
+      "burning": false,
+      "noAffordableHex": true,
+      "noProvinceExit": true,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 2,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": true
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 2,
+      "men": 3000,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 2,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": false,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 2,
+      "men": 99,
+      "burning": false,
+      "noAffordableHex": true,
+      "noProvinceExit": true,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 3,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": true
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 3,
+      "men": 3000,
+      "burning": true,
+      "noAffordableHex": true,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 3,
+      "men": 2999,
+      "burning": true,
+      "noAffordableHex": false,
+      "noProvinceExit": false,
+      "withdraw": false
+    },
+    {
+      "rule": "Native AI trapped fire / no province exit flight gate",
+      "entry": "0x2B18A",
+      "side": 3,
+      "men": 99,
+      "burning": false,
+      "noAffordableHex": true,
+      "noProvinceExit": true,
+      "withdraw": false
+    },
+    {
+      "rule": "Native human simultaneous dispatcher accepts occupied jungle as well as plain",
+      "entry": "0x265AE",
+      "terrain": 0,
+      "mode": 2,
+      "accepted": true,
+      "calls": [
+        {
+          "routine": "0x26072",
+          "target": "0x9100",
+          "q": 7,
+          "r": 4
+        }
+      ]
+    },
+    {
+      "rule": "Native human simultaneous dispatcher accepts occupied jungle as well as plain",
+      "entry": "0x265AE",
+      "terrain": 1,
+      "mode": 2,
+      "accepted": true,
+      "calls": [
+        {
+          "routine": "0x26072",
+          "target": "0x9100",
+          "q": 7,
+          "r": 4
+        }
+      ]
+    },
+    {
+      "rule": "Native simultaneous handler performs both exchanges against jungle target",
+      "entry": "0x26072",
+      "terrain": 0,
+      "enemyFlags": 132,
+      "actualEligibilityAndLookup": true,
+      "calls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "flashCalls": [
+        [
+          6,
+          7,
+          7,
+          6
+        ],
+        [
+          7,
+          7,
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "rule": "Native simultaneous handler performs both exchanges against jungle target",
+      "entry": "0x26072",
+      "terrain": 0,
+      "enemyFlags": 148,
+      "actualEligibilityAndLookup": true,
+      "calls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "flashCalls": [
+        [
+          6,
+          7,
+          7,
+          6
+        ],
+        [
+          7,
+          7,
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "rule": "Native simultaneous handler performs both exchanges against jungle target",
+      "entry": "0x26072",
+      "terrain": 1,
+      "enemyFlags": 132,
+      "actualEligibilityAndLookup": true,
+      "calls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "flashCalls": [
+        [
+          6,
+          7,
+          7,
+          6
+        ],
+        [
+          7,
+          7,
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "rule": "Native simultaneous handler performs both exchanges against jungle target",
+      "entry": "0x26072",
+      "terrain": 1,
+      "enemyFlags": 148,
+      "actualEligibilityAndLookup": true,
+      "calls": [
+        {
+          "attacker": "0x9000",
+          "defender": "0x9200",
+          "factor": 2
+        },
+        {
+          "attacker": "0x9100",
+          "defender": "0x9200",
+          "factor": 2
+        }
+      ],
+      "flashCalls": [
+        [
+          6,
+          7,
+          7,
+          6
+        ],
+        [
+          7,
+          7,
+          7,
+          6
+        ]
+      ]
+    }
+  ],
+  "limits": [
+    "Bounded Unicorn branches with controlled input, rendering, occupancy, army status and RNG hooks; no full DOS simulation.",
+    "Flight witnesses establish local low-men threat and fire branches; original strategic whole-army withdrawal flags remain untraced.",
+    "The remaster intentionally excludes concealed hostile positions from AI threat assessment."
+  ],
+  "interpretationCorrection": "v52 native controller witnesses prove that recorded cell-bit changes do not spend helper, target or ambusher own daily orders. See native-turn-witness-v52.json; raw older cell-flag observations are retained."
+}

@@ -43,6 +43,7 @@ export function disaster(game,p,type,report){
  else if(type==='typhoon'){const control=p.flood;p.loyalty=percent(p.loyalty,90+nativeRandom(game,10));p.land=percent(p.land,60+Math.floor(control/3)+nativeRandom(game,8));p.flood=percent(control,60+nativeRandom(game,21));}
  else if(type==='uprising'){p.loyalty=percent(p.loyalty,10+nativeRandom(game,21));p.land=percent(p.land,50+nativeRandom(game,21));p.gold=percent(p.gold,50+nativeRandom(game,21));p.food=Math.floor(p.food/2)+Math.floor(p.food/100)*nativeRandom(game,21);disasterTroops(game,p,60,{range:21});p.population=Math.min(3000000,(percent(Math.floor(p.population/100),60+nativeRandom(game,21))+1)*100);if(p.neighbors.length&&before.people>p.population){const destination=game.province(p.neighbors[nativeRandom(game,p.neighbors.length)]),previous=provinceSnapshot(game,destination);destination.population=Math.min(3000000,destination.population+before.people-p.population);refugees={destination,previous};}}
  else if(type==='rebellion'){
+  if((game.s.wars||[]).some(b=>[b.source,b.target,...b.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(p.id)))return;
   const ids=[...p.officers],governor=p.governor,oldOwner=p.owner,general=game.officer(governor);
   let slot=Array.from({length:16},(_,i)=>i).find(id=>!game.s.rulers.some(r=>r.id===id));
   if(slot===undefined)slot=game.s.rulers.find(r=>!game.s.provinces.some(q=>q.owner===r.id)&&!game.s.roaming?.some(p=>p.owner===r.id)&&!game.s.captiveDecisions?.some(c=>c.formerOwner===r.id&&c.officer===r.leader)&&!game.s.humanRulers?.includes(r.id))?.id;
@@ -144,7 +145,7 @@ export function runMonthlyEvents(game,report,{initial=false}={}){
    if(s.month<=6&&chance<.018)type=game.random()<.5?'locust':'epidemic';
    else if(s.month>=4&&s.month<=6&&chance<.018+(game.rules.floodChance??.12)*(1-p.flood/100))type=typhoonRegion(p)&&(!floodRegion(p)||game.random()>=.8)?'typhoon':floodRegion(p)?'flood':null;
    else if(ruler&&governor&&!(s.wars||[]).some(b=>b.target===p.id)&&p.loyalty<35&&ruler.trust<50&&governor.charm<70&&chance<(35-p.loyalty)/350)type='uprising';
-   else if(ruler&&governor&&!(s.wars||[]).some(b=>[b.source,b.target].includes(p.id))&&governor.id!==ruler.leader&&governor.loyalty<20&&chance<(20-governor.loyalty)/500)type='rebellion';
+   else if(ruler&&governor&&!(s.wars||[]).some(b=>[b.source,b.target,...b.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(p.id))&&governor.id!==ruler.leader&&governor.loyalty<20&&chance<(20-governor.loyalty)/500)type='rebellion';
    if(type)disaster(game,p,type,report);
   }
  }

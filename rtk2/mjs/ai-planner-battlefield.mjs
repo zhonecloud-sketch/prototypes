@@ -1,5 +1,5 @@
-import {living,visibleUnit,reachable,distance,at,jointAttackers,act,reinforcementOptions,placementCells,blindAttackOrder,rememberVisible} from './battle.mjs?v=49';
-import {aiBattle,armyPower,safeFireTarget,planBattleRoute,palaceReturnOrder} from './ai-battle.mjs?v=49';
+import {living,visibleUnit,reachable,distance,at,jointAttackers,act,reinforcementOptions,placementCells,blindAttackOrder,rememberVisible} from './battle.mjs?v=52';
+import {aiBattle,armyPower,safeFireTarget,planBattleRoute,palaceReturnOrder,aiFlightOrder,nextAIUnit} from './ai-battle.mjs?v=52';
 import {COMBAT_DIVISORS} from './native-combat.mjs?v=44';
 import {forkAI,observationSeed,weighted} from './ai-simulation.mjs?v=44';
 export function battlefieldObservation(g){const b=g.s.battle;const units=b.units.filter(u=>u.side===b.side||visibleUnit(b,u,b.side)),keys=['phase','side','attacker','defender','source','target','firstSide','day','completedDays','weather','wind','windStrength','terrain','fire','palace','food','gold','entryDirection','leaders','rulers','challengeWar','challengeIssued','deployment','lastKnown'];return {...structuredClone(Object.fromEntries(keys.map(k=>[k,b[k]]))),lastKnown:{[b.side]:structuredClone(b.lastKnown?.[b.side]||{}),[b.side==='attack'?'defend':'attack']:{}},units:structuredClone(units),messages:[],events:[],eventSerial:0,actionSerial:0,outcome:null};}
@@ -21,6 +21,7 @@ function clearUncertainOutcome(b,side,unknown){if(unknown&&b.outcome?.winner===s
 function value(b,side,root,weights){return (b.outcome?(b.outcome.winner===side?10000:-10000):0)+weighted(battlefieldFeatures(b,side,root),weights);}
 export function planBattlefield(g,profile){
  const original=g.s.battle;if(!original||original.phase!=='battle'||original.challenge||original.outcome||original.suspended)return null;
+ const flight=aiFlightOrder(forkAI(g),nextAIUnit(g));if(flight){const {action,...args}=flight;return {domain:'battlefield',order:{domain:'battlefield',action,args},alternatives:[],reason:'Use the native local withdrawal rule before risking a depleted army.'};}
  const returning=palaceReturnOrder(original);if(returning){const {action,...args}=returning;return {domain:'battlefield',order:{domain:'battlefield',action,args},alternatives:[],reason:'Return a ready defender to the empty, dry palace before other orders.'};}
  const root=battlefieldObservation(g),side=root.side,unknown=original.units.some(u=>u.side!==side&&!visibleUnit(original,u,side)),base=forkAI(g,observationSeed(root));base.s.battle=root;const weights=profile.weights,before=value(root,side,root,weights),ranked=[];
  if(!living(root).some(u=>u.side===side&&u.placed&&!u.ordered))return {domain:'battlefield',order:{domain:'battlefield',action:'end',args:{}},alternatives:[],reason:'All available daily orders are complete.'};

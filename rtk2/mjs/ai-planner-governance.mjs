@@ -23,7 +23,7 @@ export function governanceCandidates(g,weights){
   }
   if(ready.some(o=>o.id===p.governor))for(const o of p.officers.map(id=>g.officer(id)).filter(o=>o.id!==g.ruler().leader&&o.loyalty<95)){const amount=Math.min(100,Math.max(0,p.gold-100));if(amount>0)add('rewardGold',{province:p.id,officer:o.id,amount},weights.loyalty*(100-o.loyalty)/100);}
   const invaders=ready.filter(o=>o.soldiers>0).sort((a,b)=>power(b)-power(a)).slice(0,Math.min(5,p.officers.length-1)),strength=invaders.reduce((n,o)=>n+power(o),0),food=invasionFoodPlan(invaders.reduce((n,o)=>n+o.soldiers,0),p.food,g.rules.ai.governance);
-  if(g.aiFor().aggression>0&&invaders.length&&food!==null)for(const target of p.neighbors.map(id=>g.province(id)).filter(q=>q.owner!==255&&q.owner!==owner&&!g.ruler().alliances.includes(q.owner)&&!g.s.wars.some(b=>[b.source,b.target].includes(q.id)))){const enemy=army(g,target);if(strength>enemy*(1.8-g.aiFor().aggression/200))add('attack',{province:p.id,target:target.id,officers:invaders.map(o=>o.id),food},weights.territory*(strength/Math.max(1,enemy)-1));}
+  if(g.aiFor().aggression>0&&invaders.length&&food!==null)for(const target of p.neighbors.map(id=>g.province(id)).filter(q=>q.owner!==255&&q.owner!==owner&&!g.ruler().alliances.includes(q.owner)&&!g.s.wars.some(b=>[b.source,b.target,...b.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(q.id)))){const enemy=army(g,target);if(strength>enemy*(1.8-g.aiFor().aggression/200))add('attack',{province:p.id,target:target.id,officers:invaders.map(o=>o.id),food},weights.territory*(strength/Math.max(1,enemy)-1));}
  }return candidates.sort((a,b)=>b.hint-a.hint);
 }
 export function planGovernance(g,profile){

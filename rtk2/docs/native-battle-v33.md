@@ -16,7 +16,7 @@ Execution at `0x9AFA` invokes ruler removal/succession; `0x9B81` writes 100 to t
 
 ## Automatic ambush
 
-`0x24938` checks three cells selected by the direction table at DS `0xB5FE`. These are hexes in the entering unit's forward arc, **not all eight surrounding square cells**. `0x239D6` tests for an occupied hostile jungle cell. `0x247C6` computes the ambush; `0x2488D` protects targets with INT ≥90. The ambusher spends neither its daily order nor mobility. Movement, taunt and charge landing use the same trigger geometry.
+`0x24938` checks three cells selected by the direction table at DS `0xB5FE`. These are hexes in the entering unit's forward arc, **not all eight surrounding square cells**. `0x239D6` tests for an occupied hostile jungle cell. `0x247C6` computes the ambush; `0x2488D` protects targets with INT ≥90. The v50 audit corrects the earlier readiness interpretation: an ambush spends the ambusher's daily order but retains mobility, even on INT90 evasion. An already-ordered unit can still ambush again. Movement, taunt and charge landing use the same trigger geometry. See [native-combat-v50.md](native-combat-v50.md).
 
 Let `P = 3 × (WAR + Lu Bu bonus 20) + training + min(100, floor(100 × weapons / men))`. For the moving unit's terrain divisor `T` from v32 and integer roll `R` in 0–299:
 

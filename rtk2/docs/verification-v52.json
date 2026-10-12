@@ -1,0 +1,61 @@
+{
+  "version": 52,
+  "engineFingerprint": "10b195aa9e3a51f80e78bdbde082acdbce93ff978717277a1097736ca0e8726f",
+  "checks": {
+    "gameplay": {
+      "command": "npm test",
+      "passedGroups": 479,
+      "exitCode": 0
+    },
+    "interfaceAndLayout": {
+      "command": "npm run test:ui",
+      "passedGroups": 77,
+      "exitCode": 0,
+      "interfaceGroups": 70,
+      "layoutGroups": 7,
+      "note": "Includes prior-order simultaneous helpers, each participant sound/loss message, Fireball cue, HUD pause and Charge with 120ms frame scheduling."
+    },
+    "nativeTurnController": {
+      "command": "python tools/verify-native-turn-v52.py /private/main.exe /tmp/native-turn-witness-v52.json",
+      "boundedCases": 32,
+      "exitCode": 0,
+      "report": "native-turn-witness-v52.json"
+    },
+    "focusedBattle": {
+      "groups": 6,
+      "command": "node tests/v52-tests.mjs",
+      "exitCode": 0
+    },
+    "audioReliability": {
+      "groups": 6,
+      "command": "node tests/audio-v52-tests.mjs",
+      "exitCode": 0
+    },
+    "mediaProvenance": {
+      "groups": 8,
+      "command": "node tests/audio-v50-tests.mjs",
+      "exitCode": 0
+    },
+    "sourceWhitespace": {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  },
+  "training": {
+    "runs": 0,
+    "renewals": 0,
+    "profilesModified": false,
+    "policy": "Explicit instruction required. Archived profiles retain old fingerprints; incompatible selections use Legacy."
+  },
+  "music": {
+    "council": "assets/council-music.mp3",
+    "battle": "assets/battle-music-v17.mp3",
+    "triumph": "assets/triumph-music.mp3"
+  },
+  "limits": [
+    "No physical browser or handset rendering/listening verification.",
+    "Web Audio reliability tests use controlled audio-context doubles; the mounted interface tests use HTML audio doubles.",
+    "Native witnesses retain real eligibility and controller activation but bound presentation, input, combat arithmetic and outcome calls; not a complete DOS playthrough."
+  ],
+  "supersedes": "v50 interpretation of cell-bit changes as own daily orders."
+}

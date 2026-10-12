@@ -1,3 +1,4 @@
+import {unitOwner} from './battle.mjs?v=52';
 import {hireCapacity} from './province-rules.mjs?v=49';
 import {eligibleRoyalChildren} from './ruler-family.mjs?v=44';
 
@@ -63,9 +64,9 @@ export function orderUnavailable(g,p,id){
  if(id==='relief'&&p.food<1)return 'This province has no food to give.';
  if(['move','war'].includes(id)){
   const neighbors=p.neighbors.map(id=>g.province(id));
-  if(id==='move'&&!neighbors.some(q=>[255,r.id].includes(q.owner)&&!s.wars.some(b=>b.target===q.id)))return 'No adjacent friendly or empty province is available.';
+  if(id==='move'&&!neighbors.some(q=>[255,r.id].includes(q.owner)&&!s.wars.some(b=>b.target===q.id||b.units.some(u=>u.fled&&u.retreatProvince===q.id&&unitOwner(b,u)!==r.id))))return 'No adjacent friendly or empty province is available.';
   if(id==='war'){
-   if(!neighbors.some(q=>![255,r.id].includes(q.owner)&&!r.alliances.includes(q.owner)))return 'There is no adjacent enemy province you can invade.';
+   if(!neighbors.some(q=>![255,r.id].includes(q.owner)&&!r.alliances.includes(q.owner)&&!s.wars.some(b=>[b.source,b.target,...b.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(q.id))))return 'There is no adjacent enemy province you can invade.';
    if(p.officers.length<2||!available.some(id=>g.officer(id).soldiers>0))return 'Choose an available army and leave at least one general to govern.';
    if(p.food<1)return 'This province has no food to take to battle.';
   }

@@ -1,0 +1,90 @@
+{
+  "version": 50,
+  "engineFingerprint": "12c76df151efa75809bd3dad8d921b29b3bd8dd5cb434b50ee25faf1a0ce4ee9",
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "checks": {
+    "fullEngineSuite": {
+      "command": "npm test",
+      "passedGroups": 465,
+      "exitCode": 0,
+      "note": "Full run after concealed-jungle correction; final audio-only integration followed and its eight-group suite passed separately."
+    },
+    "finalPresentationSuite": {
+      "command": "node tests/v50-presentation-tests.mjs",
+      "passedGroups": 4,
+      "exitCode": 0
+    },
+    "mountedInterface": {
+      "command": "node tests/ui-tests.mjs",
+      "passedGroups": 70,
+      "exitCode": 0,
+      "note": "Final run includes coordinate selection of concealed jungle simultaneous target, sequential animations and all loss messages."
+    },
+    "layout": {
+      "command": "node tests/mobile-layout-tests.mjs",
+      "passedGroups": 7,
+      "exitCode": 0
+    },
+    "nativeAudio": {
+      "checks": 72,
+      "effects": 16,
+      "acceptedMusicIds": 21,
+      "report": "native-audio-v50.json"
+    },
+    "nativeReward": {
+      "checksAndCases": 29,
+      "report": "native-reward-v50.json",
+      "note": "5 static checks, 6 candidate-list witnesses, 6 complete human command witnesses, 12 complete AI witnesses"
+    },
+    "nativeCombat": {
+      "boundedExecutableCases": 60,
+      "report": "native-combat-v50.json"
+    },
+    "newAudioMedia": {
+      "mp3FilesDecoded": 37,
+      "errors": 0,
+      "note": "Final driver-rendered media also pass non-silence and duration checks; original 5 additional remaster order cues retained."
+    },
+    "strictAICheckpoints": {
+      "scenarios": 6,
+      "actionsEach": 6000,
+      "passed": true,
+      "note": "Historical pre-resume v50 check; not rerun as training."
+    },
+    "sourceWhitespace": {
+      "command": "git diff --check",
+      "passed": true
+    },
+    "finalAudioSuite": {
+      "command": "node tests/audio-v50-tests.mjs",
+      "passedGroups": 8,
+      "exitCode": 0
+    },
+    "nativeDriverAudio": {
+      "report": "native-opl-driver-v50.json",
+      "musicCount": 21,
+      "effectCount": 16,
+      "registerWrites": 169674,
+      "decodedNonSilentCompleteDurationFiles": 37,
+      "durationToleranceSeconds": 0.03
+    }
+  },
+  "training": {
+    "governance": "ai-training-v50-governance.json",
+    "battlefield": "ai-training-v50-battlefield.json",
+    "conquest": "ai-training-v50-conquest.json",
+    "scope": "Archived pre-resume runs. No new AI training or renewal ran in this update; all older profiles retain their original fingerprint and fall back to Legacy on mismatch."
+  },
+  "limits": [
+    "Browser/handset appearance and audible playback are unverified; mounted DOM/Canvas and media decoding checks passed.",
+    "Native hardware waveform equality and full FM loop boundaries are not asserted; looping streams use bounded playback windows.",
+    "Native effect 15 gameplay caller remains unresolved.",
+    "Local withdrawal witnesses do not establish all original strategic AI decisions."
+  ],
+  "resumed": {
+    "aiTrainingRuns": 0,
+    "dosReferencesTracked": 0,
+    "concealedJungleSimultaneous": true,
+    "nativeAudioRecovered": true
+  }
+}
