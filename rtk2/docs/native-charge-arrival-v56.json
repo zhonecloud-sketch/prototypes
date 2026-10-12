@@ -1,0 +1,2093 @@
+{
+  "originalSHA256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "cases": [
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        5,
+        5
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            5,
+            5
+          ],
+          "ambusher": [
+            4,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            5
+          ],
+          "ambusher": [
+            5,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            5
+          ],
+          "ambusher": [
+            4,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            5,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            6,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            7,
+            6
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            7,
+            5
+          ],
+          "ambusher": [
+            7,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            5
+          ],
+          "ambusher": [
+            8,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            5
+          ],
+          "ambusher": [
+            8,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            4,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            4,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        4
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            6,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            7,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            8,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            7,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            8,
+            4
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            5,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            6,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            5,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        6
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            7,
+            6
+          ],
+          "ambusher": [
+            6,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            6
+          ],
+          "ambusher": [
+            7,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            6
+          ],
+          "ambusher": [
+            8,
+            7
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            8,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            9,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            9,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            6,
+            5
+          ],
+          "ambusher": [
+            5,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            5
+          ],
+          "ambusher": [
+            5,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            5
+          ],
+          "ambusher": [
+            6,
+            4
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            6,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            7,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            8,
+            4
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "occupation",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        8,
+        5
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "ambushVictim": [
+            8,
+            5
+          ],
+          "ambusher": [
+            9,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            5
+          ],
+          "ambusher": [
+            8,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            5
+          ],
+          "ambusher": [
+            9,
+            4
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        4,
+        6
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            4,
+            6
+          ],
+          "ambusher": [
+            3,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            4,
+            6
+          ],
+          "ambusher": [
+            4,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            4,
+            6
+          ],
+          "ambusher": [
+            3,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        7
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            6,
+            7
+          ],
+          "ambusher": [
+            5,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            7
+          ],
+          "ambusher": [
+            6,
+            8
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            7
+          ],
+          "ambusher": [
+            7,
+            7
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            8,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            9,
+            6
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            9,
+            5
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        4,
+        4
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            4,
+            4
+          ],
+          "ambusher": [
+            3,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            4,
+            4
+          ],
+          "ambusher": [
+            3,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            4,
+            4
+          ],
+          "ambusher": [
+            4,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        3
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            6,
+            3
+          ],
+          "ambusher": [
+            5,
+            2
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            3
+          ],
+          "ambusher": [
+            6,
+            2
+          ]
+        },
+        {
+          "ambushVictim": [
+            6,
+            3
+          ],
+          "ambusher": [
+            7,
+            2
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        8,
+        4
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            8,
+            4
+          ],
+          "ambusher": [
+            9,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            4
+          ],
+          "ambusher": [
+            8,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            8,
+            4
+          ],
+          "ambusher": [
+            9,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        5,
+        6
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            5,
+            6
+          ],
+          "ambusher": [
+            4,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            6
+          ],
+          "ambusher": [
+            5,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            6
+          ],
+          "ambusher": [
+            4,
+            6
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        7
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            7,
+            7
+          ],
+          "ambusher": [
+            6,
+            8
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            7
+          ],
+          "ambusher": [
+            7,
+            8
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            7
+          ],
+          "ambusher": [
+            8,
+            8
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        9,
+        6
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            9,
+            6
+          ],
+          "ambusher": [
+            9,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            9,
+            6
+          ],
+          "ambusher": [
+            10,
+            7
+          ]
+        },
+        {
+          "ambushVictim": [
+            9,
+            6
+          ],
+          "ambusher": [
+            10,
+            6
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            4,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            4,
+            4
+          ]
+        },
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            5,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        3
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            7,
+            3
+          ],
+          "ambusher": [
+            6,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            3
+          ],
+          "ambusher": [
+            7,
+            2
+          ]
+        },
+        {
+          "ambushVictim": [
+            7,
+            3
+          ],
+          "ambusher": [
+            8,
+            3
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "breakthrough",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        9,
+        4
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        },
+        {
+          "ambushVictim": [
+            9,
+            4
+          ],
+          "ambusher": [
+            10,
+            5
+          ]
+        },
+        {
+          "ambushVictim": [
+            9,
+            4
+          ],
+          "ambusher": [
+            9,
+            3
+          ]
+        },
+        {
+          "ambushVictim": [
+            9,
+            4
+          ],
+          "ambusher": [
+            10,
+            4
+          ]
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "failed-chance",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        },
+        {
+          "chance": 100
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 0,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 1,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 2,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 3,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 4,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    },
+    {
+      "test": "NATIVE-CHARGE-ARRIVAL",
+      "branch": "blocked",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "nativeDirection": 5,
+      "calls": [
+        {
+          "exchange": [
+            "0x9000",
+            "0x9100"
+          ],
+          "factor": 1
+        }
+      ],
+      "limits": "Original full charge controller, relocation, cell occupancy transfer, six-direction geometry, forward ambush arc, jungle/hostile lookup execute unchanged. Combat damage/capture-result body, drawing, RNG, casualty body hooked; no strategic AI charge selection claim."
+    }
+  ]
+}

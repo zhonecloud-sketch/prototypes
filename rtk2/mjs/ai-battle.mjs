@@ -1,7 +1,7 @@
-import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=54';
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions} from './battle.mjs?v=54';
-import {provinceDirection} from './geography.mjs?v=54';
-import {DEFAULT_AI} from './ai-parameters.mjs?v=54';
+import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=56';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions} from './battle.mjs?v=56';
+import {provinceDirection} from './geography.mjs?v=56';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=56';
 // Plan across the whole field, independent of today's mobility. Enemy contact
 // ends a route, just as it does in reachable(); mountains, fire and occupied
 // hexes cannot be crossed. This permits detours that initially increase distance.

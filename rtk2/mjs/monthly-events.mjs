@@ -1,7 +1,7 @@
-import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=54';
-import {zeroImpact,provinceSnapshot,provinceImpact,withImpact,cleanEventLanguage} from './event-impact.mjs?v=54';
-import {retireRulerFamily} from './ruler-family.mjs?v=54';
-import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=54';
+import {replaceRemovedRuler} from './ruler-lifecycle.mjs?v=56';
+import {zeroImpact,provinceSnapshot,provinceImpact,withImpact,cleanEventLanguage} from './event-impact.mjs?v=56';
+import {retireRulerFamily} from './ruler-family.mjs?v=56';
+import {processArrivals,protectedService} from './campaign-fidelity.mjs?v=56';
 // Event categories and seasons follow the RTK II manual, Game Flow pp. 45–47.
 // Disaster timing/spread remain remaster rules; four loss branches use the supplied DOS formulas (v30).
 export const EVENT_TYPES=['locust','uprising','typhoon','flood','epidemic','meteor','war','occupation','tiger','death','chain','medical','council','history','clan','heir'];

@@ -1,0 +1,53 @@
+{
+  "release": 55,
+  "suppliedFilesUnmodified": true,
+  "decodedWith": "ffmpeg",
+  "physicalListeningVerified": false,
+  "media": [
+    {
+      "file": "freesound_community-sword-battle-jingle-loop-96983.mp3",
+      "sha256": "d3a4bacc7831431199ea668c60fd4412e6c8bb28e577b90e7ffcdc1fecc18bd7",
+      "bytes": 46560,
+      "duration": 2.328,
+      "stream": {
+        "codec_name": "mp3",
+        "sample_rate": "24000",
+        "channels": 2
+      },
+      "decodedMeanDb": -15.4,
+      "decodedPeakDb": 0.0
+    },
+    {
+      "file": "audiomass-charge_scream.mp3",
+      "sha256": "ba386c0e4841a145deb32073abb7404d671ee70f6144133bf17122f36e248b38",
+      "bytes": 57678,
+      "duration": 3.604875,
+      "stream": {
+        "codec_name": "mp3",
+        "sample_rate": "44100",
+        "channels": 2
+      },
+      "decodedMeanDb": -21.0,
+      "decodedPeakDb": -5.1
+    },
+    {
+      "file": "audiomass-horse_gallop.mp3",
+      "sha256": "3ff1a96b37ddfe94ac0e966234dc27c4faa88758de17b124d43a7e6bee40ac82",
+      "bytes": 45557,
+      "duration": 2.847313,
+      "stream": {
+        "codec_name": "mp3",
+        "sample_rate": "44100",
+        "channels": 2
+      },
+      "decodedMeanDb": -34.7,
+      "decodedPeakDb": -5.9
+    }
+  ],
+  "playback": {
+    "sword": "one clip per animated exchange (cycles2\u20138 silent), one order fallback; gain0.35",
+    "charge": "one cry per order (no flash hit sounds); gain0.5",
+    "courier": "movement-only loop; gain0.5",
+    "music": "retained v54 recordings"
+  }
+}

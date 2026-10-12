@@ -1161,3 +1161,7 @@ See [v53 fixes](fixes-v53.html), [bug-to-test ledger](bug-validation.md), [pendi
 ## V54 deployment and native-conformance corrections
 
 [V54 findings](fixes-v54.html) supersede the earlier interpretation of native10 as an opening/keypress cue. Ordinary governance selections are silent; native10/14 are failure/success feedback in the verified contexts. Captured human rulers still get Set free/Behead after losing their last province, following the user's clarified native-conformance instruction. Simultaneous losses already summed correctly, but helper roster order did not match the original direction scan; that order is corrected and each inflicted contribution is now shown. Deployment fields are read-only and compact. A transient turn cue now precedes highlight/action instead of being queued after combat. No AI training ran.
+
+## V55 audio selection
+
+Normal/Simultaneous now use the user's Pixabay sword recording; Charge uses the user's AudioMass-edited Pixabay cry once per order; courier motion uses the user's AudioMass-edited Mixkit gallop. This is an explicit user-selected departure from native sounds. Original remaster BGM and unrelated native effects are retained. See [audio rights](audio-licenses-v55.md), [fixes](fixes-v55.html) and [validation](verification-v55.json). No training ran.

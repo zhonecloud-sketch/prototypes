@@ -1,5 +1,5 @@
-import {COMBAT_DIVISORS} from './native-combat.mjs?v=54';
-import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=54';
+import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
+import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=56';
 export const activeBattleUnit=(battle,unit)=>battle?.phase==='battle'&&!battle.outcome&&!battle.suspended&&battle.selected===unit.id&&unit.side===battle.side&&unit.placed&&!unit.ordered&&!unit.fled&&!unit.routed&&unit.soldiers>0;
 // Native 0x250F8 alternates eight source/target flashes per exchange.
 export const combatAnimationCycles=action=>8*(action?.type==='charge'?Math.max(1,Math.min(10,action.exchanges??10)):1);
@@ -46,7 +46,13 @@ export function battleStatusMessages(battle,serial,officerName,human,announceTur
  const turn=id=>({text:`${officerName(id)}’s turn`}),messages=[];
  const action=battle.lastAction;
  if(announceTurns&&action?.messageSerial>serial&&action.type!=='place')messages.push(turn(action.turnUnit??action.unit));
- for(const m of battle.messages||[])if(m.serial>serial){if(announceTurns&&m.turnUnit!==undefined)messages.push(turn(m.turnUnit));if(action?.type==='simultaneous'&&action.lossRows?.length&&m.text.includes('initiated a simultaneous attack')){messages.push({text:m.text.split(' Each unit: ')[0]});if(action.exchangeRows?.length){const total=action.exchangeRows.reduce((n,row)=>n+row.loss,0);messages.push({text:`${officerName(action.target)}: ${action.exchangeRows.map(row=>officerName(row.unit)+' '+row.loss.toLocaleString()).join(' + ')} = ${total.toLocaleString()} men lost.`});}for(const row of action.lossRows)messages.push({text:`${officerName(row.unit)}: ${row.loss.toLocaleString()} men lost (${row.side==='attack'?'attacker':'defender'}).`});}else messages.push({text:m.text});}
+ const fresh=(battle.messages||[]).filter(m=>m.serial>serial),jointSummary=action?.type==='simultaneous'&&action.messageSerial>serial&&action.lossRows?.length&&fresh.some(m=>m.serial>=action.messageSerial&&m.text.includes('initiated a simultaneous attack'));
+ if(jointSummary){
+  const total=side=>action.lossRows.filter(row=>row.side===side).reduce((n,row)=>n+row.loss,0);
+  messages.push({text:`Simultaneous attack: Attacker lost ${total('attack').toLocaleString()} men; Defender lost ${total('defend').toLocaleString()} men.`});
+  for(const row of action.lossRows)messages.push({text:`${officerName(row.unit)}: ${row.loss.toLocaleString()} men lost (${row.side==='attack'?'attacker':'defender'}).`});
+ }
+ for(const m of fresh){if(announceTurns&&m.turnUnit!==undefined)messages.push(turn(m.turnUnit));if(jointSummary&&m.serial>=action.messageSerial&&m.text.includes('initiated a simultaneous attack'))continue;messages.push({text:m.text});}
  const u=battle.units.find(u=>u.id===battle.selected&&u.side===battle.side&&u.placed&&!u.ordered&&!u.fled&&!u.routed&&u.soldiers>0);
  if(announceTurns&&human&&u&&battle.phase==='battle'&&!battle.outcome&&!battle.suspended&&messages.at(-1)?.text===`${battle.side==='attack'?'Attacker':'Defender'}’s turn`)messages.push(turn(u.id));
  return messages;

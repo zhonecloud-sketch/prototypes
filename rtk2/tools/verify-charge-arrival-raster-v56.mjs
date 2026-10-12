@@ -1,0 +1,21 @@
+// Run: node SCRIPT.mjs APP_ROOT NATIVE_VECTORS.json OUTPUT.json [DEPENDENCY_PROJECT_ROOT]
+// Install project devDependencies first. Uses JSDOM + native Canvas; no browser/UI layout claim.
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import path from 'node:path';import {pathToFileURL} from 'node:url';import {createRequire} from 'node:module';
+const app=path.resolve(process.argv[2]||new URL('../',import.meta.url).pathname),require=createRequire(path.join(process.argv[5]?path.resolve(process.argv[5]):app,'package.json'));
+const {JSDOM}=require('jsdom'),canvasLib=require('@napi-rs/canvas');
+const {act,direction,distance}=await import(pathToFileURL(path.join(app,'mjs/battle.mjs')));
+const {createRasterWorld}=await import(pathToFileURL(path.join(app,'mjs/raster-world.mjs')));
+const dom=new JSDOM('<div id="world"><canvas id="scene"></canvas><div id="labels"></div></div>',{pretendToBeVisual:true});globalThis.document=dom.window.document;globalThis.ResizeObserver=class{constructor(cb){this.cb=cb;}observe(){this.cb();}disconnect(){}};
+dom.window.HTMLCanvasElement.prototype.getContext=function(){this.backing??=canvasLib.createCanvas(this.width,this.height);return this.backing.getContext('2d');};globalThis.devicePixelRatio=1;globalThis.matchMedia=()=>({matches:false});const im=canvasLib.createCanvas(64,64),assets={relief:im,army:im,capitals:im,battlefield01:im},vectors=JSON.parse(fs.readFileSync(process.argv[3]||path.join(app,'docs/native-charge-arrival-v56.json'))).cases.filter(v=>['occupation','breakthrough'].includes(v.branch)),rows=[];
+for(const v of vectors){
+ let time=0,frames=[];globalThis.performance={now:()=>time};globalThis.requestAnimationFrame=fn=>{frames.push(fn);};const parent=document.getElementById('world');parent.getBoundingClientRect=()=>({width:320,height:180});const canvas=document.getElementById('scene');canvas.getContext=()=>canvasLib.createCanvas(320,180).getContext('2d');
+ const b={phase:'battle',side:'attack',selected:0,target:1,day:1,eventSerial:0,actionSerial:0,messages:[],events:[],terrain:Array(156).fill(0),fire:{},weather:'sunny',units:[],attacker:0,defender:1,rulers:{attack:99,defend:98},leaders:{attack:0,defend:2},palace:{q:12,r:11},food:{attack:10000,defend:10000}};
+ const make=(id,side,p,soldiers=5000)=>({id,side,q:p[0],r:p[1],soldiers,weapons:soldiers,war:100,int:80,training:80,mobility:7,placed:true,ordered:false,routed:false,fled:false,captured:false});const u=make(0,'attack',v.start),target=make(1,'defend',v.target,v.branch==='occupation'?1:5000);b.units.push(u,target);const nativeDirection=[3,4,5,0,1,2][v.nativeDirection],dest=v.branch==='occupation'?target:direction(target.q,target.r,nativeDirection);
+ for(let i=0;i<6;i++){const p=direction(dest.q,dest.r,i);if([u,target].some(x=>distance(x,p)===0))continue;const enemy=make(i+2,'defend',[p.q,p.r]);b.units.push(enemy);b.terrain[p.r*13+p.q]=1;}
+ let calls=0;const g={s:{battle:b,difficulty:1,provinces:[],settings:{quality:'low'},paused:false,selected:1},int:()=>1,random:()=>{calls++;return .5;},isHuman:()=>false,battleHuman:()=>false,province:()=>({id:1}),officer:id=>({name:'General'+id}),ruler:id=>({name:'Ruler'+id})},cues=[],seen=[];const world=createRasterWorld(canvas,document.getElementById('labels'),g,{land:[],rivers:[]},[],assets,'province',()=>{},()=>{},{onCombatCue:(a,cycle)=>cues.push([a.type,a.unit,cycle])});
+ act(g,'charge',{unit:0,target:1});const state=JSON.stringify(b.units),rng=calls;world.update();let done=false;world.afterCombat(()=>{done=true;});
+ while(!done&&time<18000){time+=40;const todo=frames;frames=[];for(const fn of todo)fn(time);const animation=world.stats.combatAnimation;if(animation&&seen.at(-1)?.unit!==animation.units[0])seen.push({type:animation.type,unit:animation.units[0]});}
+ assert(done);assert.deepEqual(seen.map(x=>x.type),['charge','ambush','ambush','ambush']);assert.equal(cues.filter(x=>x[0]==='ambush').length,24);assert.equal(JSON.stringify(b.units),state);assert.equal(calls,rng);world.destroy();rows.push({branch:v.branch,start:v.start,nativeDirection:v.nativeDirection,animationSequence:seen,ambushCues:24,gameplayRNGNotReplayed:true,pass:true});
+}
+fs.writeFileSync(process.argv[4]||'/tmp/charge-arrival-raster-v56.json',JSON.stringify(rows,null,2)+'\n');console.log(rows.length,'mounted raster queue cases passed');

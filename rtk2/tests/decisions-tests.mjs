@@ -23,9 +23,9 @@ test('With an empty escape province, native WAR/training/mobility distinguish st
  const strong=win(true,true),weak=win(true,false);assert.equal(strong.g.s.captiveDecisions.length,0);assert.equal(weak.g.s.captiveDecisions.length,weak.ids.length);
  assert(strong.ids.every(id=>strong.g.s.provinces.some(p=>p.id!==8&&p.officers.includes(id))));check(strong.g);check(weak.g);
 });
-test('Recruitment refusal leaves a choice; beheading removes an officer permanently and decisions cannot repeat',()=>{
- const {g,ids}=win(),id=ids.find(id=>g.s.captiveDecisions.find(c=>c.officer===id).role!=='Ruler');g.random=()=>.999;assert.equal(g.decideCaptive(id,'recruit'),false);assert(g.officer(id).prisonerOf!==undefined);assert.throws(()=>g.decideCaptive(id,'recruit'),/already refused/);
- assert(g.decideCaptive(id,'behead'));assert(g.officer(id).dead);assert(!g.s.provinces.some(p=>['officers','hidden','unclaimed'].some(k=>p[k].includes(id))));assert.throws(()=>g.decideCaptive(id,'free'),/already/);check(g);
+test('Native ordinary captive recruitment completes once; beheading another captive removes membership permanently',()=>{
+ const {g,ids}=win(),ordinary=ids.filter(id=>g.s.captiveDecisions.find(c=>c.officer===id).role!=='Ruler');g.random=()=>.999;assert.equal(g.decideCaptive(ordinary[0],'recruit'),true);assert.equal(g.officer(ordinary[0]).prisonerOf,undefined);assert.throws(()=>g.decideCaptive(ordinary[0],'recruit'),/already/);
+ const id=ordinary[1];assert(g.decideCaptive(id,'behead'));assert(g.officer(id).dead);assert(!g.s.provinces.some(p=>['officers','hidden','unclaimed'].some(k=>p[k].includes(id))));assert.throws(()=>g.decideCaptive(id,'free'),/already/);check(g);
 });
 test('A captured ruler cannot be recruited and rejection does not spend RNG or alter the campaign',()=>{
  const {g}=win();const c=g.s.captiveDecisions.find(c=>c.role==='Ruler'),before=JSON.stringify(g.s);assert.throws(()=>g.decideCaptive(c.officer,'recruit'),/only be set free or beheaded/);assert.equal(JSON.stringify(g.s),before);g.decideCaptive(c.officer,'free');check(g);

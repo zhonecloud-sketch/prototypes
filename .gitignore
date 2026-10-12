@@ -92,3 +92,6 @@ swapfile.sys
 *.swo
 *~
 AGENTS.md
+
+# Shared runtime already tracked here; RTK2 imports must leave it unchanged.
+/lib/

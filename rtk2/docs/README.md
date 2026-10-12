@@ -1,10 +1,10 @@
 # RTK2 Remastered — current overview
 
-The current game is **v54**, a playable HTML5 / Canvas 2D strategy game for landscape phones and desktop browsers. `config/release.json` identifies the release and active event artwork. The root repository README is the entry point for development.
+The current game is **v56**, a playable HTML5 / Canvas 2D strategy game for landscape phones and desktop browsers. `config/release.json` identifies the release and active event artwork. The RTK2 README and development-workflow.md are the entry points for development.
 
 ## Guides
 
-[V54 fixes and native findings](fixes-v54.html) cover this release.
+[V56 mechanics and delivery notes](fixes-v56.html) cover this release. [Development and delivery policy](development-workflow.md) records GitHub delivery, ZIP-on-request and no automatic AI training. [V55 audio fixes and licence findings](fixes-v55.html) remain available. Earlier [V54 native findings](fixes-v54.html) remain available.
 
 [V53 fixes](fixes-v53.html), [reported bug coverage](bug-validation.md) and [pending test designs](pending-test-case-design.md) describe the current corrections and verification limits.
 
@@ -37,7 +37,7 @@ From the repository root:
 python3 dist/rtk2/tools/serve-game.py --open
 ```
 
-Visit `http://localhost:8080/rtk2/`. The neighboring `lib/js-yaml.js` is required. There is no build step. For the complete v54 download, unzip both `rtk2/` and `lib/` together, then use `start-game.bat` (Windows) or `sh start-game.sh` (macOS/Linux) with Python 3 installed. The required local library is included.
+Visit `http://localhost:8080/rtk2/`. The neighboring `lib/js-yaml.js` is required. There is no build step. For the complete v55 download, unzip both `rtk2/` and `lib/` together, then use `start-game.bat` (Windows) or `sh start-game.sh` (macOS/Linux) with Python 3 installed. The required local library is included.
 
 ## Main controls
 
@@ -74,3 +74,5 @@ The [Koei RTK II NES instruction booklet](https://www.digitpress.com/library/man
 Asset builders in `tools/` retain their required external-input instructions. Audio builders use NumPy and ffmpeg; native arithmetic verifiers need the supplied binary and optionally Unicorn. These are optional development tasks, not requirements for ordinary play.
 
 The [v54 report](fixes-v54.html) links the [verification record](verification-v54.json), [human joint audit](native-joint-findings-v54.md), [AI joint audit](native-ai-joint-findings-v54.md) and [native captive/audio audit](native-captive-audio-v54.md).
+
+[V55 audio fixes](fixes-v55.html) replace the requested clips. [Commercial audio conditions](audio-licenses-v55.md) apply to finished-game distribution; the private source archive must not be redistributed with the Mixkit sound.

@@ -1,22 +1,23 @@
-import {defeatedUnits,prepareDefeatedWithdrawal,decideDefeatedWithdrawal} from './battle-withdrawal.mjs?v=54';
-import {checkRealmDestruction,replaceRemovedRuler} from './ruler-lifecycle.mjs?v=54';
-import {zeroImpact,withImpact} from './event-impact.mjs?v=54';
-import {reportWorthy,completeEventRound,validateCurrentReports,prunePastEvents,beginWarReport,extendWarReport,finishWarReport,validateWarHistory,migrateActiveWarReports} from './event-chronicle.mjs?v=54';
-import {resolveAbstractBattle} from './auto-battle.mjs?v=54';
-import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=54';
-import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=54';
-import {runAIExtension,policyBattleUnit} from './ai-extensions.mjs?v=54';
-import {validateAIExtensions} from './ai-profile.mjs?v=54';
-import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=54';
-import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=54';
-import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=54';
-import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=54';
-import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,answerProposal,validateDecisions} from './campaign-decisions.mjs?v=54';
-import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=54';
-import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=54';
-import {applyGeography} from './geography.mjs?v=54';
-import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=54';
-import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=54';
+import {abstractEscape} from './native-settlement.mjs?v=56';
+import {defeatedUnits,prepareDefeatedWithdrawal,decideDefeatedWithdrawal} from './battle-withdrawal.mjs?v=56';
+import {checkRealmDestruction,replaceRemovedRuler} from './ruler-lifecycle.mjs?v=56';
+import {zeroImpact,withImpact} from './event-impact.mjs?v=56';
+import {reportWorthy,completeEventRound,validateCurrentReports,prunePastEvents,beginWarReport,extendWarReport,finishWarReport,validateWarHistory,migrateActiveWarReports} from './event-chronicle.mjs?v=56';
+import {resolveAbstractBattle} from './auto-battle.mjs?v=56';
+import {prepareMonthlyAdvice} from './monthly-advice.mjs?v=56';
+import {initializeRoyalFamilies,validateRoyalFamilies,royalFamilyUpkeep} from './ruler-family.mjs?v=56';
+import {runAIExtension,policyBattleUnit} from './ai-extensions.mjs?v=56';
+import {validateAIExtensions} from './ai-profile.mjs?v=56';
+import {DEFAULT_AI,validateAIConfig} from './ai-parameters.mjs?v=56';
+import {validateCompletion,configureDelegation,runDelegated,queueSpoils,decideSpoils,refundAlliedStores,resolveAISpoils,requestBattleAlly,answerAlly,aiAlly,conditionalHistory} from './campaign-completion.mjs?v=56';
+import {FIDELITY_ORDERS,fidelityOrder} from './fidelity-orders.mjs?v=56';
+import {validateFidelity,validateSuccessors,chooseSuccessor,validateForts} from './campaign-fidelity.mjs?v=56';
+import {captureChance,takeCaptive,decideCaptive,resolveAICaptives,dispatchJourney,advanceJourney,interceptJourney,answerProposal,validateDecisions} from './campaign-decisions.mjs?v=56';
+import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-events.mjs?v=56';
+import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=56';
+import {applyGeography} from './geography.mjs?v=56';
+import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=56';
+import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=56';
 export {DEFAULT_RULES};export const AI_DEFAULTS={intelligence:60,aggression:55};
 const clone=v=>JSON.parse(JSON.stringify(v));
 export const activeRulers=s=>s.rulers.filter(r=>s.provinces.some(p=>p.owner===r.id)||(s.roaming||[]).some(p=>p.owner===r.id));
@@ -63,7 +64,7 @@ export class Game extends Domestic{
  resolveBattle(){
  const b=this.s.battle;if(!b?.outcome)return;prepareDefeatedWithdrawal(this,true);const source=this.province(b.source),target=this.province(b.target),attackWon=b.outcome.winner==='attack',winner=attackWon?b.attacker:b.defender,decisions=new Map(),prisoners=[],newInjuries=[],battleDeaths=[];
  const refuge=(owner,origin=null)=>{const home=origin?this.province(origin):null;if(home?.owner===owner&&!(attackWon&&home.id===target.id))return home;return target.neighbors.map(id=>this.province(id)).find(p=>p.owner===owner&&!(attackWon&&p.id===target.id))||null;};
- const capturedRoles=new Map(target.officers.map(id=>[id,id===this.ruler(b.defender).leader?'Ruler':id===target.governor?'Governor':'General']));const emptyRetreats=target.neighbors.map(id=>this.province(id)).filter(p=>p.owner===255);const escaped=new Map();const lost=(id,owner)=>{if(owner===b.defender&&attackWon){if(!emptyRetreats.length||this.random()*100<captureChance(this.officer(id))){captive(id);return;}const dest=escaped.get(owner)||emptyRetreats[0];escaped.set(owner,dest);decisions.set(id,{province:dest,owner});return;}const home=refuge(owner);if(home)decisions.set(id,{province:home,owner});else captive(id);};
+ const capturedRoles=new Map(target.officers.map(id=>[id,id===this.ruler(b.defender).leader?'Ruler':id===target.governor?'Governor':'General']));const emptyRetreats=target.neighbors.map(id=>this.province(id)).filter(p=>p.owner===255);const escaped=new Map();let priorUnclaimedEscape=false;const lost=(id,owner,stats=this.officer(id))=>{if(owner===b.defender&&attackWon){if(b.abstractResolution){const dest=refuge(owner)||escaped.get(owner)||emptyRetreats[0];if(!dest||!abstractEscape(stats,()=>this.random(),{priorUnclaimedEscape,special:id===this.ruler(owner).leader||this.officer(id).portrait===162})){captive(id);return;}if(dest.owner===255)priorUnclaimedEscape=true;escaped.set(owner,dest);decisions.set(id,{province:dest,owner});return;}if(!emptyRetreats.length||this.random()*100<captureChance(this.officer(id))){captive(id);return;}const dest=escaped.get(owner)||emptyRetreats[0];escaped.set(owner,dest);decisions.set(id,{province:dest,owner});return;}const home=refuge(owner);if(home)decisions.set(id,{province:home,owner});else captive(id);};
  const captive=(id)=>{decisions.set(id,{province:target,owner:255,prisonerOf:winner,formerOwner:this.officer(id).owner});if(!prisoners.includes(id))prisoners.push(id);};
  if(attackWon)for(const id of target.officers)if(!b.units.some(u=>u.id===id))lost(id,b.defender);
  for(const u of b.units){const o=this.officer(u.id);if(u.killed){battleDeaths.push({id:u.id,owner:unitOwner(b,u)});continue;}o.soldiers=u.soldiers;o.weapons=u.weapons;if(u.soldiers>0&&u.soldiers<u.startSoldiers/2&&!u.captured){if(!o.injured)newInjuries.push(o.id);o.injured=true;o.illMonths=o.medicalBook?1:3;}o.training=clamp(u.training+2);o.acted=true;const owner=unitOwner(b,u),won=u.side===b.outcome.winner;
@@ -71,7 +72,7 @@ export class Game extends Domestic{
   if(u.captured&&!won){captive(u.id);continue;}
   if(u.allyOwner!==undefined&&!u.betrayed){const home=refuge(owner,u.origin);if(home)decisions.set(u.id,{province:home,owner});else captive(u.id);continue;}
   if(won&&!u.fled&&!u.routed){decisions.set(u.id,{province:target,owner});continue;}
-  if(!won){if(!decisions.has(u.id))lost(u.id,owner);}else{const home=refuge(owner,u.origin);decisions.set(u.id,{province:home||source,owner});}
+  if(!won){if(!decisions.has(u.id))lost(u.id,owner,u);}else{const home=refuge(owner,u.origin);decisions.set(u.id,{province:home||source,owner});}
  }
  for(let i=prisoners.length-1;i>=0;i--)if(decisions.get(prisoners[i])?.prisonerOf===undefined)prisoners.splice(i,1);
  for(const [id,d]of decisions){const o=this.officer(id);for(const p of this.s.provinces)for(const key of ['officers','unclaimed','hidden'])p[key]=p[key].filter(n=>n!==id);o.owner=d.owner;delete o.prisonerOf;if(d.prisonerOf!==undefined){d.province.unclaimed.push(id);o.prisonerOf=d.prisonerOf;o.soldiers=Math.floor(o.soldiers*.5);}else{d.province.owner=d.owner;d.province.officers.push(id);if(b.units.find(u=>u.id===id)?.betrayed)o.loyalty=Math.max(40,Math.min(90,o.loyalty));}}

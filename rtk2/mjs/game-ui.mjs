@@ -1,12 +1,12 @@
-import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=54';
-import {provinceLabel} from './province-choice.mjs?v=54';
-import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=54';
-import {recruitMethodChance} from './fidelity-orders.mjs?v=54';
-import {portraitFrame} from './portraits.mjs?v=54';
-import {missionChance,spyChance} from './province-rules.mjs?v=54';
-import {hireCapacity} from './province-rules.mjs?v=54';
-import {warProvisions} from './war-provisions.mjs?v=54';
-import {trainingGain} from './native-combat.mjs?v=54';
+import {canAdvise,ADVICE_UNAVAILABLE} from './monthly-advice.mjs?v=56';
+import {provinceLabel} from './province-choice.mjs?v=56';
+import {enhanceNumericControls,enhanceTextControls} from './numeric-controls.mjs?v=56';
+import {recruitMethodChance} from './fidelity-orders.mjs?v=56';
+import {portraitFrame} from './portraits.mjs?v=56';
+import {missionChance,spyChance} from './province-rules.mjs?v=56';
+import {hireCapacity} from './province-rules.mjs?v=56';
+import {warProvisions} from './war-provisions.mjs?v=56';
+import {trainingGain} from './native-combat.mjs?v=56';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function relevantAttributes(purpose=''){
  if(/governor/i.test(purpose))return ['loyalty','charm','int','war'];

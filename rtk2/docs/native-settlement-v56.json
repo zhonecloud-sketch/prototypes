@@ -1,0 +1,2647 @@
+{
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "unpackedSha256": "5c3e45a5edb097c8719d65b1678784aaf8412258e2437a26bb89d4b249824506",
+  "cases": [
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        1,
+        2
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        1,
+        2
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        1,
+        2
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        1,
+        2
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        1,
+        0,
+        2
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        1,
+        0,
+        2
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        1,
+        0,
+        2
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        1,
+        0,
+        2
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        2,
+        1
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        2,
+        1
+      ],
+      "friendlyPresent": true,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 1,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        2,
+        1
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": true,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": true,
+      "captiveList": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Abstract defeated defender selects occupied own province before unclaimed; failed escape becomes captive",
+      "candidateOrder": [
+        0,
+        2,
+        1
+      ],
+      "friendlyPresent": false,
+      "escapeSuccess": false,
+      "selectedProvinceIndex": 0,
+      "joinedDestination": false,
+      "captiveList": 37632,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        },
+        {
+          "randomBound": 2,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "neighbor enumeration5C78 returns provided candidate indices; native two-pass owner/empty selection retained",
+        "random4B38 controlled to allow/refuse escape; probability arithmetic retained",
+        "province redraw4F44 suppressed; actual5F9E linked-list placement retained"
+      ]
+    },
+    {
+      "rule": "Full abstract entry21418 reaches real defeated defender selection and writes; supplied combat outcome only",
+      "friendlyPresent": true,
+      "selectedProvinceIndex": 1,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "combat roster/build20FB4 returns present and combat21138 outcome fixed attacker victory0",
+        "neighbor enumeration5C78 and RNG4B38 controlled",
+        "redraw4F44; actual21418\u219220DAC\u219220CAE\u219220C26 and5F9Ewrites retained"
+      ]
+    },
+    {
+      "rule": "Full abstract entry21418 reaches real defeated defender selection and writes; supplied combat outcome only",
+      "friendlyPresent": false,
+      "selectedProvinceIndex": 0,
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "combat roster/build20FB4 returns present and combat21138 outcome fixed attacker victory0",
+        "neighbor enumeration5C78 and RNG4B38 controlled",
+        "redraw4F44; actual21418\u219220DAC\u219220CAE\u219220C26 and5F9Ewrites retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": false,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 68,
+      "finalRoll": 67,
+      "escaped": true,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 67
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": false,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 68,
+      "finalRoll": 68,
+      "escaped": false,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 68
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 2,
+      "bonusRoll": 49,
+      "ruler": false,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 55,
+      "finalRoll": 54,
+      "escaped": true,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 2
+        },
+        {
+          "randomBound": 50,
+          "value": 49
+        },
+        {
+          "randomBound": 100,
+          "value": 54
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 2,
+      "bonusRoll": 49,
+      "ruler": false,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 55,
+      "finalRoll": 55,
+      "escaped": false,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 2
+        },
+        {
+          "randomBound": 50,
+          "value": 49
+        },
+        {
+          "randomBound": 100,
+          "value": 55
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": true,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 88,
+      "finalRoll": 87,
+      "escaped": true,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 87
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": true,
+      "portraitA3": false,
+      "priorUnclaimedEscape": false,
+      "threshold": 88,
+      "finalRoll": 88,
+      "escaped": false,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 88
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": false,
+      "portraitA3": true,
+      "priorUnclaimedEscape": false,
+      "threshold": 88,
+      "finalRoll": 87,
+      "escaped": true,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 87
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": false,
+      "portraitA3": true,
+      "priorUnclaimedEscape": false,
+      "threshold": 88,
+      "finalRoll": 88,
+      "escaped": false,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 88
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "Native abstract escape exact equation and ruler/portrait/unclaimed bonuses",
+      "denominatorRoll": 0,
+      "bonusRoll": 0,
+      "ruler": false,
+      "portraitA3": false,
+      "priorUnclaimedEscape": true,
+      "threshold": 118,
+      "finalRoll": 99,
+      "escaped": true,
+      "events": [
+        {
+          "randomBound": 3,
+          "value": 0
+        },
+        {
+          "randomBound": 50,
+          "value": 0
+        },
+        {
+          "randomBound": 100,
+          "value": 99
+        }
+      ],
+      "suppressed": [
+        "only random4B38 controlled; exact arithmetic, ruler identification55F8 and portrait comparison retained"
+      ]
+    },
+    {
+      "rule": "No abstract refuge captures without escape RNG",
+      "events": [
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 0,
+          "provinceIndex": 0
+        },
+        {
+          "direction": 1,
+          "provinceIndex": 1
+        },
+        {
+          "direction": 2,
+          "provinceIndex": 2
+        },
+        {
+          "direction": 3,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 4,
+          "provinceIndex": 255
+        },
+        {
+          "direction": 5,
+          "provinceIndex": 255
+        }
+      ],
+      "suppressed": [
+        "candidate enumeration5C78; captive injury duration58BA fixed0; native capture list20AE8 retained"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 33,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 33,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 29,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 29,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": true,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "inputRange": [
+            1,
+            3
+          ],
+          "choice": 1
+        },
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 0,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 0,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 0,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 0,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 0,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 90,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 90,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 90,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 33,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 90,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 90,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 29,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 99,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 99,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 99,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 99,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 99,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 0,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 96,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 0,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 30,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 0
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 69,
+      "recruited": false,
+      "newLoyalty": 100,
+      "events": [
+        {
+          "beheaded": 37632
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    },
+    {
+      "rule": "Full native ordinary captive Recruit is unconditional for human; AI recruits at INT+WAR>=70 otherwise beheads",
+      "human": false,
+      "oldLoyalty": 100,
+      "compatibilityDifference": 100,
+      "jitter": 4,
+      "intPlusWar": 70,
+      "recruited": true,
+      "newLoyalty": 26,
+      "events": [
+        {
+          "randomBound": 5,
+          "value": 4
+        }
+      ],
+      "suppressed": [
+        "music598A and render8C26/8CFC/4DE0/45D8",
+        "human menu4888 chooses Recruit1",
+        "loyalty jitter58BA controlled; native owner/initializer/integer-square-root/5F9Eplacement retained",
+        "terminal6062 recorded instead of removing officer"
+      ]
+    }
+  ],
+  "count": 88
+}

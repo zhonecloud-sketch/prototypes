@@ -1,10 +1,10 @@
-RTK2 Remastered v54 — 2026-10-12
+RTK2 Remastered v56 — 2026-10-12
 
-This complete download contains the editable v54 game, all previous completed changes,
-and its local lib/js-yaml.js dependency. Unzip rtk2/ and lib/ together, install Python 3,
+This repository contains the editable v56 game, all previous completed changes,
+and uses the existing sibling lib/js-yaml.js dependency. Clone the repository, install Python 3,
 then run start-game.bat (Windows) or sh start-game.sh (macOS/Linux).
 Menu > About identifies the runtime version.
-SOURCE-COMMIT.txt identifies the packaged source commit.
+SOURCE-COMMIT.txt identifies the imported game source commit.
 config/release.json identifies and hashes the ACTIVE event artwork.
 
 Active enlarged art: assets/history-v36/ (16 standalone 1983x793 scenes),
@@ -131,3 +131,8 @@ No AI training or renewal ran; archived profiles retain their original identity.
 V53: native joint attack, jungle observer concealment, forced arrival ambush/fire, native ignition equation, messenger context/return and original governance effects. Every new bug has behavior coverage or a documented pending test design. No AI training ran.
 
 V54: native captured-ruler menu confirmed; native simultaneous helper direction order and contribution breakdown; compact selected-unit deployment stats; announcement-before-highlight/order; silent ordinary governance selections. No training ran.
+
+V55: supplied sword/charge/gallop recordings, with behavior tests and commercial-use findings.
+This source archive is your private working backup. Do not redistribute the Mixkit gallop
+with source files, in developer templates or as a standalone sound. The sound licence
+permits its use in a finished commercial game; see docs/audio-licenses-v55.md.
