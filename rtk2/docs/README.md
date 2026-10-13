@@ -4,6 +4,9 @@ The current game is **v56**, a playable HTML5 / Canvas 2D strategy game for land
 
 ## Guides
 
+[Beginner Rust and local setup](rust-development-setup.md) covers macOS,
+Windows, browser testing, GitHub Actions and future desktop packaging.
+
 [Saved generation prompts](prompts/README.md) include original production
 requests, source-image edits and the complete province 1 terrain brief.
 
