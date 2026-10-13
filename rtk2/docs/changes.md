@@ -12,6 +12,11 @@ Only the history-art asset path changes a module covered by the existing engine 
 
 Machine-readable native witnesses, register traces, artwork prompts, licence evidence and training measurements remain in their existing paths because they are test/provenance inputs, not duplicate release prose. No claim is made that the current native-derived edition is cleared for commercial sale; the v56 rights assessment is retained in full below.
 
+Generation prompts are now canonical Markdown files in docs/prompts/.
+Historical records below link to those files; production, edit and
+correction wording and generation metadata are preserved. New prompt
+text and future authored Markdown must stay within 80 source columns.
+
 ## Record index
 
 | Original report | Consolidated section |
@@ -2334,7 +2339,7 @@ All 15 scheduled historical scenes now have individual image assets under `asset
 
 Each WebP is natively **1983 × 793 pixels**. No enlargement or stretching was used when preparing these files. Compared with a v30 history-atlas cell (991.5 × 396.5), each replacement provides twice the width and height, or four times the pixels. The generation prompt requested 3840 × 1536; the actual generator output was 1983 × 793, so these are not claimed as 4K images.
 
-The complete generation prompts and the historical correction applied to the 223 scene are in `artwork/history-generation-v36.json`. The shared renderer reads each standalone image as a whole scene, uses one proportional contain scale, and loads scenes on demand. Old history atlases remain only for existing regressions/provenance. Release asset hashes identify the active files.
+The complete generation prompts and the historical correction applied to the 223 scene are in `prompts/history_v36_index.json`. The shared renderer reads each standalone image as a whole scene, uses one proportional contain scale, and loads scenes on demand. Old history atlases remain only for existing regressions/provenance. Release asset hashes identify the active files.
 
 | Year | Scene |
 | --- | --- |
@@ -2637,33 +2642,11 @@ Both images were visually reviewed as full-frame scenes with matching late-Han c
 
 #### Clan-destroyed generation prompt
 
-```text
-Use case: historical-scene.
-Asset type: late Han / Three Kingdoms strategy game event illustration.
-Primary request: CLAN DESTROYED, a symbolic fall of a ruler's realm. Create exactly ONE continuous, single-scene, full-bleed panoramic historical Chinese painting.
-Scene/backdrop: an abandoned late Han ceremonial palace courtyard at dusk, with carved dark wooden palace architecture, vermilion columns, worn stone paving and distant misty mountains.
-Subject: an empty ceremonial throne on its dais, extinguished bronze lamps, a fallen torn vermilion banner with no lettering, and a broken jade royal seal in the foreground. A small group of defeated retainers in historical Chinese robes and worn armor quietly depart through the courtyard gate, backs turned or downcast natural human faces.
-Style/medium: rich, finely detailed historical Chinese ink and painted illustration, cinematic narrative realism, natural human faces, convincing late Han clothing and architecture. Match the rich dark wooden courts, layered dramatic depth, restrained brush texture, fine garments, natural faces, and warm muted lighting of the supplied style description.
-Composition/framing: exact 2.5:1 ultra-wide panorama, intended for an event canvas 500x200; render at 2560x1024 if possible. Show the entire scene edge to edge; no collage, contact sheet, panels, seams, frame, border, gutters, blank margins or vignette. The deserted throne remains the clear central narrative focus, with the broken seal visibly readable as an object and the departing retainers supporting the story.
-Lighting/mood: subdued ochre dusk fading into jade-gray shadows, tragic quiet aftermath, thin mist and cold smoke from extinguished lamps.
-Color palette: muted jade, ochre, vermilion, weathered gold, charcoal and warm brown.
-Constraints: no readable lettering, no text, no titles, no UI, no watermark, no gore, no mutilation. This is one complete panorama, not a sheet of illustrations.
-```
+See [the saved prompt][prompt-01].
 
 #### Heir-vows-vengeance generation prompt
 
-```text
-Use case: historical-scene.
-Asset type: late Han / Three Kingdoms strategy game event illustration.
-Primary request: HEIR VOWS VENGEANCE. Create exactly ONE continuous, single-scene, full-bleed panoramic historical Chinese painting.
-Scene/backdrop: a late Han funeral court inside a grand ceremonial palace hall, carved dark wood, vermilion columns, bronze vessels, pale funeral streamers and soft incense smoke.
-Subject: a mature adult heir, with a natural expressive Chinese face, receiving a jade royal seal from a grieving senior minister before his deceased father's plain memorial tablet. The heir wears dignified white mourning clothing, his jaw tense and eyes resolute and angry. Grieving veteran generals and retainers in historically appropriate robes and armor gather around him. The father's memorial tablet is clearly a funerary object but bears no readable letters. White mourning garments and funeral streamers establish the funeral setting. Imply a rival's threatening shadow in the distant architecture and atmosphere, without adding a separate portrait or supernatural figure.
-Style/medium: rich, finely detailed historical Chinese ink and painted illustration, cinematic narrative realism, natural human faces, convincing late Han clothing and architecture. Match rich dark wooden courts, layered dramatic depth, restrained brush texture, fine garments, natural faces, and warm muted lighting.
-Composition/framing: exact 2.5:1 ultra-wide panorama, intended for an event canvas 500x200; render at 2560x1024 if possible. One continuous composition, edge-to-edge painted environment. The seal handover and mature heir's face are the central readable focus, with the father's memorial and mourners supporting the narrative. No collage, contact sheet, panels, seams, frame, border, gutters, blank margins or vignette.
-Lighting/mood: somber cinematic funeral light, muted warm ochre from bronze lamps and cool jade-gray shadows, grief turning into resolve.
-Color palette: muted jade, ochre, restrained vermilion, ivory white, charcoal, warm brown and weathered gold.
-Constraints: no readable lettering, no text, no titles, no UI, no watermark, no gore, no visible body. This is one complete panorama, not a sheet of illustrations.
-```
+See [the saved prompt][prompt-02].
 
 The image model returned 1983 × 793 rather than the requested optional 2560 × 1024; the native output is retained. The artwork is symbolic and shared across rulers. The successor can be a loyal officer rather than the deceased ruler's literal son; the illustration does not alter kinship or succession rules.
 
@@ -2690,23 +2673,23 @@ Liu Bei's edited third portrait cell uses a close bust like Cao Cao, retaining m
 
 ### history30
 
-Use case: precise-object-edit. Edit target: historical illustration atlas, four columns and four rows, fifteen historical scenes plus final council scene. Extend each scene sideways to fill its entire rectangular cell edge to edge. The current dark blank margins are a packaging defect: replace ALL plain dark blank side strips with natural painted continuations of THAT cell's scene (architecture, landscape, sky, people where appropriate). Preserve every central character, face, story and row-major scene order. Maintain Liu Bei's mature identity and long earlobes. Each cell must have a wide landscape aspect ratio 2.5:1, overall atlas also 2.5:1. Sixteen separate wide scenes, straight aligned 4x4 grid; no gutters, no borders, no matte, no plain blank canvas. Painterly ancient Chinese historical game art. Do not crop away central story. Fill the entire canvas with scene artwork.
+See [the saved prompt][prompt-03].
 
 ### disasters30
 
-Use case: precise-object-edit. Edit target: 2 by 2 disaster illustration atlas. Extend each existing scene sideways to fill the entire cell, eliminating all dark blank margins. Top left locust famine, top right uprising, bottom left coastal typhoon, bottom right flood. Preserve the central subjects and their faces; outpaint appropriate fields, village, stormy coast and submerged town around them. Four wide landscape cells, each 2.5:1; overall canvas 2.5:1. Precise aligned 2x2 grid, no gutters, no borders, no matte or blank strips. Painterly ancient Chinese strategy game illustration. Artwork must fill every cell edge to edge.
+See [the saved prompt][prompt-04].
 
 ### omens30
 
-Use case: precise-object-edit. Edit target: 2x2 event atlas. Fill every dark blank side margin with natural painted continuation of that scene. Preserve central people, faces and story. Row-major scenes: epidemic care, comet omen, troop deployment, territory occupation. Each of four cells is wide 2.5:1 landscape; overall canvas 2.5:1. Exact 2x2 grid without gutters, borders, matte or blank strips. Painterly ancient Chinese game style. Edge-to-edge artwork; preserve composition and extend rather than stretch.
+See [the saved prompt][prompt-05].
 
 ### stories30
 
-Use case: precise-object-edit. Edit target: 2x2 event atlas. Fill every dark blank side margin with natural painted continuation of that scene. Preserve central people, faces and story. Row-major scenes: Xun Yu planning, officer mourning, Diaochan chain stratagem, Hua Tuo medical treatment. Each of four cells is wide 2.5:1 landscape; overall canvas 2.5:1. Exact 2x2 grid without gutters, borders, matte or blank strips. Painterly ancient Chinese game style. Edge-to-edge artwork; preserve composition and extend rather than stretch.
+See [the saved prompt][prompt-06].
 
 ### portrait30
 
-Use case: identity-preserve. Edit target: 4x4 general portrait atlas. Change ONLY Liu Bei, third cell of first row. Enlarge/reframe him to match the scale of the other portraits, especially Cao Cao immediately to his right: large head and shoulders, close bust, face occupies comparable portion of square cell, robe extends to the lower corners, no blank side strips. Preserve his mature dignified face, long earlobes, moustache and tapered grey beard, green/gold robe, jade background and crown. Keep all other fifteen cells pixel-composition and character identity unchanged. Keep square overall atlas, precisely aligned 4x4 grid, no borders or gutters. Do not make Liu Bei younger. No text.
+See [the saved prompt][prompt-07].
 
 
 
@@ -2725,9 +2708,9 @@ Generated with the built-in image-generation tool, then proportionally packaged 
 - `assets/artwork/history-v29.webp`: revised historical scenes, source 1254 × 1254, packaged 3966 × 1586.
 - `assets/artwork/disasters-v29.webp`, `assets/artwork/omens-v29.webp`, `assets/artwork/stories-v29.webp`: existing artwork repackaged at 1983 × 793.
 
-Portrait prompt specification: Create a mature Liu Bei, approximately 45–50 years old like the established Cao Cao portrait, dignified East Asian face, distinctive long pendulous earlobes, moustache and tapered beard with subtle grey, green and gold court robes and crown, dark jade background. Preserve the established painterly game portrait style. References: `officers-historic-v16.webp`, `history-v28.webp` and the user's attached image.
+See [the saved prompt][prompt-08].
 
-Historical edit specification: Preserve the four-by-four historical atlas and the other characters/scenes. Align Liu Bei in cells 3, 6, 11 and 13 (zero-based: Xu Province, three visits, Shu coronation, deathbed) with the new portrait's mature identity, long earlobes, moustache and beard. Maintain appropriate ageing and costumes for each scene. References: the existing atlas and new portrait.
+See [the saved prompt][prompt-09].
 
 The master portrait and edited atlas were visually reviewed together. Appearance is an illustrative interpretation; no authentic historical portrait is asserted. `tools/normalize-event-art.mjs` reproducibly contains each source cell on a dark matte at the aspect ratio and exact dimensions derived from `events.webp`; it neither stretches nor crops the art.
 
@@ -2744,7 +2727,7 @@ Generated with the built-in image-generation tool. `assets/artwork/history-v28.w
 
 #### Generation prompt
 
-Create one game artwork sprite atlas: a perfectly regular 4-column by 4-row grid, sixteen equal square paintings, no gutters, no labels, no text, no interface or borders. Art style: elegant painterly historical Romance of the Three Kingdoms strategy game illustrations, clean detailed faces and Han dynasty buildings, warm parchment gold and jade tones, dramatic yet readable compositions. Each cell entirely independent, exact row-major order: 1 Dong Zhuo, imposing bearded warlord in ornate dark armor, controlling the Han emperor's court at Luoyang; 2 coalition lords gathering with burning Luoyang distant; 3 Wang Yun and Lu Bu conspiring against Dong Zhuo, palace candlelit scene no gore; 4 elderly Tao Qian entrusting Xu Province to Liu Bei; 5 Yuan Shu declaring himself emperor on extravagant throne; 6 Cao Cao at Guandu overseeing a raid on supply granaries; 7 Liu Bei with Guan Yu and Zhang Fei visiting Zhuge Liang at a quiet thatched cottage, feather fan; 8 Red Cliffs fleets burning on Yangtze under night sky; 9 Cao Cao taking mountain fortress Hanzhong; 10 Guan Yu in green robe surrounded at Jing Province riverside; 11 Cao Pi receiving Han emperor's abdication ceremonial scroll; 12 Liu Bei proclaiming Shu Han in Chengdu imperial hall; 13 Lu Xun overlooking a decisive fire counterattack at Yiling forest battlefield; 14 Zhuge Liang at Liu Bei's bedside at Baidicheng, solemn tasteful deathbed; 15 Sun Quan proclaiming Wu in grand hall; 16 Han dynasty council of scribes and envoys as universal historical fallback. Ensure exactly four rows and four columns, every painting fills its cell. All era-appropriate, no modern objects.
+See [the saved prompt][prompt-10].
 
 
 
@@ -2757,7 +2740,7 @@ Historical record from [`docs/artwork-v23.md`](https://github.com/zhonecloud-ske
 
 `assets/artwork/army-v23.webp` is an AI-generated transparent Han-era army formation sheet, converted from the generated PNG without changing its proportions. The requested layout was four columns by four rows: red marching, red attacking, blue marching and blue attacking. Formations use groups of soldiers, spears, armour and blank cloth banners. Names are overlaid at runtime so officer names remain accurate in both languages.
 
-Production prompt: Create a transparent 4×4 sprite sheet of compact Han dynasty army formations, each containing 10–14 soldiers, viewed from an elevated isometric angle. Red clothes in the first two rows, blue clothes in the last two. Row 1 and 3 are marching frames; row 2 and 4 are attacking frames. Match the existing painted strategy game, use crisp readable silhouettes and clean separated cells, with blank banners and no letters or numbers.
+See [the saved prompt][prompt-11].
 
 The selected image is 1254×1254. The renderer samples only the first two columns for march and attack animations: later columns contain spear overlap across cell boundaries. An attempted gutter edit did not reliably remove this overlap and was not selected. The displayed sprites preserve aspect ratio. No officer portraits or battlefield paintings were replaced.
 
@@ -2849,41 +2832,7 @@ Final saved output: 1254 × 1254 RGB, retained at the built-in tool's native res
 
 #### Final generation prompt
 
-```text
-Use case: historical-scene
-Asset type: strategy game character portrait atlas, one square bitmap texture.
-Primary request: Generate exactly ONE 2048 x 2048 image, a strict 4-by-4 atlas of sixteen equal 512 x 512 square portrait cells. The cell boundaries are at x=512,1024,1536 and y=512,1024,1536. There must be NO drawn grid lines, NO gutters, NO borders and NO text. Each cell is an independent head-and-shoulders portrait against the same dark jade backdrop. No body parts, headgear, feathers, fans or weapons cross any cell boundary. Leave ample dark jade margin on all four sides of each portrait, including at the bottom. All faces consistently centered at the same height and scale; full heads including headgear and shoulder tops are contained in their own cells. Portraits should remain readily distinguishable at 64px thumbnail size.
-Style/medium: Detailed hand-painted premium historic strategy game art with realistic East Asian faces. Late Han Chinese materials, robe shapes, cloth headwraps and lamellar armour. Rich restrained color, crisp facial details, subtle brush texture, directional soft illumination. Dignified nuanced expressions, no caricature. Uniform visual style and lighting across all cells.
-Backdrop: Uniform deep dark jade, softly painterly with no scenery.
-Composition: Exactly four rows and four columns, each cell has exactly one person, sixteen portraits total, fifteen identities because Xiahou Dun appears twice in matched before/after injury variants. Strictly follow this row-major slot manifest:
-
-ROW 1
-Slot 0, top-left: Zhuge Liang. Slim composed scholar, high forehead, neat mustache and long narrow black beard, silk scholar headcloth, white robe, white feather fan visible low on chest, never obscuring face. The feather fan and scholar headcloth are conventional literary iconography.
-Slot 1: Zhao Yun. Majestic martial bearing, handsome realistic clean-shaven face. Silver-grey Han lamellar armour and Han helmet, white cloth and restrained blue accent.
-Slot 2: Liu Bei. Calm benevolent face, clean-shaven, conspicuously long earlobes clearly visible on both ears. Green-gold Han robes and simple Han headgear that does not cover the ears.
-Slot 3, top-right: Cao Cao. Sharp watchful expression, short dark beard and moustache, black-red Han court clothes and modest ceremonial Han hat. Imagined historical face, NO modern imperial dragon costume.
-
-ROW 2
-Slot 4: Sun Quan. Broad dignified jaw, warm brown beard with a subtle purple-brown tone, natural dark brown eyes, red-gold Han court clothing. NO green eyes.
-Slot 5: Xiahou Dun AFTER eye injury. Rugged middle-aged general with short dark beard, dark Han lamellar armour, simple dark Han helmet. Mostly frontal face, scarred CLOSED LEFT eye, which is on the VIEWER'S RIGHT. His other eye is intact and open. No pirate patch. Remember this exact identity and clothes for slot 15.
-Slot 6: Dian Wei. Extremely robust muscular neck and shoulders, very powerful build, rough short beard, iron Han lamellar armour. Two small ji polearm tips only glimpsed beside the outer lower shoulders, wholly inside cell and away from face.
-Slot 7: Guan Yu. Noble stern bearing, magnificent very long flowing black beard contained in cell, green cloth Han headwrap, dark green Han robe/armour. Natural subtle warm East Asian skin, NOT bright red skin.
-
-ROW 3
-Slot 8: Zhang Fei. Broad fierce realistic face, bushy black beard, heavy dark Han armour. Artistic reconstruction with a clearly distinct face and build from Dian Wei and Xu Chu.
-Slot 9: Lü Bu. Tall athletic warrior suggested by posture, elegant youthful fierce face, bronze Han helmet with a long feather crest gracefully contained within the upper cell margin, Han armour. Iconic literary crest.
-Slot 10: Zhou Yu. Young handsome elegant general, refined clean-shaven East Asian face, red-white Han robe plus light armour.
-Slot 11: Sima Yi. Lean mature strategist, penetrating composed eyes, narrow greying beard, dark scholar headcloth, blue-black Han robes.
-
-ROW 4
-Slot 12: Huang Zhong. Elder veteran, weathered face and white beard, bronze Han lamellar armour; a subtle bow glimpse low beside shoulder, fully within cell and away from face. Conventional elder-veteran iconography.
-Slot 13: Sun Ce. Young handsome confident warrior, clean-shaven, red-bronze Han armour, realistic East Asian face distinctly different from Zhou Yu and Zhao Yun.
-Slot 14: Xu Chu. Very broad stocky warrior, powerful thick neck and shoulders, short dark beard, heavy Han armour. Large waist implied by very broad torso, distinctly different face from Dian Wei and Zhang Fei.
-Slot 15, bottom-right: Xiahou Dun BEFORE eye injury. The SAME face, beard, headgear, age, dark Han lamellar armour, pose, lighting and facial proportions as slot 5. Both eyes intact and open, no scars. This matched variant represents the same man before 198.
-
-Constraints: Exactly 16 independent portraits in exactly 4 rows and 4 columns; every head and both shoulder tops fully contained with safe margins in its own equal square cell; no cross-cell overlap. Slot 5 scarred closed left eye is viewer-right, slot 15 both eyes intact. All people realistic East Asian, visibly distinct except matched Xiahou Dun identity variants. Late Han clothing, armour and headgear; artistic historical reconstructions with only the stated conventional iconography.
-Avoid: any letters, Chinese characters, numbers, labels, signatures, captions, watermark, frame, grid, visible cell dividers, gutters, extra people, extra heads, weapons or fan covering faces, fantasy green eyes, vivid red skin, pirate eyepatch, modern or medieval European armour, Qing imperial dragon robes.
-```
+See [the saved prompt][prompt-12].
 
 
 
@@ -3023,7 +2972,7 @@ This update changes presentation and confirmation controls. Native combat, gover
 | Order confirmation | Pure confirm steps show the question with Cancel / Back / Confirm order, without a duplicate Yes/No selector. Shared flow covers Reward, Hire, Move, Appoint, Dismiss, Tax, Healing, cancel alliance, court marriage and self-exile. Actual payload choices, such as taking all generals into exile, remain selectable. |
 | China map captions | One left-aligned `Jan · 189AD · Spring 春` line. Two left-aligned legend rows, Your provinces and Unclaimed. China/city-count/tap instructions are hidden in China view; Province map retains identifying labels. |
 | Messenger and bad omens | Smaller courier canvas, four-hoof galloping effect, and distinct flood, locust, typhoon, epidemic, uprising, meteor and death effects. Existing sound preferences and visibility rules apply. Effects are original synthesized nonverbal textures, not sampled recordings. |
-| Historical scenes | All 15 scheduled scenes plus a fallback regenerated separately at native 1983×793, four times the pixels of the former atlas cell. They load on demand and preserve aspect ratio. Prompt set, actual dimensions and correction notes are in artwork-v36.md and artwork/history-generation-v36.json. All new images are in the versioned pack. |
+| Historical scenes | All 15 scheduled scenes plus a fallback regenerated separately at native 1983×793, four times the pixels of the former atlas cell. They load on demand and preserve aspect ratio. Prompt set, actual dimensions and correction notes are in artwork-v36.md and prompts/history_v36_index.json. All new images are in the versioned pack. |
 
 Verification: engine/native regression suite, mounted-interface tests and mobile CSS/height-budget checks. Native Canvas verifies whole-scene rendering and asset dimensions. No browser/physical handset QA was available; the final phone layout and playback sound still need device inspection. This release does not claim unrecovered original-game formulas have been resolved.
 
@@ -4061,3 +4010,15 @@ See [v53 fixes](changes.md#record-fixes-v53), [bug-to-test ledger](bug-validatio
 
 Normal/Simultaneous now use the user's Pixabay sword recording; Charge uses the user's AudioMass-edited Pixabay cry once per order; courier motion uses the user's AudioMass-edited Mixkit gallop. This is an explicit user-selected departure from native sounds. Original remaster BGM and unrelated native effects are retained. See [audio rights](changes.md#record-audio-licenses-v55), [fixes](changes.md#record-fixes-v55) and [validation](verification-v55.json). No training ran.
 
+[prompt-01]: prompts/clan_destroyed_v31_webp.md#original-production-prompt
+[prompt-02]: prompts/heir_vows_vengeance_v31_webp.md#original-production-prompt
+[prompt-03]: prompts/history_v30_webp.md#production-edit-prompt
+[prompt-04]: prompts/disasters_v30_webp.md#production-edit-prompt
+[prompt-05]: prompts/omens_v30_webp.md#production-edit-prompt
+[prompt-06]: prompts/stories_v30_webp.md#production-edit-prompt
+[prompt-07]: prompts/officers_historic_v30_webp.md#production-edit-prompt
+[prompt-08]: prompts/liu_bei_v29_webp.md#recorded-portrait-specification
+[prompt-09]: prompts/history_v29_webp.md#recorded-edit-specification
+[prompt-10]: prompts/history_v28_webp.md#original-production-prompt
+[prompt-11]: prompts/army_v23_webp.md#original-production-prompt
+[prompt-12]: prompts/officers_historic_v16_webp.md#original-production-prompt

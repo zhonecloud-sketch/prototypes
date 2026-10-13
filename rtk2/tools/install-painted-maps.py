@@ -19,6 +19,14 @@ def main():
     records=[];hashes=set()
     for record in sorted(inputs,key=lambda r:r['province']):
         number=record['province'];source=args.sources/f'province-{number:02d}.png'
+        prompt_ref=record.get('promptFile',
+            f'docs/prompts/province_{number:02d}_v17_webp.md#original-production-prompt')
+        prompt_path=ROOT/prompt_ref.split('#')[0]
+        assert prompt_path.is_file(), 'Canonical prompt document is required.'
+        if 'prompt' in record:
+            normalized=lambda text: ' '.join(text.split())
+            assert normalized(record['prompt']) in normalized(prompt_path.read_text()), \
+                'Input prompt differs from the saved canonical document.'
         with Image.open(source) as image:
             assert abs(image.width/image.height-1024/1109)<.002, f'Province {number}: artwork registration aspect is incorrect.'
             # Format conversion only: preserve every source pixel's position and aspect.
@@ -29,7 +37,8 @@ def main():
             records.append({'province':number,'name':provinces[number-1]['seat'],
                 'asset':final.relative_to(ROOT).as_posix(),'width':image.width,'height':image.height,
                 'sha256':digest,'sourceSha256':sha(source.read_bytes()),
-                'terrainSha256':sha(bytes(grid)),'terrain':grid,'prompt':record['prompt']})
+                'terrainSha256':sha(bytes(grid)),'terrain':grid,
+                'promptFile':prompt_ref})
     manifest={'version':17,'generation':'Built-in image generation: one complete painting per original terrain guide.',
         'registration':{'guideWidth':1024,'guideHeight':1109,'worldLeft':-10,'worldTop':-6*3**.5,'worldWidth':20,'worldHeight':12.5*3**.5},
         'maps':records}

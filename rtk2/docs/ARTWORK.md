@@ -1,12 +1,15 @@
 # Raster artwork
 
+[All saved generation prompts](prompts/README.md) now have canonical
+Markdown documents. This overview retains provenance and rendering notes.
+
 ## V42 flame overlay
 
 `assets/artwork/fire-v42.webp` is a new built-in image-generation asset made on 10 October 2026. The generated 1273 × 1236 RGBA PNG was encoded as WebP at its original dimensions with alpha preserved. `config/release.json` records its hash. The battlefield draws it over burning ground and units, continuously varying opacity and size; deleting/extinguishing the fire cell removes the overlay.
 
 Generation prompt:
 
-> Use case: stylized-concept. Asset type: transparent flame sprite overlay for an isometric painted historical strategy battlefield. Create ONE compact, unmistakable cluster of roaring fire: tall bright yellow-white flame tongues with rich orange and red outer edges, a wide glowing ember base and a few flying sparks. Readable at 50–90 pixels tall against green jungle, tan hills, water banks and palace artwork. Hand-painted game sprite with crisp silhouette and strong contrast, slight isometric ground footprint. Centered fully inside the image with generous transparent margins, flame height about 1.3 times base width. No building, soldiers, landscape, text, border, smoke cloud, checkerboard, or background. Genuine alpha transparency; preserve warm flame colour and soft glow around its edges.
+See [the saved prompt][prompt-01].
 
 The original four atlases were generated with the built-in image-generation tool for this project. No original DOS graphic was used.
 
@@ -24,19 +27,19 @@ Army atlas: four walk and four attack frames, alpha background.
 
 ### portraits
 
-Use case: historical-scene. Asset type: raster portrait atlas for a late Han / Three Kingdoms mobile strategy game. Create one single 2048x2048 sheet divided into exactly 4 columns by 4 rows of equal square portrait cells, touching edge to edge, no borders, labels, writing, logos or watermark. Each cell is a separate realistic, naturalistic head-and-shoulders oil-painted character portrait, finely detailed face, silk robes or period lamellar armor, cinematic soft daylight, restrained colors, dark neutral background, historically plausible Chinese people circa AD 190-220, never modern celebrity likenesses. The 16 cells in row-major order: Cao Cao (wily middle-aged narrow eyes black beard dark robe); Liu Bei (gentle middle-aged long ears thin moustache green robe); Sun Quan (young resolute ruler auburn-black short beard dark crimson robe); Guan Yu (powerful mature general long black beard green robe); Zhang Fei (rugged broad-faced black-bearded warrior); Zhao Yun (handsome young clean-shaven silver-armored general); Zhuge Liang (calm scholarly man small beard cloth scholar cap); Zhou Yu (elegant young clean-shaven red-armored commander); Sima Yi (older calculating narrow face gray-black beard black scholar hat); Lu Bu (tall fierce young warrior elaborate Han headdress armor); Dong Zhuo (heavy older sinister bearded lord); Yuan Shao (dignified wealthy middle-aged leader fine purple-brown robe); Sun Jian (forty-year-old determined warrior red scarf and Han armor); Ma Chao (young clean-shaven martial man pale armor); Huang Zhong (elderly strong gray-bearded veteran in bronze armor); anonymous officer placeholder (face in deep shadow, plain Han helmet, neutral dark background). Portraits are artistic interpretations, not purported historical likenesses. Every head fully contained within its cell, consistent head size and shoulder crop. Photorealistic proportions and materials, not anime, not cel shading, not 3D render.
+See [the saved prompt][prompt-02].
 
 ### events
 
-Use case: historical-scene. Asset type: realistic 2D raster event atlas for a late Han Chinese strategy game. One 2560x1440 landscape image divided into exactly 2 columns by 2 rows, 4 equal 1280x720 panels touching edge to edge. No frame, borders, text, writing, captions, logo or watermark. Naturalistic painted cinematic realism with real skin, cloth, wood and lamellar armor, restrained gold and green tones and soft natural lighting, NOT 3D render, anime or pixel art. Top left: diplomatic audience in a Han governor's timber hall, envoy presenting a rolled silk letter to a seated ruler, two guards in background, respectful tense mood. Top right: an unharmed detained Han messenger escorted by two guards into a stone-and-timber holding room, parchment letter on table, no torture, no graphic harm. Bottom left: late Han walled city after a campaign, banners, soldiers marching through a gate, smoke haze without gore, realistic landscape and masonry. Bottom right: peaceful command pavilion overlooking fields and rice stores with a scholarly official studying a map, morning sunlight, everyday administration. Compose each panel as a complete distinct 16:9 scene, key subjects central and large enough to read in a small mobile event frame. Realistic still images for an original-style Romance of Three Kingdoms remake.
+See [the saved prompt][prompt-03].
 
 ### terrain
 
-Use case: historical-scene. Asset type: raster 2D terrain texture atlas used inside an accurately drawn geographic map and a hex strategy map, not itself a map. Create one 2048x1024 sheet of 8 square cells, exactly 4 columns by 2 rows, touching edge to edge, no text, borders, labels, UI or watermark. Each square is an overhead aerial orthographic photograph-like naturalistic painting, consistent late Han China midday daylight, no isometric perspective, no 3D render look. Row-major cells: 1 grassy dry fertile plains with subtle footpaths; 2 dense green broadleaf forest; 3 rolling foothills with grass and earth; 4 gray rugged exposed rocky mountains; 5 blue-green river water with natural sandy banks along opposing edges; 6 small earthen and timber military fort with walls and gates seen directly from above; 7 small realistic late Han walled town with courtyard roofs and gray tiled halls seen directly from above; 8 irrigated rice paddies divided by narrow dikes. Ground fills every cell. Real fine natural textures and historically plausible buildings, no modern infrastructure. Each cell must work when cropped independently as a tiled raster game asset.
+See [the saved prompt][prompt-04].
 
 ### army
 
-Use case: historical-scene. Asset type: animated 2D raster sprite atlas for a Han China strategy game. Transparent background. One single 1536x1024 image divided into exactly 4 columns by 2 rows of equal 384x512 cells. In each cell the same realistic late Han Chinese infantryman in dark iron lamellar armor, red waist sash, tied hair under simple dark Han helmet, holding a spear, full body from head to feet, 3/4 facing right. Consistent figure size, feet aligned at the same y coordinate, each character fits fully inside his cell with generous transparent margin, no cropped weapons crossing cell edges. Naturalistic detailed painted realism, realistic anatomy, cloth and metal; NOT cartoon, anime, plastic 3D render or pixel art. Row one: four consecutive phases of a slow marching gait, spear upright, moving legs and slight arm motion, intended as a repeating walk animation. Row two: four consecutive phases of a spear thrust attack, ready, beginning thrust, extended thrust, recovering, intended as an attack animation. Exactly 8 characters, no other objects, no text, numbers, grid, borders or watermark. Genuine clear alpha transparency around all sprites.
+See [the saved prompt][prompt-05].
 
 
 Atlas cells are drawn into Canvas 2D with a single uniform scale and centred letterboxing. Portrait cells are square; event cells retain the sheet cell ratio of 1983:793. Launch, setup and modal graphics use the same renderer. Army frame dimensions derive from the sprite sheet rather than a fixed display ratio.
@@ -45,7 +48,7 @@ Atlas cells are drawn into Canvas 2D with a single uniform scale and centred let
 
 The former `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/weather.png` is a 1254 × 1254 image generated with the built-in image generator. It contains four square cells: sun (upper left), clouds (upper right), storm/lightning (lower left), rain (lower right). The full atlas is retained without resizing or cropping on disk; Canvas 2D selects a cell and fits it proportionally between the commanders.
 
-Generation brief: one precise 2×2 atlas of restrained painted weather symbols on opaque dark jade (#17251e); gold sun, pale grey clouds, dark storm clouds and lightning, muted blue rain. Centred symbols kept inside equal cells, readable at 36–48 pixels, with no text, borders, interface, people, logos, scenery or watermark. Built-in generation, opaque background, one output and no retries.
+See [the saved prompt][prompt-06].
 
 ## Expanded set
 
@@ -53,11 +56,11 @@ Twenty-two square 4×4 officer sheets provide 352 distinct portrait cells. Their
 
 Three 2×2 scene sheets contain twelve complete landscape cells: `disasters.webp` (locusts/uprising/typhoon/flood), `omens.webp` (plague/comet/troop deployment/occupation) and `stories.webp` (Xun Yu’s plan/officer death/Diaochan’s plan/Hua Tuo’s medical book). `weather.webp` is a 2×2 square sheet: Clear/Few clouds/Cloudy/Rain. The superseded weather PNG is retained for reference and is not loaded by the app.
 
-All 26 expanded sheets were generated once using the built-in image-generation tool, without variant regeneration. WebP encoding preserves the full sheet dimensions; runtime Canvas cell selection uses uniform scaling and centred letterboxing. Full production prompts, generation-order names and the returned image dimensions are recorded in `docs/artwork/expanded-art-prompts.json` and `expanded-art-manifest.json`. The face sheets vary age, facial shape, eyebrows, eyes, facial hair and period headwear; no modern likenesses, borders, captions or interface are requested. Event scenes use naturalistic late Han painted realism with no modern plague equipment or graphic harm. Weather symbols use restrained gold/grey/blue on dark jade, with no text or scenery.
+All 26 expanded sheets were generated once using the built-in image-generation tool, without variant regeneration. WebP encoding preserves the full sheet dimensions; runtime Canvas cell selection uses uniform scaling and centred letterboxing. Full production prompts, generation-order names and the returned image dimensions are recorded in `docs/prompts/expanded_art_index.json` and `expanded-art-manifest.json`. The face sheets vary age, facial shape, eyebrows, eyes, facial hair and period headwear; no modern likenesses, borders, captions or interface are requested. Event scenes use naturalistic late Han painted realism with no modern plague equipment or graphic harm. Weather symbols use restrained gold/grey/blue on dark jade, with no text or scenery.
 
 ## V9 graphics
 
-Five new artworks were generated in one parallel batch, one request each, with no variants or retries. The returned PNGs were inspected before integration. Full production prompts and native dimensions are in `docs/artwork/graphics-v9-prompts.json` and `graphics-v9-manifest.json`; the manifest describes the generated originals. Runtime copies are WebP encoded at quality 85 without resizing or creative postprocessing, retaining alpha.
+Five new artworks were generated in one parallel batch, one request each, with no variants or retries. The returned PNGs were inspected before integration. Full production prompts and native dimensions are in `docs/prompts/graphics_v9_index.json` and `graphics-v9-manifest.json`; the manifest describes the generated originals. Runtime copies are WebP encoded at quality 85 without resizing or creative postprocessing, retaining alpha.
 
 | Runtime asset | Native dimensions | Cells and use |
 | --- | --- | --- |
@@ -79,17 +82,17 @@ Terrain variants are drawn from the existing terrain atlas with a six-bit neighb
 
 Runtime asset: `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v14.webp`, 2048 × 1024, eight equal square cells. Generated with the built-in image-generation tool, then uniformly resized from its 2:1 original and encoded as WebP for the game. This replaces `terrain-v9.webp` at runtime. Older atlases remain archival assets.
 
-Prompt: Use case: historical-scene. A precise 4-column × 2-row equal-square texture atlas, edge-filling, no gutters, hex outlines, writing or UI. Orthographic top-down painterly historical cartography, muted natural colours, coherent soft daylight, crisp organic small details. Row 1: olive grassland with subtle paths, irregular dark green woodland canopy, ochre rolling hills, slate rocky mountains. Row 2: uniform deep teal water, small centred Han stone fort with plenty of surrounding earth, compact walled Han capital with rooftops and surrounding grass, dry sandy grassland. No units, floating platforms, vignette padding or watermark.
+See [the saved prompt][prompt-07].
 
 `mjs/terrain-art.mjs` samples textures in battlefield coordinates, mirrors texture repeats to eliminate seams, and blends neighbouring terrain from the six-bit mask. Connected water edges have no internal bank line; exposed banks follow the neighbouring land. Source and displayed raster cells retain their aspect ratio. Functional grid clipping, adjacency masks and transition masks are generated from terrain data, rather than decorative vector artwork.
 
 ## V15 clean battlefield and triumph art
 
-Generated using the built-in image-generation tool, with one request for each asset. Final runtime files are `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v15.webp` (2048 × 1024, exact 4 × 2 atlas) and `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/triumph-v15.webp` (2048 × 1152, exact 16:9 scene). Source PNGs were uniformly resized and encoded to WebP, preserving their aspect ratio. The atlas replaces V14 at runtime; its world-aligned samples span several hexes and six-bit masks blend adjacent terrain. Rain/cloud layers are lighter so the art remains readable. The full production prompts are saved in `docs/artwork/v15-prompts.json`. No original DOS artwork was copied.
+Generated using the built-in image-generation tool, with one request for each asset. Final runtime files are `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v15.webp` (2048 × 1024, exact 4 × 2 atlas) and `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/triumph-v15.webp` (2048 × 1152, exact 16:9 scene). Source PNGs were uniformly resized and encoded to WebP, preserving their aspect ratio. The atlas replaces V14 at runtime; its world-aligned samples span several hexes and six-bit masks blend adjacent terrain. Rain/cloud layers are lighter so the art remains readable. The full production prompts are saved in `docs/prompts/legacy_v15_index.json`. No original DOS artwork was copied.
 
-Terrain prompt: clean top-down Han-era strategy terrain, broad jade/olive grass, rounded emerald forest canopies, smooth pale green hills, blue-grey mountain ridges; clear azure water, compact fort, walled capital and golden grass in exact row-major 4 × 2 squares. Restrained readable detail, flat soft daylight, edge-to-edge seamless material fields; no gritty/grunge/noisy texture, hex outlines, UI, troops or labels.
+See [the saved prompt][prompt-08].
 
-Triumph prompt: victorious Han-era army formations, many soldiers with raised spears and red banners, sunrise over a captured Chinese walled city, polished clean illustrated shapes, open upper sky for the Victory title, 16:9. No UI/text, modern elements or gore.
+See [the saved prompt][prompt-09].
 
 Original compositions `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/battle-music.mp3` and `assets/music/triumph-music.mp3` are reproducible with `tools/build-battle-audio.py`: pentatonic plucked strings, breathy flute, horn harmonics, war drums and gong, with stereo room reflections. No third-party samples or DOS recordings were used.
 
@@ -100,3 +103,13 @@ The battlefield autotiling/texture-blending renderer is retired. One full hand-p
 Assets are `assets/artwork/battlefields/province-01-v17.webp` through `province-41-v17.webp`. `config/battlefield-paintings.json` records all 41 production prompts, image dimensions, image hashes, source hashes, original terrain arrays/hashes and painting registration. Built-in image generation was used once per province. WebP encoding preserves source dimensions and aspect ratio, without stretching or changing artwork positions. These are artistic reconstructions; the original terrain grid remains the gameplay authority.
 
 The previously generated triumph scene is now `assets/artwork/triumph-v17.webp` and preloaded before a campaign begins. The faster battle score is `assets/music/battle-music-v17.mp3`, composed at 144 BPM using the updated `tools/build-battle-audio.py`. It uses no original game samples. The separate triumph fanfare remains.
+
+[prompt-01]: prompts/fire_v42_webp.md#original-production-prompt
+[prompt-02]: prompts/portraits_initial_webp.md#original-production-prompt
+[prompt-03]: prompts/events_initial_webp.md#original-production-prompt
+[prompt-04]: prompts/terrain_initial_webp.md#original-production-prompt
+[prompt-05]: prompts/army_initial_webp.md#original-production-prompt
+[prompt-06]: prompts/weather_initial_webp.md#recorded-generation-brief
+[prompt-07]: prompts/terrain_v14_webp.md#original-production-prompt
+[prompt-08]: prompts/terrain_v15_webp.md#historical-summary-brief
+[prompt-09]: prompts/triumph_v15_webp.md#historical-summary-brief

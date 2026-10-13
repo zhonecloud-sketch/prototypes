@@ -1,0 +1,147 @@
+[
+  {
+    "year": 189,
+    "asset": "assets/artwork/history-v36/189.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/189_webp.md#original-production-prompt"
+  },
+  {
+    "year": 190,
+    "asset": "assets/artwork/history-v36/190.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/190_webp.md#original-production-prompt"
+  },
+  {
+    "year": 192,
+    "asset": "assets/artwork/history-v36/192.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/192_webp.md#original-production-prompt"
+  },
+  {
+    "year": 194,
+    "asset": "assets/artwork/history-v36/194.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/194_webp.md#original-production-prompt"
+  },
+  {
+    "year": 197,
+    "asset": "assets/artwork/history-v36/197.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/197_webp.md#original-production-prompt"
+  },
+  {
+    "year": 200,
+    "asset": "assets/artwork/history-v36/200.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/200_webp.md#original-production-prompt"
+  },
+  {
+    "year": 207,
+    "asset": "assets/artwork/history-v36/207.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/207_webp.md#original-production-prompt"
+  },
+  {
+    "year": 208,
+    "asset": "assets/artwork/history-v36/208.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/208_webp.md#original-production-prompt"
+  },
+  {
+    "year": 215,
+    "asset": "assets/artwork/history-v36/215.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/215_webp.md#original-production-prompt"
+  },
+  {
+    "year": 219,
+    "asset": "assets/artwork/history-v36/219.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/219_webp.md#original-production-prompt"
+  },
+  {
+    "year": 220,
+    "asset": "assets/artwork/history-v36/220.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/220_webp.md#original-production-prompt"
+  },
+  {
+    "year": 221,
+    "asset": "assets/artwork/history-v36/221.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/221_webp.md#original-production-prompt"
+  },
+  {
+    "year": 222,
+    "asset": "assets/artwork/history-v36/222.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/222_webp.md#original-production-prompt"
+  },
+  {
+    "year": 223,
+    "asset": "assets/artwork/history-v36/223.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/223_webp.md#original-production-prompt",
+    "correctionPromptFile": "docs/prompts/223_webp.md#historical-correction-edit"
+  },
+  {
+    "year": 229,
+    "asset": "assets/artwork/history-v36/229.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/229_webp.md#original-production-prompt"
+  },
+  {
+    "year": "Default",
+    "asset": "assets/artwork/history-v36/default.webp",
+    "nativeDimensions": [
+      1983,
+      793
+    ],
+    "promptFile": "docs/prompts/default_webp.md#original-production-prompt"
+  }
+]

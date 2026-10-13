@@ -4,6 +4,9 @@ The current game is **v56**, a playable HTML5 / Canvas 2D strategy game for land
 
 ## Guides
 
+[Saved generation prompts](prompts/README.md) include original production
+requests, source-image edits and the complete province 1 terrain brief.
+
 Use [changes.md](changes.md) for all release history, [native_sound.md](native_sound.md) for original/current sound routing, and [test_spec.md](test_spec.md) for the complete validation catalogue. Media is grouped under assets/artwork, assets/sounds and assets/music; [asset-manifest.json](asset-manifest.json) records the cleanup.
 
 

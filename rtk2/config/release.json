@@ -100,7 +100,7 @@
     }
   ],
   "historicalAssets": "Scheduled history uses 15 standalone native 1983x793 v36 scenes plus a fallback, loaded on demand. v30 remains active for disasters, omens, stories and portraits; old history atlases remain for provenance/regression.",
-  "mapPromptIndex": "docs/artwork/v15-prompts.json",
+  "mapPromptIndex": "docs/prompts/README.md",
   "battlefieldMaps": 41,
   "nativeEquationCases": 1608,
   "provinceApproaches": 186,

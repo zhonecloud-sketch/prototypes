@@ -95,3 +95,6 @@ AGENTS.md
 
 # Shared runtime already tracked here; RTK2 imports must leave it unchanged.
 /lib/
+
+# Keep RTK2's user-authored project instructions in version control.
+!/rtk2/AGENTS.md

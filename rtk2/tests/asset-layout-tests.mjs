@@ -21,7 +21,7 @@ exists(logical);}}
 const release=JSON.parse(fs.readFileSync(path.join(root,'config/release.json')));const checkRefs=v=>{if(typeof v==='string'&&/^(?:assets|docs)\//.test(v))exists(v.split('#')[0]);else if(Array.isArray(v))v.forEach(checkRefs);else if(v&&typeof v==='object')Object.values(v).forEach(checkRefs);};checkRefs(release);
 console.log('PASS concrete source media URLs and release pointers resolve after relocation');
 const changes=fs.readFileSync(path.join(root,'docs/changes.md'),'utf8'),anchors=[...changes.matchAll(/<a id="([^"]+)"><\/a>/g)].map(m=>m[1]);assert.equal(anchors.length,new Set(anchors).size);
-for(const file of walk(path.join(root,'docs')))assert(!/v\d+[^/]*\.(md|html)$/.test(file),file);
+for(const file of walk(path.join(root,'docs')))if(!file.startsWith(path.join(root,'docs','prompts')+path.sep))assert(!/v\d+[^/]*\.(md|html)$/.test(file),file);
 for(const row of manifest.documentationMigrated){assert(!fs.existsSync(path.join(root,row.from)),row.from);assert(changes.includes(row.gitBlob),row.from);assert(anchors.includes(row.to.split('#')[1]),row.to);}
 assert(changes.includes('original Git blob'));assert(changes.includes('record-fixes-v56'));exists('docs/native_sound.md');exists('docs/test_spec.md');
 console.log('PASS one consolidated version history, unique record anchors and current sound/test documentation');

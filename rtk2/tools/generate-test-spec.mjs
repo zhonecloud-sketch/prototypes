@@ -49,7 +49,37 @@ function buildTestSpec(files){
  }
  const optional=Object.keys(files).filter(p=>/^tools\//.test(p)&&/\.(mjs|py|sh|bat)$/.test(p)&&!/^tools\/verify/.test(p)&&p!=="tools/ai-rules.mjs"&&p!=="tools/generate-test-spec.mjs");
  out+="\n## Build, training and support tools (not independent validation cases)\n\nThese scripts are not silently executed by this catalogue. Builders can replace artwork/media/data; optimizer and benchmark commands have their own inputs/outputs and do not substitute for regression tests. Run production training only on explicit instruction. Historical fallback audio generators must not overwrite driver-rendered native exports or the user's supplied clips.\n\n"+optional.map(p=>"- ["+p+"]("+link(p)+")").join("\n")+"\n\n## Keeping this document current\n\nRun `node tools/generate-test-spec.mjs` after changing a test, then review the generated case input excerpts, dynamic matrices and assertions against the source. Cases are identified by their declared labels or PASS checkpoints; one matrix row may expand to many executions. Generation does not run tests, create training profiles or certify a pass. Add every new reported bug to a behavioral case or record the exceptional missing design in pending-test-case-design.md.\n";
- return out;
+ return formatTestSpecification(out);
+}
+function formatTestSpecification(md){
+ const decode=s=>s.replace(/&#96;/g,'`').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/\\\|/g,'|');
+ const wrap=s=>s.split('\n').flatMap(line=>{
+  const out=[];while(line.length>80){let at=line.lastIndexOf(' ',80);if(at<1)at=80;out.push(line.slice(0,at).trimEnd());line=line.slice(at).trimStart();}out.push(line);return out;
+ }).join('\n');
+ const split=row=>{const cells=[];let part='',escaped=false;for(const c of row.trim().slice(1,-1)){if(c==='|'&&!escaped){cells.push(part.trim());part='';}else part+=c;escaped=c==='\\'&&!escaped;}cells.push(part.trim());return cells;};
+ const lines=md.split('\n'),out=[];
+ for(let i=0;i<lines.length;i++){
+  if(lines[i].startsWith('| ')&&lines[i+1]?.match(/^\| ?[-: ]+\|/)){
+   const headers=split(lines[i]);i+=2;
+   while(i<lines.length&&lines[i].startsWith('| ')){
+    const cells=split(lines[i]);out.push('---','');
+    for(let k=0;k<headers.length;k++){
+     out.push('**'+decode(headers[k])+'**','');
+     const cell=cells[k]||'',parts=cell.split('<br>');
+     if(/assert|Inputs and procedure|Shared inputs|Invocation|Required assertion/.test(cell+' '+headers[k])&&!/\]\(/.test(cell)){
+      out.push('```text',wrap(decode(parts.join('\n'))),'```','');
+     }else out.push(wrap(parts.join('<br>\n')),'');
+    }i++;
+   }i--;continue;
+  }
+  out.push(lines[i]);
+ }
+ let text=out.join('\n');
+ text=text.replace('the table shows the exact assertion expressions.','source links identify the exact assertion expressions.');
+ text=text.replace('Setup excerpts identify case-specific inputs;','Display excerpts are wrapped at 80 source columns; consult the linked code for execution. Setup excerpts identify case-specific inputs;');
+ // Short reference labels prevent wide case source links from exceeding 80.
+ const refs=[];text=text.replace(/\[([^\]]+)\]\(([^)\n]+)\)/g,(all,label,target)=>{if(all.length<=75)return all;const id='test-source-'+(refs.length+1);refs.push('['+id+']: '+target);return '['+label+']['+id+']';});
+ return wrap(text.trim())+(refs.length?'\n\n'+refs.map(wrap).join('\n'):'')+'\n';
 }
 const files={},walk=dir=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(dir+'/'+e.name):[dir+'/'+e.name]);for(const dir of ['tests','tools'])for(const p of walk(dir)){if(/\.(mjs|py|sh|bat)$/.test(p))files[p]=fs.readFileSync(path.join(root,p),'utf8');}
 fs.writeFileSync(path.join(root,'docs/test_spec.md'),buildTestSpec(files));console.log('Test specification generated from existing test sources; no tests or training run.');
