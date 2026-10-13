@@ -1,7 +1,7 @@
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
 function buildTestSpec(files){
- const safe=s=>s.replace(/\|/g,"\\|").replace(/\r?\n/g,"<br>").replace(/`/g,"&#96;");
+ const safe=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\|/g,"\\|").replace(/\r?\n/g,"<br>").replace(/`/g,"&#96;");
  const link=p=>"../"+p;
  function endOf(s,i){let depth=0,q=null,comment=null;for(let j=i;j<s.length;j++){const c=s[j],n=s[j+1];if(comment==="line"){if(c==="\n")comment=null;continue;}if(comment==="block"){if(c==="*"&&n==="/"){comment=null;j++;}continue;}if(q){if(c==="\\"){j++;continue;}if(c===q)q=null;continue;}if(c==="/"&&n==="/"){comment="line";j++;continue;}if(c==="/"&&n==="*"){comment="block";j++;continue;}if(c==="'"||c==='"'||c==="`"){q=c;continue;}if(c==="(")depth++;if(c===")"&&--depth===0)return j+1;}return s.length;}
  const assertions=s=>[...s.matchAll(/\bassert(?:\.\w+)?\s*\(/g)].map(m=>s.slice(m.index,endOf(s,s.indexOf("(",m.index))).trim());
@@ -51,5 +51,5 @@ function buildTestSpec(files){
  out+="\n## Build, training and support tools (not independent validation cases)\n\nThese scripts are not silently executed by this catalogue. Builders can replace artwork/media/data; optimizer and benchmark commands have their own inputs/outputs and do not substitute for regression tests. Run production training only on explicit instruction. Historical fallback audio generators must not overwrite driver-rendered native exports or the user's supplied clips.\n\n"+optional.map(p=>"- ["+p+"]("+link(p)+")").join("\n")+"\n\n## Keeping this document current\n\nRun `node tools/generate-test-spec.mjs` after changing a test, then review the generated case input excerpts, dynamic matrices and assertions against the source. Cases are identified by their declared labels or PASS checkpoints; one matrix row may expand to many executions. Generation does not run tests, create training profiles or certify a pass. Add every new reported bug to a behavioral case or record the exceptional missing design in pending-test-case-design.md.\n";
  return out;
 }
-const files={};for(const dir of ['tests','tools'])for(const name of fs.readdirSync(path.join(root,dir))){const p=dir+'/'+name;if(/\.(mjs|py|sh|bat)$/.test(p))files[p]=fs.readFileSync(path.join(root,p),'utf8');}
+const files={},walk=dir=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(dir+'/'+e.name):[dir+'/'+e.name]);for(const dir of ['tests','tools'])for(const p of walk(dir)){if(/\.(mjs|py|sh|bat)$/.test(p))files[p]=fs.readFileSync(path.join(root,p),'utf8');}
 fs.writeFileSync(path.join(root,'docs/test_spec.md'),buildTestSpec(files));console.log('Test specification generated from existing test sources; no tests or training run.');
