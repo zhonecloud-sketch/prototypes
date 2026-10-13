@@ -39,7 +39,7 @@
     "listeningVerified": false
   },
   "music": "All three active BGM recordings equal v54 bytes",
-  "licenses": "docs/audio-licenses-v55.md",
+  "licenses": "docs/changes.md#record-audio-licenses-v55",
   "aiTrainingRun": false,
   "aiRulesIdentity": "Unchanged; current engine fingerprint check passed",
   "limits": "docs/pending-test-case-design.md"

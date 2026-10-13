@@ -58,27 +58,27 @@
   ],
   "mediaPreserved": [
     {
-      "file": "assets/council-music.mp3",
+      "file": "assets/music/council-music.mp3",
       "sha256": "b6c53dfa808f289ed8bf134d1aada5fe5871769eeafefc3bd72d03476858d59b"
     },
     {
-      "file": "assets/battle-music-v17.mp3",
+      "file": "assets/music/battle-music-v17.mp3",
       "sha256": "fd9587987c866043613f2de9ed2e61e253358cd0fe02faa86149bc74da3ec9f2"
     },
     {
-      "file": "assets/triumph-music.mp3",
+      "file": "assets/music/triumph-music.mp3",
       "sha256": "71e0cabdccba97c4c8820bded33c415239ce3362eec515c944ff4d5e74151819"
     },
     {
-      "file": "assets/freesound_community-sword-battle-jingle-loop-96983.mp3",
+      "file": "assets/sounds/freesound_community-sword-battle-jingle-loop-96983.mp3",
       "sha256": "d3a4bacc7831431199ea668c60fd4412e6c8bb28e577b90e7ffcdc1fecc18bd7"
     },
     {
-      "file": "assets/audiomass-charge_scream.mp3",
+      "file": "assets/sounds/audiomass-charge_scream.mp3",
       "sha256": "ba386c0e4841a145deb32073abb7404d671ee70f6144133bf17122f36e248b38"
     },
     {
-      "file": "assets/audiomass-horse_gallop.mp3",
+      "file": "assets/sounds/audiomass-horse_gallop.mp3",
       "sha256": "3ff1a96b37ddfe94ac0e966234dc27c4faa88758de17b124d43a7e6bee40ac82"
     }
   ],

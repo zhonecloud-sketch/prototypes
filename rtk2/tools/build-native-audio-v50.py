@@ -13,7 +13,7 @@ def save(name,x):
  with tempfile.TemporaryDirectory() as td:
   wav=Path(td)/'cue.wav'
   with wave.open(str(wav),'wb') as w:w.setnchannels(1);w.setsampwidth(2);w.setframerate(SR);w.writeframes((np.clip(x,-1,1)*32767).astype('<i2').tobytes())
-  subprocess.run(['ffmpeg','-v','error','-y','-i',str(wav),'-codec:a','libmp3lame','-b:a','96k',str(ROOT/'assets'/f'{name}.mp3')],check=True)
+  subprocess.run(['ffmpeg','-v','error','-y','-i',str(wav),'-codec:a','libmp3lame','-b:a','96k',str(ROOT/'assets'/'sounds'/f'{name}.mp3')],check=True)
 
 def voice(note,seconds,effect):
  t=np.arange(round(seconds*SR))/SR;freq=440*2**((note+24-69)/12);ratio=[1,1.5,2,2.5,3][effect%5]

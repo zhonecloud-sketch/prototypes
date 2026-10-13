@@ -1,0 +1,1538 @@
+{
+  "version": 56,
+  "baselineCommit": "52c4d359dd5576b220b98c2a0329e34473e854bd",
+  "policy": "Move retained media without byte changes. Remove only superseded working exports or unused replacements. Retain test/provenance media pending the user's test review. Do not rewrite Git history.",
+  "retired": [
+    {
+      "path": "assets/army.png",
+      "gitBlob": "17d0e724aefafbc0554009594d565c7239117a99",
+      "bytes": 2056578,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/army.png"
+    },
+    {
+      "path": "assets/army.webp",
+      "gitBlob": "0d939d938177549d4a64ad5d974bc4a8c4f2ca50",
+      "bytes": 256134,
+      "reason": "Superseded by army-v23.webp; v9 regression uses its separate army-v9.webp.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/army.webp"
+    },
+    {
+      "path": "assets/battle-music.mp3",
+      "gitBlob": "acddc5e270470f1faf84825ccd8d91d752da6b7b",
+      "bytes": 801481,
+      "reason": "Superseded by battle-music-v17.mp3; no v56 track constructor or test uses it.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/battle-music.mp3"
+    },
+    {
+      "path": "assets/battle.mp3",
+      "gitBlob": "0fa0b04e4df29d9b255a3428f498c8bdf98b640d",
+      "bytes": 8821,
+      "reason": "Unused old generic combat cue; active battle routes use sword, charge cry, fire or native ambush.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/battle.mp3"
+    },
+    {
+      "path": "assets/charge-shout.mp3",
+      "gitBlob": "e4e74b90705854402fa634e51bb9cd26a42d9319",
+      "bytes": 15091,
+      "reason": "Superseded by supplied audiomass-charge_scream.mp3.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/charge-shout.mp3"
+    },
+    {
+      "path": "assets/events.png",
+      "gitBlob": "e40770101eee0bdac98e5b1bd2028d8a3ecb43bb",
+      "bytes": 2730548,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/events.png"
+    },
+    {
+      "path": "assets/gallop.mp3",
+      "gitBlob": "dff7f18705cea674a843c6f38184ef8d01a068eb",
+      "bytes": 39332,
+      "reason": "Superseded by supplied audiomass-horse_gallop.mp3.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/gallop.mp3"
+    },
+    {
+      "path": "assets/generated/officers-custom-v49.png",
+      "gitBlob": "e2bd03423106a61b1bc5eee4726d2db78538e739",
+      "bytes": 2341717,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/generated/officers-custom-v49.png"
+    },
+    {
+      "path": "assets/liu-bei-v29.webp",
+      "gitBlob": "aa9b140227c4b7f96fd7414839d1f7e71e76bd6c",
+      "bytes": 400380,
+      "reason": "Superseded by historic v30 portrait atlas; no runtime or retained test reads individual image.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/liu-bei-v29.webp"
+    },
+    {
+      "path": "assets/portraits.png",
+      "gitBlob": "97333dfd4b5278953b4f5f36a90cd999b081ea35",
+      "bytes": 2936063,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/portraits.png"
+    },
+    {
+      "path": "assets/select.mp3",
+      "gitBlob": "bb27cbf92f2ec6cec361d4400bcbc88777ec83ef",
+      "bytes": 3805,
+      "reason": "Ordinary selector/button click is silent; play('select') exits without loading.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/select.mp3"
+    },
+    {
+      "path": "assets/terrain-v14.webp",
+      "gitBlob": "15091a43155998c716a6f65c6cef72f29bb20781",
+      "bytes": 886478,
+      "reason": "Superseded painted terrain; renderer uses registered province battlefield paintings.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v14.webp"
+    },
+    {
+      "path": "assets/terrain-v15.webp",
+      "gitBlob": "5c98d8cdc1e1abfd7fdbd8a52a1150a5b6167d47",
+      "bytes": 573006,
+      "reason": "Unreachable terrain-key mapping; renderer uses 41 registered battlefield paintings.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v15.webp"
+    },
+    {
+      "path": "assets/terrain.png",
+      "gitBlob": "3bada0b3c478bfe715ef325459618200f3be5b99",
+      "bytes": 3822534,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain.png"
+    },
+    {
+      "path": "assets/terrain.webp",
+      "gitBlob": "2a4936c2dc00460cd9288e6cb4a918edb5894449",
+      "bytes": 578246,
+      "reason": "Unused earlier terrain atlas; legacy v9 tests use terrain-v9.webp.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain.webp"
+    },
+    {
+      "path": "assets/triumph-v15.webp",
+      "gitBlob": "3a5e67116e733a6f1062924d8dd4c08ac1c4327a",
+      "bytes": 481990,
+      "reason": "Superseded by active triumph-v17.webp.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/triumph-v15.webp"
+    },
+    {
+      "path": "assets/weather.png",
+      "gitBlob": "873c3a26eeeb367f4f256f9834ea63c4c6b19e85",
+      "bytes": 1609827,
+      "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/weather.png"
+    }
+  ],
+  "relocated": [
+    {
+      "from": "assets/army-v23.webp",
+      "to": "assets/artwork/army-v23.webp",
+      "gitBlob": "18f50ae26baf36063ee86e4d605e0feec47f71ae",
+      "bytes": 642724,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/army-v9.webp",
+      "to": "assets/artwork/army-v9.webp",
+      "gitBlob": "7aec4116d030c9311d7d105cbf90b075b07cdb0b",
+      "bytes": 514508,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/audiomass-charge_scream.mp3",
+      "to": "assets/sounds/audiomass-charge_scream.mp3",
+      "gitBlob": "32018927d22c0011537ee0665d5271b2b92f0c70",
+      "bytes": 57678,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/audiomass-horse_gallop.mp3",
+      "to": "assets/sounds/audiomass-horse_gallop.mp3",
+      "gitBlob": "7c66fe1eb523a0401c06f31d4fe7bcff1d5c385c",
+      "bytes": 45557,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/battle-music-v17.mp3",
+      "to": "assets/music/battle-music-v17.mp3",
+      "gitBlob": "36dd542b4e8f676514435d96b3f9c8aa9260241d",
+      "bytes": 1067930,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-01-v17.webp",
+      "to": "assets/artwork/battlefields/province-01-v17.webp",
+      "gitBlob": "61ab8894c32e7c3557bc1495889608f31e09ec1e",
+      "bytes": 485906,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-02-v17.webp",
+      "to": "assets/artwork/battlefields/province-02-v17.webp",
+      "gitBlob": "1f782da3402d05d10076d07244df18ee978dd20a",
+      "bytes": 583214,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-03-v17.webp",
+      "to": "assets/artwork/battlefields/province-03-v17.webp",
+      "gitBlob": "7e186a08bd901fb4bd0224d5ad089c4332a6ff7f",
+      "bytes": 515172,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-04-v17.webp",
+      "to": "assets/artwork/battlefields/province-04-v17.webp",
+      "gitBlob": "2916edbaba5155680a8e3461dd0afda893f7d04d",
+      "bytes": 591926,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-05-v17.webp",
+      "to": "assets/artwork/battlefields/province-05-v17.webp",
+      "gitBlob": "bb278e87571ac85a6c28cd875256a031ddac6f83",
+      "bytes": 580732,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-06-v17.webp",
+      "to": "assets/artwork/battlefields/province-06-v17.webp",
+      "gitBlob": "6ed23e67c28efb0dd2e1b3b38b284e7cb346e6ff",
+      "bytes": 431152,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-07-v17.webp",
+      "to": "assets/artwork/battlefields/province-07-v17.webp",
+      "gitBlob": "0ab871cbd78409b6b304ceece2f7039e15d5a80e",
+      "bytes": 530710,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-08-v17.webp",
+      "to": "assets/artwork/battlefields/province-08-v17.webp",
+      "gitBlob": "09fa3edfb74b0e0bedca74f0384cc32b84f4dfea",
+      "bytes": 514082,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-09-v17.webp",
+      "to": "assets/artwork/battlefields/province-09-v17.webp",
+      "gitBlob": "3da9beceef235cac7d542436dd7364c0e1ea2edd",
+      "bytes": 502112,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-10-v17.webp",
+      "to": "assets/artwork/battlefields/province-10-v17.webp",
+      "gitBlob": "bf30b04a04b7c5726fa62498d9e13e093e12292a",
+      "bytes": 487140,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-11-v17.webp",
+      "to": "assets/artwork/battlefields/province-11-v17.webp",
+      "gitBlob": "a0748e9febe6e9b88320e5489064f73812881051",
+      "bytes": 514032,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-12-v17.webp",
+      "to": "assets/artwork/battlefields/province-12-v17.webp",
+      "gitBlob": "baa54c8c73e5826aa496cf755914df82bfef5236",
+      "bytes": 587978,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-13-v17.webp",
+      "to": "assets/artwork/battlefields/province-13-v17.webp",
+      "gitBlob": "2d9118454894f888cba878210761cfa175f1d8f2",
+      "bytes": 564204,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-14-v17.webp",
+      "to": "assets/artwork/battlefields/province-14-v17.webp",
+      "gitBlob": "f5a3c97526a8a55d1267c9f403982bd43f06df1e",
+      "bytes": 519036,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-15-v17.webp",
+      "to": "assets/artwork/battlefields/province-15-v17.webp",
+      "gitBlob": "faef39ecd621c33a39c65a5b871b9133a83162c9",
+      "bytes": 578130,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-16-v17.webp",
+      "to": "assets/artwork/battlefields/province-16-v17.webp",
+      "gitBlob": "3b7f7527215c9c0e912f013983399fcceb00f097",
+      "bytes": 452286,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-17-v17.webp",
+      "to": "assets/artwork/battlefields/province-17-v17.webp",
+      "gitBlob": "2cfebee6ccb65516e3c2d2e8d9cfd55d54de541e",
+      "bytes": 560482,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-18-v17.webp",
+      "to": "assets/artwork/battlefields/province-18-v17.webp",
+      "gitBlob": "4ab7f159f6aac205ce7c2bc536ee097efc01975b",
+      "bytes": 533618,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-19-v17.webp",
+      "to": "assets/artwork/battlefields/province-19-v17.webp",
+      "gitBlob": "fb79c08d6275b3b157dad3cf4f7fe04fcf88682f",
+      "bytes": 559488,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-20-v17.webp",
+      "to": "assets/artwork/battlefields/province-20-v17.webp",
+      "gitBlob": "539fb953d29e3326b6f102fd853142835e081d76",
+      "bytes": 579844,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-21-v17.webp",
+      "to": "assets/artwork/battlefields/province-21-v17.webp",
+      "gitBlob": "2a80bc66c1e669bebc7d7cc96f5f872565ec0378",
+      "bytes": 507578,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-22-v17.webp",
+      "to": "assets/artwork/battlefields/province-22-v17.webp",
+      "gitBlob": "49b0264490daf3834f5b27ecc225f73656730736",
+      "bytes": 589780,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-23-v17.webp",
+      "to": "assets/artwork/battlefields/province-23-v17.webp",
+      "gitBlob": "9b791f906d3cd8506ab64a30a28f7f8a9b40ea37",
+      "bytes": 494986,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-24-v17.webp",
+      "to": "assets/artwork/battlefields/province-24-v17.webp",
+      "gitBlob": "1152c5eb1f6f4cfd7cdee0d2213759e63c7afc6a",
+      "bytes": 423842,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-25-v17.webp",
+      "to": "assets/artwork/battlefields/province-25-v17.webp",
+      "gitBlob": "f0aabcf784f6ef46abea47eb44c68709733b1e78",
+      "bytes": 552202,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-26-v17.webp",
+      "to": "assets/artwork/battlefields/province-26-v17.webp",
+      "gitBlob": "9b07a7833f77328c0a41fc6549ef90a13d6619c0",
+      "bytes": 566088,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-27-v17.webp",
+      "to": "assets/artwork/battlefields/province-27-v17.webp",
+      "gitBlob": "fd911bc4d74b3e8846a81edd88a6587efd03453d",
+      "bytes": 527214,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-28-v17.webp",
+      "to": "assets/artwork/battlefields/province-28-v17.webp",
+      "gitBlob": "77347d626fa121b52bbc9365647688d90fcd8410",
+      "bytes": 551912,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-29-v17.webp",
+      "to": "assets/artwork/battlefields/province-29-v17.webp",
+      "gitBlob": "82862a2ff7dbcaf5c4d16000a7a0fea980871caf",
+      "bytes": 546352,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-30-v17.webp",
+      "to": "assets/artwork/battlefields/province-30-v17.webp",
+      "gitBlob": "71d7df1ff4b197e13b8e179aabf5b75078859de7",
+      "bytes": 563792,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-31-v17.webp",
+      "to": "assets/artwork/battlefields/province-31-v17.webp",
+      "gitBlob": "60dcf17b1ec7a0b4a30f2b08a3f07edbc2d86e75",
+      "bytes": 551884,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-32-v17.webp",
+      "to": "assets/artwork/battlefields/province-32-v17.webp",
+      "gitBlob": "ba11fe41ff60e086f17b3738cc39a8cc04ab6c71",
+      "bytes": 423034,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-33-v17.webp",
+      "to": "assets/artwork/battlefields/province-33-v17.webp",
+      "gitBlob": "01a72e1ba1cb8b44bf45ecd5156d4d6b0d9598eb",
+      "bytes": 565210,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-34-v17.webp",
+      "to": "assets/artwork/battlefields/province-34-v17.webp",
+      "gitBlob": "1400df8c13c9a8f2f840482e4f2e17321e597d7d",
+      "bytes": 587342,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-35-v17.webp",
+      "to": "assets/artwork/battlefields/province-35-v17.webp",
+      "gitBlob": "7f80f6f3f35508b9dba1650e15cb5f37e0a4766a",
+      "bytes": 484640,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-36-v17.webp",
+      "to": "assets/artwork/battlefields/province-36-v17.webp",
+      "gitBlob": "5977c2f9b573b1b51b901775a687e2c963a58d71",
+      "bytes": 606102,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-37-v17.webp",
+      "to": "assets/artwork/battlefields/province-37-v17.webp",
+      "gitBlob": "bcb188543a0c8534aace8ef2c1325b88ab33868b",
+      "bytes": 518154,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-38-v17.webp",
+      "to": "assets/artwork/battlefields/province-38-v17.webp",
+      "gitBlob": "71883fc3888dd23cc8802cb2c2fbb795fd125000",
+      "bytes": 484466,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-39-v17.webp",
+      "to": "assets/artwork/battlefields/province-39-v17.webp",
+      "gitBlob": "42a3ee1efd266a4e4adf6dc612c0dfbb24c4f24d",
+      "bytes": 444272,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-40-v17.webp",
+      "to": "assets/artwork/battlefields/province-40-v17.webp",
+      "gitBlob": "3b7c70c8ad79dc75fd097f84ca89828826198c85",
+      "bytes": 553910,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/battlefields/province-41-v17.webp",
+      "to": "assets/artwork/battlefields/province-41-v17.webp",
+      "gitBlob": "c16f7781e733a8c7c6cc996b159af80edad50964",
+      "bytes": 427638,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/capitals-v9.webp",
+      "to": "assets/artwork/capitals-v9.webp",
+      "gitBlob": "38747ddca25f5f484f16ac1c6e8a6dc8a7e10554",
+      "bytes": 659750,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/china-relief-v9.webp",
+      "to": "assets/artwork/china-relief-v9.webp",
+      "gitBlob": "3b07f9f7b95a3f6ca161b423d91da404f69a52aa",
+      "bytes": 590366,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/clan-destroyed-v31.webp",
+      "to": "assets/artwork/clan-destroyed-v31.webp",
+      "gitBlob": "be47ddd2c9e39dc26531cb2b06aa2c40d5f4d011",
+      "bytes": 525854,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/council-music.mp3",
+      "to": "assets/music/council-music.mp3",
+      "gitBlob": "3ca5d20541b78c92476260b4882d2457a40c8ff4",
+      "bytes": 769506,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/courier.webp",
+      "to": "assets/artwork/courier.webp",
+      "gitBlob": "7ca69b978b1c638a0bf6516df1e8c3883af0abb2",
+      "bytes": 212930,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/custom-ruler-silhouette.svg",
+      "to": "assets/artwork/custom-ruler-silhouette.svg",
+      "gitBlob": "37962198c597a1595e1f067f0fb7450dca0f2e77",
+      "bytes": 714,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/death.mp3",
+      "to": "assets/sounds/death.mp3",
+      "gitBlob": "636ce6882db92fa4cfb3b16a9a3c5ad984aadf3b",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/disasters-v29.webp",
+      "to": "assets/artwork/disasters-v29.webp",
+      "gitBlob": "2032f5f7b6f1cb81c0d0a069bfc351b27a491f48",
+      "bytes": 341978,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/disasters-v30.webp",
+      "to": "assets/artwork/disasters-v30.webp",
+      "gitBlob": "01f1561d59345b616a4968995032c5f15e7edf13",
+      "bytes": 639128,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/disasters.webp",
+      "to": "assets/artwork/disasters.webp",
+      "gitBlob": "79a12dbdf182929610eee75deedf23538bb4455e",
+      "bytes": 424086,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/epidemic.mp3",
+      "to": "assets/sounds/epidemic.mp3",
+      "gitBlob": "7a7433f1d0ab1bce7bbb2f6e971eaefe00d42550",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/events.webp",
+      "to": "assets/artwork/events.webp",
+      "gitBlob": "174226c09acbdf9dbd97c578b45216e7510c9c61",
+      "bytes": 317670,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/fire-v42.webp",
+      "to": "assets/artwork/fire-v42.webp",
+      "gitBlob": "efb888aab81b91823d60038378f6053492aabe8b",
+      "bytes": 299644,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/fire.mp3",
+      "to": "assets/sounds/fire.mp3",
+      "gitBlob": "864b4dad0b407143c1ac49af14650a960e850703",
+      "bytes": 19270,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/flood.mp3",
+      "to": "assets/sounds/flood.mp3",
+      "gitBlob": "be1c93c39140e0287bce2510031fa2982e18af13",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/freesound_community-sword-battle-jingle-loop-96983.mp3",
+      "to": "assets/sounds/freesound_community-sword-battle-jingle-loop-96983.mp3",
+      "gitBlob": "bf029636f8632d35eeb298a56440fb60b1b199ce",
+      "bytes": 46560,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/heir-vows-vengeance-v31.webp",
+      "to": "assets/artwork/heir-vows-vengeance-v31.webp",
+      "gitBlob": "855de2f89bea62775960172d3bbe991f1c762e99",
+      "bytes": 496276,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v28.webp",
+      "to": "assets/artwork/history-v28.webp",
+      "gitBlob": "502ce02c125f6f123a3d2150d0bd7ba072a47cba",
+      "bytes": 625278,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/history-v29.webp",
+      "to": "assets/artwork/history-v29.webp",
+      "gitBlob": "bb8c6eb13e015da064d7e0242f17d01e8323a6d0",
+      "bytes": 633480,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/history-v30.webp",
+      "to": "assets/artwork/history-v30.webp",
+      "gitBlob": "37437c4921aad63d55dd1a66b959d9f51badf0ed",
+      "bytes": 1319200,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/189.webp",
+      "to": "assets/artwork/history-v36/189.webp",
+      "gitBlob": "d6320505a8d67debde3e63b92ec81e8a9c7e0cff",
+      "bytes": 550254,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/190.webp",
+      "to": "assets/artwork/history-v36/190.webp",
+      "gitBlob": "2824f3100b9729104db678e9fa2f775b308bf7c6",
+      "bytes": 614822,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/192.webp",
+      "to": "assets/artwork/history-v36/192.webp",
+      "gitBlob": "e31d46beab87f833b3e9cd398966a0c3b0c35a31",
+      "bytes": 490340,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/194.webp",
+      "to": "assets/artwork/history-v36/194.webp",
+      "gitBlob": "a99cb4f5f959c5c90eb98fd3fd2272dcffe9b8a2",
+      "bytes": 533824,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/197.webp",
+      "to": "assets/artwork/history-v36/197.webp",
+      "gitBlob": "29b6cc2050e601bd7bc10c63c164b6d83bdb4947",
+      "bytes": 573984,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/200.webp",
+      "to": "assets/artwork/history-v36/200.webp",
+      "gitBlob": "cf239a07ccc125373f04c95316ffbc13c51a615f",
+      "bytes": 671572,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/207.webp",
+      "to": "assets/artwork/history-v36/207.webp",
+      "gitBlob": "cb733cbab39c6a6cd8558505c34f69cc18cb1cea",
+      "bytes": 587688,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/208.webp",
+      "to": "assets/artwork/history-v36/208.webp",
+      "gitBlob": "f73036c06b60dbb94eab9a7b6121a722339eb6fb",
+      "bytes": 615024,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/215.webp",
+      "to": "assets/artwork/history-v36/215.webp",
+      "gitBlob": "f6a6a54fe71fe866f76a6e62e5f2a0029c65dc0f",
+      "bytes": 670860,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/219.webp",
+      "to": "assets/artwork/history-v36/219.webp",
+      "gitBlob": "2369558c2194fe507e87d2491979d4c328cd071d",
+      "bytes": 579062,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/220.webp",
+      "to": "assets/artwork/history-v36/220.webp",
+      "gitBlob": "f4eb05001731b7b1bcc25ed5b101442cf03ec1ac",
+      "bytes": 573392,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/221.webp",
+      "to": "assets/artwork/history-v36/221.webp",
+      "gitBlob": "7fcdffbbb33b2298dddcf855e554d981a2e9a14e",
+      "bytes": 610054,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/222.webp",
+      "to": "assets/artwork/history-v36/222.webp",
+      "gitBlob": "8eeef6fce8eb63a90a30b3457fec728889482290",
+      "bytes": 628602,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/223.webp",
+      "to": "assets/artwork/history-v36/223.webp",
+      "gitBlob": "91923797af90748fd3302c54adb6419500aa7110",
+      "bytes": 482560,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/229.webp",
+      "to": "assets/artwork/history-v36/229.webp",
+      "gitBlob": "0f8239c0770387a4d5a8304ad3c0b37fc19ceef7",
+      "bytes": 645278,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/history-v36/default.webp",
+      "to": "assets/artwork/history-v36/default.webp",
+      "gitBlob": "a67ba948c7802e61ff40e5f1c145896aa7c36bf5",
+      "bytes": 558982,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/launch-v9.webp",
+      "to": "assets/artwork/launch-v9.webp",
+      "gitBlob": "6585abc40f7581056851f493689132324741fe0b",
+      "bytes": 309398,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/locust.mp3",
+      "to": "assets/sounds/locust.mp3",
+      "gitBlob": "3bcf38af55f95a2a95118f19ab6262ea0ceaa997",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/march.mp3",
+      "to": "assets/sounds/march.mp3",
+      "gitBlob": "6a4843193d400526a41417ef618d396b28d37c91",
+      "bytes": 7254,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/message.mp3",
+      "to": "assets/sounds/message.mp3",
+      "gitBlob": "0ce0613def837c4801ff3366bd47baa8d7bd66bc",
+      "bytes": 11746,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/meteor.mp3",
+      "to": "assets/sounds/meteor.mp3",
+      "gitBlob": "7521e81f17b6e79c884be109a79154a01cb952bb",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/month.mp3",
+      "to": "assets/sounds/month.mp3",
+      "gitBlob": "3888112ebfd6fd4cf7bf909ac22dfd813c7f63ed",
+      "bytes": 25539,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-0.mp3",
+      "to": "assets/sounds/native-effect-0.mp3",
+      "gitBlob": "73608a00d9d22ede5a93362bf3467a891b753892",
+      "bytes": 57722,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-1.mp3",
+      "to": "assets/sounds/native-effect-1.mp3",
+      "gitBlob": "419409fbec6bc6b8181949f2f37d9ce4b7fb4bd5",
+      "bytes": 57722,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-10.mp3",
+      "to": "assets/sounds/native-effect-10.mp3",
+      "gitBlob": "27f64668272b82789a7903a3e6af7f1e73227f28",
+      "bytes": 13000,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-11.mp3",
+      "to": "assets/sounds/native-effect-11.mp3",
+      "gitBlob": "98e1df3f9063c4a07900cec5db5f1e45b9124fe5",
+      "bytes": 5895,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-12.mp3",
+      "to": "assets/sounds/native-effect-12.mp3",
+      "gitBlob": "05d681f2ec7e1a5dd798e585a033137769676045",
+      "bytes": 31391,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-13.mp3",
+      "to": "assets/sounds/native-effect-13.mp3",
+      "gitBlob": "6f8a12c97f3d1d7115ecb1b912dbe279168cc0f8",
+      "bytes": 15508,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-14.mp3",
+      "to": "assets/sounds/native-effect-14.mp3",
+      "gitBlob": "5c2cf1ec39a02e08742c08b10543dc401151d12a",
+      "bytes": 21777,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-15.mp3",
+      "to": "assets/sounds/native-effect-15.mp3",
+      "gitBlob": "419e374d76242f1680858aa29193808589cdf500",
+      "bytes": 15508,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-2.mp3",
+      "to": "assets/sounds/native-effect-2.mp3",
+      "gitBlob": "1d8fc542ec4988d027066618ea308b7edd56d627",
+      "bytes": 57722,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-3.mp3",
+      "to": "assets/sounds/native-effect-3.mp3",
+      "gitBlob": "d5be3b319f84f8cff4c3d1cc9f0e38a995bf59d6",
+      "bytes": 57722,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-4.mp3",
+      "to": "assets/sounds/native-effect-4.mp3",
+      "gitBlob": "e076c3ca890b5cd70b95ffc0e604d0800d13f992",
+      "bytes": 6731,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-5.mp3",
+      "to": "assets/sounds/native-effect-5.mp3",
+      "gitBlob": "fb677daf22883f86918fda3027ad734cd22eef10",
+      "bytes": 40168,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-6.mp3",
+      "to": "assets/sounds/native-effect-6.mp3",
+      "gitBlob": "4ef86e4cd4bfdcd6b49ca9de9fca4f582664e0b3",
+      "bytes": 39332,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-7.mp3",
+      "to": "assets/sounds/native-effect-7.mp3",
+      "gitBlob": "835176052fbca9c32f849df115e69bf12cb59e25",
+      "bytes": 14672,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-8.mp3",
+      "to": "assets/sounds/native-effect-8.mp3",
+      "gitBlob": "ba6f72295ee7604d57beeb9263fe5422ee7e2884",
+      "bytes": 14672,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-effect-9.mp3",
+      "to": "assets/sounds/native-effect-9.mp3",
+      "gitBlob": "c1be2d6883d6e883ebb7c098241c1034c7c7d3ba",
+      "bytes": 44765,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/native-music-0.mp3",
+      "to": "assets/music/native-music-0.mp3",
+      "gitBlob": "286ac6fda3c44dd85c2702df5e3ab1799a9d7dcd",
+      "bytes": 2881036,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-1.mp3",
+      "to": "assets/music/native-music-1.mp3",
+      "gitBlob": "7dce5e4bfac760bbf21ccaa360b0e87de2bf4324",
+      "bytes": 593128,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-10.mp3",
+      "to": "assets/music/native-music-10.mp3",
+      "gitBlob": "d5b154145393109f1eb1ae928c8b8e47c8b18520",
+      "bytes": 339426,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-11.mp3",
+      "to": "assets/music/native-music-11.mp3",
+      "gitBlob": "0ba644a0ac15725c4fff969c3256d5327b2a9325",
+      "bytes": 2881036,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-12.mp3",
+      "to": "assets/music/native-music-12.mp3",
+      "gitBlob": "bc384acd87cb2448d0b92cd7b7f19444c3bc8b47",
+      "bytes": 1923910,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-13.mp3",
+      "to": "assets/music/native-music-13.mp3",
+      "gitBlob": "91baa28056342029e73bb2368fffa50a158e83c7",
+      "bytes": 746519,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-14.mp3",
+      "to": "assets/music/native-music-14.mp3",
+      "gitBlob": "90a4987179e3a52946ecb4436fc833bd69813a7a",
+      "bytes": 615697,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-15.mp3",
+      "to": "assets/music/native-music-15.mp3",
+      "gitBlob": "b5f783ddec25652a17334a036803bd8c0b43f678",
+      "bytes": 170153,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-16.mp3",
+      "to": "assets/music/native-music-16.mp3",
+      "gitBlob": "3bb8edf9588aae92c44f8f5b9a8e93545e4719d2",
+      "bytes": 2881036,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-17.mp3",
+      "to": "assets/music/native-music-17.mp3",
+      "gitBlob": "e0822ec3914dfd622f4797133890f40b139b9326",
+      "bytes": 416749,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-18.mp3",
+      "to": "assets/music/native-music-18.mp3",
+      "gitBlob": "7cc54802574b0bc7c5ac82369e3b2fcafecea9b0",
+      "bytes": 608592,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-19.mp3",
+      "to": "assets/music/native-music-19.mp3",
+      "gitBlob": "600307b58e93c6b0d6e6752238824c0fad5fe69d",
+      "bytes": 514133,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-2.mp3",
+      "to": "assets/music/native-music-2.mp3",
+      "gitBlob": "26251759b8608574bd238f0bf4cd55f656999728",
+      "bytes": 975142,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-20.mp3",
+      "to": "assets/music/native-music-20.mp3",
+      "gitBlob": "07861dde89f63415da0f899f21cd1f227c8f2128",
+      "bytes": 2176775,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-3.mp3",
+      "to": "assets/music/native-music-3.mp3",
+      "gitBlob": "54ec7fd25892e899ed608074610f457199a3c6f9",
+      "bytes": 912448,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-4.mp3",
+      "to": "assets/music/native-music-4.mp3",
+      "gitBlob": "9b7c02e246b2f814750c53d19aac7ded3bad0603",
+      "bytes": 686751,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-5.mp3",
+      "to": "assets/music/native-music-5.mp3",
+      "gitBlob": "8d1c69309eff99f1341d59d860856c50ec565efa",
+      "bytes": 1087991,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-6.mp3",
+      "to": "assets/music/native-music-6.mp3",
+      "gitBlob": "7028de72132a077bbd100ba9c87453f5e15b3cf5",
+      "bytes": 891133,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-7.mp3",
+      "to": "assets/music/native-music-7.mp3",
+      "gitBlob": "3f69a7044a5498163516861361f4018045053ac6",
+      "bytes": 500759,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-8.mp3",
+      "to": "assets/music/native-music-8.mp3",
+      "gitBlob": "eb6ef9938b0214e8950ce36895a54012622e4987",
+      "bytes": 2881036,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/native-music-9.mp3",
+      "to": "assets/music/native-music-9.mp3",
+      "gitBlob": "56bcbbe03b75a8e22dd4d22980f4c97b813a95b3",
+      "bytes": 2881036,
+      "role": "original reference music / audio-v50 integrity test"
+    },
+    {
+      "from": "assets/officers-custom-v49.webp",
+      "to": "assets/artwork/officers-custom-v49.webp",
+      "gitBlob": "bb927b1ab8b70ae76554e2e040807e673ebed6a6",
+      "bytes": 362272,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers-historic-v16.webp",
+      "to": "assets/artwork/officers-historic-v16.webp",
+      "gitBlob": "119070290fd584e52d8758296dbb3bcbce3de8fc",
+      "bytes": 480306,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/officers-historic-v29.webp",
+      "to": "assets/artwork/officers-historic-v29.webp",
+      "gitBlob": "ac0e791e355d97b4398a9bed010c4f2ec8659e55",
+      "bytes": 421988,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/officers-historic-v30.webp",
+      "to": "assets/artwork/officers-historic-v30.webp",
+      "gitBlob": "b39ec73fc43490d89a4256320522140feb48f240",
+      "bytes": 413856,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers0.webp",
+      "to": "assets/artwork/officers0.webp",
+      "gitBlob": "cbfb411f25301efb61c2a748edee0a84d03cbbc6",
+      "bytes": 275862,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers1.webp",
+      "to": "assets/artwork/officers1.webp",
+      "gitBlob": "3e5d919b786a14c63b644857cb5dc20ccbce912d",
+      "bytes": 262772,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers10.webp",
+      "to": "assets/artwork/officers10.webp",
+      "gitBlob": "8761f6b1f1d4e68da9b7d1943b827ae252448ce7",
+      "bytes": 245466,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers11.webp",
+      "to": "assets/artwork/officers11.webp",
+      "gitBlob": "c0127cc2b4dbd560c83752f5decbe66a5b65f26f",
+      "bytes": 222930,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers12.webp",
+      "to": "assets/artwork/officers12.webp",
+      "gitBlob": "51046b16d146770365654a82afa3ebb0daac3f51",
+      "bytes": 230590,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers13.webp",
+      "to": "assets/artwork/officers13.webp",
+      "gitBlob": "6bb056256e5eee0cf36fdb85e1f1a69fee459e12",
+      "bytes": 221476,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers14.webp",
+      "to": "assets/artwork/officers14.webp",
+      "gitBlob": "43a1d1d805edf8d2273d4f1eb3452696302e83f8",
+      "bytes": 223990,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers15.webp",
+      "to": "assets/artwork/officers15.webp",
+      "gitBlob": "3c58d15071f7d5a25e3a2f694568a9983130c476",
+      "bytes": 242144,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers16.webp",
+      "to": "assets/artwork/officers16.webp",
+      "gitBlob": "8e5f658df4fcc263b5c15c19a5ae9238049338ca",
+      "bytes": 228506,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers17.webp",
+      "to": "assets/artwork/officers17.webp",
+      "gitBlob": "d3fbb7f03474ba17ab3127b0aea452bfb402e4ae",
+      "bytes": 232276,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers18.webp",
+      "to": "assets/artwork/officers18.webp",
+      "gitBlob": "65835cf95d1af2be2f1d95d6c717630a2e71ce32",
+      "bytes": 236816,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers19.webp",
+      "to": "assets/artwork/officers19.webp",
+      "gitBlob": "b55d58820bc56daa8ddf1b9b1780216542ea06c9",
+      "bytes": 232496,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers2.webp",
+      "to": "assets/artwork/officers2.webp",
+      "gitBlob": "0cdab27d861c0452ad61041d16078c0d54ad92e1",
+      "bytes": 260468,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers20.webp",
+      "to": "assets/artwork/officers20.webp",
+      "gitBlob": "b5382b0435f9f5a22e18a5edc80ebeda9e8d0aec",
+      "bytes": 251146,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers21.webp",
+      "to": "assets/artwork/officers21.webp",
+      "gitBlob": "03c778ed84db647d37b2cd53fdce53025ac28d9f",
+      "bytes": 214734,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers3.webp",
+      "to": "assets/artwork/officers3.webp",
+      "gitBlob": "ac7e4d87ec6796b36f150f4796c11fd879e5692c",
+      "bytes": 246042,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers4.webp",
+      "to": "assets/artwork/officers4.webp",
+      "gitBlob": "00e98d584468ea4513df62ea3047d38981c6080b",
+      "bytes": 236750,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers5.webp",
+      "to": "assets/artwork/officers5.webp",
+      "gitBlob": "824f6e7f6855e37e00732fd60afa4e8cf6d07bf3",
+      "bytes": 228856,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers6.webp",
+      "to": "assets/artwork/officers6.webp",
+      "gitBlob": "105881062bf4953926d8494895b4f14d24f421ef",
+      "bytes": 237324,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers7.webp",
+      "to": "assets/artwork/officers7.webp",
+      "gitBlob": "808b75fe05d406eb9b70a973614a77bb226d5510",
+      "bytes": 235424,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers8.webp",
+      "to": "assets/artwork/officers8.webp",
+      "gitBlob": "257633519ff4c01ccddd65177a46ca232c9ef45b",
+      "bytes": 240696,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/officers9.webp",
+      "to": "assets/artwork/officers9.webp",
+      "gitBlob": "c14ce0767975d38f0efe5088529c0e4b7c096bbc",
+      "bytes": 205710,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/omens-v29.webp",
+      "to": "assets/artwork/omens-v29.webp",
+      "gitBlob": "317b6e4eb0efc25f32774b23d4f566d5cd3a72a9",
+      "bytes": 282150,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/omens-v30.webp",
+      "to": "assets/artwork/omens-v30.webp",
+      "gitBlob": "9ea817671fd2992a05d14199f8385aaf03d0eea7",
+      "bytes": 596640,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/omens.webp",
+      "to": "assets/artwork/omens.webp",
+      "gitBlob": "7b29cb90c2ea9f65f107e2a6c48fc09aedbc1414",
+      "bytes": 331332,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/order.mp3",
+      "to": "assets/sounds/order.mp3",
+      "gitBlob": "8b4bcd5d058de3790ee0b0a928919cfc4ee99123",
+      "bytes": 12582,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/portraits.webp",
+      "to": "assets/artwork/portraits.webp",
+      "gitBlob": "4018e693d826addac60448e699739c7e80592a8d",
+      "bytes": 308314,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/recruit.mp3",
+      "to": "assets/sounds/recruit.mp3",
+      "gitBlob": "de4d5f8c1c9e984f4c0aa8ccfad3cfc8c1f7de98",
+      "bytes": 5687,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/retreat.mp3",
+      "to": "assets/sounds/retreat.mp3",
+      "gitBlob": "b656c090a16979d57e3a7cda51a799f29a8ef997",
+      "bytes": 5687,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/stories-v29.webp",
+      "to": "assets/artwork/stories-v29.webp",
+      "gitBlob": "f827dddb0403449c168f8aea180b65ea9dc825bf",
+      "bytes": 258808,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/stories-v30.webp",
+      "to": "assets/artwork/stories-v30.webp",
+      "gitBlob": "bfb846ea93d24d426f993299b90afef88094ffbb",
+      "bytes": 508696,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/stories.webp",
+      "to": "assets/artwork/stories.webp",
+      "gitBlob": "01d639163eb516c6581cae0ad23dfdc77ef96412",
+      "bytes": 288382,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/terrain-v9.webp",
+      "to": "assets/artwork/terrain-v9.webp",
+      "gitBlob": "d13a1c3f49c51e000a70f4b7751a80ca4b2927d8",
+      "bytes": 608902,
+      "role": "legacy regression fixture"
+    },
+    {
+      "from": "assets/trade.mp3",
+      "to": "assets/sounds/trade.mp3",
+      "gitBlob": "9498073c9ac544ce4902a6ed71d55e659f903ea5",
+      "bytes": 5687,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/train.mp3",
+      "to": "assets/sounds/train.mp3",
+      "gitBlob": "591aec56d8252bb710078a29ce2a45a59c2fb92d",
+      "bytes": 5687,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/triumph-music.mp3",
+      "to": "assets/music/triumph-music.mp3",
+      "gitBlob": "acb295dbfe680d080428d01e3b6eae604bec3cd3",
+      "bytes": 361579,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/triumph-v17.webp",
+      "to": "assets/artwork/triumph-v17.webp",
+      "gitBlob": "3a5e67116e733a6f1062924d8dd4c08ac1c4327a",
+      "bytes": 481990,
+      "role": "runtime artwork or retained artwork regression fixture"
+    },
+    {
+      "from": "assets/typhoon.mp3",
+      "to": "assets/sounds/typhoon.mp3",
+      "gitBlob": "a8e007133517f8512573888b554cb5f694d7c062",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/uprising.mp3",
+      "to": "assets/sounds/uprising.mp3",
+      "gitBlob": "be22a527541eb9031847d6900d2b6462c300ae3b",
+      "bytes": 48945,
+      "role": "playback or retained audio API/regression fixture"
+    },
+    {
+      "from": "assets/weather.webp",
+      "to": "assets/artwork/weather.webp",
+      "gitBlob": "a4fa19a68f428c751485f3364fb6be147b6b6278",
+      "bytes": 105914,
+      "role": "runtime artwork or retained artwork regression fixture"
+    }
+  ],
+  "totals": {
+    "retiredFiles": 17,
+    "retiredBytes": 19542031,
+    "relocatedFiles": 169
+  },
+  "documentationMigrated": [
+    {
+      "from": "docs/native-audio-v50.md",
+      "to": "docs/changes.md#record-native-audio-v50",
+      "gitBlob": "a157ca27a98a851a70fa81dd606a40493ab705e1"
+    },
+    {
+      "from": "docs/native-captive-audio-v54.md",
+      "to": "docs/changes.md#record-native-captive-audio-v54",
+      "gitBlob": "5ec372470cfdbb024f57f7603151f25e0af49fa7"
+    },
+    {
+      "from": "docs/ai-ambush-proposal-v33.md",
+      "to": "docs/changes.md#record-ai-ambush-proposal-v33",
+      "gitBlob": "7a088823e43c719d0ec99122600fcc70f58861f8"
+    },
+    {
+      "from": "docs/ai-training-v44-results.html",
+      "to": "docs/changes.md#record-ai-training-v44-results-html",
+      "gitBlob": "9e8bc2f73b743c1aaa40469fbc03203ae1c309f0"
+    },
+    {
+      "from": "docs/ai-training-v44-results.md",
+      "to": "docs/changes.md#record-ai-training-v44-results",
+      "gitBlob": "0aaacb361b1c0a4488b8ffe67c37e62b4b6c943d"
+    },
+    {
+      "from": "docs/ai-training-v45-results.html",
+      "to": "docs/changes.md#record-ai-training-v45-results-html",
+      "gitBlob": "cbfebcc4b003955ccca835978daac4100afb1fad"
+    },
+    {
+      "from": "docs/ai-training-v45-results.md",
+      "to": "docs/changes.md#record-ai-training-v45-results",
+      "gitBlob": "e6305d09897143063ef1fd8be67eb58d54149461"
+    },
+    {
+      "from": "docs/artwork-v23.md",
+      "to": "docs/changes.md#record-artwork-v23",
+      "gitBlob": "6c335a326c2ad83e4b8d0effbc1df9b0a89ef89d"
+    },
+    {
+      "from": "docs/artwork-v28.md",
+      "to": "docs/changes.md#record-artwork-v28",
+      "gitBlob": "6f93ad4ea4cd19d29e8bd0ee1ed885ca362ae50f"
+    },
+    {
+      "from": "docs/artwork-v29.md",
+      "to": "docs/changes.md#record-artwork-v29",
+      "gitBlob": "5afb227e2c078a44b732a2fc0e2f322c9c7d04d7"
+    },
+    {
+      "from": "docs/artwork-v30.md",
+      "to": "docs/changes.md#record-artwork-v30",
+      "gitBlob": "5d759b089c4bc355a74b23a7af1591be719a1d6f"
+    },
+    {
+      "from": "docs/artwork-v31.md",
+      "to": "docs/changes.md#record-artwork-v31",
+      "gitBlob": "a7e283ccf60471e4a26b4fed4dc269d757123b0b"
+    },
+    {
+      "from": "docs/artwork-v36.md",
+      "to": "docs/changes.md#record-artwork-v36",
+      "gitBlob": "6f3e3a3eb29e10640919b94e197ab5220c0b8881"
+    },
+    {
+      "from": "docs/artwork/historic-portraits-v16.md",
+      "to": "docs/changes.md#record-artwork-historic-portraits-v16",
+      "gitBlob": "7505441389f7fa3460dfc05088fa89178c585e94"
+    },
+    {
+      "from": "docs/audio-licenses-v55.md",
+      "to": "docs/changes.md#record-audio-licenses-v55",
+      "gitBlob": "8ff066f4ff6f21820d225962452f6ec4dccefca3"
+    },
+    {
+      "from": "docs/battle-equations-v32.md",
+      "to": "docs/changes.md#record-battle-equations-v32",
+      "gitBlob": "f8ef2e62042a03adc682e8a7bcded0eb50b267d4"
+    },
+    {
+      "from": "docs/battle-presentation-v48.md",
+      "to": "docs/changes.md#record-battle-presentation-v48",
+      "gitBlob": "a7c2c6c2cf7389fd42917ab93ee4b585da52f260"
+    },
+    {
+      "from": "docs/commercial-rights-audit-v56.md",
+      "to": "docs/changes.md#record-commercial-rights-audit-v56",
+      "gitBlob": "06dd901ab20c0e10c519857d0a488ccc1a9c38e1"
+    },
+    {
+      "from": "docs/compulsory-retreat-v34.md",
+      "to": "docs/changes.md#record-compulsory-retreat-v34",
+      "gitBlob": "0fbb06d98f42e8b9d24f1dc1b23cdda77e04fe71"
+    },
+    {
+      "from": "docs/differences.md",
+      "to": "docs/changes.md#record-differences",
+      "gitBlob": "59f36c75d45215562e554511226f8b8da2fbad1f"
+    },
+    {
+      "from": "docs/fixes-v49.html",
+      "to": "docs/changes.md#record-fixes-v49-html",
+      "gitBlob": "f9d3a9706128cce862a60b0c3b7c3ca7a1fa47b3"
+    },
+    {
+      "from": "docs/fixes-v49.md",
+      "to": "docs/changes.md#record-fixes-v49",
+      "gitBlob": "21f3f225aa201e2491f23086856f942eb96ec4ae"
+    },
+    {
+      "from": "docs/fixes-v50.html",
+      "to": "docs/changes.md#record-fixes-v50-html",
+      "gitBlob": "a1e07ddf83e2c6a0abfb7beeb08033cddbfa47a0"
+    },
+    {
+      "from": "docs/fixes-v50.md",
+      "to": "docs/changes.md#record-fixes-v50",
+      "gitBlob": "d2ac74bcd12660a474894a9418eb222a8461c1e8"
+    },
+    {
+      "from": "docs/fixes-v52.html",
+      "to": "docs/changes.md#record-fixes-v52-html",
+      "gitBlob": "d33ddb11b4c24731c045f3b2d0b655bbe3380cf4"
+    },
+    {
+      "from": "docs/fixes-v52.md",
+      "to": "docs/changes.md#record-fixes-v52",
+      "gitBlob": "6fdb4d3d9969c282890083b44a53ba56049c1de3"
+    },
+    {
+      "from": "docs/fixes-v53.html",
+      "to": "docs/changes.md#record-fixes-v53",
+      "gitBlob": "f2de96efda721bec1c6c88e29922c60a0f0505cd"
+    },
+    {
+      "from": "docs/fixes-v54.html",
+      "to": "docs/changes.md#record-fixes-v54",
+      "gitBlob": "f701a29ba9b64a9ec92e42b237d6ad6c95ed7c9e"
+    },
+    {
+      "from": "docs/fixes-v55.html",
+      "to": "docs/changes.md#record-fixes-v55",
+      "gitBlob": "f42a4e39ede5ce753c9208c9119e8ae8bb7b8502"
+    },
+    {
+      "from": "docs/fixes-v56.html",
+      "to": "docs/changes.md#record-fixes-v56",
+      "gitBlob": "4a15d1e3134abf13a22935036650038c48d543a5"
+    },
+    {
+      "from": "docs/messenger-native-v53-report.md",
+      "to": "docs/changes.md#record-messenger-native-v53-report",
+      "gitBlob": "91b87e7dc8a67d73b61e4b92819aff4eda55d57b"
+    },
+    {
+      "from": "docs/native-ai-joint-findings-v54.md",
+      "to": "docs/changes.md#record-native-ai-joint-findings-v54",
+      "gitBlob": "800905dc99e3abcc55b12c86a03147d604d9c8b2"
+    },
+    {
+      "from": "docs/native-battle-audit-v53.md",
+      "to": "docs/changes.md#record-native-battle-audit-v53",
+      "gitBlob": "c4cd61cfcf18ebc2acbe598f272a7f41f5ed2bc2"
+    },
+    {
+      "from": "docs/native-battle-v33.md",
+      "to": "docs/changes.md#record-native-battle-v33",
+      "gitBlob": "7a210f1b929a08d8eee1830764cb0946ab163d59"
+    },
+    {
+      "from": "docs/native-charge-arrival-v56.md",
+      "to": "docs/changes.md#record-native-charge-arrival-v56",
+      "gitBlob": "fa985bf0cce50e477dbcbb643fcb656bf9cb08f9"
+    },
+    {
+      "from": "docs/native-combat-v50.md",
+      "to": "docs/changes.md#record-native-combat-v50",
+      "gitBlob": "e11d36316a3a7af9e448ff8140010bb6f25a273a"
+    },
+    {
+      "from": "docs/native-concealed-v56.md",
+      "to": "docs/changes.md#record-native-concealed-v56",
+      "gitBlob": "86200c0c67d4441a0a0688af05eed69631406833"
+    },
+    {
+      "from": "docs/native-display-v47.md",
+      "to": "docs/changes.md#record-native-display-v47",
+      "gitBlob": "3c7055b589ec69b2c9d57d8065d2fa527f657032"
+    },
+    {
+      "from": "docs/native-fire-v42.md",
+      "to": "docs/changes.md#record-native-fire-v42",
+      "gitBlob": "335a6d0f21f6afe060b7f47b81ff4686bf2f6b53"
+    },
+    {
+      "from": "docs/native-joint-findings-v54.md",
+      "to": "docs/changes.md#record-native-joint-findings-v54",
+      "gitBlob": "2639e0ba4eb75bc675e0cb45fc83e44385248a5f"
+    },
+    {
+      "from": "docs/native-reward-v50.md",
+      "to": "docs/changes.md#record-native-reward-v50",
+      "gitBlob": "7d630b983cea042369a6f2c62507f764543a9dc2"
+    },
+    {
+      "from": "docs/native-settlement-v56.md",
+      "to": "docs/changes.md#record-native-settlement-v56",
+      "gitBlob": "80e78dceb636684da80cbf641cc1bff2233252e0"
+    },
+    {
+      "from": "docs/native-turn-audit-v52.md",
+      "to": "docs/changes.md#record-native-turn-audit-v52",
+      "gitBlob": "d87ac558de2630e9c4ca7677a4f225540b9a069a"
+    },
+    {
+      "from": "docs/native-turns-v43.md",
+      "to": "docs/changes.md#record-native-turns-v43",
+      "gitBlob": "62f1ee11fd50372ded7b07a99efbb728bf90ffe2"
+    }
+  ]
+}

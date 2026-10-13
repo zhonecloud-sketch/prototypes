@@ -15,7 +15,7 @@ def main():
     assert len(inputs)==41 and {r['province'] for r in inputs}==set(range(1,42)), 'All 41 original maps are required.'
     terrains=json.loads((ROOT/'config/province-terrain.json').read_text())
     provinces=json.loads((ROOT/'config/scenarios.json').read_text())[0]['provinces']
-    output=ROOT/'assets/battlefields';output.mkdir(parents=True,exist_ok=True)
+    output=ROOT/'assets/artwork/battlefields';output.mkdir(parents=True,exist_ok=True)
     records=[];hashes=set()
     for record in sorted(inputs,key=lambda r:r['province']):
         number=record['province'];source=args.sources/f'province-{number:02d}.png'

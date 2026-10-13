@@ -48,9 +48,9 @@
     "policy": "Explicit instruction required. Archived profiles retain old fingerprints; incompatible selections use Legacy."
   },
   "music": {
-    "council": "assets/council-music.mp3",
-    "battle": "assets/battle-music-v17.mp3",
-    "triumph": "assets/triumph-music.mp3"
+    "council": "assets/music/council-music.mp3",
+    "battle": "assets/music/battle-music-v17.mp3",
+    "triumph": "assets/music/triumph-music.mp3"
   },
   "limits": [
     "No physical browser or handset rendering/listening verification.",

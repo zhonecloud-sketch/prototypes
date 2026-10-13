@@ -43,7 +43,7 @@ def save(name,score,loop=False):
     data=np.column_stack(channels);data*=.8/max(.8,np.max(np.abs(data)))
     if not loop:
         fade=round(.8*SR);data[-fade:]*=np.linspace(1,0,fade)[:,None]
-    out=ROOT/'assets';temp=out/(name+'.wav')
+    out=ROOT/'assets'/'music';out.mkdir(parents=True,exist_ok=True);temp=out/(name+'.wav')
     with wave.open(str(temp),'wb') as w:
         w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes((data*32767).astype('<i2').tobytes())
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(temp),'-codec:a','libmp3lame','-b:a','160k',str(out/(name+'.mp3'))],check=True)

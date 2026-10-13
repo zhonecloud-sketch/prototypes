@@ -5,9 +5,10 @@ ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'assets';OUT.mkdir(exist_ok=Tr
 SR=22050;rng=np.random.default_rng(204)
 def write(name,data):
  data=np.asarray(data);data=data/max(1,np.max(np.abs(data))/0.88);data=np.column_stack((data,np.roll(data,127)*.98)) if data.ndim==1 else data
- temp=OUT/(name+'.wav')
+ destination=OUT/('music' if name.endswith('-music') else 'sounds');destination.mkdir(parents=True,exist_ok=True)
+ temp=destination/(name+'.wav')
  with wave.open(str(temp),'wb') as w:w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes((np.clip(data,-1,1)*32767).astype('<i2').tobytes())
- subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(temp),'-codec:a','libmp3lame','-b:a','128k',str(OUT/(name+'.mp3'))],check=True);temp.unlink()
+ subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(temp),'-codec:a','libmp3lame','-b:a','128k',str(destination/(name+'.mp3'))],check=True);temp.unlink()
 def pluck(freq,duration=3):
  t=np.arange(int(SR*duration))/SR;x=np.zeros_like(t)
  for h in range(1,11):x+=np.sin(2*np.pi*freq*h*(1+0.00025*h*h)*t+0.15*h)*np.exp(-t*(.8+.37*h))/h**1.5

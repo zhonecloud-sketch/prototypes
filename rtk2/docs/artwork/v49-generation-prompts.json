@@ -4,8 +4,8 @@
   "framingEditPrompt": "Edit the provided image, preserving exactly the same 4-by-4 equal-cell portrait atlas, all sixteen distinct facial identities, male/female assignments, costumes, painterly realistic style, flat dark jade/brown backgrounds and row-major positions. Change only the within-cell framing: zoom every bust out slightly and leave ample dark safe margin ABOVE the complete headgear or hair in every cell, especially the first row. Reconstruct the small missing top of the black court crown in row1 column3 and contain the red helmet crest of row1 column2. Every full head, helmet, crown, topknot and plume must fit clearly within its own square with at least a narrow visible dark margin on all sides. Shoulder tops and upper chest still visible, faces still a consistent size and height across all sixteen cells. Keep the exact same identities, expressions and arrangement, no other creative changes. Exactly sixteen cells in four rows and four columns. No visible grid lines, no gutters, no borders, no text, labels or watermark. Preserve Taishi Ci bowman in row4 column1 and youthful Cao Pi in row4 column2.",
   "initialSource": "/workspace/scratch/242db664fc4f/generated_images/exec-208d0235-cad4-4d04-b32d-b702eb1ea49f.png",
   "selectedRawSource": "/workspace/scratch/242db664fc4f/generated_images/exec-0c628bf5-5a76-4d41-94d7-19779e73487d.png",
-  "finalSourcePNG": "/workspace/sites/rtk2-remastered/dist/rtk2/assets/generated/officers-custom-v49.png",
-  "runtimeWebP": "/workspace/sites/rtk2-remastered/dist/rtk2/assets/officers-custom-v49.webp",
+  "finalSourcePNG": "/workspace/sites/rtk2-remastered/dist/rtk2/https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/generated/officers-custom-v49.png",
+  "runtimeWebP": "/workspace/sites/rtk2-remastered/dist/rtk2/assets/artwork/officers-custom-v49.webp",
   "slots": [
     "Custom male strategist",
     "Custom male military",

@@ -31,7 +31,7 @@ def main():
         assert archive.testzip() is None
         assert not any(private_dos(Path(n)) for n in archive.namelist())
         names=set(archive.namelist())
-        assert {'rtk2/index.html','rtk2/mjs/battle.mjs','rtk2/docs/differences.md','rtk2/tests/ui-tests.mjs','rtk2/config/scenarios.json','rtk2/start-game.bat','rtk2/tools/serve-game.py'}<=names
+        assert {'rtk2/index.html','rtk2/mjs/battle.mjs','rtk2/docs/changes.md#record-differences','rtk2/tests/ui-tests.mjs','rtk2/config/scenarios.json','rtk2/start-game.bat','rtk2/tools/serve-game.py'}<=names
         assert all(n.startswith('rtk2/') or args.include_shared and n=='lib/js-yaml.js' for n in names)
         assert ('lib/js-yaml.js' in names)==args.include_shared
         assert not any(n.endswith(('three.module.js','three.core.js','three-core.js')) for n in names)

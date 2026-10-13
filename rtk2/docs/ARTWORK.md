@@ -2,7 +2,7 @@
 
 ## V42 flame overlay
 
-`assets/fire-v42.webp` is a new built-in image-generation asset made on 10 October 2026. The generated 1273 × 1236 RGBA PNG was encoded as WebP at its original dimensions with alpha preserved. `config/release.json` records its hash. The battlefield draws it over burning ground and units, continuously varying opacity and size; deleting/extinguishing the fire cell removes the overlay.
+`assets/artwork/fire-v42.webp` is a new built-in image-generation asset made on 10 October 2026. The generated 1273 × 1236 RGBA PNG was encoded as WebP at its original dimensions with alpha preserved. `config/release.json` records its hash. The battlefield draws it over burning ground and units, continuously varying opacity and size; deleting/extinguishing the fire cell removes the overlay.
 
 Generation prompt:
 
@@ -10,7 +10,7 @@ Generation prompt:
 
 The original four atlases were generated with the built-in image-generation tool for this project. No original DOS graphic was used.
 
-Original-generation assets: `assets/portraits.webp`, `events.webp`, `terrain.webp`, `army.webp`. The terrain and single-soldier army sheets are superseded by v9 at runtime. The PNG originals are retained in the same folder. WebP copies keep the original dimensions and alpha; they are encoding optimizations.
+The first generation produced portraits, events, terrain and army atlases. Active and regression-required WebPs now live under `assets/artwork/`. Unused terrain/army versions and intermediate PNGs were retired in v56 maintenance; [asset-manifest.json](asset-manifest.json) records recoverable original Git blobs. The current renderer loads army-v23 and 41 registered battlefield paintings, while the separate v9 terrain/army snapshots remain test fixtures. Retained WebP bytes, dimensions and alpha are unchanged.
 
 Portrait atlas: row-major Cao Cao, Liu Bei, Sun Quan, Guan Yu, Zhang Fei, Zhao Yun, Zhuge Liang, Zhou Yu, Sima Yi, Lu Bu, Dong Zhuo, Yuan Shao, Sun Jian, Ma Chao, Huang Zhong, reserved officer. These are artistic interpretations. This original portrait sheet is now retained for launch/fallback graphics. Every named campaign officer uses the expanded roster sheets described below.
 
@@ -43,13 +43,13 @@ Atlas cells are drawn into Canvas 2D with a single uniform scale and centred let
 
 ## Battle weather atlas
 
-The former `assets/weather.png` is a 1254 × 1254 image generated with the built-in image generator. It contains four square cells: sun (upper left), clouds (upper right), storm/lightning (lower left), rain (lower right). The full atlas is retained without resizing or cropping on disk; Canvas 2D selects a cell and fits it proportionally between the commanders.
+The former `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/weather.png` is a 1254 × 1254 image generated with the built-in image generator. It contains four square cells: sun (upper left), clouds (upper right), storm/lightning (lower left), rain (lower right). The full atlas is retained without resizing or cropping on disk; Canvas 2D selects a cell and fits it proportionally between the commanders.
 
 Generation brief: one precise 2×2 atlas of restrained painted weather symbols on opaque dark jade (#17251e); gold sun, pale grey clouds, dark storm clouds and lightning, muted blue rain. Centred symbols kept inside equal cells, readable at 36–48 pixels, with no text, borders, interface, people, logos, scenery or watermark. Built-in generation, opaque background, one output and no retries.
 
 ## Expanded set
 
-Twenty-two square 4×4 officer sheets provide 352 distinct portrait cells. Their runtime paths are `assets/officers0.webp` through `officers21.webp`. `officer-roster.mjs` identifies the canonical officers; `portraits.mjs` gives the bijection between identities and generated cells, avoiding slot-based identity changes between scenarios. These are artistic interpretations, not historical likenesses. No cell is reused for two distinct officers; unnamed unused slots retain the reserved fallback.
+Twenty-two square 4×4 officer sheets provide 352 distinct portrait cells. Their runtime paths are `assets/artwork/officers0.webp` through `officers21.webp`. `officer-roster.mjs` identifies the canonical officers; `portraits.mjs` gives the bijection between identities and generated cells, avoiding slot-based identity changes between scenarios. These are artistic interpretations, not historical likenesses. No cell is reused for two distinct officers; unnamed unused slots retain the reserved fallback.
 
 Three 2×2 scene sheets contain twelve complete landscape cells: `disasters.webp` (locusts/uprising/typhoon/flood), `omens.webp` (plague/comet/troop deployment/occupation) and `stories.webp` (Xun Yu’s plan/officer death/Diaochan’s plan/Hua Tuo’s medical book). `weather.webp` is a 2×2 square sheet: Clear/Few clouds/Cloudy/Rain. The superseded weather PNG is retained for reference and is not loaded by the app.
 
@@ -71,13 +71,13 @@ The returned atlas cells are 443.5 × 443.5 pixels; source rectangles use these 
 
 ## V11 courier and terrain masks
 
-`assets/courier.webp` is a new image-generated RGBA mounted Han courier atlas, 2172 × 724 pixels. Four 543 × 724 cells contain complete right-facing gallop poses of the horse, rider, scroll, cape and tack. The inspected original was encoded to WebP without resizing; uniform contain scaling is used for the journey scene, and the map sprite preserves the 543:724 frame ratio. No unrelated artwork was regenerated.
+`assets/artwork/courier.webp` is a new image-generated RGBA mounted Han courier atlas, 2172 × 724 pixels. Four 543 × 724 cells contain complete right-facing gallop poses of the horse, rider, scroll, cape and tack. The inspected original was encoded to WebP without resizing; uniform contain scaling is used for the journey scene, and the map sprite preserves the 543:724 frame ratio. No unrelated artwork was regenerated.
 
 Terrain variants are drawn from the existing terrain atlas with a six-bit neighbor mask and cached by terrain/mask pair. The bits use the same six directions as tactical movement. Water edges against other terrain gain a shoreline; matching neighbors suppress those contours. This is code-based terrain composition rather than generated map geometry. City stamps use exact projection anchors. Numbered seals sit above them, with thin leaders when mobile collision avoidance requires an offset; clipped Voronoi colour regions represent ownership and can be hidden. These display regions do not change the original 93 province connections.
 
 ## V14 battlefield terrain overhaul
 
-Runtime asset: `assets/terrain-v14.webp`, 2048 × 1024, eight equal square cells. Generated with the built-in image-generation tool, then uniformly resized from its 2:1 original and encoded as WebP for the game. This replaces `terrain-v9.webp` at runtime. Older atlases remain archival assets.
+Runtime asset: `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v14.webp`, 2048 × 1024, eight equal square cells. Generated with the built-in image-generation tool, then uniformly resized from its 2:1 original and encoded as WebP for the game. This replaces `terrain-v9.webp` at runtime. Older atlases remain archival assets.
 
 Prompt: Use case: historical-scene. A precise 4-column × 2-row equal-square texture atlas, edge-filling, no gutters, hex outlines, writing or UI. Orthographic top-down painterly historical cartography, muted natural colours, coherent soft daylight, crisp organic small details. Row 1: olive grassland with subtle paths, irregular dark green woodland canopy, ochre rolling hills, slate rocky mountains. Row 2: uniform deep teal water, small centred Han stone fort with plenty of surrounding earth, compact walled Han capital with rooftops and surrounding grass, dry sandy grassland. No units, floating platforms, vignette padding or watermark.
 
@@ -85,18 +85,18 @@ Prompt: Use case: historical-scene. A precise 4-column × 2-row equal-square tex
 
 ## V15 clean battlefield and triumph art
 
-Generated using the built-in image-generation tool, with one request for each asset. Final runtime files are `assets/terrain-v15.webp` (2048 × 1024, exact 4 × 2 atlas) and `assets/triumph-v15.webp` (2048 × 1152, exact 16:9 scene). Source PNGs were uniformly resized and encoded to WebP, preserving their aspect ratio. The atlas replaces V14 at runtime; its world-aligned samples span several hexes and six-bit masks blend adjacent terrain. Rain/cloud layers are lighter so the art remains readable. The full production prompts are saved in `docs/artwork/v15-prompts.json`. No original DOS artwork was copied.
+Generated using the built-in image-generation tool, with one request for each asset. Final runtime files are `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/terrain-v15.webp` (2048 × 1024, exact 4 × 2 atlas) and `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/triumph-v15.webp` (2048 × 1152, exact 16:9 scene). Source PNGs were uniformly resized and encoded to WebP, preserving their aspect ratio. The atlas replaces V14 at runtime; its world-aligned samples span several hexes and six-bit masks blend adjacent terrain. Rain/cloud layers are lighter so the art remains readable. The full production prompts are saved in `docs/artwork/v15-prompts.json`. No original DOS artwork was copied.
 
 Terrain prompt: clean top-down Han-era strategy terrain, broad jade/olive grass, rounded emerald forest canopies, smooth pale green hills, blue-grey mountain ridges; clear azure water, compact fort, walled capital and golden grass in exact row-major 4 × 2 squares. Restrained readable detail, flat soft daylight, edge-to-edge seamless material fields; no gritty/grunge/noisy texture, hex outlines, UI, troops or labels.
 
 Triumph prompt: victorious Han-era army formations, many soldiers with raised spears and red banners, sunrise over a captured Chinese walled city, polished clean illustrated shapes, open upper sky for the Victory title, 16:9. No UI/text, modern elements or gore.
 
-Original compositions `assets/battle-music.mp3` and `assets/triumph-music.mp3` are reproducible with `tools/build-battle-audio.py`: pentatonic plucked strings, breathy flute, horn harmonics, war drums and gong, with stereo room reflections. No third-party samples or DOS recordings were used.
+Original compositions `https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/battle-music.mp3` and `assets/music/triumph-music.mp3` are reproducible with `tools/build-battle-audio.py`: pentatonic plucked strings, breathy flute, horn harmonics, war drums and gong, with stereo room reflections. No third-party samples or DOS recordings were used.
 
 ## V17 — 41 full province battlefield paintings
 
 The battlefield autotiling/texture-blending renderer is retired. One full hand-painted landscape replaces it for each of the 41 provinces, derived from that province’s original 13 × 12 semantic terrain guide. Guide centers use the same offset-column hex coordinates as the engine, including the original fort and palace anchors. No repeated tile images are used at runtime. All original fort/palace coordinates and newly constructed forts use the existing city artwork as small, exactly aligned overlays.
 
-Assets are `assets/battlefields/province-01-v17.webp` through `province-41-v17.webp`. `config/battlefield-paintings.json` records all 41 production prompts, image dimensions, image hashes, source hashes, original terrain arrays/hashes and painting registration. Built-in image generation was used once per province. WebP encoding preserves source dimensions and aspect ratio, without stretching or changing artwork positions. These are artistic reconstructions; the original terrain grid remains the gameplay authority.
+Assets are `assets/artwork/battlefields/province-01-v17.webp` through `province-41-v17.webp`. `config/battlefield-paintings.json` records all 41 production prompts, image dimensions, image hashes, source hashes, original terrain arrays/hashes and painting registration. Built-in image generation was used once per province. WebP encoding preserves source dimensions and aspect ratio, without stretching or changing artwork positions. These are artistic reconstructions; the original terrain grid remains the gameplay authority.
 
-The previously generated triumph scene is now `assets/triumph-v17.webp` and preloaded before a campaign begins. The faster battle score is `assets/battle-music-v17.mp3`, composed at 144 BPM using the updated `tools/build-battle-audio.py`. It uses no original game samples. The separate triumph fanfare remains.
+The previously generated triumph scene is now `assets/artwork/triumph-v17.webp` and preloaded before a campaign begins. The faster battle score is `assets/music/battle-music-v17.mp3`, composed at 144 BPM using the updated `tools/build-battle-audio.py`. It uses no original game samples. The separate triumph fanfare remains.

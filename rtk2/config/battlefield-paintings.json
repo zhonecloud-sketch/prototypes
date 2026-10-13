@@ -13,7 +13,7 @@
     {
       "province": 1,
       "name": "Xiangping",
-      "asset": "assets/battlefields/province-01-v17.webp",
+      "asset": "assets/artwork/battlefields/province-01-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "2a1c40d306402800627d7661a0e5d95182a3992725d79f78a26eaf1b1f716dc1",
@@ -182,7 +182,7 @@
     {
       "province": 2,
       "name": "Yuyang",
-      "asset": "assets/battlefields/province-02-v17.webp",
+      "asset": "assets/artwork/battlefields/province-02-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "01d7e1465997a7af3c7cf5c9d0a8d6f17698007be75e9989f9326cd2170b9e8c",
@@ -351,7 +351,7 @@
     {
       "province": 3,
       "name": "Zhuo",
-      "asset": "assets/battlefields/province-03-v17.webp",
+      "asset": "assets/artwork/battlefields/province-03-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "edf1d488acce79abcfd1a76389dd46d1461d633ee37d547d4451ed062145fba4",
@@ -520,7 +520,7 @@
     {
       "province": 4,
       "name": "Jinyang",
-      "asset": "assets/battlefields/province-04-v17.webp",
+      "asset": "assets/artwork/battlefields/province-04-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "9a45d31a6cdad0f92df2026eea8a0c883bae963909c6206b3af26954f4228332",
@@ -689,7 +689,7 @@
     {
       "province": 5,
       "name": "Shangdang",
-      "asset": "assets/battlefields/province-05-v17.webp",
+      "asset": "assets/artwork/battlefields/province-05-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "e8541f1b7bacee917a1f04edf7da46937f99c466f9840c15a66838a409c92dec",
@@ -858,7 +858,7 @@
     {
       "province": 6,
       "name": "Ye",
-      "asset": "assets/battlefields/province-06-v17.webp",
+      "asset": "assets/artwork/battlefields/province-06-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "0199b972a3513f8a840d74f8dbb9dadc9d18cac28dec484072cb24bf90eaa47c",
@@ -1027,7 +1027,7 @@
     {
       "province": 7,
       "name": "Anping",
-      "asset": "assets/battlefields/province-07-v17.webp",
+      "asset": "assets/artwork/battlefields/province-07-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "86b7d413921c2432f6efb4e62a41e538a3c8de261da45d8f4a08e082a30f9a2c",
@@ -1196,7 +1196,7 @@
     {
       "province": 8,
       "name": "Linzi",
-      "asset": "assets/battlefields/province-08-v17.webp",
+      "asset": "assets/artwork/battlefields/province-08-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "a4cdc696d57ae51193f98bc729b51e3b3873c9ca218df44ab1c4f360de4c449e",
@@ -1365,7 +1365,7 @@
     {
       "province": 9,
       "name": "Chenliu",
-      "asset": "assets/battlefields/province-09-v17.webp",
+      "asset": "assets/artwork/battlefields/province-09-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "94081e1903e168c20d55f7fafe498a54db3618c8dc72c8fa0fe8ce6a74523336",
@@ -1534,7 +1534,7 @@
     {
       "province": 10,
       "name": "Luoyang",
-      "asset": "assets/battlefields/province-10-v17.webp",
+      "asset": "assets/artwork/battlefields/province-10-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "172e6678e4de89b30e2fc22a6bd158a20f8fec1ff4b60e4434e72065addf634c",
@@ -1703,7 +1703,7 @@
     {
       "province": 11,
       "name": "Hedong",
-      "asset": "assets/battlefields/province-11-v17.webp",
+      "asset": "assets/artwork/battlefields/province-11-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "3bfc53f6f0df6fdd984974cb3cac09206afe8db8171e9d5a0747bac13a84d18d",
@@ -1872,7 +1872,7 @@
     {
       "province": 12,
       "name": "Chang'an",
-      "asset": "assets/battlefields/province-12-v17.webp",
+      "asset": "assets/artwork/battlefields/province-12-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "61d97be6c43ad65d4041292c88542946ad909f9baa6294eb63ddc96c929d77ef",
@@ -2041,7 +2041,7 @@
     {
       "province": 13,
       "name": "Longxi",
-      "asset": "assets/battlefields/province-13-v17.webp",
+      "asset": "assets/artwork/battlefields/province-13-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "5c08b745013b7621f25635150bb6c895992e098d395537fd6ed8ad87d831d272",
@@ -2210,7 +2210,7 @@
     {
       "province": 14,
       "name": "Jincheng",
-      "asset": "assets/battlefields/province-14-v17.webp",
+      "asset": "assets/artwork/battlefields/province-14-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "709c38580a497fc8a3b3642d6996dedf52f4e0ea75c34a4a3316c2bb9efa05f1",
@@ -2379,7 +2379,7 @@
     {
       "province": 15,
       "name": "Wuwei",
-      "asset": "assets/battlefields/province-15-v17.webp",
+      "asset": "assets/artwork/battlefields/province-15-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "a423f9145445187986b7396b29b9d012d1b6cd9176a9764446d78da1bd03cd54",
@@ -2548,7 +2548,7 @@
     {
       "province": 16,
       "name": "Xiapi",
-      "asset": "assets/battlefields/province-16-v17.webp",
+      "asset": "assets/artwork/battlefields/province-16-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "4deb08a167f4b57e94be4e9404370a04d3ce0e01d8129c21d3f7b8914486335c",
@@ -2717,7 +2717,7 @@
     {
       "province": 17,
       "name": "Xuchang",
-      "asset": "assets/battlefields/province-17-v17.webp",
+      "asset": "assets/artwork/battlefields/province-17-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "2dccbda06e63cf5461b2527cf9b1ce5a8c20b889e7d152cfae8b48f2cbaf399f",
@@ -2886,7 +2886,7 @@
     {
       "province": 18,
       "name": "Runan",
-      "asset": "assets/battlefields/province-18-v17.webp",
+      "asset": "assets/artwork/battlefields/province-18-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "983b7292fb53f9ccb2a11f075a577fbe4210e53c241fd837de5969ed4399fbe8",
@@ -3055,7 +3055,7 @@
     {
       "province": 19,
       "name": "Wan",
-      "asset": "assets/battlefields/province-19-v17.webp",
+      "asset": "assets/artwork/battlefields/province-19-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "c22591d1b519374070b1146af139c5801b990a9f69f5b202cc45807b5357ee5a",
@@ -3224,7 +3224,7 @@
     {
       "province": 20,
       "name": "Xiangyang",
-      "asset": "assets/battlefields/province-20-v17.webp",
+      "asset": "assets/artwork/battlefields/province-20-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "62b24698b0f7b69106e12b612381eba12e3958ebf1baf69ae4f956b057e3b77b",
@@ -3393,7 +3393,7 @@
     {
       "province": 21,
       "name": "Changsha",
-      "asset": "assets/battlefields/province-21-v17.webp",
+      "asset": "assets/artwork/battlefields/province-21-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "d3f256b0184ffcd813f61f01efb879b65e3abd063a3b9b714386c0dc2d191c89",
@@ -3562,7 +3562,7 @@
     {
       "province": 22,
       "name": "Jiangxia",
-      "asset": "assets/battlefields/province-22-v17.webp",
+      "asset": "assets/artwork/battlefields/province-22-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "f303cf2b54995164fa468439eb7581523ef54d7cfc2a73811d4b43d385f06f2d",
@@ -3731,7 +3731,7 @@
     {
       "province": 23,
       "name": "Wuling",
-      "asset": "assets/battlefields/province-23-v17.webp",
+      "asset": "assets/artwork/battlefields/province-23-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "e2facc95caf44dafc5efea330735a5d5b9fa59b9b6267ab04c805bbc30de70c5",
@@ -3900,7 +3900,7 @@
     {
       "province": 24,
       "name": "Wu",
-      "asset": "assets/battlefields/province-24-v17.webp",
+      "asset": "assets/artwork/battlefields/province-24-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "c78901727f043b6688606c071814dcb6793a51de7e61abb47eee11e646a2b1c5",
@@ -4069,7 +4069,7 @@
     {
       "province": 25,
       "name": "Moling",
-      "asset": "assets/battlefields/province-25-v17.webp",
+      "asset": "assets/artwork/battlefields/province-25-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "835533fb2a8cce71818b2859372cb4af0e9cf5a2a748f843a27168fc2eeaf088",
@@ -4238,7 +4238,7 @@
     {
       "province": 26,
       "name": "Kuaiji",
-      "asset": "assets/battlefields/province-26-v17.webp",
+      "asset": "assets/artwork/battlefields/province-26-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "10a7261c4f8f4865adf9b79db36cd9d858cd8d1eff57cecb79db9cf5dc1d1251",
@@ -4407,7 +4407,7 @@
     {
       "province": 27,
       "name": "Yuzhang",
-      "asset": "assets/battlefields/province-27-v17.webp",
+      "asset": "assets/artwork/battlefields/province-27-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "0d44d5d61630edafbb3542b1c502330c2ee80ecead77ba1901da8c6e81276e15",
@@ -4576,7 +4576,7 @@
     {
       "province": 28,
       "name": "Shouchun",
-      "asset": "assets/battlefields/province-28-v17.webp",
+      "asset": "assets/artwork/battlefields/province-28-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "9c147f345e8ac0e2dd99606f282655c842ccb85d41b0dd69e37d10c47ef8e47c",
@@ -4745,7 +4745,7 @@
     {
       "province": 29,
       "name": "Hanzhong",
-      "asset": "assets/battlefields/province-29-v17.webp",
+      "asset": "assets/artwork/battlefields/province-29-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "89e788c8ad60489269cba74c2ab044c0f6f995c3bd1d4919942adb9ba3af7f13",
@@ -4914,7 +4914,7 @@
     {
       "province": 30,
       "name": "Zitong",
-      "asset": "assets/battlefields/province-30-v17.webp",
+      "asset": "assets/artwork/battlefields/province-30-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "299c9a49232c07c69250d2aff5ef7a99d8d7799cdcd7d0d0dfaa70c67851a0a4",
@@ -5083,7 +5083,7 @@
     {
       "province": 31,
       "name": "Ba",
-      "asset": "assets/battlefields/province-31-v17.webp",
+      "asset": "assets/artwork/battlefields/province-31-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "310db77862429fa0c002e171f325b825db31e09a396d6f1dda82f25067fbec8e",
@@ -5252,7 +5252,7 @@
     {
       "province": 32,
       "name": "Jianwei",
-      "asset": "assets/battlefields/province-32-v17.webp",
+      "asset": "assets/artwork/battlefields/province-32-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "f4730d6d4b1e0af6c0f20c58439c1aed2fec513389fd3df597ccca07e17c3234",
@@ -5421,7 +5421,7 @@
     {
       "province": 33,
       "name": "Chengdu",
-      "asset": "assets/battlefields/province-33-v17.webp",
+      "asset": "assets/artwork/battlefields/province-33-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "241049a3a84410c7922cdf0a07a112a84d80d9d4630f41cc596ca7d9bf70e1c0",
@@ -5590,7 +5590,7 @@
     {
       "province": 34,
       "name": "Yuexi",
-      "asset": "assets/battlefields/province-34-v17.webp",
+      "asset": "assets/artwork/battlefields/province-34-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "724c6c20eae5072bd69b5117d730cb54981cfd6213dd8ead23f2939b67eefc74",
@@ -5759,7 +5759,7 @@
     {
       "province": 35,
       "name": "Dianchi",
-      "asset": "assets/battlefields/province-35-v17.webp",
+      "asset": "assets/artwork/battlefields/province-35-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "0db023685189ea45121c6c7932c1a12059a3b1dfdfa81f92209556ee33268579",
@@ -5928,7 +5928,7 @@
     {
       "province": 36,
       "name": "Yongchang",
-      "asset": "assets/battlefields/province-36-v17.webp",
+      "asset": "assets/artwork/battlefields/province-36-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "adc0f76a808d07a3cb38d0a21b144a4f8574174213037606828a89ec016bfc00",
@@ -6097,7 +6097,7 @@
     {
       "province": 37,
       "name": "Nanhai",
-      "asset": "assets/battlefields/province-37-v17.webp",
+      "asset": "assets/artwork/battlefields/province-37-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "bdff0490d7feb14e823374243dc32205744a8534c99d8f713fafd529f8251975",
@@ -6266,7 +6266,7 @@
     {
       "province": 38,
       "name": "Cangwu",
-      "asset": "assets/battlefields/province-38-v17.webp",
+      "asset": "assets/artwork/battlefields/province-38-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "6ace4b4a3f9131778ac2b97107a9790cbddf3293ff6c252a7fccfa08e2ce41f0",
@@ -6435,7 +6435,7 @@
     {
       "province": 39,
       "name": "Hepu",
-      "asset": "assets/battlefields/province-39-v17.webp",
+      "asset": "assets/artwork/battlefields/province-39-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "48849a0da79f646246ae4e857c02fa2004fc43bbdfb906896a811dc7bc83309c",
@@ -6604,7 +6604,7 @@
     {
       "province": 40,
       "name": "Yulin",
-      "asset": "assets/battlefields/province-40-v17.webp",
+      "asset": "assets/artwork/battlefields/province-40-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "34a76d4262c8deb26dff8e01ebc4d6c9463b843325fb26c19fc7df5fc8283a40",
@@ -6773,7 +6773,7 @@
     {
       "province": 41,
       "name": "Jiaozhi",
-      "asset": "assets/battlefields/province-41-v17.webp",
+      "asset": "assets/artwork/battlefields/province-41-v17.webp",
       "width": 1205,
       "height": 1305,
       "sha256": "7fffadecdde15c16e3ed8e7cfee29a61ad1fdd63586a3a60a0497103d4b5c901",

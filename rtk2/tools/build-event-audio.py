@@ -49,5 +49,5 @@ def cue(name,duration):
  with tempfile.TemporaryDirectory() as tmp:
   wav=Path(tmp)/'cue.wav'
   with wave.open(str(wav),'wb') as f:f.setnchannels(1);f.setsampwidth(2);f.setframerate(SR);f.writeframes((x*32767).astype('<i2').tobytes())
-  subprocess.run(['ffmpeg','-v','error','-y','-i',str(wav),'-codec:a','libmp3lame','-b:a','128k',str(root/'assets'/f'{name}.mp3')],check=True)
+  subprocess.run(['ffmpeg','-v','error','-y','-i',str(wav),'-codec:a','libmp3lame','-b:a','128k',str(root/'assets'/'sounds'/f'{name}.mp3')],check=True)
 for name in ['gallop','flood','locust','typhoon','epidemic','uprising','meteor','death']:cue(name,2.4 if name=='gallop' else 3)

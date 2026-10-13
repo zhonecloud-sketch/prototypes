@@ -22,4 +22,4 @@ with tempfile.TemporaryDirectory() as tmp:
     wav=Path(tmp)/'shout.wav'
     with wave.open(str(wav),'wb') as out:
         out.setnchannels(1);out.setsampwidth(2);out.setframerate(RATE);out.writeframes((signal*32767).astype('<i2').tobytes())
-    subprocess.run(['ffmpeg','-y','-loglevel','error','-i',str(wav),'-codec:a','libmp3lame','-b:a','96k',str(Path(__file__).resolve().parents[1]/'assets/charge-shout.mp3')],check=True)
+    subprocess.run(['ffmpeg','-y','-loglevel','error','-i',str(wav),'-codec:a','libmp3lame','-b:a','96k',str(Path(__file__).resolve().parents[1]/'assets/sounds/charge-shout.mp3')],check=True)

@@ -10,4 +10,4 @@ Do not run or renew AI training without explicit user instruction. Preserve exis
 
 Raw DOS references `fmdrv.com`, `grpdata.dat`, `hexdata.dat`, `koei.bat`, `packdata.dat`, `rtk2.com` and their numbered copies stay outside source and releases. Local dependencies, Python caches, transfer helpers and generated delivery archives are ignored. Keep tracked native evidence archives, media, provenance and useful regression suites.
 
-`SOURCE-COMMIT.txt` records the imported game source. Git history records subsequent GitHub changes. The current imported release is v56, with its validation in `verification-v56.json` and notes in `fixes-v56.html`.
+`SOURCE-COMMIT.txt` records the imported game source. Git history records subsequent GitHub changes. The current imported release is v56, with its validation in `verification-v56.json` and notes in `changes.md#record-fixes-v56`.

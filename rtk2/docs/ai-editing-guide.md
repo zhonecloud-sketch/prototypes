@@ -125,7 +125,7 @@ The current sequence is:
 | Order cost, success equation or validation | `engine.mjs`, `province-rules.mjs`, `fidelity-orders.mjs`, depending on the order |
 | End-of-month delegated province work | `campaign-completion.mjs`, `runDelegated`; not the same path as `aiGovernance` |
 
-The native priority file contains recovered original-game tables. Strategic invasion/diplomacy decisions and some eligibility checks around those tables remain remaster policies. Changing the tables means departing from verified priority behavior; record that explicitly in `differences.md` if you decide to do it.
+The native priority file contains recovered original-game tables. Strategic invasion/diplomacy decisions and some eligibility checks around those tables remain remaster policies. Changing the tables means departing from verified priority behavior; record that explicitly in `changes.md#record-differences` if you decide to do it.
 
 ### Read a real condition
 
@@ -182,13 +182,13 @@ A more precise experiment would be:
 5. Choose a legal reachable move toward the best useful jungle, or Wait if already well positioned. Retain the palace guard.
 6. Reassess on the next legal defender activation. Do not move a defender during the opponent's phase just because an automatic ambush fired.
 
-This is a documented proposal, not implemented by the cleanup. See [the ambush discussion](ai-ambush-proposal-v33.md) for the fuller policy.
+This is a documented proposal, not implemented by the cleanup. See [the ambush discussion](changes.md#record-ai-ambush-proposal-v33) for the fuller policy.
 
 Automatic ambush itself is in `battle.mjs` (`ambush`, `moveAlong`, `ambushCells`) and its arithmetic is in `native-combat.mjs` (`ambushExchange`). The native trigger checks three direction-dependent forward hexes, not every neighboring tile. It does not spend the ambusher's order or mobility; a subsequent move still must pass ordinary turn/order checks.
 
 ### Reinforcement, withdrawal and unwatched battles
 
-Use `reinforcementOptions(...)` and `placementCells(...)` when choosing reinforcement. A policy setting cannot make an illegal extra contingent legal. The initial/main invading contingent and allied field capacity are enforced in the rule layer; read the current evidence and caveats in `differences.md`.
+Use `reinforcementOptions(...)` and `placementCells(...)` when choosing reinforcement. A policy setting cannot make an illegal extra contingent legal. The initial/main invading contingent and allied field capacity are enforced in the rule layer; read the current evidence and caveats in `changes.md#record-differences`.
 
 Voluntary Flee and compulsory withdrawal after defeat have different flows. `battle.mjs`, `native-combat.mjs` and `battle-withdrawal.mjs` apply their rules; `strategy.mjs` handles result review and settlement. The existing tactical `aiBattle` policy does not currently choose a voluntary Flee branch. Changing a flee threshold elsewhere will not add one.
 
@@ -204,7 +204,7 @@ When all adjacent enemies are in jungle, a unit in water waits and banks mobilit
 
 The AI still reads the attributes of visible enemies when choosing duels, tactics and targets; it does not pay the human enemy-inspection fee. Removing hidden-position leaks does not make those information rules identical. HUD is an inspection/cheat tool and its unit picker can inspect either army.
 
-To check the new behavior, place a visible enemy in adjacent jungle, compare a water unit with a hill unit, and use HUD → AI → One AI action. Inspect Wait/mobility or the attack report. Moving the concealed enemy between distant jungle cells should leave the planned route unchanged. `node tests/v42-tests.mjs` covers those cases and the recovered fire priorities. See [fire evidence](native-fire-v42.md) for exactly what was recovered from `main.exe`.
+To check the new behavior, place a visible enemy in adjacent jungle, compare a water unit with a hill unit, and use HUD → AI → One AI action. Inspect Wait/mobility or the attack report. Moving the concealed enemy between distant jungle cells should leave the planned route unchanged. `node tests/v42-tests.mjs` covers those cases and the recovered fire priorities. See [fire evidence](changes.md#record-native-fire-v42) for exactly what was recovered from `main.exe`.
 
 ## Turns, fire and movement — v43
 
@@ -216,7 +216,7 @@ An **order** is one unit's action. An **army turn** is all that army's orders. A
 
 `nextAIUnit` in `ai-battle.mjs` is the shared choice for the AI action, automatic HUD preview and active-unit display. If you change actor priority, change it here so the highlight stays truthful. Display-only attack cycles are in `battle-presentation.mjs`: five for Normal/Simultaneous, ten for Charge. Never put damage or random rolls into animation frames.
 
-Original deployment does more than pick the nearest palace tile. The remaster's current placement branch is still simplified; read [the recovered priorities and boundaries](native-turns-v43.md) before describing a new deployment policy as original-game behavior. `node tests/v43-tests.mjs` checks fire timing, mobility, deployment reset, AI actor consistency, participant order costs and five-captive settlement.
+Original deployment does more than pick the nearest palace tile. The remaster's current placement branch is still simplified; read [the recovered priorities and boundaries](changes.md#record-native-turns-v43) before describing a new deployment policy as original-game behavior. `node tests/v43-tests.mjs` checks fire timing, mobility, deployment reset, AI actor consistency, participant order costs and five-captive settlement.
 
 ## Verify that your change does what you intended
 
@@ -236,7 +236,7 @@ First define an observable outcome: “a defender chooses the middle jungle on t
 
 For a new behavior, add a small scenario-based check to the relevant test file: arrange a specific map/state, run one AI step, assert its legal action or outcome, and validate the save when appropriate. Existing `arena()` helpers in tactical tests are useful examples. Use fixed seeds to compare strategies, and several scenarios for balance judgments.
 
-Then run `npm test` and `npm run test:ui`. Review changes with `git diff`; update `differences.md` if native behavior was intentionally changed. Keep publication and package generation as explicit later steps.
+Then run `npm test` and `npm run test:ui`. Review changes with `git diff`; update `changes.md#record-differences` if native behavior was intentionally changed. Keep publication and package generation as explicit later steps.
 
 ## Common reasons a change appears ineffective
 

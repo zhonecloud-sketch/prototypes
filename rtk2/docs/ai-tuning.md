@@ -54,7 +54,7 @@ Loaded saves use the configuration loaded at startup. HUD AI intelligence/aggres
 
 Main policy: `mjs/ai-battle.mjs`. Its `projectedAttackRoutes` forecasts terrain-cost paths to the palace from visible attackers. `ambushLaneScore` weights proximity by expected passing troops, with extra commander weight. `tacticalPosition` chooses useful cover and can plan toward a jungle beyond today's movement budget. `planBattleRoute` follows passable, legal routes; one palace guard retains the defensive objective.
 
-The route-lane heuristic does not yet score every movement step's exact native ambush arc. The stronger proposal in [ai-ambush-proposal-v33.md](ai-ambush-proposal-v33.md) remains discussion. Native automatic ambush is independently enforced by `battle.mjs` and `native-combat.mjs`.
+The route-lane heuristic does not yet score every movement step's exact native ambush arc. The stronger proposal in [changes.md#record-ai-ambush-proposal-v33](changes.md#record-ai-ambush-proposal-v33) remains discussion. Native automatic ambush is independently enforced by `battle.mjs` and `native-combat.mjs`.
 
 ## Unwatched battles
 

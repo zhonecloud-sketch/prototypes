@@ -4,11 +4,14 @@ The current game is **v56**, a playable HTML5 / Canvas 2D strategy game for land
 
 ## Guides
 
-[V56 mechanics and delivery notes](fixes-v56.html) cover this release. [Development and delivery policy](development-workflow.md) records GitHub delivery, ZIP-on-request and no automatic AI training. [V55 audio fixes and licence findings](fixes-v55.html) remain available. Earlier [V54 native findings](fixes-v54.html) remain available.
+Use [changes.md](changes.md) for all release history, [native_sound.md](native_sound.md) for original/current sound routing, and [test_spec.md](test_spec.md) for the complete validation catalogue. Media is grouped under assets/artwork, assets/sounds and assets/music; [asset-manifest.json](asset-manifest.json) records the cleanup.
 
-[V53 fixes](fixes-v53.html), [reported bug coverage](bug-validation.md) and [pending test designs](pending-test-case-design.md) describe the current corrections and verification limits.
 
-[V48 display and battle animation fixes](battle-presentation-v53.md) describe message timing, governor visibility and charge/ambush presentation.
+[V56 mechanics and delivery notes](changes.md#record-fixes-v56) cover this release. [Development and delivery policy](development-workflow.md) records GitHub delivery, ZIP-on-request and no automatic AI training. [V55 audio fixes and licence findings](changes.md#record-fixes-v55) remain available. Earlier [V54 native findings](changes.md#record-fixes-v54) remain available.
+
+[V53 fixes](changes.md#record-fixes-v53), [reported bug coverage](bug-validation.md) and [pending test designs](pending-test-case-design.md) describe the current corrections and verification limits.
+
+[V48 display and battle animation fixes](changes.md#record-battle-presentation-v48) describe message timing, governor visibility and charge/ambush presentation.
 
 | Read this | For |
 | --- | --- |
@@ -16,28 +19,28 @@ The current game is **v56**, a playable HTML5 / Canvas 2D strategy game for land
 | [Beginner AI editing guide](ai-editing-guide.md) | Step-by-step changes to governance and battlefield decisions. |
 | [AI settings reference](ai-tuning.md) | Exact configuration names, defaults and current consumers. |
 | [Maintenance handoff](maintenance.md) | Event, messenger and treasure paths that previously regressed. |
-| [Original-game differences](differences.md) | Verified equations and limits, executable evidence and remaining approximations. |
-| [Native combat and orders](native-battle-v33.md) | Ambush, voluntary flight, Train, Give and local governance priority evidence. |
-| [Defeated field withdrawal](compulsory-retreat-v34.md) | Compulsory retreat/capture and pending-decision save behavior. |
+| [Original-game differences](changes.md#record-differences) | Verified equations and limits, executable evidence and remaining approximations. |
+| [Native combat and orders](changes.md#record-native-battle-v33) | Ambush, voluntary flight, Train, Give and local governance priority evidence. |
+| [Defeated field withdrawal](changes.md#record-compulsory-retreat-v34) | Compulsory retreat/capture and pending-decision save behavior. |
 | [AI training manual](ai-training-manual.md) | Optional profiles, offline training, Legacy comparison and retraining after rule changes. |
-| [AI training evaluation](ai-training-v44-results.md) | Reproducible experimental example results and limits. |
-| [Battle turns, fire, movement and deployment](native-turns-v43.md) | Original executable findings, requested controls and known limits. |
-| [Fire escape and palace decisions](native-fire-v42.md) | Recovered fire-goal priorities, executable checks and remaining limits. |
-| [Combat equations](battle-equations-v32.md) | Native melee, equipment and palace-assault arithmetic. |
-| [Ambush AI proposal](ai-ambush-proposal-v33.md) | A discussion of more precise interception policy; not an implemented new strategy. |
-| [Artwork overview](ARTWORK.md) and [v36 history artwork](artwork-v36.md) | Generation provenance and current standalone history images. |
+| [AI training evaluation](changes.md#record-ai-training-v44-results) | Reproducible experimental example results and limits. |
+| [Battle turns, fire, movement and deployment](changes.md#record-native-turns-v43) | Original executable findings, requested controls and known limits. |
+| [Fire escape and palace decisions](changes.md#record-native-fire-v42) | Recovered fire-goal priorities, executable checks and remaining limits. |
+| [Combat equations](changes.md#record-battle-equations-v32) | Native melee, equipment and palace-assault arithmetic. |
+| [Ambush AI proposal](changes.md#record-ai-ambush-proposal-v33) | A discussion of more precise interception policy; not an implemented new strategy. |
+| [Artwork overview](ARTWORK.md) and [v36 history artwork](changes.md#record-artwork-v36) | Generation provenance and current standalone history images. |
 
-Older versioned tests and evidence are retained because current checks still use them. For release history, use `differences.md` and Git history; this overview describes the current entry points instead of repeating old behavior.
+Older versioned tests and evidence are retained because current checks still use them. For release history, use `changes.md#record-differences` and Git history; this overview describes the current entry points instead of repeating old behavior.
 
 ## Play locally
 
 From the repository root:
 
 ```sh
-python3 dist/rtk2/tools/serve-game.py --open
+python3 rtk2/tools/serve-game.py --open
 ```
 
-Visit `http://localhost:8080/rtk2/`. The neighboring `lib/js-yaml.js` is required. There is no build step. For the complete v55 download, unzip both `rtk2/` and `lib/` together, then use `start-game.bat` (Windows) or `sh start-game.sh` (macOS/Linux) with Python 3 installed. The required local library is included.
+Visit `http://localhost:8080/rtk2/`. The neighboring `lib/js-yaml.js` is required. There is no build step. For the GitHub checkout, keep `rtk2/` and the existing `lib/` together, then use `start-game.bat` (Windows) or `sh start-game.sh` (macOS/Linux) with Python 3 installed. Do not rebuild or upload library helpers; the existing library is already tracked.
 
 ## Main controls
 
@@ -51,7 +54,7 @@ Across China includes current reports and the latest completed AI round, not an 
 
 ## Development checks
 
-From `dist/rtk2`, with Node 24.15+ in the 24.x line:
+From `rtk2`, with Node 24.15+ in the 24.x line:
 
 ```sh
 npm ci
@@ -73,6 +76,6 @@ The [Koei RTK II NES instruction booklet](https://www.digitpress.com/library/man
 
 Asset builders in `tools/` retain their required external-input instructions. Audio builders use NumPy and ffmpeg; native arithmetic verifiers need the supplied binary and optionally Unicorn. These are optional development tasks, not requirements for ordinary play.
 
-The [v54 report](fixes-v54.html) links the [verification record](verification-v54.json), [human joint audit](native-joint-findings-v54.md), [AI joint audit](native-ai-joint-findings-v54.md) and [native captive/audio audit](native-captive-audio-v54.md).
+The [v54 report](changes.md#record-fixes-v54) links the [verification record](verification-v54.json), [human joint audit](changes.md#record-native-joint-findings-v54), [AI joint audit](changes.md#record-native-ai-joint-findings-v54) and [native captive/audio audit](changes.md#record-native-captive-audio-v54).
 
-[V55 audio fixes](fixes-v55.html) replace the requested clips. [Commercial audio conditions](audio-licenses-v55.md) apply to finished-game distribution; the private source archive must not be redistributed with the Mixkit sound.
+[V55 audio fixes](changes.md#record-fixes-v55) replace the requested clips. [Commercial audio conditions](changes.md#record-audio-licenses-v55) apply to finished-game distribution; the private source archive must not be redistributed with the Mixkit sound.

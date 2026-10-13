@@ -4,7 +4,7 @@
 
 There is one editable source checkout: `/workspace/sites/rtk2-remastered` in this session. Open its root `README.md` first. All relative paths below start at that checkout unless stated otherwise.
 
-The current game release is **v44**, recorded in `dist/rtk2/config/release.json`. V44 adds optional trained governance/battlefield policies, HUD comparison and reusable offline training tools. Legacy remains the default; start with [the training manual](ai-training-manual.md). V43 updates fire timing/transparency, portrait inspection, deployment confirmation, movement costs and attack playback. See `docs/native-turns-v43.md` for original-rule verification. The cleanup was a maintenance change on top of v38. The v39 update adds HUD AI inspection overlays. V40 fixes battlefield status sizing and turn announcements, restores defender-first combat and adds the root AGENTS.md coding rules. V41 fixes Fireball targeting and mobile placement cards, and closes HUD after an AI action. V42 adds automatic ready-unit selection, synchronized three-cycle attacks, clearer fire, recovered fire-escape priorities and visibility-limited route planning. Downloadable packaging remains undecided.
+The current game release is **v44**, recorded in `dist/rtk2/config/release.json`. V44 adds optional trained governance/battlefield policies, HUD comparison and reusable offline training tools. Legacy remains the default; start with [the training manual](ai-training-manual.md). V43 updates fire timing/transparency, portrait inspection, deployment confirmation, movement costs and attack playback. See `docs/changes.md#record-native-turns-v43` for original-rule verification. The cleanup was a maintenance change on top of v38. The v39 update adds HUD AI inspection overlays. V40 fixes battlefield status sizing and turn announcements, restores defender-first combat and adds the root AGENTS.md coding rules. V41 fixes Fireball targeting and mobile placement cards, and closes HUD after an AI action. V42 adds automatic ready-unit selection, synchronized three-cycle attacks, clearer fire, recovered fire-escape priorities and visibility-limited route planning. Downloadable packaging remains undecided.
 
 ## What each folder contains
 
@@ -22,7 +22,7 @@ The current game release is **v44**, recorded in `dist/rtk2/config/release.json`
 | `dist/rtk2/start-game.*`, `START-HERE.html`, `RELEASE.txt` | Existing launch instructions and release description | Yes. |
 | Git history and hosting configuration | Recovery history and existing Site identity | Yes; preserve them during maintenance. |
 | `node_modules/`, `__pycache__/` | Installed development dependencies and Python caches | Recreate when needed; excluded from the cleaned workspace. |
-| Generated ZIP/TAR files and exported copies of `differences.md` | Delivery outputs from an earlier release | Recreate after deciding the next package; keep the source report in `docs/`. |
+| Generated ZIP/TAR files and exported copies of `changes.md#record-differences` | Delivery outputs from an earlier release | Recreate after deciding the next package; keep the source report in `docs/`. |
 
 `dist/` often means disposable build output in other projects. Here the HTML and modules run directly in the browser, and this folder is the source of truth. There is no `src/` copy to recover from if you delete it.
 
@@ -30,7 +30,7 @@ The current game release is **v44**, recorded in `dist/rtk2/config/release.json`
 
 The cleanup removed these confirmed nonessential files:
 
-- `rtk2-remastered-source.zip`, `rtk2-site.tar.gz`, `rtk2-site-complete.tar.gz` and duplicate exported `differences.md` from the session's `v38/` folder.
+- `rtk2-remastered-source.zip`, `rtk2-site.tar.gz`, `rtk2-site-complete.tar.gz` and duplicate exported `changes.md#record-differences` from the session's `v38/` folder.
 - Downloaded Library transfer helpers and their cache in the session workspace.
 - Installed `node_modules/` and Python bytecode caches after verification. Their inputs remain in the source tree.
 - The retired `mjs/world.mjs` and `mjs/province-world.mjs` WebGL renderers, and their unused `dist/lib/three.module.js` and `three-core.js` dependencies. The active renderer is `mjs/raster-world.mjs`.

@@ -6,11 +6,11 @@ export const NATIVE_MUSIC_COUNT=21;
 // Native DS:3C4E, indexed by province region; battlefield adds five.
 const regionMusic=[6,6,6,2,2,2,2,5,2,2,4,4,3,5];
 export const nativeMusicFor=(theme,region,won=true)=>{if(theme==='triumph')return won?15:16;if(theme==='clan')return 14;const id=regionMusic[region]??2;return theme==='battle'?id+5:id;};
-const customEffects=['select','order','battle','fire','month','message','gallop','flood','locust','typhoon','epidemic','uprising','meteor','death','march','train','trade','recruit','retreat','charge-shout','sword-attack'];
+const customEffects=['order','fire','month','message','gallop','flood','locust','typhoon','epidemic','uprising','meteor','death','march','train','trade','recruit','retreat','charge-shout','sword-attack'];
 const nativeName=id=>`native-effect-${id}`;
 // User-supplied v55 recordings are kept byte-for-byte; native reference media remains archived.
 const replacementFiles={'sword-attack':'freesound_community-sword-battle-jingle-loop-96983.mp3','charge-shout':'audiomass-charge_scream.mp3',gallop:'audiomass-horse_gallop.mp3'};
-const effectSource=name=>`./assets/${replacementFiles[name]||name+'.mp3'}${name.startsWith('native-effect-')?'?v=56':''}`;
+const effectSource=name=>`./assets/sounds/${replacementFiles[name]||name+'.mp3'}${name.startsWith('native-effect-')?'?v=56':''}`;
 export function orderSound(type,args={}){
  return nativeName(14);
 }
@@ -56,7 +56,7 @@ export function battleSound(action){
  return 'order';
 }
 export class AudioBus{
- constructor(){this.unlocked=false;this.sound=true;this.music=true;this.active=false;this.effects=new Set();this.theme='council';this.battlePlayed=new WeakMap();this.context=null;this.buffers=new Map();this.audioError=null;this.tracks=Object.fromEntries(['council','battle','triumph'].map(theme=>{const a=new Audio(theme==='council'?'./assets/council-music.mp3':theme==='battle'?'./assets/battle-music-v17.mp3':'./assets/triumph-music.mp3');a.loop=theme!=='triumph';a.volume=theme==='battle'?.24:.3;a.preload='auto';return [theme,a];}));this.track=this.tracks.council;this.notice=null;this.courierMoving=false;this.courierEffect=null;this.onVisibility=()=>this.sync();document.addEventListener('visibilitychange',this.onVisibility);this.onGesture=()=>{if(this.active&&this.sound)this.unlock();};document.addEventListener('pointerdown',this.onGesture,{passive:true});}
+ constructor(){this.unlocked=false;this.sound=true;this.music=true;this.active=false;this.effects=new Set();this.theme='council';this.battlePlayed=new WeakMap();this.context=null;this.buffers=new Map();this.audioError=null;this.tracks=Object.fromEntries(['council','battle','triumph'].map(theme=>{const a=new Audio(theme==='council'?'./assets/music/council-music.mp3':theme==='battle'?'./assets/music/battle-music-v17.mp3':'./assets/music/triumph-music.mp3');a.loop=theme!=='triumph';a.volume=theme==='battle'?.24:.3;a.preload='auto';return [theme,a];}));this.track=this.tracks.council;this.notice=null;this.courierMoving=false;this.courierEffect=null;this.onVisibility=()=>this.sync();document.addEventListener('visibilitychange',this.onVisibility);this.onGesture=()=>{if(this.active&&this.sound)this.unlock();};document.addEventListener('pointerdown',this.onGesture,{passive:true});}
  configure(settings){this.sound=settings.sound!==false;this.music=settings.music!==false;this.sync();}
  unlock(){this.unlocked=true;const Context=globalThis.AudioContext||globalThis.webkitAudioContext;if(!this.context&&Context)try{this.context=new Context();}catch{}if(this.context){if(this.context.state==='suspended')this.context.resume()?.catch(()=>{});for(const name of ['sword-attack','charge-shout',nativeName(13),'fire','march','gallop'])this.loadEffect(name).catch(()=>{});}this.sync();}
  loadEffect(name){if(!this.buffers.has(name)){const promise=fetch(effectSource(name)).then(r=>{if(!r.ok)throw Error('Sound file could not load.');return r.arrayBuffer();}).then(data=>this.context.decodeAudioData(data));this.buffers.set(name,promise);promise.catch(()=>this.buffers.delete(name));}return this.buffers.get(name);}
@@ -70,7 +70,7 @@ export class AudioBus{
  play(name='select'){
   if(name==='select')return; // Native ordinary key/menu selection is silent.
   if(!this.sound||!this.unlocked||!this.active||document.hidden)return;
-  if(!customEffects.includes(name)&&!Array.from({length:NATIVE_EFFECT_COUNT},(_,id)=>nativeName(id)).includes(name))name='select';
+  if(!customEffects.includes(name)&&!Array.from({length:NATIVE_EFFECT_COUNT},(_,id)=>nativeName(id)).includes(name))return;
   // Keep fast simultaneous/charge playback bounded, without interrupting courier motion.
   const bursts=[...this.effects].filter(a=>a!==this.courierEffect);if(bursts.length>=8){bursts[0].pause();this.effects.delete(bursts[0]);}
   const volume=name==='sword-attack'?.35:name==='native-effect-13'?.55:name==='battle'?.4:.5;if(this.context)return this.playBuffer(name,volume);const a=new Audio(effectSource(name));a.preload='auto';a.volume=volume;this.effects.add(a);a.onended=()=>this.effects.delete(a);a.onerror=()=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(Error('Sound file could not load.'));};a.play()?.catch(error=>{const current=this.effects.delete(a);if(current&&this.active&&this.sound&&!document.hidden)this.reportError(error);});return a;
