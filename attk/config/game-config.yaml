@@ -1,0 +1,7 @@
+# Remaster monthly simulation. Implemented domestic formulas live in engine.mjs.
+wagePerOfficer: 3
+troopFoodDivisor: 3
+januaryTaxDivisor: 200
+julyHarvestDivisor: 5
+populationGrowth: 0.002
+floodChance: 0.12

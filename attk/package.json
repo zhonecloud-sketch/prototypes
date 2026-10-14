@@ -1,0 +1,19 @@
+{
+  "name": "attk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tools/ai-rules.mjs --check && node tests/tests.mjs && node tests/strategy-tests.mjs && node tests/battle-tests.mjs && node tests/monthly-tests.mjs && node tests/artwork-tests.mjs && node tests/expansion-tests.mjs && node tests/province-tests.mjs && node tests/decisions-tests.mjs && node tests/fidelity-tests.mjs && node tests/completion-tests.mjs && node tests/v15-tests.mjs && node tests/v16-tests.mjs && node tests/v17-tests.mjs && node tests/v18-tests.mjs && node tests/v19-tests.mjs && node tests/v20-tests.mjs && node tests/v21-tests.mjs && node tests/v22-tests.mjs && node tests/v23-tests.mjs && node tests/v24-tests.mjs && node tests/v25-tests.mjs && node tests/v26-tests.mjs && node tests/v27-tests.mjs && node tests/v28-tests.mjs && node tests/v29-tests.mjs && node tests/v30-tests.mjs && node tests/v31-tests.mjs && node tests/v32-tests.mjs && node tests/v33-tests.mjs && node tests/v34-tests.mjs && node tests/v35-tests.mjs && node tests/v36-tests.mjs && node tests/v38-tests.mjs && node tests/v39-tests.mjs && node tests/v42-tests.mjs && node tests/v43-tests.mjs && node tests/v44-tests.mjs && node tests/v45-tests.mjs && node tests/v47-tests.mjs && node tests/v48-tests.mjs && node tests/v49-tests.mjs && node tests/v50-governance-tests.mjs && node tests/v50-battle-tests.mjs && node tests/audio-v50-tests.mjs && node tests/v50-presentation-tests.mjs && node tests/v52-tests.mjs && node tests/audio-v52-tests.mjs && node tests/v53-tests.mjs && node tests/audio-v53-tests.mjs && node tests/v54-tests.mjs && node tests/audio-v55-tests.mjs && node tests/v56-tests.mjs && node tests/audio-v56-tests.mjs && node tests/asset-layout-tests.mjs",
+    "test:ui": "node tests/mobile-layout-tests.mjs && node tests/ui-tests.mjs && node tests/v54-ui-tests.mjs && node tests/v55-ui-tests.mjs",
+    "train:ai": "node tools/train-ai.mjs",
+    "train:governance": "node tools/train-governance.mjs",
+    "benchmark:ai": "node tools/benchmark-ai.mjs",
+    "test:audio:ui": "node tests/v55-ui-tests.mjs",
+    "test:v56:ui": "node tools/verify-charge-arrival-raster-v56.mjs && node tests/v56-ui-tests.mjs",
+    "test:rust": "node tests/attk-rust-tests.mjs && node tests/attk-server-tests.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.2",
+    "@napi-rs/canvas": "0.1.100"
+  }
+}

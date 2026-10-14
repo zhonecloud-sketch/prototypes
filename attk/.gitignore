@@ -1,0 +1,28 @@
+__pycache__/
+node_modules
+*.py[cod]
+
+# Private DOS references stay outside source and release packages.
+[fF][mM][dD][rR][vV]*.[cC][oO][mM]
+[gG][rR][pP][dD][aA][tT][aA]*.[dD][aA][tT]
+[hH][eE][xX][dD][aA][tT][aA]*.[dD][aA][tT]
+[kK][oO][eE][iI]*.[bB][aA][tT]
+[pP][aA][cC][kK][dD][aA][tT][aA]*.[dD][aA][tT]
+[rR][tT][kK]2*.[cC][oO][mM]
+
+# Transfer helpers and generated delivery files are workspace-only.
+library_upload.py
+library_hosted_apps.py
+library_file_transfer.py
+library-helpers*/
+RTK2-Remastered-*.zip
+*-deployment.tar.gz
+
+# Reproducible local Rust outputs; distributed through build artifacts.
+/target/
+/bin/
+/wasm/
+/dist/
+
+# Keep this project's authored instructions tracked.
+!AGENTS.md

@@ -1,0 +1,762 @@
+{
+  "originalSHA256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "cases": [
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "jungle": [
+        4,
+        6
+      ],
+      "nativeDirection": 0,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        5,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            5,
+            5
+          ],
+          "ambusher": [
+            4,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "jungle": [
+        4,
+        6
+      ],
+      "nativeDirection": 0,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        5,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "jungle": [
+        6,
+        7
+      ],
+      "nativeDirection": 1,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        6,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "jungle": [
+        6,
+        7
+      ],
+      "nativeDirection": 1,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        6,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "jungle": [
+        8,
+        6
+      ],
+      "nativeDirection": 2,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        7,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            7,
+            5
+          ],
+          "ambusher": [
+            8,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "jungle": [
+        8,
+        6
+      ],
+      "nativeDirection": 2,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        7,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "jungle": [
+        4,
+        4
+      ],
+      "nativeDirection": 3,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        5,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            5,
+            4
+          ],
+          "ambusher": [
+            4,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "jungle": [
+        4,
+        4
+      ],
+      "nativeDirection": 3,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        5,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "jungle": [
+        6,
+        3
+      ],
+      "nativeDirection": 4,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        6,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            6,
+            4
+          ],
+          "ambusher": [
+            6,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "jungle": [
+        6,
+        3
+      ],
+      "nativeDirection": 4,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        6,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "jungle": [
+        8,
+        4
+      ],
+      "nativeDirection": 5,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        7,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            8,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "jungle": [
+        8,
+        4
+      ],
+      "nativeDirection": 5,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        7,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "jungle": [
+        5,
+        6
+      ],
+      "nativeDirection": 0,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        6,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            6,
+            6
+          ],
+          "ambusher": [
+            5,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "jungle": [
+        5,
+        6
+      ],
+      "nativeDirection": 0,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        6,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "jungle": [
+        7,
+        7
+      ],
+      "nativeDirection": 1,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        7,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            7,
+            6
+          ],
+          "ambusher": [
+            7,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "jungle": [
+        7,
+        7
+      ],
+      "nativeDirection": 1,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        7,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "jungle": [
+        9,
+        6
+      ],
+      "nativeDirection": 2,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        8,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            8,
+            6
+          ],
+          "ambusher": [
+            9,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "jungle": [
+        9,
+        6
+      ],
+      "nativeDirection": 2,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        8,
+        6
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "jungle": [
+        5,
+        4
+      ],
+      "nativeDirection": 3,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        6,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            6,
+            5
+          ],
+          "ambusher": [
+            5,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "jungle": [
+        5,
+        4
+      ],
+      "nativeDirection": 3,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        6,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "jungle": [
+        7,
+        3
+      ],
+      "nativeDirection": 4,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        7,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            7,
+            4
+          ],
+          "ambusher": [
+            7,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "jungle": [
+        7,
+        3
+      ],
+      "nativeDirection": 4,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        7,
+        4
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "jungle": [
+        9,
+        4
+      ],
+      "nativeDirection": 5,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": false,
+      "winner": 255,
+      "reason": 0,
+      "actorFinal": [
+        8,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": [
+        {
+          "ambushVictim": [
+            8,
+            5
+          ],
+          "ambusher": [
+            9,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "jungle": [
+        9,
+        4
+      ],
+      "nativeDirection": 5,
+      "test": "FULL-CHARGE-CAPTURE-TERMINAL-GATE",
+      "targetCommander": true,
+      "winner": 0,
+      "reason": 5,
+      "actorFinal": [
+        8,
+        5
+      ],
+      "targetFinalMen": 0,
+      "targetFinalHex": "0xff",
+      "calls": []
+    }
+  ],
+  "limits": "Unchanged native full charge controller, both casualty/equipment equations, zero-men capture, service removal, army linked-list commander recognition, terminal winner/reason writes, occupation and jungle eligibility execute. Only native RNG, drawing/text/pause, and ambush casualty body are controlled. No UI, strategic AI target selection or recruit outcome claim."
+}

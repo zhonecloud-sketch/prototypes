@@ -1,0 +1,698 @@
+[
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 0,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 1,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 2,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 3,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 4,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 5,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 0,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 1,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 2,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 3,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 4,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "occupation",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 5,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 0,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 1,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 2,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 3,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 4,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      6,
+      5
+    ],
+    "nativeDirection": 5,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 0,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 1,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 2,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 6
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 3,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 5
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 4,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 2
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  },
+  {
+    "branch": "breakthrough",
+    "start": [
+      7,
+      5
+    ],
+    "nativeDirection": 5,
+    "animationSequence": [
+      {
+        "type": "charge",
+        "unit": 0
+      },
+      {
+        "type": "ambush",
+        "unit": 7
+      },
+      {
+        "type": "ambush",
+        "unit": 3
+      },
+      {
+        "type": "ambush",
+        "unit": 4
+      }
+    ],
+    "ambushCues": 24,
+    "gameplayRNGNotReplayed": true,
+    "pass": true
+  }
+]

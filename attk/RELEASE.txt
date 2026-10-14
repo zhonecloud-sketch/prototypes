@@ -1,0 +1,7 @@
+A Tale of the Three Kingdoms 0.1.0
+Baseline: RTK2 v56, 7e3daec6568f6cfaf356909afcf42cb46a2cce1e
+Rust 1.90.0 server plus compiled WebAssembly arithmetic.
+Campaign, AI, rendering, audio and mobile GUI remain JavaScript.
+Read docs/installation.md for installation, device testing and removal.
+Read docs/attk-test-spec.md for automated coverage and pending cases.
+No AI training or new asset generation was performed.

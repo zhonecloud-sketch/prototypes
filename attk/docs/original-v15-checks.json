@@ -1,0 +1,29 @@
+{
+  "method": "Static unpacking, disassembly and exact byte checks; no DOS runtime execution",
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "unpackedSha256": "5c3e45a5edb097c8719d65b1678784aaf8412258e2437a26bb89d4b249824506",
+  "unpackedBytes": 246400,
+  "compressionBlocks": 173,
+  "offsets": "Unpacked load-image offsets; not packed-file offsets or relocated DOS addresses",
+  "checks": {
+    "attack_menu_dispatch": "0x26652",
+    "defender_defeat_status": "0x24c12",
+    "charge_terminal_branch": "0x26438",
+    "charge_defeated_tile_coordinates": "0x2644c",
+    "charge_defeated_tile_occupancy": "0x2645f",
+    "charge_breakthrough_war_test": "0x26503",
+    "percentage_test": "0x58aa",
+    "marriage_no_daughter_flag": "0x16f06",
+    "marriage_already_married": "0x16f2c",
+    "marriage_outgoing_partner_write": "0x10ad6",
+    "marriage_incoming_partner_write": "0x10b85",
+    "dead_spouse_daughter_retirement": "0x7f84"
+  },
+  "charge": "Defender defeat takes the target tile; surviving-defender breakthrough is separate and tests attacker War.",
+  "daughters": "One availability flag plus outgoing (+0x21) and incoming (+0x20) marriage links; no numerical child age/count records or birth-event mechanism identified. Expanded spouses, births and ages are separate remaster rules.",
+  "liuBei189": [
+    "Liu Bei",
+    "Guan Yu",
+    "Zhang Fei"
+  ]
+}

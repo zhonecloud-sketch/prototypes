@@ -1,0 +1,10 @@
+{
+  "title": "A Tale of the Three Kingdoms",
+  "version": "0.1.0",
+  "baselineCommit": "7e3daec6568f6cfaf356909afcf42cb46a2cce1e",
+  "baselineVersion": 56,
+  "engine": "Rust WASM arithmetic + v56 JavaScript campaign and UI",
+  "server": "Rust std-only HTTP",
+  "toolchain": "1.90.0",
+  "localPort": 8765
+}

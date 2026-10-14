@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "policyVersion": 1,
+  "id": "governance-conquest-11001-g2",
+  "name": "Governance conquest · experimental",
+  "domain": "governance",
+  "rulesId": "65d8573a4f36663d810fff3e2329a58bdeb554e766d1f91bfd16affd91e005d1",
+  "weights": {
+    "territory": 2.0203429228452943,
+    "officers": 2,
+    "army": 1.5,
+    "land": 1,
+    "flood": 0.9276475559557672,
+    "loyalty": 0.6256507765007152,
+    "gold": 0.6403363957857016,
+    "food": 2.7823699196581195,
+    "safety": 5.111822407779343
+  },
+  "training": {
+    "objective": "governance-conquest-v1",
+    "optimizer": "seeded multiplicative hill climbing; backward curriculum with rehearsal",
+    "battleResolution": "abstract",
+    "seed": 11001,
+    "holdoutSeed": 910001,
+    "generations": 2,
+    "population": 3,
+    "months": 3,
+    "evaluationMonths": 6,
+    "rulesId": "65d8573a4f36663d810fff3e2329a58bdeb554e766d1f91bfd16affd91e005d1",
+    "summaries": {
+      "trained": {
+        "episodes": 18,
+        "wins": 5,
+        "losses": 0,
+        "unfinished": 13,
+        "successRate": 0.2777777777777778,
+        "meanMonthsToVictory": 2.8,
+        "meanCappedMonths": 5.833333333333333,
+        "meanProvinces": 27.444444444444443,
+        "shortageMonths": 223,
+        "abstractBattles": 2467,
+        "instantBattles": 19,
+        "detailedActions": 0
+      },
+      "legacy": {
+        "episodes": 18,
+        "wins": 1,
+        "losses": 2,
+        "unfinished": 15,
+        "successRate": 0.05555555555555555,
+        "meanMonthsToVictory": 4,
+        "meanCappedMonths": 6.833333333333333,
+        "meanProvinces": 23.27777777777778,
+        "shortageMonths": 305,
+        "abstractBattles": 2592,
+        "instantBattles": 9,
+        "detailedActions": 0
+      },
+      "previous": {
+        "episodes": 18,
+        "wins": 5,
+        "losses": 0,
+        "unfinished": 13,
+        "successRate": 0.2777777777777778,
+        "meanMonthsToVictory": 3.2,
+        "meanCappedMonths": 5.944444444444445,
+        "meanProvinces": 26.11111111111111,
+        "shortageMonths": 231,
+        "abstractBattles": 2867,
+        "instantBattles": 4,
+        "detailedActions": 0
+      }
+    },
+    "automaticActivation": false
+  }
+}

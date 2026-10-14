@@ -1,0 +1,46 @@
+{
+  "release": 55,
+  "date": "2026-10-12",
+  "preFixSource": "49354eb87874969117a9d39e9e1ee9912737faa8",
+  "preFixReproductions": {
+    "failed": 4,
+    "unrelatedCueAndBGMGuardPassed": 1
+  },
+  "gameplay": {
+    "command": "npm test",
+    "status": "passed",
+    "groups": 503,
+    "newAudioGroups": 5
+  },
+  "mountedAudio": {
+    "command": "npm run test:audio:ui",
+    "status": "passed",
+    "groups": 4,
+    "initializationGroups": 2,
+    "cases": [
+      "Normal supplied sword",
+      "Simultaneous each exchange supplied sword",
+      "Charge cry once, no native hits",
+      "Capture-release messenger returning with supplied gallop"
+    ],
+    "environment": "Emulated DOM plus native Canvas and mocked audio; physical listening not verified"
+  },
+  "legacyFullUI": {
+    "command": "npm run test:ui",
+    "status": "incomplete",
+    "observedBlock": "Legacy shared-fixture challenge assertion after100ms; fixed-time presentation assumptions prevent a full pass in this environment. The attempted full run is not counted as passed.",
+    "proposedSolution": "Split into isolated saved fixtures; await actual order/decision state; use deterministic timers/frames for timing-sensitive checks."
+  },
+  "media": {
+    "files": 3,
+    "byteIdentity": "Matched uploaded files",
+    "fullDecoding": "ffmpeg passed",
+    "details": "docs/audio-assets-v55.json",
+    "listeningVerified": false
+  },
+  "music": "All three active BGM recordings equal v54 bytes",
+  "licenses": "docs/changes.md#record-audio-licenses-v55",
+  "aiTrainingRun": false,
+  "aiRulesIdentity": "Unchanged; current engine fingerprint check passed",
+  "limits": "docs/pending-test-case-design.md"
+}

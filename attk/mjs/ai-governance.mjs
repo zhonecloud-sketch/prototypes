@@ -1,0 +1,32 @@
+import {nativePolicy,runNativePriority} from './native-governance-priority.mjs?v=56';
+import {invasionFoodPlan} from './war-provisions.mjs?v=56';
+import {DEFAULT_AI} from './ai-parameters.mjs?v=56';
+import {aiPolitics} from './ai-politics.mjs?v=56';
+import {hireCapacity} from './province-rules.mjs?v=56';
+// One governance action per scheduler step; game validation remains authoritative.
+export function aiGovernance(g){const tuning=g.rules.ai?.governance??DEFAULT_AI.governance,ai=g.aiFor(),provinces=g.s.provinces.filter(p=>p.owner===g.s.player),smart=ai.intelligence>=tuning.smartIntelligence;
+ for(const p of provinces){let ready=p.officers.map(id=>g.officer(id)).filter(o=>{try{g.ready(p,o.id);return true;}catch{return false;}});if(!ready.length)continue;ready.sort((a,b)=>smart?b.int-a.int:0);const o=smart?ready[0]:ready[g.int(0,ready.length-1)];if(g.s.familyMode==='expanded'&&p.officers.includes(g.ruler().leader)&&!g.ruler().family?.spouse&&!g.officer(g.ruler().leader).acted&&p.gold>=100&&g.random()<tuning.courtMarriageChance){try{g.execute('courtMarriage',{province:p.id});return true;}catch{}}if(aiPolitics(g,p,ready,ai))return true;const army=ready.filter(o=>o.soldiers>0).sort((a,b)=>b.soldiers-a.soldiers).slice(0,Math.min(tuning.maxInvaders,p.officers.length-1));const strength=army.reduce((n,o)=>n+o.soldiers*(.5+o.training/100),0);const enemies=p.neighbors.map(id=>g.province(id)).filter(q=>q.owner!==255&&q.owner!==p.owner&&!g.ruler().alliances.includes(q.owner)&&!g.s.wars.some(w=>[w.source,w.target,...w.units.flatMap(u=>[u.origin,u.retreatProvince])].includes(q.id))).sort((a,b)=>a.officers.reduce((n,id)=>n+g.officer(id).soldiers,0)-b.officers.reduce((n,id)=>n+g.officer(id).soldiers,0));
+ const men=army.reduce((n,o)=>n+o.soldiers,0),carriedFood=invasionFoodPlan(men,p.food,tuning),enemy=enemies[0],enemyStrength=enemy?.officers.reduce((n,id)=>n+g.officer(id).soldiers*(.5+g.officer(id).training/100),0)||0;
+ try{const envoy=ready.filter(o=>o.id!==g.ruler().leader).sort((a,b)=>b.charm-a.charm)[0],partners=g.s.rulers.filter(r=>g.s.provinces.some(q=>q.owner===r.id)||(g.s.roaming||[]).some(p=>p.owner===r.id)).filter(r=>r.id!==g.s.player&&!g.ruler().alliances.includes(r.id)).sort((a,b)=>(g.ruler().relations[a.id]??50)-(g.ruler().relations[b.id]??50));if(smart&&envoy&&p.officers.includes(g.ruler().leader)&&partners.length&&p.gold>=500&&g.random()<tuning.diplomacyChance){g.execute('diplomaticMission',{province:p.id,officer:envoy.id,mode:ai.aggression<50?'alliance':'gift',target:partners[0].id,amount:100});return true;}if(ai.aggression>0&&army.length&&carriedFood!==null&&p.food>tuning.minimumWarFood&&enemy&&strength>enemyStrength*(smart?tuning.attackStrengthRatio:tuning.basicAttackStrengthRatio)&&g.random()<ai.aggression/100){g.invade({province:p.id,target:enemy.id,officers:army.map(o=>o.id),food:carriedFood});return true;}
+ const policy=nativePolicy(g.officer(p.governor).ambition??0,()=>g.random());
+ const attempt=order=>{try{
+  const args={province:p.id,officer:o.id},subordinates=p.officers.map(id=>g.officer(id)).filter(v=>v.id!==g.ruler().leader),rewarded=[...subordinates].sort((a,b)=>a.loyalty-b.loyalty)[0];
+  if(order==='movement'){const neutral=p.neighbors.map(id=>g.province(id)).find(q=>q.owner===255);if(!neutral||p.officers.length<2)return false;g.execute('move',{...args,target:neutral.id,gold:Math.min(200,p.gold),food:Math.min(5000,p.food)});}
+  else if(order==='recruit'){if(!p.unclaimed.length||p.gold<100)return false;g.execute('recruit',{...args,target:p.unclaimed[0]});}
+  else if(order==='search'){if(!p.hidden.length)return false;g.execute('search',args);}
+  else if(order==='reward'){if(!rewarded||rewarded.loyalty===100)return false;g.execute(p.horses?'rewardHorse':'rewardGold',{...args,officer:rewarded.id,amount:Math.min(100,p.gold)});}
+  else if(order==='rewardWritings'){const advisor=g.ruler().advisor===null?null:g.officer(g.ruler().advisor),target=subordinates.find(v=>advisor&&v.int+1<advisor.int);if(!target)return false;g.execute('rewardWritings',{...args,officer:target.id});}
+  else if(order==='relief'){if(p.loyalty>=tuning.loyaltyTarget||p.food<=tuning.minimumWarFood)return false;g.execute('relief',{...args,amount:Math.min(p.food,tuning.reliefAmount)});}
+  else if(order==='hireArmy'){if(o.soldiers>=tuning.recruitTargetMen||p.food<=10000)return false;const hundreds=Math.min(tuning.hireHundreds,Math.floor((10000-o.soldiers)/100),hireCapacity(g,p));if(hundreds<1)return false;const allocations=Object.fromEntries(p.officers.map(id=>[id,g.officer(id).soldiers]));allocations[o.id]+=hundreds*100;g.execute('hireArmy',{...args,hundreds,allocations});}
+  else if(order==='reassignArmy'){const reserve=subordinates.find(v=>v.id!==o.id&&v.soldiers>tuning.recruitTargetMen),amount=reserve&&Math.min(reserve.soldiers-tuning.recruitTargetMen,Math.max(0,tuning.recruitTargetMen-o.soldiers));if(!amount)return false;const allocations=Object.fromEntries(p.officers.map(id=>[id,g.officer(id).soldiers]));allocations[reserve.id]-=amount;allocations[o.id]+=amount;g.execute('reassignArmy',{...args,allocations});}
+  else if(order==='trainArmy'){if(!o.soldiers||o.training>=tuning.trainingTarget)return false;g.execute('trainArmy',args);}
+  else if(order==='buyWeapons'){if(!p.merchant||!o.soldiers||o.weapons>=o.soldiers*tuning.weaponsCoverageTarget||p.gold<=100)return false;const lots=Math.min(p.gold-100,Math.ceil((o.soldiers-o.weapons)/100));if(lots<1)return false;g.execute('trade',{...args,recipient:o.id,mode:'arms',amount:lots});o.acted=true;}
+  else if(order==='buyHorses'){if(!p.merchant||p.horses>=100||p.gold<=500||p.land<=70)return false;g.execute('trade',{...args,mode:'horse',amount:Math.min(100-p.horses,Math.floor(Math.sqrt(Math.floor(p.gold/50))))});o.acted=true;}
+  else if(order==='sellFood'){if(!p.merchant||p.food<=Math.max(10000,men*3))return false;g.execute('trade',{...args,mode:'sell',amount:Math.min(10000,p.food-Math.max(10000,men*3))});o.acted=true;}
+  else if(order==='develop'||order==='flood'){const field=order==='develop'?'land':'flood',amount=Math.min(100,Math.floor(Math.sqrt(p.gold)/2));if(p[field]>=100||p.gold<=p[field]||amount<4*g.s.difficulty||g.random()*100>=(order==='develop'?110:105)-p[field])return false;g.execute(order,{...args,amount});}
+  else return false;
+  return true;
+ }catch{return false;}};
+ if(runNativePriority(policy,g.s.difficulty,()=>g.random(),attempt))return true;
+ }catch{}g.officer(o.id).acted=true;return true;}
+ g.finishFactionTurn();return true;}

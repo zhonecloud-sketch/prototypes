@@ -1,0 +1,481 @@
+{
+  "schema": 1,
+  "rulesId": "1070bb72b33ee11292cbbaa4fa6934724ac97a9be42ad7d5319939b6a7f3ae93",
+  "domain": "governance",
+  "seed": 49021,
+  "holdoutSeed": 949021,
+  "generations": 1,
+  "population": 2,
+  "months": 2,
+  "training": {
+    "episodes": 6,
+    "independentSeeds": 6,
+    "trainedMean": 19.082817430869955,
+    "legacyMean": -5.8751970834067535,
+    "meanDifference": 24.95801451427671,
+    "approximateMean95": null,
+    "battles": null,
+    "interpretation": "Small exploratory sample; not evidence of general superiority."
+  },
+  "holdout": {
+    "episodes": 6,
+    "independentSeeds": 6,
+    "trainedMean": 24.12928547571921,
+    "legacyMean": 14.125509881783701,
+    "meanDifference": 10.003775593935506,
+    "approximateMean95": null,
+    "battles": null,
+    "interpretation": "Small exploratory sample; not evidence of general superiority."
+  },
+  "history": [
+    {
+      "generation": 1,
+      "score": 19.082817430869955
+    }
+  ],
+  "trainingResults": {
+    "trained": [
+      {
+        "seed": 4231075120,
+        "owner": 0,
+        "score": -30.65093090922431,
+        "metrics": {
+          "provinces": 0,
+          "officers": 0,
+          "soldiers": 0,
+          "gold": 0,
+          "food": 0,
+          "land": 0,
+          "flood": 0,
+          "loyalty": 0
+        },
+        "steps": 329,
+        "decisions": 9,
+        "meanDecisionMs": 72.50112055555557
+      },
+      {
+        "seed": 4231179849,
+        "owner": 0,
+        "score": -67.2895314687773,
+        "metrics": {
+          "provinces": 0,
+          "officers": 0,
+          "soldiers": 0,
+          "gold": 0,
+          "food": 0,
+          "land": 0,
+          "flood": 0,
+          "loyalty": 0
+        },
+        "steps": 376,
+        "decisions": 36,
+        "meanDecisionMs": 141.48965680555554
+      },
+      {
+        "seed": 4231284578,
+        "owner": 0,
+        "score": 66.67704230316451,
+        "metrics": {
+          "provinces": 11,
+          "officers": 46,
+          "soldiers": 59318,
+          "gold": 4109,
+          "food": 151469,
+          "land": 579,
+          "flood": 360,
+          "loyalty": 411
+        },
+        "steps": 364,
+        "decisions": 67,
+        "meanDecisionMs": 161.39788280597017
+      },
+      {
+        "seed": 4231389307,
+        "owner": 0,
+        "score": 45.01942840377944,
+        "metrics": {
+          "provinces": 16,
+          "officers": 70,
+          "soldiers": 118086,
+          "gold": 4028,
+          "food": 246588,
+          "land": 790,
+          "flood": 490,
+          "loyalty": 719
+        },
+        "steps": 382,
+        "decisions": 117,
+        "meanDecisionMs": 191.24487813675233
+      },
+      {
+        "seed": 4231494036,
+        "owner": 0,
+        "score": 36.85368582515946,
+        "metrics": {
+          "provinces": 19,
+          "officers": 72,
+          "soldiers": 143203,
+          "gold": 3639,
+          "food": 278499,
+          "land": 989,
+          "flood": 556,
+          "loyalty": 851
+        },
+        "steps": 351,
+        "decisions": 130,
+        "meanDecisionMs": 178.00720996153836
+      },
+      {
+        "seed": 4231598765,
+        "owner": 0,
+        "score": 63.88721043111792,
+        "metrics": {
+          "provinces": 22,
+          "officers": 75,
+          "soldiers": 128360,
+          "gold": 6991,
+          "food": 267720,
+          "land": 1092,
+          "flood": 661,
+          "loyalty": 1049
+        },
+        "steps": 345,
+        "decisions": 107,
+        "meanDecisionMs": 193.69669471962635
+      }
+    ],
+    "legacy": [
+      {
+        "seed": 4231075120,
+        "owner": 0,
+        "score": -8.667323834866785,
+        "metrics": {
+          "provinces": 1,
+          "officers": 5,
+          "soldiers": 16000,
+          "gold": 760,
+          "food": 25001,
+          "land": 65,
+          "flood": 50,
+          "loyalty": 42
+        },
+        "steps": 323,
+        "decisions": 17,
+        "meanDecisionMs": 1.2223357058880056
+      },
+      {
+        "seed": 4231179849,
+        "owner": 0,
+        "score": -29.938894810950337,
+        "metrics": {
+          "provinces": 1,
+          "officers": 12,
+          "soldiers": 17143,
+          "gold": 69,
+          "food": 0,
+          "land": 75,
+          "flood": 57,
+          "loyalty": 35
+        },
+        "steps": 377,
+        "decisions": 30,
+        "meanDecisionMs": 1.2899214333350149
+      },
+      {
+        "seed": 4231284578,
+        "owner": 0,
+        "score": 12.21939609274429,
+        "metrics": {
+          "provinces": 6,
+          "officers": 47,
+          "soldiers": 59351,
+          "gold": 3359,
+          "food": 41304,
+          "land": 368,
+          "flood": 271,
+          "loyalty": 377
+        },
+        "steps": 376,
+        "decisions": 79,
+        "meanDecisionMs": 1.2008612658242737
+      },
+      {
+        "seed": 4231389307,
+        "owner": 0,
+        "score": 34.889730063632555,
+        "metrics": {
+          "provinces": 14,
+          "officers": 79,
+          "soldiers": 136575,
+          "gold": 5307,
+          "food": 68726,
+          "land": 707,
+          "flood": 511,
+          "loyalty": 892
+        },
+        "steps": 444,
+        "decisions": 153,
+        "meanDecisionMs": 1.526474156865494
+      },
+      {
+        "seed": 4231494036,
+        "owner": 0,
+        "score": -36.97430519719188,
+        "metrics": {
+          "provinces": 17,
+          "officers": 59,
+          "soldiers": 125757,
+          "gold": 6606,
+          "food": 65224,
+          "land": 850,
+          "flood": 581,
+          "loyalty": 947
+        },
+        "steps": 330,
+        "decisions": 125,
+        "meanDecisionMs": 1.1676731279990635
+      },
+      {
+        "seed": 4231598765,
+        "owner": 0,
+        "score": -6.779784813808362,
+        "metrics": {
+          "provinces": 18,
+          "officers": 64,
+          "soldiers": 136675,
+          "gold": 6546,
+          "food": 87103,
+          "land": 910,
+          "flood": 649,
+          "loyalty": 1016
+        },
+        "steps": 468,
+        "decisions": 127,
+        "meanDecisionMs": 0.862576803150101
+      }
+    ]
+  },
+  "holdoutResults": {
+    "trained": [
+      {
+        "seed": 4231975120,
+        "owner": 0,
+        "score": -3.4225264707006033,
+        "metrics": {
+          "provinces": 1,
+          "officers": 7,
+          "soldiers": 11407,
+          "gold": 1594,
+          "food": 35154,
+          "land": 65,
+          "flood": 50,
+          "loyalty": 50
+        },
+        "steps": 299,
+        "decisions": 12,
+        "meanDecisionMs": 108.9022479166694
+      },
+      {
+        "seed": 1768678366,
+        "owner": 0,
+        "score": 30.853679374317963,
+        "metrics": {
+          "provinces": 4,
+          "officers": 27,
+          "soldiers": 33108,
+          "gold": 1644,
+          "food": 50736,
+          "land": 245,
+          "flood": 155,
+          "loyalty": 149
+        },
+        "steps": 309,
+        "decisions": 36,
+        "meanDecisionMs": 128.1080719166647
+      },
+      {
+        "seed": 4232184578,
+        "owner": 0,
+        "score": 31.113144716152874,
+        "metrics": {
+          "provinces": 9,
+          "officers": 45,
+          "soldiers": 51255,
+          "gold": 1860,
+          "food": 81843,
+          "land": 471,
+          "flood": 274,
+          "loyalty": 354
+        },
+        "steps": 346,
+        "decisions": 59,
+        "meanDecisionMs": 164.4953187627124
+      },
+      {
+        "seed": 1768887824,
+        "owner": 0,
+        "score": 30.63852531353882,
+        "metrics": {
+          "provinces": 15,
+          "officers": 70,
+          "soldiers": 118182,
+          "gold": 3103,
+          "food": 219676,
+          "land": 723,
+          "flood": 430,
+          "loyalty": 661
+        },
+        "steps": 424,
+        "decisions": 117,
+        "meanDecisionMs": 196.57714180341867
+      },
+      {
+        "seed": 4232394036,
+        "owner": 0,
+        "score": 41.3665481329316,
+        "metrics": {
+          "provinces": 20,
+          "officers": 72,
+          "soldiers": 134181,
+          "gold": 5022,
+          "food": 263548,
+          "land": 1026,
+          "flood": 588,
+          "loyalty": 895
+        },
+        "steps": 341,
+        "decisions": 122,
+        "meanDecisionMs": 180.53549309836254
+      },
+      {
+        "seed": 4232498765,
+        "owner": 0,
+        "score": 14.226341788074592,
+        "metrics": {
+          "provinces": 18,
+          "officers": 63,
+          "soldiers": 141000,
+          "gold": 3394,
+          "food": 302674,
+          "land": 937,
+          "flood": 555,
+          "loyalty": 890
+        },
+        "steps": 380,
+        "decisions": 128,
+        "meanDecisionMs": 172.18174323437142
+      }
+    ],
+    "legacy": [
+      {
+        "seed": 4231975120,
+        "owner": 0,
+        "score": -8.963113615003532,
+        "metrics": {
+          "provinces": 1,
+          "officers": 5,
+          "soldiers": 10310,
+          "gold": 689,
+          "food": 16980,
+          "land": 65,
+          "flood": 53,
+          "loyalty": 40
+        },
+        "steps": 246,
+        "decisions": 13,
+        "meanDecisionMs": 1.0179363846143064
+      },
+      {
+        "seed": 1768678366,
+        "owner": 0,
+        "score": -18.19214866063092,
+        "metrics": {
+          "provinces": 2,
+          "officers": 14,
+          "soldiers": 19973,
+          "gold": 647,
+          "food": 0,
+          "land": 110,
+          "flood": 88,
+          "loyalty": 47
+        },
+        "steps": 360,
+        "decisions": 29,
+        "meanDecisionMs": 1.9490309999974702
+      },
+      {
+        "seed": 4232184578,
+        "owner": 0,
+        "score": 93.21805111624718,
+        "metrics": {
+          "provinces": 12,
+          "officers": 59,
+          "soldiers": 74429,
+          "gold": 6663,
+          "food": 96435,
+          "land": 564,
+          "flood": 380,
+          "loyalty": 528
+        },
+        "steps": 452,
+        "decisions": 71,
+        "meanDecisionMs": 1.7648873380303356
+      },
+      {
+        "seed": 1768887824,
+        "owner": 0,
+        "score": 6.03947340570403,
+        "metrics": {
+          "provinces": 14,
+          "officers": 67,
+          "soldiers": 125400,
+          "gold": 5064,
+          "food": 69609,
+          "land": 688,
+          "flood": 472,
+          "loyalty": 862
+        },
+        "steps": 482,
+        "decisions": 133,
+        "meanDecisionMs": 1.3267094812043452
+      },
+      {
+        "seed": 4232394036,
+        "owner": 0,
+        "score": -7.323987414431315,
+        "metrics": {
+          "provinces": 18,
+          "officers": 66,
+          "soldiers": 139745,
+          "gold": 7178,
+          "food": 89929,
+          "land": 896,
+          "flood": 617,
+          "loyalty": 998
+        },
+        "steps": 434,
+        "decisions": 133,
+        "meanDecisionMs": 1.1614478571398212
+      },
+      {
+        "seed": 4232498765,
+        "owner": 0,
+        "score": 19.97478445881677,
+        "metrics": {
+          "provinces": 20,
+          "officers": 70,
+          "soldiers": 144083,
+          "gold": 8472,
+          "food": 116829,
+          "land": 962,
+          "flood": 623,
+          "loyalty": 1132
+        },
+        "steps": 388,
+        "decisions": 125,
+        "meanDecisionMs": 0.9663760800003074
+      }
+    ]
+  },
+  "elapsedSeconds": 343.218
+}

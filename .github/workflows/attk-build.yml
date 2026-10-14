@@ -1,0 +1,94 @@
+name: ATTK Rust build and validation
+on:
+  push:
+    branches: [main, 'attk/**']
+    paths: ['attk/**', '.github/workflows/attk-build.yml']
+  pull_request:
+    paths: ['attk/**', '.github/workflows/attk-build.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: attk-build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2022
+            package: attk-windows-x64
+          - runner: macos-15
+            package: attk-macos-arm64
+          - runner: macos-15-intel
+            package: attk-macos-x64
+          - runner: ubuntu-24.04
+            package: attk-linux-x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: attk
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: attk/package-lock.json
+      - name: Install the pinned Rust toolchain
+        shell: bash
+        run: |
+          rustup toolchain install 1.90.0 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.90.0
+          rustc --version
+      - name: Build Windows runtime and WASM
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: build.bat
+      - name: Build Unix runtime and WASM
+        if: runner.os != 'Windows'
+        run: sh build.sh
+      - name: Native Rust unit cases
+        run: cargo test --locked --workspace
+      - name: Compiled WASM equations and real server cases
+        run: npm run test:rust
+      - name: Install inherited validation dependencies
+        if: runner.os == 'Linux'
+        run: npm ci
+      - name: Inherited game and asset cases using compiled Rust
+        if: runner.os == 'Linux'
+        env:
+          NODE_OPTIONS: --import=./tests/rust-preload.mjs
+        run: npm test
+      - name: Mounted UI and arrival raster using compiled Rust
+        if: runner.os == 'Linux'
+        env:
+          NODE_OPTIONS: --import=./tests/rust-preload.mjs
+        run: npm run test:v56:ui
+      - name: Install browser validation tools
+        if: runner.os == 'Linux'
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Real browser boot and compact layout cases
+        if: runner.os == 'Linux'
+        run: node tests/attk-browser-tests.mjs
+      - name: Package self-contained platform output
+        run: node tools/package-attk.mjs ${{ matrix.package }}
+      - name: Save compiled platform package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ matrix.package }}
+          path: attk/dist/${{ matrix.package }}/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+      - name: Save compact layout evidence
+        if: runner.os == 'Linux' && always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: attk-browser-screenshots
+          path: attk/dist/screenshots/
+          if-no-files-found: ignore

@@ -1,0 +1,85 @@
+import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+function buildTestSpec(files){
+ const safe=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\|/g,"\\|").replace(/\r?\n/g,"<br>").replace(/`/g,"&#96;");
+ const link=p=>"../"+p;
+ function endOf(s,i){let depth=0,q=null,comment=null;for(let j=i;j<s.length;j++){const c=s[j],n=s[j+1];if(comment==="line"){if(c==="\n")comment=null;continue;}if(comment==="block"){if(c==="*"&&n==="/"){comment=null;j++;}continue;}if(q){if(c==="\\"){j++;continue;}if(c===q)q=null;continue;}if(c==="/"&&n==="/"){comment="line";j++;continue;}if(c==="/"&&n==="*"){comment="block";j++;continue;}if(c==="'"||c==='"'||c==="`"){q=c;continue;}if(c==="(")depth++;if(c===")"&&--depth===0)return j+1;}return s.length;}
+ const assertions=s=>[...s.matchAll(/\bassert(?:\.\w+)?\s*\(/g)].map(m=>s.slice(m.index,endOf(s,s.indexOf("(",m.index))).trim());
+ const casesFor=s=>{
+  const starts=[...s.matchAll(/\b(?:test|check)\(\s*(['"`])([\s\S]*?)\1\s*,/g)];
+  if(starts.length)return starts.map(m=>{const start=m.index,end=endOf(s,s.indexOf("(",start));return {name:m[2],start,end,body:s.slice(start,end)};});
+  const logs=[...s.matchAll(/console\.log\(\s*(['"`])(PASS[^'"\n]*)\1/g)];
+  if(logs.length){let prior=0;return logs.map(m=>{const c={name:m[2].replace(/^PASS\s*/,""),start:prior,end:m.index,body:s.slice(prior,m.index)};prior=endOf(s,s.indexOf("(",m.index));return c;});}
+  return [{name:"All assertion blocks / parameterized vector matrix",start:0,end:s.length,body:s}];
+ };
+ let out="# Test specification — RTK2 v56\n\nThis is a source-derived catalogue of every validation entry point in this checkout. It records declared test cases and parameterized groups, not a claimed execution count. Run the scripts to expand seeded, roster, region, viewport and native-vector loops. Every assertion in the linked source is part of the success contract; the table shows the exact assertion expressions. Setup excerpts identify case-specific inputs; shared helpers and full input mutation sequences are accessible at the linked line range. No validation script was removed during this maintenance.\n\n## Running and interpreting results\n\nRun from the `rtk2/` directory after `npm ci` with Node 24 (jsdom 30 requires a compatible modern Node). `npm test` runs the engine fingerprint check plus the core/versioned suites. `npm run test:ui` includes the older UI suites; `npm run test:v56:ui` runs the 24-vector mounted raster comparison and current UI regression suite; `npm run test:audio:ui` is the v55 UI suite. `node tests/asset-layout-tests.mjs` checks the maintenance manifest, media bytes, grouped directory references and retired-file absence. Native Python probes are separate: they require legally supplied private DOS inputs, Python and Unicorn and are not run by npm test.\n\nA case succeeds only if all assertions execute and pass; a thrown assertion or nonzero process exit fails the script. Named helpers print PASS/FAIL plus their group summary; straight-line scripts print their listed PASS checkpoints. Some helpers collect failures until completion; absence of a crash or existence of an output JSON alone is not sufficient. Native comparison files must have the expected case count and all pass flags true. Raster tests validate canvas calls and state/RNG stability, not physical screen layout or human hearing.\n\nThe previous v56 verification records remain [verification-v56.json](verification-v56.json). They describe the earlier checkout; the current asset-move validation must use the new CI run. The older all-UI suite has recorded fixed-delay/timing limitations and is not certified by a v56-only UI pass. Existing nine AI profile files are retained unchanged. Tests of tiny optimizer/curriculum fixtures are validation code, not authorization to renew production profiles; no `train:ai` or `train:governance` command is run by maintenance.\n\n## Retention review and coverage limits\n\nDo not infer that a script never caught a bug merely because its filename is old. [bug-validation.md](bug-validation.md) connects reported bugs to behavioral coverage; [pending-test-case-design.md](pending-test-case-design.md) records exceptional missing tests. The v56 before/after commander-capture witnesses and the driver-export truncation report are positive historical detection evidence. Where no historical failure record exists, detection history is unknown, not “never caught”.\n\nCandidates for later review include v9/v28/v29 artwork snapshot/file-size checks, v36 synthetic disaster-file existence checks even where native cues now play, overlapping audio observer suites and older copied UI suites. They remain intact until their behavioral and integration assertions are separated from obsolete asset checks. All 21 native music exports are retained because audio-v50 verifies their bytes and driver capture, despite being inactive BGM. These checks cannot establish original hardware waveform parity, complete original caller coverage, real browser autoplay behavior, physical-phone sound/layout, commercial permissions, or unobserved native AI branches.\n\n## Script index\n\n| Script | Invocation | Declared groups / checkpoints | Shared inputs and dependencies | Outputs |\n| --- | --- | --- | --- | --- |\n";
+ const entries=Object.entries(files).filter(([p])=>/^tests\/.*\.mjs$/.test(p)||/^tools\/verify.*\.(mjs|py)$/.test(p)||p==="tools/ai-rules.mjs").sort(([a],[b])=>a.localeCompare(b));
+ const specs=[];
+ for(const[p,s]of entries){
+  const python=p.endsWith(".py"),cs=python?[]:casesFor(s);
+  const inputs=[...new Set([...s.matchAll(/(['"`])([^'"\n`]*?(?:\.json|\.yaml|\.webp|\.mp3|\.exe|\.com|index\.html|style\.css))\1/g)].map(m=>m[2]))];
+  const deps=[...new Set([...s.matchAll(/from\s+['"]([^'"]+)['"]/g)].map(m=>m[1]).concat(python?[...s.matchAll(/^(?:from\s+([\w.]+)\s+import|import\s+([^\n]+))/gm)].map(m=>m[1]||m[2]):[]))];
+  const slug=p.replace(/[^a-z0-9]+/gi,"-"),command=(python?"python ":"node ")+p+(python?" <arguments listed below>":"");
+  out+="| ["+p+"](#"+slug+") | &#96;"+command+"&#96; | "+(python?"Native/static assertion matrix":cs.length)+" | "+safe(inputs.join(", ")||"Inline fixture/state and imported helpers")+"; "+safe(deps.filter(d=>!d.startsWith("../")).join(", "))+" | Console checkpoints / failure exit"+(python?" and report JSON when specified":"")+" |\n";
+  specs.push({p,s,python,cs,inputs,deps,slug});
+ }
+ for(const{p,s,python,cs,inputs,deps,slug}of specs){
+  out+="\n<a id=\""+slug+"\"></a>\n## "+p+"\n\nSource: ["+p+"]("+link(p)+"). "+(python?"Purpose: bounded original-executable or deployment/geometry verification; the source's hook boundaries are part of the specification.":"Purpose: "+cs.map(c=>c.name).slice(0,3).join("; ")+(cs.length>3?"; additional cases below.":"."))+"\n\n";
+  out+="Shared inputs: "+(inputs.length?inputs.map(x=>"`"+x+"`").join(", "):"inline fixtures and helper arguments defined in this script")+". Dependencies/entry points: "+deps.map(x=>"`"+x+"`").join(", ")+".\n\n";
+  if(python){
+   const header=s.match(/^(?:#![^\n]*\n)?\s*"""([\s\S]*?)"""/)?.[1]||s.split("\n").slice(0,10).join("\n");
+   const cli=s.split("\n").filter(l=>/add_argument|sys\.argv|parse_args|EXPECTED|OUT\.|output\.|write_text|write_bytes|json\.dump|print\(/.test(l));
+   const asserts=s.split("\n").map((l,i)=>({l,n:i+1})).filter(x=>/\bassert\b/.test(x.l));
+   const matrix=s.split("\n").map((l,i)=>({l,n:i+1})).filter(x=>/^\s*(?:for |def |[A-Z_]*(?:CASES|RESULTS|VECTORS|HOOKS)|(?:cases|results)\.(?:append|extend))/.test(x.l));
+   out+="### Inputs, procedure and expected outputs\n\n"+header.trim()+"\n\nCLI, input identity and report writes (literal source):\n\n```python\n"+cli.join("\n")+"\n```\n\nSubcases are expanded by these functions/matrices; parameters and branch labels are preserved rather than reported as a single claimed case:\n\n```python\n"+matrix.map(x=>"# L"+x.n+"\n"+x.l).join("\n")+"\n```\n\nSuccess criteria: every executable assertion below and successful completion of the report-writing path. Hooks/mocks can bypass graphics, keyboard, RNG or other native routines; full DOS parity is not established. Running requires the private source input, never a committed DOS binary.\n\n| Source line | Required assertion / subcase oracle |\n| --- | --- |\n"+asserts.map(x=>"| ["+x.n+"]("+link(p)+"#L"+x.n+") | "+safe(x.l.trim())+" |").join("\n")+"\n";
+  }else{
+   out+="Outputs: each listed PASS/group or script summary on success; thrown assertions or collected failures give a failing process exit. All loop iterations in each row must pass. Asset/source assertions inspect files; state/RNG assertions inspect engine outcomes; Audio/JSDOM/Canvas fixtures inspect integration calls.\n\n| Case / what it tests | Inputs and procedure (source excerpt; shared helpers above) | Required output / success criteria |\n| --- | --- | --- |\n";
+   for(const [i,c]of cs.entries()){
+    const aa=assertions(c.body);let setup=c.body;
+    for(const a of aa)setup=setup.replace(a,"");setup=setup.replace(/console\.log\([^;]*\);?/g,"").replace(/^\s*(?:import.*\n|\/\/[^\n]*\n)/gm,"").replace(/\s+/g," ").trim();
+    const loc=s.slice(0,c.start).split("\n").length,end=s.slice(0,c.end).split("\n").length;
+    const excerpt=setup.length>700?setup.slice(0,700)+" … (complete input/procedure at linked L"+loc+"–"+end+")":setup;
+    out+="| "+(i+1)+". ["+safe(c.name)+"]("+link(p)+"#L"+loc+"-L"+end+") | "+safe(excerpt||"Shared fixture; evaluate assertions directly.")+" | "+(aa.length?aa.map(safe).join("<br>"):"This checkpoint logs completion; assertions may be shared with preceding setup. Use the full linked block when judging independent coverage.")+" |\n";
+   }
+   if(cs.length&&/\btest\(/.test(s)){
+    const uncovered=assertions(s).filter(a=>!cs.some(c=>c.body.includes(a)));
+    if(uncovered.length)out+="\nAdditional setup/helper or post-suite assertions (also required; parameterized helper assertions execute per call):\n\n```js\n"+[...new Set(uncovered)].join(";\n")+"\n```\n";
+   }
+  }
+ }
+ const optional=Object.keys(files).filter(p=>/^tools\//.test(p)&&/\.(mjs|py|sh|bat)$/.test(p)&&!/^tools\/verify/.test(p)&&p!=="tools/ai-rules.mjs"&&p!=="tools/generate-test-spec.mjs");
+ out+="\n## Build, training and support tools (not independent validation cases)\n\nThese scripts are not silently executed by this catalogue. Builders can replace artwork/media/data; optimizer and benchmark commands have their own inputs/outputs and do not substitute for regression tests. Run production training only on explicit instruction. Historical fallback audio generators must not overwrite driver-rendered native exports or the user's supplied clips.\n\n"+optional.map(p=>"- ["+p+"]("+link(p)+")").join("\n")+"\n\n## Keeping this document current\n\nRun `node tools/generate-test-spec.mjs` after changing a test, then review the generated case input excerpts, dynamic matrices and assertions against the source. Cases are identified by their declared labels or PASS checkpoints; one matrix row may expand to many executions. Generation does not run tests, create training profiles or certify a pass. Add every new reported bug to a behavioral case or record the exceptional missing design in pending-test-case-design.md.\n";
+ return formatTestSpecification(out);
+}
+function formatTestSpecification(md){
+ const decode=s=>s.replace(/&#96;/g,'`').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/\\\|/g,'|');
+ const wrap=s=>s.split('\n').flatMap(line=>{
+  const out=[];while(line.length>80){let at=line.lastIndexOf(' ',80);if(at<1)at=80;out.push(line.slice(0,at).trimEnd());line=line.slice(at).trimStart();}out.push(line);return out;
+ }).join('\n');
+ const split=row=>{const cells=[];let part='',escaped=false;for(const c of row.trim().slice(1,-1)){if(c==='|'&&!escaped){cells.push(part.trim());part='';}else part+=c;escaped=c==='\\'&&!escaped;}cells.push(part.trim());return cells;};
+ const lines=md.split('\n'),out=[];
+ for(let i=0;i<lines.length;i++){
+  if(lines[i].startsWith('| ')&&lines[i+1]?.match(/^\| ?[-: ]+\|/)){
+   const headers=split(lines[i]);i+=2;
+   while(i<lines.length&&lines[i].startsWith('| ')){
+    const cells=split(lines[i]);out.push('---','');
+    for(let k=0;k<headers.length;k++){
+     out.push('**'+decode(headers[k])+'**','');
+     const cell=cells[k]||'',parts=cell.split('<br>');
+     if(/assert|Inputs and procedure|Shared inputs|Invocation|Required assertion/.test(cell+' '+headers[k])&&!/\]\(/.test(cell)){
+      out.push('```text',wrap(decode(parts.join('\n'))),'```','');
+     }else out.push(wrap(parts.join('<br>\n')),'');
+    }i++;
+   }i--;continue;
+  }
+  out.push(lines[i]);
+ }
+ let text=out.join('\n');
+ text=text.replace('the table shows the exact assertion expressions.','source links identify the exact assertion expressions.');
+ text=text.replace('Setup excerpts identify case-specific inputs;','Display excerpts are wrapped at 80 source columns; consult the linked code for execution. Setup excerpts identify case-specific inputs;');
+ // Short reference labels prevent wide case source links from exceeding 80.
+ const refs=[];text=text.replace(/\[([^\]]+)\]\(([^)\n]+)\)/g,(all,label,target)=>{if(all.length<=75)return all;const id='test-source-'+(refs.length+1);refs.push('['+id+']: '+target);return '['+label+']['+id+']';});
+ return wrap(text.trim())+(refs.length?'\n\n'+refs.map(wrap).join('\n'):'')+'\n';
+}
+const files={},walk=dir=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(dir+'/'+e.name):[dir+'/'+e.name]);for(const dir of ['tests','tools'])for(const p of walk(dir)){if(/\.(mjs|py|sh|bat)$/.test(p))files[p]=fs.readFileSync(path.join(root,p),'utf8');}
+fs.writeFileSync(path.join(root,'docs/test_spec.md'),buildTestSpec(files));console.log('Test specification generated from existing test sources; no tests or training run.');

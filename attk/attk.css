@@ -1,0 +1,7 @@
+/* ATTK: preserve compact v56 controls and safe-area handling. */
+#launch .launch-art h1{max-width:100%;overflow-wrap:normal;line-height:1.05}
+#launchMenu h2{overflow-wrap:anywhere}
+@media(orientation:landscape) and (max-height:600px){
+ #launch .launch-art h1{font-size:clamp(17px,3vw,30px)}
+ #launchMenu h2{font-size:clamp(15px,2.5vw,22px)}
+}

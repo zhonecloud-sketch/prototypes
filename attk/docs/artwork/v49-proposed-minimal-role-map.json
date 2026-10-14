@@ -1,0 +1,1459 @@
+{
+  "rule": "Canonical/base stats, fixed identity portrait. Iconic exceptions take priority; no dynamic face changes. High INT/CHARM without WAR uses civil; only WAR high uses military; WAR plus another high uses mixed. None >80: retain unique ordinary-officer portrait unless needed for high-stat repair; strongest base ability is preference for donor selection, not compulsory full redesign.",
+  "historicOverrides": "Preserve all 15 existing historic atlas identities and Xiahou Dun year variant.",
+  "preserveNamedCells": {
+    "Sun Jian": 2,
+    "Dong Zhuo": 8,
+    "Ma Chao": 167
+  },
+  "newNamedArt": [
+    "Taishi Ci",
+    "Cao Pi"
+  ],
+  "assignment": {
+    "3": 33,
+    "4": 4,
+    "5": 133,
+    "6": 6,
+    "7": 7,
+    "9": 9,
+    "10": 10,
+    "11": 11,
+    "12": 12,
+    "13": 13,
+    "14": 14,
+    "15": 15,
+    "16": 16,
+    "17": 17,
+    "18": 290,
+    "19": 19,
+    "20": 305,
+    "21": 21,
+    "22": 22,
+    "23": 23,
+    "24": 96,
+    "25": 152,
+    "26": 26,
+    "27": 27,
+    "28": 28,
+    "29": 29,
+    "30": 30,
+    "31": 31,
+    "32": 238,
+    "33": 100,
+    "34": 20,
+    "36": 36,
+    "37": 194,
+    "38": 124,
+    "39": 39,
+    "42": 42,
+    "43": 43,
+    "44": 44,
+    "45": 45,
+    "46": 46,
+    "47": 47,
+    "48": 48,
+    "49": 49,
+    "50": 50,
+    "51": 51,
+    "53": 53,
+    "54": 34,
+    "56": 227,
+    "57": 57,
+    "58": 58,
+    "59": 59,
+    "60": 60,
+    "61": 61,
+    "62": 291,
+    "63": 63,
+    "64": 64,
+    "65": 65,
+    "66": 66,
+    "67": 67,
+    "68": 68,
+    "69": 69,
+    "70": 70,
+    "71": 71,
+    "72": 72,
+    "73": 73,
+    "74": 158,
+    "75": 75,
+    "76": 76,
+    "77": 77,
+    "78": 78,
+    "79": 79,
+    "80": 80,
+    "81": 81,
+    "82": 82,
+    "83": 83,
+    "84": 84,
+    "85": 85,
+    "86": 86,
+    "87": 87,
+    "88": 308,
+    "90": 90,
+    "91": 91,
+    "92": 92,
+    "93": 281,
+    "94": 94,
+    "95": 95,
+    "96": 24,
+    "97": 97,
+    "98": 98,
+    "99": 99,
+    "100": 88,
+    "101": 101,
+    "102": 102,
+    "103": 103,
+    "104": 104,
+    "105": 280,
+    "106": 106,
+    "107": 107,
+    "108": 349,
+    "109": 109,
+    "110": 110,
+    "111": 111,
+    "112": 270,
+    "113": 113,
+    "114": 114,
+    "115": 115,
+    "116": 116,
+    "117": 54,
+    "118": 118,
+    "119": 119,
+    "120": 120,
+    "121": 121,
+    "122": 122,
+    "123": 123,
+    "124": 3,
+    "125": 125,
+    "126": 126,
+    "127": 127,
+    "128": 128,
+    "129": 129,
+    "130": 130,
+    "131": 131,
+    "132": 132,
+    "133": 273,
+    "134": 134,
+    "135": 135,
+    "136": 136,
+    "137": 137,
+    "138": 138,
+    "139": 139,
+    "140": 140,
+    "141": 141,
+    "142": 142,
+    "143": 160,
+    "144": 144,
+    "145": 145,
+    "146": 146,
+    "147": 147,
+    "148": 148,
+    "149": 149,
+    "150": 150,
+    "151": 151,
+    "152": 38,
+    "153": 153,
+    "154": 154,
+    "155": 155,
+    "156": 156,
+    "158": 214,
+    "159": 159,
+    "160": 257,
+    "161": 62,
+    "162": 162,
+    "163": 163,
+    "164": 164,
+    "166": 166,
+    "168": 250,
+    "169": 168,
+    "170": 170,
+    "171": 171,
+    "172": 172,
+    "173": 173,
+    "174": 174,
+    "175": 175,
+    "176": 176,
+    "177": 177,
+    "178": 178,
+    "179": 180,
+    "180": 181,
+    "181": 182,
+    "183": 350,
+    "184": 185,
+    "185": 187,
+    "186": 188,
+    "187": 189,
+    "188": 190,
+    "189": 191,
+    "190": 192,
+    "191": 193,
+    "192": 37,
+    "193": 195,
+    "194": 196,
+    "195": 197,
+    "196": 198,
+    "197": 199,
+    "198": 200,
+    "199": 201,
+    "200": 202,
+    "201": 203,
+    "202": 204,
+    "203": 205,
+    "204": 206,
+    "205": 207,
+    "206": 208,
+    "207": 209,
+    "208": 210,
+    "209": 211,
+    "210": 212,
+    "211": 213,
+    "212": 93,
+    "213": 215,
+    "214": 216,
+    "215": 217,
+    "216": 218,
+    "217": 219,
+    "218": 220,
+    "219": 221,
+    "221": 315,
+    "222": 224,
+    "223": 245,
+    "224": 226,
+    "225": 233,
+    "227": 231,
+    "228": 232,
+    "229": 306,
+    "230": 234,
+    "231": 235,
+    "232": 236,
+    "234": 56,
+    "235": 239,
+    "236": 240,
+    "237": 18,
+    "238": 242,
+    "239": 347,
+    "240": 244,
+    "241": 340,
+    "242": 246,
+    "243": 247,
+    "244": 248,
+    "245": 249,
+    "246": 316,
+    "247": 251,
+    "248": 252,
+    "249": 253,
+    "250": 254,
+    "251": 255,
+    "252": 256,
+    "253": 258,
+    "254": 259,
+    "255": 260,
+    "257": 262,
+    "258": 263,
+    "259": 264,
+    "260": 143,
+    "261": 266,
+    "262": 267,
+    "263": 268,
+    "264": 269,
+    "265": 271,
+    "266": 272,
+    "267": 25,
+    "268": 274,
+    "269": 275,
+    "271": 277,
+    "272": 278,
+    "273": 279,
+    "274": 338,
+    "275": 342,
+    "276": 282,
+    "277": 283,
+    "278": 112,
+    "279": 285,
+    "280": 286,
+    "281": 287,
+    "283": 74,
+    "284": 310,
+    "285": 344,
+    "286": 293,
+    "287": 294,
+    "288": 295,
+    "289": 296,
+    "290": 297,
+    "291": 298,
+    "292": 299,
+    "293": 300,
+    "294": 301,
+    "295": 302,
+    "296": 304,
+    "297": 5,
+    "298": 307,
+    "299": 289,
+    "300": 309,
+    "301": 223,
+    "302": 311,
+    "303": 328,
+    "304": 313,
+    "305": 314,
+    "306": 284,
+    "307": 225,
+    "308": 317,
+    "309": 318,
+    "310": 319,
+    "311": 179,
+    "312": 320,
+    "313": 321,
+    "314": 322,
+    "315": 323,
+    "316": 324,
+    "317": 325,
+    "318": 326,
+    "319": 327,
+    "320": 292,
+    "321": 329,
+    "322": 330,
+    "323": 331,
+    "324": 332,
+    "325": 333,
+    "326": 312,
+    "327": 161,
+    "328": 336,
+    "329": 337,
+    "330": 169,
+    "331": 339,
+    "332": 105,
+    "333": 348,
+    "334": 108,
+    "335": 343,
+    "336": 241,
+    "337": 186,
+    "338": 345,
+    "339": 346,
+    "340": 265,
+    "341": 335,
+    "342": 228,
+    "343": 243,
+    "344": 230,
+    "345": 32,
+    "346": 184,
+    "347": 351,
+    "348": 334,
+    "349": 117,
+    "350": 303,
+    "351": 341
+  },
+  "changes": [
+    {
+      "id": 3,
+      "name": "Yuan Shao",
+      "stats": {
+        "int": 70,
+        "war": 81,
+        "charm": 70
+      },
+      "role": "military",
+      "oldCell": 3,
+      "oldAttire": "civil",
+      "newCell": 33,
+      "newAttire": "military",
+      "newSourceName": "Chen Gong"
+    },
+    {
+      "id": 5,
+      "name": "Ma Teng",
+      "stats": {
+        "int": 54,
+        "war": 95,
+        "charm": 87
+      },
+      "role": "mixed",
+      "oldCell": 5,
+      "oldAttire": "military",
+      "newCell": 133,
+      "newAttire": "mixed",
+      "newSourceName": "Hua Xin"
+    },
+    {
+      "id": 18,
+      "name": "Liu Zhang",
+      "stats": {
+        "int": 70,
+        "war": 50,
+        "charm": 90
+      },
+      "role": "civil",
+      "oldCell": 18,
+      "oldAttire": "mixed",
+      "newCell": 290,
+      "newAttire": "civil",
+      "newSourceName": "Zhang Bao"
+    },
+    {
+      "id": 20,
+      "name": "Tian Feng",
+      "stats": {
+        "int": 90,
+        "war": 46,
+        "charm": 78
+      },
+      "role": "civil",
+      "oldCell": 20,
+      "oldAttire": "military",
+      "newCell": 305,
+      "newAttire": "civil",
+      "newSourceName": "Guan Suo"
+    },
+    {
+      "id": 24,
+      "name": "Guo Tu",
+      "stats": {
+        "int": 80,
+        "war": 32,
+        "charm": 42
+      },
+      "role": "general",
+      "oldCell": 24,
+      "oldAttire": "military",
+      "newCell": 96,
+      "newAttire": "mixed",
+      "newSourceName": "Zhang Ren"
+    },
+    {
+      "id": 25,
+      "name": "Yan Liang",
+      "stats": {
+        "int": 27,
+        "war": 90,
+        "charm": 51
+      },
+      "role": "military",
+      "oldCell": 25,
+      "oldAttire": "mixed",
+      "newCell": 152,
+      "newAttire": "military",
+      "newSourceName": "Zhang Song"
+    },
+    {
+      "id": 32,
+      "name": "Ju Shou",
+      "stats": {
+        "int": 84,
+        "war": 61,
+        "charm": 76
+      },
+      "role": "civil",
+      "oldCell": 32,
+      "oldAttire": "mixed",
+      "newCell": 238,
+      "newAttire": "civil",
+      "newSourceName": "Hao Zhao"
+    },
+    {
+      "id": 33,
+      "name": "Chen Gong",
+      "stats": {
+        "int": 81,
+        "war": 58,
+        "charm": 65
+      },
+      "role": "civil",
+      "oldCell": 33,
+      "oldAttire": "military",
+      "newCell": 100,
+      "newAttire": "civil",
+      "newSourceName": "Wen Chou"
+    },
+    {
+      "id": 34,
+      "name": "Xiahou Yuan",
+      "stats": {
+        "int": 60,
+        "war": 90,
+        "charm": 71
+      },
+      "role": "military",
+      "oldCell": 34,
+      "oldAttire": "civil",
+      "newCell": 20,
+      "newAttire": "military",
+      "newSourceName": "Tian Feng"
+    },
+    {
+      "id": 37,
+      "name": "Cao Ang",
+      "stats": {
+        "int": 52,
+        "war": 59,
+        "charm": 60
+      },
+      "role": "general",
+      "oldCell": 37,
+      "oldAttire": "military",
+      "newCell": 194,
+      "newAttire": "mixed",
+      "newSourceName": "Pang De"
+    },
+    {
+      "id": 38,
+      "name": "Cao Ren",
+      "stats": {
+        "int": 64,
+        "war": 84,
+        "charm": 63
+      },
+      "role": "military",
+      "oldCell": 38,
+      "oldAttire": "civil",
+      "newCell": 124,
+      "newAttire": "military",
+      "newSourceName": "Wang Can"
+    },
+    {
+      "id": 54,
+      "name": "Cheng Pu",
+      "stats": {
+        "int": 84,
+        "war": 60,
+        "charm": 87
+      },
+      "role": "civil",
+      "oldCell": 54,
+      "oldAttire": "military",
+      "newCell": 34,
+      "newAttire": "civil",
+      "newSourceName": "Xiahou Yuan"
+    },
+    {
+      "id": 56,
+      "name": "Huang Gai",
+      "stats": {
+        "int": 58,
+        "war": 88,
+        "charm": 73
+      },
+      "role": "military",
+      "oldCell": 56,
+      "oldAttire": "mixed",
+      "newCell": 227,
+      "newAttire": "military",
+      "newSourceName": "Liu Qi"
+    },
+    {
+      "id": 62,
+      "name": "Yan Yan",
+      "stats": {
+        "int": 70,
+        "war": 87,
+        "charm": 72
+      },
+      "role": "military",
+      "oldCell": 62,
+      "oldAttire": "mixed",
+      "newCell": 291,
+      "newAttire": "military",
+      "newSourceName": "Yan Jun"
+    },
+    {
+      "id": 74,
+      "name": "Wu Lan",
+      "stats": {
+        "int": 49,
+        "war": 86,
+        "charm": 53
+      },
+      "role": "military",
+      "oldCell": 74,
+      "oldAttire": "mixed",
+      "newCell": 158,
+      "newAttire": "military",
+      "newSourceName": "Lu Meng"
+    },
+    {
+      "id": 88,
+      "name": "Sun Qian",
+      "stats": {
+        "int": 78,
+        "war": 37,
+        "charm": 91
+      },
+      "role": "civil",
+      "oldCell": 88,
+      "oldAttire": "military",
+      "newCell": 308,
+      "newAttire": "civil",
+      "newSourceName": "Meng Huo"
+    },
+    {
+      "id": 93,
+      "name": "Zhao Cen",
+      "stats": {
+        "int": 24,
+        "war": 64,
+        "charm": 26
+      },
+      "role": "general",
+      "oldCell": 93,
+      "oldAttire": "civil",
+      "newCell": 281,
+      "newAttire": "mixed",
+      "newSourceName": "Cao Zhang"
+    },
+    {
+      "id": 96,
+      "name": "Zhang Ren",
+      "stats": {
+        "int": 67,
+        "war": 88,
+        "charm": 72
+      },
+      "role": "military",
+      "oldCell": 96,
+      "oldAttire": "mixed",
+      "newCell": 24,
+      "newAttire": "military",
+      "newSourceName": "Guo Tu"
+    },
+    {
+      "id": 100,
+      "name": "Wen Chou",
+      "stats": {
+        "int": 18,
+        "war": 91,
+        "charm": 57
+      },
+      "role": "military",
+      "oldCell": 100,
+      "oldAttire": "civil",
+      "newCell": 88,
+      "newAttire": "military",
+      "newSourceName": "Sun Qian"
+    },
+    {
+      "id": 105,
+      "name": "Zhou Tai",
+      "stats": {
+        "int": 52,
+        "war": 85,
+        "charm": 70
+      },
+      "role": "military",
+      "oldCell": 105,
+      "oldAttire": "mixed",
+      "newCell": 280,
+      "newAttire": "military",
+      "newSourceName": "Jiang Wan"
+    },
+    {
+      "id": 108,
+      "name": "Yi Ji",
+      "stats": {
+        "int": 81,
+        "war": 27,
+        "charm": 88
+      },
+      "role": "civil",
+      "oldCell": 108,
+      "oldAttire": "mixed",
+      "newCell": 349,
+      "newAttire": "civil",
+      "newSourceName": "Jiang Wei"
+    },
+    {
+      "id": 112,
+      "name": "Xu You",
+      "stats": {
+        "int": 79,
+        "war": 42,
+        "charm": 46
+      },
+      "role": "general",
+      "oldCell": 112,
+      "oldAttire": "military",
+      "newCell": 270,
+      "newAttire": "mixed",
+      "newSourceName": "Liao Hua"
+    },
+    {
+      "id": 117,
+      "name": "Fan Chou",
+      "stats": {
+        "int": 21,
+        "war": 82,
+        "charm": 41
+      },
+      "role": "military",
+      "oldCell": 117,
+      "oldAttire": "civil",
+      "newCell": 54,
+      "newAttire": "military",
+      "newSourceName": "Cheng Pu"
+    },
+    {
+      "id": 124,
+      "name": "Wang Can",
+      "stats": {
+        "int": 85,
+        "war": 29,
+        "charm": 70
+      },
+      "role": "civil",
+      "oldCell": 124,
+      "oldAttire": "military",
+      "newCell": 3,
+      "newAttire": "civil",
+      "newSourceName": "Yuan Shao"
+    },
+    {
+      "id": 133,
+      "name": "Hua Xin",
+      "stats": {
+        "int": 78,
+        "war": 29,
+        "charm": 85
+      },
+      "role": "civil",
+      "oldCell": 133,
+      "oldAttire": "mixed",
+      "newCell": 273,
+      "newAttire": "civil",
+      "newSourceName": "Jin Xuan"
+    },
+    {
+      "id": 143,
+      "name": "Wang Lei",
+      "stats": {
+        "int": 82,
+        "war": 19,
+        "charm": 74
+      },
+      "role": "civil",
+      "oldCell": 143,
+      "oldAttire": "mixed",
+      "newCell": 160,
+      "newAttire": "civil",
+      "newSourceName": "Xu Huang"
+    },
+    {
+      "id": 152,
+      "name": "Zhang Song",
+      "stats": {
+        "int": 92,
+        "war": 35,
+        "charm": 80
+      },
+      "role": "civil",
+      "oldCell": 152,
+      "oldAttire": "military",
+      "newCell": 38,
+      "newAttire": "civil",
+      "newSourceName": "Cao Ren"
+    },
+    {
+      "id": 158,
+      "name": "Lu Meng",
+      "stats": {
+        "int": 86,
+        "war": 83,
+        "charm": 86
+      },
+      "role": "mixed",
+      "oldCell": 158,
+      "oldAttire": "military",
+      "newCell": 214,
+      "newAttire": "mixed",
+      "newSourceName": "Liu Ye"
+    },
+    {
+      "id": 160,
+      "name": "Xu Huang",
+      "stats": {
+        "int": 45,
+        "war": 92,
+        "charm": 68
+      },
+      "role": "military",
+      "oldCell": 160,
+      "oldAttire": "civil",
+      "newCell": 257,
+      "newAttire": "military",
+      "newSourceName": "Zhang Yi"
+    },
+    {
+      "id": 161,
+      "name": "Wang Kai",
+      "stats": {
+        "int": 58,
+        "war": 31,
+        "charm": 24
+      },
+      "role": "general",
+      "oldCell": 161,
+      "oldAttire": "military",
+      "newCell": 62,
+      "newAttire": "mixed",
+      "newSourceName": "Yan Yan"
+    },
+    {
+      "id": 168,
+      "name": "Man Chong",
+      "stats": {
+        "int": 81,
+        "war": 40,
+        "charm": 92
+      },
+      "role": "civil",
+      "oldCell": 168,
+      "oldAttire": "mixed",
+      "newCell": 250,
+      "newAttire": "civil",
+      "newSourceName": "Niu Jin"
+    },
+    {
+      "id": 169,
+      "name": "Chen Jiao",
+      "stats": {
+        "int": 79,
+        "war": 18,
+        "charm": 73
+      },
+      "role": "general",
+      "oldCell": 169,
+      "oldAttire": "military",
+      "newCell": 168,
+      "newAttire": "mixed",
+      "newSourceName": "Man Chong"
+    },
+    {
+      "id": 183,
+      "name": "Zhang Wei",
+      "stats": {
+        "int": 33,
+        "war": 73,
+        "charm": 68
+      },
+      "role": "general",
+      "oldCell": 184,
+      "oldAttire": "civil",
+      "newCell": 350,
+      "newAttire": "mixed",
+      "newSourceName": "Zhong Hui"
+    },
+    {
+      "id": 192,
+      "name": "Pang De",
+      "stats": {
+        "int": 64,
+        "war": 94,
+        "charm": 71
+      },
+      "role": "military",
+      "oldCell": 194,
+      "oldAttire": "mixed",
+      "newCell": 37,
+      "newAttire": "military",
+      "newSourceName": "Cao Ang"
+    },
+    {
+      "id": 212,
+      "name": "Liu Ye",
+      "stats": {
+        "int": 84,
+        "war": 36,
+        "charm": 81
+      },
+      "role": "civil",
+      "oldCell": 214,
+      "oldAttire": "mixed",
+      "newCell": 93,
+      "newAttire": "civil",
+      "newSourceName": "Zhao Cen"
+    },
+    {
+      "id": 221,
+      "name": "Ma Xiu",
+      "stats": {
+        "int": 46,
+        "war": 52,
+        "charm": 50
+      },
+      "role": "general",
+      "oldCell": 223,
+      "oldAttire": "civil",
+      "newCell": 315,
+      "newAttire": "mixed",
+      "newSourceName": "Fei Yi"
+    },
+    {
+      "id": 223,
+      "name": "Lu Su",
+      "stats": {
+        "int": 96,
+        "war": 63,
+        "charm": 92
+      },
+      "role": "civil",
+      "oldCell": 225,
+      "oldAttire": "mixed",
+      "newCell": 245,
+      "newAttire": "civil",
+      "newSourceName": "Sun Yi"
+    },
+    {
+      "id": 225,
+      "name": "Liu Qi",
+      "stats": {
+        "int": 84,
+        "war": 30,
+        "charm": 71
+      },
+      "role": "civil",
+      "oldCell": 227,
+      "oldAttire": "military",
+      "newCell": 233,
+      "newAttire": "civil",
+      "newSourceName": "Ling Tong"
+    },
+    {
+      "id": 229,
+      "name": "Ling Tong",
+      "stats": {
+        "int": 67,
+        "war": 83,
+        "charm": 73
+      },
+      "role": "military",
+      "oldCell": 233,
+      "oldAttire": "civil",
+      "newCell": 306,
+      "newAttire": "military",
+      "newSourceName": "Quan Zong"
+    },
+    {
+      "id": 234,
+      "name": "Hao Zhao",
+      "stats": {
+        "int": 71,
+        "war": 84,
+        "charm": 81
+      },
+      "role": "mixed",
+      "oldCell": 238,
+      "oldAttire": "civil",
+      "newCell": 56,
+      "newAttire": "mixed",
+      "newSourceName": "Huang Gai"
+    },
+    {
+      "id": 237,
+      "name": "Lu Xun",
+      "stats": {
+        "int": 96,
+        "war": 81,
+        "charm": 85
+      },
+      "role": "mixed",
+      "oldCell": 241,
+      "oldAttire": "civil",
+      "newCell": 18,
+      "newAttire": "mixed",
+      "newSourceName": "Liu Zhang"
+    },
+    {
+      "id": 239,
+      "name": "Zhang Hong",
+      "stats": {
+        "int": 94,
+        "war": 28,
+        "charm": 88
+      },
+      "role": "civil",
+      "oldCell": 243,
+      "oldAttire": "mixed",
+      "newCell": 347,
+      "newAttire": "civil",
+      "newSourceName": "Wang Shuang"
+    },
+    {
+      "id": 241,
+      "name": "Sun Yi",
+      "stats": {
+        "int": 41,
+        "war": 81,
+        "charm": 40
+      },
+      "role": "military",
+      "oldCell": 245,
+      "oldAttire": "civil",
+      "newCell": 340,
+      "newAttire": "military",
+      "newSourceName": "Deng Ai"
+    },
+    {
+      "id": 246,
+      "name": "Niu Jin",
+      "stats": {
+        "int": 33,
+        "war": 86,
+        "charm": 54
+      },
+      "role": "military",
+      "oldCell": 250,
+      "oldAttire": "civil",
+      "newCell": 316,
+      "newAttire": "military",
+      "newSourceName": "Duosi"
+    },
+    {
+      "id": 260,
+      "name": "Xu Sheng",
+      "stats": {
+        "int": 74,
+        "war": 64,
+        "charm": 68
+      },
+      "role": "general",
+      "oldCell": 265,
+      "oldAttire": "military",
+      "newCell": 143,
+      "newAttire": "mixed",
+      "newSourceName": "Wang Lei"
+    },
+    {
+      "id": 267,
+      "name": "Jin Xuan",
+      "stats": {
+        "int": 29,
+        "war": 43,
+        "charm": 37
+      },
+      "role": "general",
+      "oldCell": 273,
+      "oldAttire": "civil",
+      "newCell": 25,
+      "newAttire": "mixed",
+      "newSourceName": "Yan Liang"
+    },
+    {
+      "id": 274,
+      "name": "Jiang Wan",
+      "stats": {
+        "int": 84,
+        "war": 61,
+        "charm": 83
+      },
+      "role": "civil",
+      "oldCell": 280,
+      "oldAttire": "military",
+      "newCell": 338,
+      "newAttire": "civil",
+      "newSourceName": "Gongsun Yuan"
+    },
+    {
+      "id": 275,
+      "name": "Cao Zhang",
+      "stats": {
+        "int": 60,
+        "war": 92,
+        "charm": 72
+      },
+      "role": "military",
+      "oldCell": 281,
+      "oldAttire": "mixed",
+      "newCell": 342,
+      "newAttire": "military",
+      "newSourceName": "Guo Youzhi"
+    },
+    {
+      "id": 278,
+      "name": "Guan Xing",
+      "stats": {
+        "int": 69,
+        "war": 90,
+        "charm": 70
+      },
+      "role": "military",
+      "oldCell": 284,
+      "oldAttire": "civil",
+      "newCell": 112,
+      "newAttire": "military",
+      "newSourceName": "Xu You"
+    },
+    {
+      "id": 283,
+      "name": "Cao Zhi",
+      "stats": {
+        "int": 80,
+        "war": 15,
+        "charm": 80
+      },
+      "role": "general",
+      "oldCell": 289,
+      "oldAttire": "military",
+      "newCell": 74,
+      "newAttire": "mixed",
+      "newSourceName": "Wu Lan"
+    },
+    {
+      "id": 284,
+      "name": "Zhang Bao",
+      "stats": {
+        "int": 35,
+        "war": 93,
+        "charm": 54
+      },
+      "role": "military",
+      "oldCell": 290,
+      "oldAttire": "civil",
+      "newCell": 310,
+      "newAttire": "military",
+      "newSourceName": "Xiahou Hui"
+    },
+    {
+      "id": 285,
+      "name": "Shang Chong",
+      "stats": {
+        "int": 41,
+        "war": 85,
+        "charm": 70
+      },
+      "role": "military",
+      "oldCell": 292,
+      "oldAttire": "mixed",
+      "newCell": 344,
+      "newAttire": "military",
+      "newSourceName": "Zhuge Ke"
+    },
+    {
+      "id": 297,
+      "name": "Guan Suo",
+      "stats": {
+        "int": 68,
+        "war": 91,
+        "charm": 69
+      },
+      "role": "military",
+      "oldCell": 305,
+      "oldAttire": "civil",
+      "newCell": 5,
+      "newAttire": "military",
+      "newSourceName": "Ma Teng"
+    },
+    {
+      "id": 299,
+      "name": "Meng Huo",
+      "stats": {
+        "int": 20,
+        "war": 89,
+        "charm": 39
+      },
+      "role": "military",
+      "oldCell": 308,
+      "oldAttire": "civil",
+      "newCell": 289,
+      "newAttire": "military",
+      "newSourceName": "Cao Zhi"
+    },
+    {
+      "id": 301,
+      "name": "Xiahou Hui",
+      "stats": {
+        "int": 84,
+        "war": 53,
+        "charm": 80
+      },
+      "role": "civil",
+      "oldCell": 310,
+      "oldAttire": "military",
+      "newCell": 223,
+      "newAttire": "civil",
+      "newSourceName": "Ma Xiu"
+    },
+    {
+      "id": 303,
+      "name": "Dong Yun",
+      "stats": {
+        "int": 86,
+        "war": 21,
+        "charm": 72
+      },
+      "role": "civil",
+      "oldCell": 312,
+      "oldAttire": "mixed",
+      "newCell": 328,
+      "newAttire": "civil",
+      "newSourceName": "Dongtu Na"
+    },
+    {
+      "id": 306,
+      "name": "Fei Yi",
+      "stats": {
+        "int": 83,
+        "war": 24,
+        "charm": 82
+      },
+      "role": "civil",
+      "oldCell": 315,
+      "oldAttire": "mixed",
+      "newCell": 284,
+      "newAttire": "civil",
+      "newSourceName": "Guan Xing"
+    },
+    {
+      "id": 307,
+      "name": "Duosi",
+      "stats": {
+        "int": 66,
+        "war": 53,
+        "charm": 36
+      },
+      "role": "general",
+      "oldCell": 316,
+      "oldAttire": "military",
+      "newCell": 225,
+      "newAttire": "mixed",
+      "newSourceName": "Lu Su"
+    },
+    {
+      "id": 320,
+      "name": "Dongtu Na",
+      "stats": {
+        "int": 13,
+        "war": 60,
+        "charm": 16
+      },
+      "role": "general",
+      "oldCell": 328,
+      "oldAttire": "civil",
+      "newCell": 292,
+      "newAttire": "mixed",
+      "newSourceName": "Shang Chong"
+    },
+    {
+      "id": 326,
+      "name": "Zhu Bao",
+      "stats": {
+        "int": 13,
+        "war": 73,
+        "charm": 18
+      },
+      "role": "general",
+      "oldCell": 334,
+      "oldAttire": "civil",
+      "newCell": 312,
+      "newAttire": "mixed",
+      "newSourceName": "Dong Yun"
+    },
+    {
+      "id": 327,
+      "name": "Wen Qin",
+      "stats": {
+        "int": 27,
+        "war": 81,
+        "charm": 59
+      },
+      "role": "military",
+      "oldCell": 335,
+      "oldAttire": "civil",
+      "newCell": 161,
+      "newAttire": "military",
+      "newSourceName": "Wang Kai"
+    },
+    {
+      "id": 330,
+      "name": "Gongsun Yuan",
+      "stats": {
+        "int": 71,
+        "war": 84,
+        "charm": 63
+      },
+      "role": "military",
+      "oldCell": 338,
+      "oldAttire": "civil",
+      "newCell": 169,
+      "newAttire": "military",
+      "newSourceName": "Chen Jiao"
+    },
+    {
+      "id": 332,
+      "name": "Deng Ai",
+      "stats": {
+        "int": 94,
+        "war": 86,
+        "charm": 79
+      },
+      "role": "mixed",
+      "oldCell": 340,
+      "oldAttire": "military",
+      "newCell": 105,
+      "newAttire": "mixed",
+      "newSourceName": "Zhou Tai"
+    },
+    {
+      "id": 333,
+      "name": "Guanqiu Jian",
+      "stats": {
+        "int": 51,
+        "war": 90,
+        "charm": 55
+      },
+      "role": "military",
+      "oldCell": 341,
+      "oldAttire": "mixed",
+      "newCell": 348,
+      "newAttire": "military",
+      "newSourceName": "Cheng Wu"
+    },
+    {
+      "id": 334,
+      "name": "Guo Youzhi",
+      "stats": {
+        "int": 74,
+        "war": 32,
+        "charm": 68
+      },
+      "role": "general",
+      "oldCell": 342,
+      "oldAttire": "military",
+      "newCell": 108,
+      "newAttire": "mixed",
+      "newSourceName": "Yi Ji"
+    },
+    {
+      "id": 336,
+      "name": "Zhuge Ke",
+      "stats": {
+        "int": 95,
+        "war": 50,
+        "charm": 80
+      },
+      "role": "civil",
+      "oldCell": 344,
+      "oldAttire": "military",
+      "newCell": 241,
+      "newAttire": "civil",
+      "newSourceName": "Lu Xun"
+    },
+    {
+      "id": 340,
+      "name": "Wang Shuang",
+      "stats": {
+        "int": 18,
+        "war": 89,
+        "charm": 22
+      },
+      "role": "military",
+      "oldCell": 347,
+      "oldAttire": "civil",
+      "newCell": 265,
+      "newAttire": "military",
+      "newSourceName": "Xu Sheng"
+    },
+    {
+      "id": 341,
+      "name": "Cheng Wu",
+      "stats": {
+        "int": 81,
+        "war": 44,
+        "charm": 72
+      },
+      "role": "civil",
+      "oldCell": 348,
+      "oldAttire": "military",
+      "newCell": 335,
+      "newAttire": "civil",
+      "newSourceName": "Wen Qin"
+    },
+    {
+      "id": 343,
+      "name": "Jiang Wei",
+      "stats": {
+        "int": 94,
+        "war": 91,
+        "charm": 88
+      },
+      "role": "mixed",
+      "oldCell": 349,
+      "oldAttire": "civil",
+      "newCell": 243,
+      "newAttire": "mixed",
+      "newSourceName": "Zhang Hong"
+    },
+    {
+      "id": 345,
+      "name": "Sun Deng",
+      "stats": {
+        "int": 39,
+        "war": 38,
+        "charm": 80
+      },
+      "role": "general",
+      "oldCell": 257,
+      "oldAttire": "military",
+      "newCell": 32,
+      "newAttire": "mixed",
+      "newSourceName": "Ju Shou"
+    },
+    {
+      "id": 346,
+      "name": "Sima Shi",
+      "stats": {
+        "int": 89,
+        "war": 66,
+        "charm": 82
+      },
+      "role": "civil",
+      "oldCell": 270,
+      "oldAttire": "mixed",
+      "newCell": 184,
+      "newAttire": "civil",
+      "newSourceName": "Zhang Wei"
+    },
+    {
+      "id": 348,
+      "name": "Sima Zhao",
+      "stats": {
+        "int": 88,
+        "war": 65,
+        "charm": 70
+      },
+      "role": "civil",
+      "oldCell": 291,
+      "oldAttire": "military",
+      "newCell": 334,
+      "newAttire": "civil",
+      "newSourceName": "Zhu Bao"
+    },
+    {
+      "id": 349,
+      "name": "Zhong Hui",
+      "stats": {
+        "int": 95,
+        "war": 62,
+        "charm": 77
+      },
+      "role": "civil",
+      "oldCell": 350,
+      "oldAttire": "mixed",
+      "newCell": 117,
+      "newAttire": "civil",
+      "newSourceName": "Fan Chou"
+    },
+    {
+      "id": 351,
+      "name": "Sun He",
+      "stats": {
+        "int": 37,
+        "war": 39,
+        "charm": 79
+      },
+      "role": "general",
+      "oldCell": 306,
+      "oldAttire": "military",
+      "newCell": 341,
+      "newAttire": "mixed",
+      "newSourceName": "Guanqiu Jian"
+    }
+  ]
+}

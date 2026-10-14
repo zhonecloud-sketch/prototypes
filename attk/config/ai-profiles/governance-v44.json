@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "policyVersion": 1,
+  "id": "governance-3001-g1",
+  "name": "Experimental governance \u00b7 v44",
+  "domain": "governance",
+  "rulesId": "65d8573a4f36663d810fff3e2329a58bdeb554e766d1f91bfd16affd91e005d1",
+  "weights": {
+    "territory": 2.405716979732187,
+    "officers": 2,
+    "army": 1.5,
+    "land": 1,
+    "flood": 0.6,
+    "loyalty": 0.8,
+    "gold": 0.6013838796014875,
+    "food": 2,
+    "safety": 3
+  },
+  "training": {
+    "optimizer": "seeded multiplicative hill climbing",
+    "seed": 3001,
+    "holdoutSeed": 900001,
+    "generations": 1,
+    "population": 2,
+    "trainingEpisodes": 6,
+    "holdoutEpisodes": 6,
+    "months": 2,
+    "training": {
+      "episodes": 6,
+      "independentSeeds": 6,
+      "trainedMean": 38.726074978542876,
+      "legacyMean": 1.0651654074610803,
+      "meanDifference": 37.660909571081795,
+      "approximateMean95": null,
+      "battles": null,
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    },
+    "holdout": {
+      "episodes": 6,
+      "independentSeeds": 6,
+      "trainedMean": 30.05876227307155,
+      "legacyMean": 2.4500791978945693,
+      "meanDifference": 27.60868307517698,
+      "approximateMean95": null,
+      "battles": null,
+      "interpretation": "Small exploratory sample; not evidence of general superiority."
+    },
+    "automaticActivation": false
+  }
+}

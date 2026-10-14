@@ -1,0 +1,202 @@
+{
+  "description": "Warm-start weights for the final v49 training runs. These retain their earlier rules fingerprint and are archived for reproducing the report; do not activate them as current profiles.",
+  "profiles": {
+    "governance": {
+      "schema": 1,
+      "policyVersion": 1,
+      "id": "governance-49011-g1",
+      "name": "governance \u00b7 trained seed 49011",
+      "domain": "governance",
+      "rulesId": "9cc539979aa9baf9b709a8a66668a6b4acbab953b89a3d1aa0fad7408c3bd059",
+      "weights": {
+        "territory": 2.405716979732187,
+        "officers": 2,
+        "army": 1.5,
+        "land": 1,
+        "flood": 0.6,
+        "loyalty": 0.8,
+        "gold": 0.6013838796014875,
+        "food": 2,
+        "safety": 3
+      },
+      "training": {
+        "optimizer": "seeded multiplicative hill climbing",
+        "seed": 49011,
+        "holdoutSeed": 949011,
+        "generations": 1,
+        "population": 2,
+        "trainingEpisodes": 6,
+        "holdoutEpisodes": 6,
+        "months": 2,
+        "training": {
+          "episodes": 6,
+          "independentSeeds": 6,
+          "trainedMean": 27.300968231984182,
+          "legacyMean": -53.99084380673622,
+          "meanDifference": 81.29181203872041,
+          "approximateMean95": null,
+          "battles": null,
+          "interpretation": "Small exploratory sample; not evidence of general superiority."
+        },
+        "holdout": {
+          "episodes": 6,
+          "independentSeeds": 6,
+          "trainedMean": 38.89593779047602,
+          "legacyMean": 18.000919285040496,
+          "meanDifference": 20.89501850543552,
+          "approximateMean95": null,
+          "battles": null,
+          "interpretation": "Small exploratory sample; not evidence of general superiority."
+        },
+        "automaticActivation": false
+      }
+    },
+    "battlefield": {
+      "schema": 1,
+      "policyVersion": 1,
+      "id": "battlefield-49012-g1",
+      "name": "battlefield \u00b7 trained seed 49012",
+      "domain": "battlefield",
+      "rulesId": "9cc539979aa9baf9b709a8a66668a6b4acbab953b89a3d1aa0fad7408c3bd059",
+      "weights": {
+        "men": 3,
+        "enemyLoss": 3,
+        "palace": 5,
+        "progress": 2,
+        "cover": 1,
+        "fire": 4,
+        "mobility": 0.6605969128914806,
+        "orders": 1,
+        "commander": 3
+      },
+      "training": {
+        "optimizer": "seeded multiplicative hill climbing",
+        "seed": 49012,
+        "holdoutSeed": 949012,
+        "generations": 1,
+        "population": 2,
+        "trainingEpisodes": 12,
+        "holdoutEpisodes": 12,
+        "months": 2,
+        "training": {
+          "episodes": 12,
+          "independentSeeds": 6,
+          "trainedMean": 6.0555380902175315,
+          "legacyMean": 5,
+          "meanDifference": 1.0555380902175309,
+          "approximateMean95": null,
+          "battles": {
+            "wins": 2,
+            "losses": 0,
+            "draws": 10,
+            "decisiveWinRate": 1,
+            "decisiveWinRate95": null,
+            "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+            "scoreRate": 0.5833333333333334
+          },
+          "interpretation": "Small exploratory sample; not evidence of general superiority."
+        },
+        "holdout": {
+          "episodes": 12,
+          "independentSeeds": 6,
+          "trainedMean": 6.049572790148448,
+          "legacyMean": 5,
+          "meanDifference": 1.0495727901484482,
+          "approximateMean95": null,
+          "battles": {
+            "wins": 2,
+            "losses": 0,
+            "draws": 10,
+            "decisiveWinRate": 1,
+            "decisiveWinRate95": null,
+            "uncertainty": "Paired roles share a starting position; use the seed-grouped mean comparison for uncertainty.",
+            "scoreRate": 0.5833333333333334
+          },
+          "interpretation": "Small exploratory sample; not evidence of general superiority."
+        },
+        "automaticActivation": false
+      }
+    },
+    "conquest": {
+      "schema": 1,
+      "policyVersion": 1,
+      "id": "governance-conquest-49013-g1",
+      "name": "Governance conquest \u00b7 experimental",
+      "domain": "governance",
+      "rulesId": "9cc539979aa9baf9b709a8a66668a6b4acbab953b89a3d1aa0fad7408c3bd059",
+      "weights": {
+        "territory": 2.0203429228452943,
+        "officers": 2,
+        "army": 1.2311264819850987,
+        "land": 1.2093678294633596,
+        "flood": 0.9276475559557672,
+        "loyalty": 0.6256507765007152,
+        "gold": 0.6403363957857016,
+        "food": 2.7823699196581195,
+        "safety": 5.111822407779343
+      },
+      "training": {
+        "objective": "governance-conquest-v1",
+        "optimizer": "seeded multiplicative hill climbing; backward curriculum with rehearsal",
+        "battleResolution": "abstract",
+        "seed": 49013,
+        "holdoutSeed": 949013,
+        "generations": 1,
+        "population": 1,
+        "months": 2,
+        "evaluationMonths": 3,
+        "rulesId": "9cc539979aa9baf9b709a8a66668a6b4acbab953b89a3d1aa0fad7408c3bd059",
+        "summaries": {
+          "trained": {
+            "episodes": 6,
+            "wins": 0,
+            "losses": 0,
+            "unfinished": 6,
+            "successRate": 0,
+            "meanMonthsToVictory": null,
+            "meanCappedMonths": 4,
+            "meanProvinces": 22.833333333333332,
+            "shortageMonths": 36,
+            "abstractBattles": 229,
+            "instantBattles": 0,
+            "detailedActions": 0
+          },
+          "legacy": {
+            "episodes": 6,
+            "wins": 0,
+            "losses": 0,
+            "unfinished": 6,
+            "successRate": 0,
+            "meanMonthsToVictory": null,
+            "meanCappedMonths": 4,
+            "meanProvinces": 20.833333333333332,
+            "shortageMonths": 22,
+            "abstractBattles": 234,
+            "instantBattles": 1,
+            "detailedActions": 0
+          },
+          "previous": {
+            "episodes": 6,
+            "wins": 0,
+            "losses": 0,
+            "unfinished": 6,
+            "successRate": 0,
+            "meanMonthsToVictory": null,
+            "meanCappedMonths": 4,
+            "meanProvinces": 23.166666666666668,
+            "shortageMonths": 37,
+            "abstractBattles": 223,
+            "instantBattles": 0,
+            "detailedActions": 0
+          }
+        },
+        "automaticActivation": false
+      }
+    }
+  },
+  "commands": [
+    "node tools/train-ai.mjs --domain governance --seed 49021 --holdout-seed 949021 --generations 1 --population 2 --episodes 6 --holdout-episodes 6 --months 2 --from warmstart-governance.json --out training/governance-v49",
+    "node tools/train-ai.mjs --domain battlefield --seed 49022 --holdout-seed 949022 --generations 1 --population 2 --episodes 6 --holdout-episodes 6 --months 2 --from warmstart-battlefield.json --out training/battlefield-v49",
+    "node tools/train-governance.mjs --seed 49023 --holdout-seed 949023 --generations 1 --population 1 --episodes 1 --holdout-episodes 2 --months 2 --evaluation-months 3 --from warmstart-conquest.json --compare warmstart-governance.json --out training/conquest-v49"
+  ]
+}

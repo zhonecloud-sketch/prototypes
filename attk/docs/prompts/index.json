@@ -1,0 +1,720 @@
+{
+  "schema": 1,
+  "baselineCommit": "102779599ab324ea7ee2d8bf61c9f536abc63e98",
+  "normalization": "replace every whitespace run with one ASCII space, then trim",
+  "documents": [
+    "docs/prompts/189_webp.md",
+    "docs/prompts/190_webp.md",
+    "docs/prompts/192_webp.md",
+    "docs/prompts/194_webp.md",
+    "docs/prompts/197_webp.md",
+    "docs/prompts/200_webp.md",
+    "docs/prompts/207_webp.md",
+    "docs/prompts/208_webp.md",
+    "docs/prompts/215_webp.md",
+    "docs/prompts/219_webp.md",
+    "docs/prompts/220_webp.md",
+    "docs/prompts/221_webp.md",
+    "docs/prompts/222_webp.md",
+    "docs/prompts/223_webp.md",
+    "docs/prompts/229_webp.md",
+    "docs/prompts/army_initial_webp.md",
+    "docs/prompts/army_v23_webp.md",
+    "docs/prompts/army_v9_webp.md",
+    "docs/prompts/capitals_v9_webp.md",
+    "docs/prompts/china_relief_v9_webp.md",
+    "docs/prompts/clan_destroyed_v31_webp.md",
+    "docs/prompts/default_webp.md",
+    "docs/prompts/disasters_initial_webp.md",
+    "docs/prompts/disasters_v30_webp.md",
+    "docs/prompts/events_initial_webp.md",
+    "docs/prompts/fire_v42_webp.md",
+    "docs/prompts/heir_vows_vengeance_v31_webp.md",
+    "docs/prompts/history_v28_webp.md",
+    "docs/prompts/history_v29_webp.md",
+    "docs/prompts/history_v30_webp.md",
+    "docs/prompts/launch_v9_webp.md",
+    "docs/prompts/liu_bei_v29_webp.md",
+    "docs/prompts/officers_00_webp.md",
+    "docs/prompts/officers_01_webp.md",
+    "docs/prompts/officers_02_webp.md",
+    "docs/prompts/officers_03_webp.md",
+    "docs/prompts/officers_04_webp.md",
+    "docs/prompts/officers_05_webp.md",
+    "docs/prompts/officers_06_webp.md",
+    "docs/prompts/officers_07_webp.md",
+    "docs/prompts/officers_08_webp.md",
+    "docs/prompts/officers_09_webp.md",
+    "docs/prompts/officers_10_webp.md",
+    "docs/prompts/officers_11_webp.md",
+    "docs/prompts/officers_12_webp.md",
+    "docs/prompts/officers_13_webp.md",
+    "docs/prompts/officers_14_webp.md",
+    "docs/prompts/officers_15_webp.md",
+    "docs/prompts/officers_16_webp.md",
+    "docs/prompts/officers_17_webp.md",
+    "docs/prompts/officers_18_webp.md",
+    "docs/prompts/officers_19_webp.md",
+    "docs/prompts/officers_20_webp.md",
+    "docs/prompts/officers_21_webp.md",
+    "docs/prompts/officers_custom_v49_webp.md",
+    "docs/prompts/officers_historic_v16_webp.md",
+    "docs/prompts/officers_historic_v30_webp.md",
+    "docs/prompts/omens_initial_webp.md",
+    "docs/prompts/omens_v30_webp.md",
+    "docs/prompts/portraits_initial_webp.md",
+    "docs/prompts/province_01_v17_webp.md",
+    "docs/prompts/province_02_v17_webp.md",
+    "docs/prompts/province_03_v17_webp.md",
+    "docs/prompts/province_04_v17_webp.md",
+    "docs/prompts/province_05_v17_webp.md",
+    "docs/prompts/province_06_v17_webp.md",
+    "docs/prompts/province_07_v17_webp.md",
+    "docs/prompts/province_08_v17_webp.md",
+    "docs/prompts/province_09_v17_webp.md",
+    "docs/prompts/province_10_v17_webp.md",
+    "docs/prompts/province_11_v17_webp.md",
+    "docs/prompts/province_12_v17_webp.md",
+    "docs/prompts/province_13_v17_webp.md",
+    "docs/prompts/province_14_v17_webp.md",
+    "docs/prompts/province_15_v17_webp.md",
+    "docs/prompts/province_16_v17_webp.md",
+    "docs/prompts/province_17_v17_webp.md",
+    "docs/prompts/province_18_v17_webp.md",
+    "docs/prompts/province_19_v17_webp.md",
+    "docs/prompts/province_20_v17_webp.md",
+    "docs/prompts/province_21_v17_webp.md",
+    "docs/prompts/province_22_v17_webp.md",
+    "docs/prompts/province_23_v17_webp.md",
+    "docs/prompts/province_24_v17_webp.md",
+    "docs/prompts/province_25_v17_webp.md",
+    "docs/prompts/province_26_v17_webp.md",
+    "docs/prompts/province_27_v17_webp.md",
+    "docs/prompts/province_28_v17_webp.md",
+    "docs/prompts/province_29_v17_webp.md",
+    "docs/prompts/province_30_v17_webp.md",
+    "docs/prompts/province_31_v17_webp.md",
+    "docs/prompts/province_32_v17_webp.md",
+    "docs/prompts/province_33_v17_webp.md",
+    "docs/prompts/province_34_v17_webp.md",
+    "docs/prompts/province_35_v17_webp.md",
+    "docs/prompts/province_36_v17_webp.md",
+    "docs/prompts/province_37_v17_webp.md",
+    "docs/prompts/province_38_v17_webp.md",
+    "docs/prompts/province_39_v17_webp.md",
+    "docs/prompts/province_40_v17_webp.md",
+    "docs/prompts/province_41_v17_webp.md",
+    "docs/prompts/stories_initial_webp.md",
+    "docs/prompts/stories_v30_webp.md",
+    "docs/prompts/terrain_initial_webp.md",
+    "docs/prompts/terrain_v14_webp.md",
+    "docs/prompts/terrain_v15_webp.md",
+    "docs/prompts/terrain_v9_webp.md",
+    "docs/prompts/triumph_v15_webp.md",
+    "docs/prompts/weather_expanded_webp.md",
+    "docs/prompts/weather_initial_webp.md"
+  ],
+  "uniquePromptVariants": 115,
+  "migratedOccurrences": [
+    {
+      "source": "config/battlefield-paintings.json:maps[0].prompt",
+      "to": "docs/prompts/province_01_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "457571b0cb50b0abeba774c9856d1ec518c98b2a303384cac0f0c3464e001079"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[1].prompt",
+      "to": "docs/prompts/province_02_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "35a8a9cdd860d945426c4ea2d766432fceab19e3e973d7da3181daf8216a0b56"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[2].prompt",
+      "to": "docs/prompts/province_03_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "fda702a273745a7244be43d12708f1054775b3b0733cc0d5ecfc6db02979301d"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[3].prompt",
+      "to": "docs/prompts/province_04_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "09baf402cdb98972c2427f95e849b2d892091ec55c920e613c1f9cd7a909c345"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[4].prompt",
+      "to": "docs/prompts/province_05_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "7266249536c286248775ef0defecebfb7823cc9e348ba636a964aafe124d19a4"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[5].prompt",
+      "to": "docs/prompts/province_06_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "1561a6cf98db3a78bde13950bbbe4ae3b99b591aa26908cfba065c944039126c"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[6].prompt",
+      "to": "docs/prompts/province_07_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "22e7953b9384a4cd7d34ed8c26214fee34646dccecb260b723731a7f14ce2b9d"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[7].prompt",
+      "to": "docs/prompts/province_08_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "bb2c970742b7a9126b97e97fac95266f6bbd9674d22d61870c03fb7149441197"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[8].prompt",
+      "to": "docs/prompts/province_09_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "a5b089af720d95d6b514bd6eb0ecf78502a6b65e43063b3e37a2567eb27c70ca"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[9].prompt",
+      "to": "docs/prompts/province_10_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "d919143849e15307d1babb3c70158ccfda7d277572f6894fcf5c6e81448053eb"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[10].prompt",
+      "to": "docs/prompts/province_11_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "ec042c520d59580b54a6a31b5c7d281633096395f4df4e2104b9f607eca52a0f"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[11].prompt",
+      "to": "docs/prompts/province_12_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "559732c28df315d40d582d1044fbe34d4979d09b02356aad069f2e3ec8878298"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[12].prompt",
+      "to": "docs/prompts/province_13_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "e03ed74daaca7b7a3b96dcaac5162a9bf7d1302244965718725caebf3980f739"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[13].prompt",
+      "to": "docs/prompts/province_14_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "bb541385f9d839d39b5d7f5a662e79083e58fbed1d8002c448b5b1bc8116fe27"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[14].prompt",
+      "to": "docs/prompts/province_15_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "60b4dba3d43941798ecf98cc85516ffdaa17016364b3f5a2c918747cb9fce348"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[15].prompt",
+      "to": "docs/prompts/province_16_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "d072d70a7e6cf0fdd56b5fceef8e6bc3b4c2f1339d1fc8202bca68e4614b4350"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[16].prompt",
+      "to": "docs/prompts/province_17_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "915f26ffa114889bab0ab42f332bfb69cdfc3381160e3a942939b8c0d2d08b49"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[17].prompt",
+      "to": "docs/prompts/province_18_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "a1e11c405b4aff7312042ec26d2e0c4fc6d047f193107380f6cd437696481075"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[18].prompt",
+      "to": "docs/prompts/province_19_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "ee28234c00a63c204f2cceda72b9b04a4e9f4aedde20723493c2c23d45840aa1"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[19].prompt",
+      "to": "docs/prompts/province_20_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "9e11c86e6b843ff86cfc364395c6fdedd80579ba5edc68b6027780d6c66cdb10"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[20].prompt",
+      "to": "docs/prompts/province_21_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "a3de37b0d5a9e76a87a95256857ec8c0a81030cf54961c9bfd26b774c064f087"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[21].prompt",
+      "to": "docs/prompts/province_22_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "7f82ede5debedadc8521ed1da538e948fa2644287998cca04425d87961205896"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[22].prompt",
+      "to": "docs/prompts/province_23_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "fe08412c8cb476360614e7daa7f56a4ec0cdcd58d274a9c4dd064865bee7bd21"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[23].prompt",
+      "to": "docs/prompts/province_24_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "0c4b37613dd85040fba3676ed8d5e6ce5a8d207f7e304ec66d92e1f6a808d4e4"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[24].prompt",
+      "to": "docs/prompts/province_25_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "f90810a367ea11c9774208738745afb04beaa00856c1e5bee6621369931ad5bb"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[25].prompt",
+      "to": "docs/prompts/province_26_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "dc70ba86249c0ad79dc44e55b24e6b1e9cec7ef8cf69ea1a022806a9a0a65b28"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[26].prompt",
+      "to": "docs/prompts/province_27_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "89c19986c4f91232cf6c04e48637493389a8cb889933bc4b93722cb00a1f7bfb"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[27].prompt",
+      "to": "docs/prompts/province_28_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "865ad8fef0cd21112b4b2b1738502fab1d58b34a64a4018dc5a6710accf69f44"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[28].prompt",
+      "to": "docs/prompts/province_29_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "94e7e17c0c5de2ec4afac13a035633538decdbcc277f0faa0e331f87273ddc02"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[29].prompt",
+      "to": "docs/prompts/province_30_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "eede2179ff1384e4f5807af4d4abb811d75fce29cf9dec00b9dc28b409f55e3f"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[30].prompt",
+      "to": "docs/prompts/province_31_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "c6a0ec7f1721d71009587d2f13a35ab7612ff86bbfd6b5b7ee2d5948ac5dcd79"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[31].prompt",
+      "to": "docs/prompts/province_32_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "5d5f498563d7ff256809ca01030f9efaff8838a6d522821088314d50556f0137"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[32].prompt",
+      "to": "docs/prompts/province_33_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "44cb7f87fc7a8d02ed67f2a6b38e5064f2b8089951d79972947bbdc0af67f145"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[33].prompt",
+      "to": "docs/prompts/province_34_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "c7b4c9b1ace1af39330751169ddbb0dcf68da4ac053dfa3e7107c8d1d6a5449c"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[34].prompt",
+      "to": "docs/prompts/province_35_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "dd1f245844ab36247c427f9460574b0f34b4f8afddc003a02cac3c2ac17869d5"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[35].prompt",
+      "to": "docs/prompts/province_36_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "764e7ad756a4af35094aa3857e50af91a1fdbae955ef6ff5d559f4e6d9e753d1"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[36].prompt",
+      "to": "docs/prompts/province_37_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "6f4e67d07aeb9450589a347a32f474aa8d6e5d35ddd0365dd05a05ca6576f26c"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[37].prompt",
+      "to": "docs/prompts/province_38_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "6caa0940ea7803b346fca26e03f3106076846330781be37689ccb029fda5f92f"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[38].prompt",
+      "to": "docs/prompts/province_39_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "8962faf419e5ddccb8ed9a6201f05063f4b3b93c4a4dce2aa76e181a21a1f3b8"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[39].prompt",
+      "to": "docs/prompts/province_40_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "f49f71cc724e52f3f687fb164772d06ee3fbe963e11f85e97535a075fe490eed"
+    },
+    {
+      "source": "config/battlefield-paintings.json:maps[40].prompt",
+      "to": "docs/prompts/province_41_v17_webp.md#original-production-prompt",
+      "normalizedSha256": "752e04c4e28e49bba1e681ced1c4eb6cbc9ae76593dd3d54e758c3626bb9011c"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[0].prompt",
+      "to": "docs/prompts/officers_00_webp.md#original-production-prompt",
+      "normalizedSha256": "02ea7ce27bdd9134121673df255bf52cc471e911cad6ab399193de95b82db93f"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[1].prompt",
+      "to": "docs/prompts/officers_01_webp.md#original-production-prompt",
+      "normalizedSha256": "b1f4a108136788c40f51fd629a3d16f260a564d5c3204c6535becc3fe4f551b3"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[2].prompt",
+      "to": "docs/prompts/officers_02_webp.md#original-production-prompt",
+      "normalizedSha256": "289c79603a2f9dc68449bcc8b935cdf48c181f7979d4e18f6fd3f64497cef7b9"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[3].prompt",
+      "to": "docs/prompts/officers_03_webp.md#original-production-prompt",
+      "normalizedSha256": "f0d295ddd89167deebd708ac7a51d5befd2cdab171c575113f3664d539639c8b"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[4].prompt",
+      "to": "docs/prompts/officers_04_webp.md#original-production-prompt",
+      "normalizedSha256": "7e435df769f6e79126cd6bf69cac0a51e94a048a7be4220e5b0828f22dd2b583"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[5].prompt",
+      "to": "docs/prompts/officers_05_webp.md#original-production-prompt",
+      "normalizedSha256": "b4df170733243f6c495c4d7cbb76e93accbe9b97ea80ae445d9dbaccff9cd111"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[6].prompt",
+      "to": "docs/prompts/officers_06_webp.md#original-production-prompt",
+      "normalizedSha256": "e6bfdbcfe11a056805d422c9dcf29d94b9af5f1b54b81e7914a84c51dd52ef5a"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[7].prompt",
+      "to": "docs/prompts/officers_07_webp.md#original-production-prompt",
+      "normalizedSha256": "7efdedb2280f77d3a168b3554c1922579c79aa2a322948da5b20de30deeabf78"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[8].prompt",
+      "to": "docs/prompts/officers_08_webp.md#original-production-prompt",
+      "normalizedSha256": "da018fc63184ecf593be1492df543ca862cd0b0840c8e616c51e4e3f2f3ddd7e"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[9].prompt",
+      "to": "docs/prompts/officers_09_webp.md#original-production-prompt",
+      "normalizedSha256": "e0e8ffe04b4f2abb2383a3455cd47cd264abb0aed303f59a1d17262227ba04bf"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[10].prompt",
+      "to": "docs/prompts/officers_10_webp.md#original-production-prompt",
+      "normalizedSha256": "8cf3f6a70d782f7ff6c76fe70356db0685ec14d74601bfe666fd8be92dcccddf"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[11].prompt",
+      "to": "docs/prompts/officers_11_webp.md#original-production-prompt",
+      "normalizedSha256": "64fa62c853b83aa429b95e73c82fa8639046fa6e3b47d7429d653b3be456db53"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[12].prompt",
+      "to": "docs/prompts/officers_12_webp.md#original-production-prompt",
+      "normalizedSha256": "79be8f0258463a2d21e055148a25ae2d89a02a769d3f7177d2e1f0eced316382"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[13].prompt",
+      "to": "docs/prompts/officers_13_webp.md#original-production-prompt",
+      "normalizedSha256": "88498c72ad1f72dacbf943bf47c921c9b93f6a3c5146f195b27f24d4d013feba"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[14].prompt",
+      "to": "docs/prompts/officers_14_webp.md#original-production-prompt",
+      "normalizedSha256": "53982b7fec6095b8520b05c7b47a360070787c6cd2533e5826f1cd534fe32e4a"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[15].prompt",
+      "to": "docs/prompts/officers_15_webp.md#original-production-prompt",
+      "normalizedSha256": "91eb5b8b2ce9ebf62c85cb0987da217a1604ae328322123dc0e08e2c89e64e4d"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[16].prompt",
+      "to": "docs/prompts/officers_16_webp.md#original-production-prompt",
+      "normalizedSha256": "ba04e02716821641cabaa29fc87573d63392a7946f2ee4bbe93967375e7a028b"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[17].prompt",
+      "to": "docs/prompts/officers_17_webp.md#original-production-prompt",
+      "normalizedSha256": "67a5db19a4e7ec6b0eb45ab96533ff2356ffc11257fa35dba95015c32c0126a9"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[18].prompt",
+      "to": "docs/prompts/officers_18_webp.md#original-production-prompt",
+      "normalizedSha256": "9d975bac800a9b3880f5c3fd31338d8de944a292209bc8757ac240869b4ee4ce"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[19].prompt",
+      "to": "docs/prompts/officers_19_webp.md#original-production-prompt",
+      "normalizedSha256": "580c03a00a5c89dae542d9bb60cd53fb9421d1456a3cc91919c45e6c40ff60a2"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[20].prompt",
+      "to": "docs/prompts/officers_20_webp.md#original-production-prompt",
+      "normalizedSha256": "437245f845f3acd4ca7b1f8c1f017a332d8651e0d63fa9662674ad50f7d37685"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[21].prompt",
+      "to": "docs/prompts/officers_21_webp.md#original-production-prompt",
+      "normalizedSha256": "6d8b5c3cb190c504e24bdbe02b2323f59b3f857cdc194979d2b45b7b39f2d1a9"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[22].prompt",
+      "to": "docs/prompts/disasters_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "2dc9fc5b38ca6425b7e06899632636b46c7341f51d679438227cc328e6c799a3"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[23].prompt",
+      "to": "docs/prompts/omens_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "d3f77befe2c8869b95fb692962e1351c758b230fec833cf94184be71c779da6a"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[24].prompt",
+      "to": "docs/prompts/stories_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "3faac32072e0f29caf037628eaa973daa7d11ee9ab75fcb6c0a4d72064786f1a"
+    },
+    {
+      "source": "docs/artwork/expanded-art-prompts.json:[25].prompt",
+      "to": "docs/prompts/weather_expanded_webp.md#original-production-prompt",
+      "normalizedSha256": "d2e189f0565877c2e6e93b8d69679a445bf18a920b54bd1f11c517d7cc698bdf"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-prompts.json:[0].prompt",
+      "to": "docs/prompts/launch_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "6ac5d2d8fa66a763549c0ac6ea9cf3879aa795367b3d57aed7dd4619963cf20f"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-prompts.json:[1].prompt",
+      "to": "docs/prompts/terrain_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "53e582c0d2851186fbd5afd9600c26aa81ff0cefda1f8bff8ac307d156f068e5"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-prompts.json:[2].prompt",
+      "to": "docs/prompts/army_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "a353783e734b39b16bdcce87bba2bba904f57eb176e100f62ad3e85b21705c12"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-prompts.json:[3].prompt",
+      "to": "docs/prompts/china_relief_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "103742726b0758383972eadcd7d3134d44c2dd34ec5dc925f563cc4654d305d7"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-prompts.json:[4].prompt",
+      "to": "docs/prompts/capitals_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "509a2816c2d38900f621f2a46512f9f801ef3a07a7f64714cc21afe8c44df097"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[0].prompt",
+      "to": "docs/prompts/189_webp.md#original-production-prompt",
+      "normalizedSha256": "e2a854c073507da94ce76fa8faffd180c1b9937b011c4f7fc074dd9d6a2e0533"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[1].prompt",
+      "to": "docs/prompts/190_webp.md#original-production-prompt",
+      "normalizedSha256": "a0da7ea4ea8f761cc2c2766113c19ac7841cda7e93007ac1a477b0d6935f5376"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[2].prompt",
+      "to": "docs/prompts/192_webp.md#original-production-prompt",
+      "normalizedSha256": "757fa37883227cbd3b9007eddcfffccb52ce29be230d0daf565300cd4b9175b4"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[3].prompt",
+      "to": "docs/prompts/194_webp.md#original-production-prompt",
+      "normalizedSha256": "4b7be2e38834de90b2d8cfc309f30c461933ff31eb6708963234cd46813dfd5c"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[4].prompt",
+      "to": "docs/prompts/197_webp.md#original-production-prompt",
+      "normalizedSha256": "da0f866b30eebc375a8227a135935f29f4d01b478faa58f5570b3c423ed163e6"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[5].prompt",
+      "to": "docs/prompts/200_webp.md#original-production-prompt",
+      "normalizedSha256": "13eac938e4f361ea981b9ccb761e57556fc694f4596b471e7c6510b37ff9b967"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[6].prompt",
+      "to": "docs/prompts/207_webp.md#original-production-prompt",
+      "normalizedSha256": "274c1b7ccae9e359ddce1cf82ef4ec0b310e003e47d80f4cd900062d49ce9348"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[7].prompt",
+      "to": "docs/prompts/208_webp.md#original-production-prompt",
+      "normalizedSha256": "0f1a75964d697850f85833a34d9f5a92a0ff7e8d528896a15578a4f13beabd23"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[8].prompt",
+      "to": "docs/prompts/215_webp.md#original-production-prompt",
+      "normalizedSha256": "6e40238f69e25d1223594c1eb544c595143c036261580afb3965d6cfe5692b6a"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[9].prompt",
+      "to": "docs/prompts/219_webp.md#original-production-prompt",
+      "normalizedSha256": "bdcddb95d9dccc0ac1df6e6a8ab4f84a1f36d8720b0efa23376626190c7d3e7d"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[10].prompt",
+      "to": "docs/prompts/220_webp.md#original-production-prompt",
+      "normalizedSha256": "8842a0bed2a2c422ae5a95249f03a185e1a6b2177ea503a1403bd9ccf07def31"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[11].prompt",
+      "to": "docs/prompts/221_webp.md#original-production-prompt",
+      "normalizedSha256": "12ff94d7c8df890a3691d68377c0a7e8620db6de92cb12a1677c7c85b3b4933c"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[12].prompt",
+      "to": "docs/prompts/222_webp.md#original-production-prompt",
+      "normalizedSha256": "2eac5733e993012b81e7e9245b37a869423485c8ca7579f0a70e3d4d0b797d0a"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[13].prompt",
+      "to": "docs/prompts/223_webp.md#original-production-prompt",
+      "normalizedSha256": "22516ff8edcb4963742bdd4cf0d9dec6d8265e8957c8b36791be626b02c8126a"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[13].correctionPrompt",
+      "to": "docs/prompts/223_webp.md#historical-correction-edit",
+      "normalizedSha256": "5c1c637ce01194e5aa48bd200c1288a07163c56068a6f3e6d5fc49d2e2c1c53c"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[14].prompt",
+      "to": "docs/prompts/229_webp.md#original-production-prompt",
+      "normalizedSha256": "a3046bb6fdca46ab34c2601fc2109a60764579720624fbbb47e3920164236a75"
+    },
+    {
+      "source": "docs/artwork/history-generation-v36.json:[15].prompt",
+      "to": "docs/prompts/default_webp.md#original-production-prompt",
+      "normalizedSha256": "1ec13e7989734c891e780e2352daeee0802be058918d340681816037049c7803"
+    },
+    {
+      "source": "docs/artwork/v15-prompts.json:assets[0].prompt",
+      "to": "docs/prompts/terrain_v15_webp.md#original-production-prompt",
+      "normalizedSha256": "c0f18fd2dbac7c32e48cc0c4024c1bd684d6cb39b1bb828c096cc847675f286b"
+    },
+    {
+      "source": "docs/artwork/v15-prompts.json:assets[1].prompt",
+      "to": "docs/prompts/triumph_v15_webp.md#original-production-prompt",
+      "normalizedSha256": "63fbec5de2114a2f9264373d8801b33d91bb7a7aae34bd066b09f5cec4e1e9a1"
+    },
+    {
+      "source": "docs/artwork/v49-generation-prompts.json:initialPrompt",
+      "to": "docs/prompts/officers_custom_v49_webp.md#initial-generation",
+      "normalizedSha256": "d7d578c0d35b23790025160f533a02ff30fee5c00ee351efcd00132e6c2d638d"
+    },
+    {
+      "source": "docs/artwork/v49-generation-prompts.json:framingEditPrompt",
+      "to": "docs/prompts/officers_custom_v49_webp.md#framing-edit",
+      "normalizedSha256": "c80fa27bdc81909cda29baa8866d7923b2c1241f57aee9d2232b3c69d5582e8d"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-manifest.json:assets[0].prompt",
+      "to": "docs/prompts/launch_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "6ac5d2d8fa66a763549c0ac6ea9cf3879aa795367b3d57aed7dd4619963cf20f"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-manifest.json:assets[1].prompt",
+      "to": "docs/prompts/terrain_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "53e582c0d2851186fbd5afd9600c26aa81ff0cefda1f8bff8ac307d156f068e5"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-manifest.json:assets[2].prompt",
+      "to": "docs/prompts/army_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "a353783e734b39b16bdcce87bba2bba904f57eb176e100f62ad3e85b21705c12"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-manifest.json:assets[3].prompt",
+      "to": "docs/prompts/china_relief_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "103742726b0758383972eadcd7d3134d44c2dd34ec5dc925f563cc4654d305d7"
+    },
+    {
+      "source": "docs/artwork/graphics-v9-manifest.json:assets[4].prompt",
+      "to": "docs/prompts/capitals_v9_webp.md#original-production-prompt",
+      "normalizedSha256": "509a2816c2d38900f621f2a46512f9f801ef3a07a7f64714cc21afe8c44df097"
+    },
+    {
+      "source": "docs/ARTWORK.md:V42 flame overlay",
+      "to": "docs/prompts/fire_v42_webp.md#original-production-prompt",
+      "normalizedSha256": "b0250dfdd498d7ab7cbc424ac60eb89e484cb41c28093702402f43fc1743501f"
+    },
+    {
+      "source": "docs/ARTWORK.md:portraits_initial_webp",
+      "to": "docs/prompts/portraits_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "a7deb44829ad93a57ca4f7c63b9ea0b2cd1b061d2457c362c6b793acbcee7639"
+    },
+    {
+      "source": "docs/ARTWORK.md:events_initial_webp",
+      "to": "docs/prompts/events_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "855cdcd9f02bed59c9702f4f882b6e3c86682e8e3e35156ebb4d08b4ce5c8618"
+    },
+    {
+      "source": "docs/ARTWORK.md:terrain_initial_webp",
+      "to": "docs/prompts/terrain_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "00806ef7c502299db00a8b7cc7b59deb7bbcf6018511486566bec3a42e5819e5"
+    },
+    {
+      "source": "docs/ARTWORK.md:army_initial_webp",
+      "to": "docs/prompts/army_initial_webp.md#original-production-prompt",
+      "normalizedSha256": "0ad650e55dd8283fb34e0b4bfc939a6e7f9aedc668ba6c4d3a46ee001d65b616"
+    },
+    {
+      "source": "docs/ARTWORK.md:Battle weather atlas",
+      "to": "docs/prompts/weather_initial_webp.md#recorded-generation-brief",
+      "normalizedSha256": "1fd301a35b3b0593ea91a97cf132a2e457a83455dff941e9ee80d56248ab5915"
+    },
+    {
+      "source": "docs/ARTWORK.md:V14 battlefield terrain overhaul",
+      "to": "docs/prompts/terrain_v14_webp.md#original-production-prompt",
+      "normalizedSha256": "301e8b859b3b0e8e43c0d8bf419ddfc1bcc3e1e6ee1656a5a36417be37704724"
+    },
+    {
+      "source": "docs/ARTWORK.md:V15 terrain summary",
+      "to": "docs/prompts/terrain_v15_webp.md#historical-summary-brief",
+      "normalizedSha256": "7d8f0fcfe5ff90316f4166c84f17a864b0b28a8a7dc47524b859d94b31d6e86e"
+    },
+    {
+      "source": "docs/ARTWORK.md:V15 triumph summary",
+      "to": "docs/prompts/triumph_v15_webp.md#historical-summary-brief",
+      "normalizedSha256": "97c3f1db312146e295985c3859b7638e6a9254cf6854a0f9d38cd04e049d6cfc"
+    },
+    {
+      "source": "docs/changes.md:clan_destroyed_v31_webp",
+      "to": "docs/prompts/clan_destroyed_v31_webp.md#original-production-prompt",
+      "normalizedSha256": "b6b8f8f11a0f2360ac6576532cb7e7c9b96a82a620d9bd45ad7937ef275173de"
+    },
+    {
+      "source": "docs/changes.md:heir_vows_vengeance_v31_webp",
+      "to": "docs/prompts/heir_vows_vengeance_v31_webp.md#original-production-prompt",
+      "normalizedSha256": "04676c17505eabbaf077132e14348856a06c26bb70fed08d13e0b90cb3f74c9d"
+    },
+    {
+      "source": "docs/changes.md:officers_historic_v16_webp",
+      "to": "docs/prompts/officers_historic_v16_webp.md#original-production-prompt",
+      "normalizedSha256": "064081b0ddb2843178d28ce300465bb6c43641db828c1665c22715902a39daa7"
+    },
+    {
+      "source": "docs/changes.md:history_v30_webp",
+      "to": "docs/prompts/history_v30_webp.md#production-edit-prompt",
+      "normalizedSha256": "07f0e90280d12d64badb55c53d22e4c1058581bb22b8db82498fa5679a494687"
+    },
+    {
+      "source": "docs/changes.md:disasters_v30_webp",
+      "to": "docs/prompts/disasters_v30_webp.md#production-edit-prompt",
+      "normalizedSha256": "3683ac5763338035bd58ccddc25b7a9ee4c8e3d16a3a4afd830837b5165e829b"
+    },
+    {
+      "source": "docs/changes.md:omens_v30_webp",
+      "to": "docs/prompts/omens_v30_webp.md#production-edit-prompt",
+      "normalizedSha256": "3b77f84a1f7695664243cd99112d18836f4f9f289851a0079b31a558d151c1de"
+    },
+    {
+      "source": "docs/changes.md:stories_v30_webp",
+      "to": "docs/prompts/stories_v30_webp.md#production-edit-prompt",
+      "normalizedSha256": "df2a383e23525fca0d12b132d20f7538aeffe1d5454ace3fd08988b8f60e648c"
+    },
+    {
+      "source": "docs/changes.md:officers_historic_v30_webp",
+      "to": "docs/prompts/officers_historic_v30_webp.md#production-edit-prompt",
+      "normalizedSha256": "4dabf8a65c5f3acdff015bf0bbb8f3ccfe4e2f93407655f1aca518031fd1262f"
+    },
+    {
+      "source": "docs/changes.md:artwork-v29 portrait",
+      "to": "docs/prompts/liu_bei_v29_webp.md#recorded-portrait-specification",
+      "normalizedSha256": "44e50c90c54f4bf34a2b53e7c17e5b034a6f9850f10fce5d2733b2e5503f347d"
+    },
+    {
+      "source": "docs/changes.md:artwork-v29 history",
+      "to": "docs/prompts/history_v29_webp.md#recorded-edit-specification",
+      "normalizedSha256": "ec4bda9d3c061f486f3019ac8048504baa667f2142e2aefe7437ec4a309b4ec7"
+    },
+    {
+      "source": "docs/changes.md:artwork-v23",
+      "to": "docs/prompts/army_v23_webp.md#original-production-prompt",
+      "normalizedSha256": "7f8e0489dc5ccfde908b21cf2050f7591504b08f22170a5c10bc5a53057a27d5"
+    },
+    {
+      "source": "docs/changes.md:artwork-v28",
+      "to": "docs/prompts/history_v28_webp.md#original-production-prompt",
+      "normalizedSha256": "7e10d4454495ed1ca64af3ab1499830904be3cd9185eee9bb2ec05b1a82a8a07"
+    },
+    {
+      "source": "Conversation:complete province-01 prompt",
+      "to": "docs/prompts/province_01_v17_webp.md#complete-copy-and-paste-prompt",
+      "normalizedSha256": "b851b92c758d50d65dffbb8f1b5c0988f0af7ea3a3f7c7a25f55cec4d35b4e0c"
+    }
+  ]
+}

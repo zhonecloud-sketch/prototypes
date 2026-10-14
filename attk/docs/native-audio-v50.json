@@ -1,0 +1,1267 @@
+{
+  "originalSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "unpackedSha256": "5c3e45a5edb097c8719d65b1678784aaf8412258e2437a26bb89d4b249824506",
+  "imageBytes": 246400,
+  "driverSignature": "OPLDRV",
+  "effectCount": 16,
+  "musicAcceptedIds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "effects": [
+    {
+      "id": 0,
+      "use": "Locust",
+      "entry": "0x70a0",
+      "patchOffset": "0x3970",
+      "patchSha256": "bb5016480b4697a814cc02f5e69cd78ad14c71e4dda6c892c45ca28786061979",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3970"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 20
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "use": "Epidemic",
+      "entry": "0x70c6",
+      "patchOffset": "0x3986",
+      "patchSha256": "d144ff51284800d6f77fa7720dac8fba13390b71006291000e5b3559c2a30541",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3986"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 20
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "use": "Typhoon / flood",
+      "entry": "0x70ec",
+      "patchOffset": "0x399c",
+      "patchSha256": "ee2d7ef5e238ff92108640ab4579437a82cff1174a28d6b7ba5c735bc5c3a61f",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x399c"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 20
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "use": "Popular riot",
+      "entry": "0x7112",
+      "patchOffset": "0x39b2",
+      "patchSha256": "6430325b14035582e7c0e4d176ac4ab83c84374910519215eb25b9e98bbd91a6",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x39b2"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 20
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "use": "Meteor / evil omen",
+      "entry": "0x7138",
+      "patchOffset": "0x39c8",
+      "patchSha256": "3e5b1506a90523f159443b42b61dae5a3fe59583d6e3ff8506315ee18dd3b03a",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x39c8"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x581e",
+          "argument": 4
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "use": "Officer rebellion",
+      "entry": "0x715e",
+      "patchOffset": "0x39de",
+      "patchSha256": "4efc16be43d154970baf7cdba56cb48e105ebea5bfb8846bf780ecd461c5abca",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x39de"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 10
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "use": "Settle province",
+      "entry": "0x7198",
+      "patchOffset": "0x39f4",
+      "patchSha256": "dc7b04a6669b63d65dff100af786b7038280a3ca125d3629e173fd309dcfe350",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x39f4"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "use": "Betrayal / field status / captive prompt",
+      "entry": "0x71fc",
+      "patchOffset": "0x3a0a",
+      "patchSha256": "5bbc3dcd2dcc7951b2dcf41a67686a0233087471585a139dad418204d7465cd7",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a0a"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "use": "Personal combat result",
+      "entry": "0x7212",
+      "patchOffset": "0x3a20",
+      "patchSha256": "c7a600a4423b676723253eed3c6f63770f91ed652a5f24956a29f8bce8b39664",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a20"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "use": "Reinforcements arrival / request / return",
+      "entry": "0x7228",
+      "patchOffset": "0x3a36",
+      "patchSha256": "8b3a3a6e21bfd6b46a1951c3e23ca926121377aeba99995972a4779cf980a6e2",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a36"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 15
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "use": "Input / wait opening cue",
+      "entry": "0x724e",
+      "patchOffset": "0x3a4c",
+      "patchSha256": "b2373d4a3a1c3dc5190ea7711a0e8ec418e14cd09e07eef469fdda6a42bbe302",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a4c"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 3
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "use": "Army sprite animation cue",
+      "entry": "0x7274",
+      "patchOffset": "0x3a62",
+      "patchSha256": "d09df2f0cd1c04ca4ff8089dd2f346ac7b2bc3a137fd6620197967f786b54a82",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a62"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x581e",
+          "argument": 3
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "use": "Yellow Turban attack",
+      "entry": "0x72ae",
+      "patchOffset": "0x3a78",
+      "patchSha256": "05b1d50c1309ee091182059cd7fd829849e25b36e09a35f083369abb40b0b1e7",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a78"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 10
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "use": "Combat exchange",
+      "entry": "0x72d4",
+      "patchOffset": "0x3a8e",
+      "patchSha256": "948719f47e76bfbeaf5045358da53342314eebfd19527d4c201ec1cb311731d4",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3a8e"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x581e",
+          "argument": 1
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "use": "Input / wait completion cue",
+      "entry": "0x72fa",
+      "patchOffset": "0x3aa4",
+      "patchSha256": "dc7b04a6669b63d65dff100af786b7038280a3ca125d3629e173fd309dcfe350",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3aa4"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 1
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 1
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 1
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 1
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x583c",
+          "argument": 1
+        },
+        {
+          "command": 6,
+          "argument": 0
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "use": "Unresolved use; no direct call found",
+      "entry": "0x737a",
+      "patchOffset": "0x3aba",
+      "patchSha256": "58235529e45fce9f3f27b7155aba119ea5b5ec06f2ecf4942b8bd47c8789a2d8",
+      "sequence": [
+        {
+          "command": 5,
+          "argument": 0,
+          "patchOffset": "0x3aba"
+        },
+        {
+          "command": 6,
+          "argument": 0
+        },
+        {
+          "delayRoutine": "0x581e",
+          "argument": 1
+        },
+        {
+          "command": 7,
+          "argument": 0
+        }
+      ]
+    }
+  ],
+  "staticFarCallCandidates": [
+    {
+      "at": "0x441e",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "e55dcb90b8060050"
+    },
+    {
+      "at": "0x49b0",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "3d1b007519b01850"
+    },
+    {
+      "at": "0x49b8",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x58f6",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "2c3500740db00a50"
+    },
+    {
+      "at": "0x5909",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "46fc0300b8030050"
+    },
+    {
+      "at": "0x5940",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "fe047345b8010050"
+    },
+    {
+      "at": "0x5957",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "fe83c402b8010050"
+    },
+    {
+      "at": "0x5979",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "0175c2eb0bb00e50"
+    },
+    {
+      "at": "0x599a",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "222aff8a874e3c50"
+    },
+    {
+      "at": "0x59b4",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "ff8a874e3c040550"
+    },
+    {
+      "at": "0x6b17",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "7efc00742bb04050"
+    },
+    {
+      "at": "0x6b1f",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x6b2b",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "060bc075f7b00250"
+    },
+    {
+      "at": "0x78a1",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a8201b50483c40a"
+    },
+    {
+      "at": "0x78ad",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "060bc075f7b00c50"
+    },
+    {
+      "at": "0x7916",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "020ee8a3fdb06050"
+    },
+    {
+      "at": "0x791e",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x7f07",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "9a9002b504b00e50"
+    },
+    {
+      "at": "0x7f12",
+      "entry": "0x6fb0",
+      "kind": "playback setting",
+      "precedingBytes": "eb0683c4022ac050"
+    },
+    {
+      "at": "0x813f",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a0800610583c406"
+    },
+    {
+      "at": "0x815d",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "000ac074e5b01050"
+    },
+    {
+      "at": "0x8177",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "4010740ca0d44050"
+    },
+    {
+      "at": "0x8aff",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "ef0383c402b01050"
+    },
+    {
+      "at": "0x8b0a",
+      "entry": "0x6fb0",
+      "kind": "playback setting",
+      "precedingBytes": "eb0683c4022ac050"
+    },
+    {
+      "at": "0x8b3f",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a7c007c0583c402"
+    },
+    {
+      "at": "0x8b5e",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "f20ee8f9fb83c402"
+    },
+    {
+      "at": "0x99ab",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "b50483c402b01350"
+    },
+    {
+      "at": "0x99b6",
+      "entry": "0x6fb0",
+      "kind": "playback setting",
+      "precedingBytes": "eb0683c4022ac050"
+    },
+    {
+      "at": "0x9a47",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "500ee8dafc83c404"
+    },
+    {
+      "at": "0xa289",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "2c3500740ab00750"
+    },
+    {
+      "at": "0xa294",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "eb06eb09b8060050"
+    },
+    {
+      "at": "0xb82e",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "030bc074cbb03050"
+    },
+    {
+      "at": "0xb836",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0xb84e",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "9a6403b504b03050"
+    },
+    {
+      "at": "0xb87f",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9ac006ef0383c402"
+    },
+    {
+      "at": "0xb88b",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "060bc075f7b00250"
+    },
+    {
+      "at": "0xc48c",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "b50483c402b00150"
+    },
+    {
+      "at": "0xd147",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "ff0bc07412b06050"
+    },
+    {
+      "at": "0xd475",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "f10bd2750bb00450"
+    },
+    {
+      "at": "0xd558",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "01eb068be5b00450"
+    },
+    {
+      "at": "0xe905",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "ef0383c406b00550"
+    },
+    {
+      "at": "0xeaa3",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "90558bec8a460650"
+    },
+    {
+      "at": "0x13056",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "35a801740bb00b50"
+    },
+    {
+      "at": "0x1b352",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "ef0383c402b06050"
+    },
+    {
+      "at": "0x1b35a",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x1b3da",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "ef0383c402b06050"
+    },
+    {
+      "at": "0x1b3e2",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x1b4ac",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "222aff8a874e3c50"
+    },
+    {
+      "at": "0x1b4b9",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "8be55dcb90b01050"
+    },
+    {
+      "at": "0x1e600",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "7efe017579b01350"
+    },
+    {
+      "at": "0x1e60b",
+      "entry": "0x6fb0",
+      "kind": "playback setting",
+      "precedingBytes": "eb0683c4022ac050"
+    },
+    {
+      "at": "0x1e694",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "9cce05740bb01250"
+    },
+    {
+      "at": "0x1e72b",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "0583c4028a46fe50"
+    },
+    {
+      "at": "0x1e79d",
+      "entry": "0x6eea",
+      "kind": "driver control",
+      "precedingBytes": "9cce05741db01050"
+    },
+    {
+      "at": "0x1e7a5",
+      "entry": "0x6f14",
+      "kind": "driver status",
+      "precedingBytes": "9a3a00eb0683c402"
+    },
+    {
+      "at": "0x1e7b2",
+      "entry": "0x6f46",
+      "kind": "music selection",
+      "precedingBytes": "0bc075f78a46fe50"
+    },
+    {
+      "at": "0x215c8",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "35a801740bb00650"
+    },
+    {
+      "at": "0x21a93",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "ef0383c404b00c50"
+    },
+    {
+      "at": "0x22455",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "ef0383c406b00650"
+    },
+    {
+      "at": "0x25059",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "5e8be55dcbb00750"
+    },
+    {
+      "at": "0x250c9",
+      "entry": "0x6ebe",
+      "kind": "speaker wait",
+      "precedingBytes": "3500750bb8010050"
+    },
+    {
+      "at": "0x250da",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "b43301740bb00d50"
+    },
+    {
+      "at": "0x289e3",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "ef0383c404b00850"
+    },
+    {
+      "at": "0x29d9f",
+      "entry": "0x73a0",
+      "kind": "effect dispatch",
+      "precedingBytes": "5e8be55dcbb00950"
+    }
+  ],
+  "checks": [
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 0
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 0,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 0,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 1
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 1,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 1,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 2
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 2,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 2,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 3
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 3,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 3,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 4
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 4,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 4,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 5
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 5,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 5,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 6
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 6,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 6,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 7
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 7,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 7,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 8
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 8,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 8,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 9
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 9,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 9,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 10
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 10,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 10,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 11
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 11,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 11,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 12
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 12,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 12,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 13
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 13,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 13,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 14
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 14,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 14,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Every native effect dispatches its own patch and pitch sequence",
+      "id": 15
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 15,
+      "sound": false,
+      "driver": true
+    },
+    {
+      "rule": "Muted or absent-driver effect is a timed silent fallback",
+      "id": 15,
+      "sound": true,
+      "driver": false
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 0,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 1,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 2,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 3,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 4,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 5,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 6,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 7,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 8,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 9,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 10,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 11,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 12,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 13,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 14,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 15,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 16,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 17,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 18,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 19,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 20,
+      "accepted": true
+    },
+    {
+      "rule": "Music ID range and one-based driver translation",
+      "id": 21,
+      "accepted": false
+    },
+    {
+      "rule": "Music independently gated",
+      "driver": true,
+      "music": false
+    },
+    {
+      "rule": "Music independently gated",
+      "driver": false,
+      "music": true
+    }
+  ],
+  "checkCount": 72,
+  "limits": [
+    "This historical 72-check audit mocks the external driver boundary. The resumed update separately recovers driver-rendered audio; see native-opl-driver-v50.json.",
+    "Driver interrupt and waits are hooked; the native dispatch and effect sequences execute unchanged.",
+    "Effect labels come from call-site strings and controlled native routines; ID15 use remains unresolved.",
+    "Static far-call candidates can include data and are not an exhaustive dynamically reachable call graph."
+  ]
+}
