@@ -57,6 +57,9 @@ jobs:
         run: cargo test --locked --workspace
       - name: Compiled WASM equations and real server cases
         run: npm run test:rust
+      - name: Windows missing-runtime and compiler-free launcher cases
+        if: runner.os == 'Windows'
+        run: node tests/windows-launcher-tests.mjs
       - name: Install inherited validation dependencies
         if: runner.os == 'Linux'
         run: npm ci

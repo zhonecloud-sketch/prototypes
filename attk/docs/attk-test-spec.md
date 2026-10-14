@@ -171,3 +171,18 @@ Its event-routing assertions are retained, without changing game behavior.
 - Output: the Windows DLL import list, or a failed dependency assertion.
 - Success: no external Visual C++/UCRT runtime DLL is required.
 - Scope: standard Windows OS libraries remain necessary.
+
+## BUG-ATTK-02: Windows startup without Cargo
+
+- Script: `node tests/windows-launcher-tests.mjs`, on Windows.
+- Inputs: disposable paths with spaces; no Cargo on PATH/profile; missing
+  server, missing WASM, both missing, nested extraction, cached Cargo,
+  a PATH Cargo fixture and the actual prebuilt executable/WASM.
+- Method: execute copied launch/build scripts in isolated child environments.
+  Missing-runtime cases assert exact missing paths and the prebuilt route.
+  Compiler fixtures verify build selection without compiling/installing.
+  The complete runtime starts the actual server and verifies HTTP health.
+- Output: eight named pass lines, or a failed startup/message assertion.
+- Success: a complete prebuilt runtime runs without Cargo; missing outputs
+  explain their installation route; available Cargo still selects a build.
+- Cleanup: stop the owned child process and remove only temporary fixtures.

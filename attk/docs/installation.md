@@ -111,6 +111,28 @@ task, system browser change or firewall rule is installed by the launcher.
 Do not double-click index.html. Browser module/data security requires
 HTTP for this game; the launcher opens that exact file through the server.
 
+## If the launcher reports Cargo is missing
+
+A Git checkout supplies source, not the ignored bin/wasm build outputs.
+At least one required runtime file is missing if the launcher tries to
+build. A runtime ZIP may also have been extracted one folder too deeply.
+
+Check these exact paths in PowerShell:
+
+```powershell
+Test-Path C:\automation\prototypes\attk\bin\attk-server.exe
+Test-Path C:\automation\prototypes\attk\wasm\attk_engine.wasm
+```
+
+Both must return True to use the prebuilt route. Extract the small Windows
+runtime so bin and wasm sit directly inside attk, then rerun start-game.bat.
+Rust is not required to play with these prebuilt files.
+
+If you want a source build instead, install Rust and the C++ prerequisites
+below. The updated scripts also check the standard user Cargo location
+when a newly installed Rust toolchain has not yet appeared on PATH.
+They do not install Rust or change your system PATH.
+
 ## Source installation on Windows
 
 1. Install [Microsoft C++ Build Tools][windows].
