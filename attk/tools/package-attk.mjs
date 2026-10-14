@@ -12,6 +12,7 @@ for(const entry of fs.readdirSync(root,{withFileTypes:true})){
 }
 for(const dir of ['bin','wasm'])fs.cpSync(path.join(root,dir),path.join(output,dir),{recursive:true});
 const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
+if(process.env.GITHUB_SHA)fs.writeFileSync(path.join(output,'SOURCE-COMMIT.txt'),process.env.GITHUB_SHA+'\n');
 const rows=walk(output).map(file=>({path:path.relative(output,file).split(path.sep).join('/'),
  bytes:fs.statSync(file).size,sha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')}));
 const report={platform:name,commit:process.env.GITHUB_SHA||null,rust:'1.90.0',

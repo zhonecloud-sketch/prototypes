@@ -1,1 +1,2 @@
-7e3daec6568f6cfaf356909afcf42cb46a2cce1e
+ATTK source commit: see RUNTIME-INFO.json or BUILD-INFO.json.
+RTK2 baseline commit: 7e3daec6568f6cfaf356909afcf42cb46a2cce1e

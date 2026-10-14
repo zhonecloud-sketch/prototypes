@@ -4052,3 +4052,7 @@ CRLF when checking the source fingerprint without changing AI weights.
 
 The engine compatibility fingerprint includes Rust arithmetic source.
 Runtime-only artifacts allow existing clones to download only bin/wasm.
+
+The inherited v28 report test clears its unrelated startup report ledger.
+This removes a clock-seeded fixture failure without changing gameplay.
+Package source-commit metadata now records the actual build commit.

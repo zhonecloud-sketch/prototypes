@@ -155,3 +155,10 @@ The original `docs/test_spec.md` still describes the inherited v56 suite.
 - Success: binaries start and the browser passes the same game checklist.
 - Suggested solution: build locally for that host until it has its own
   validated artifact. iOS/Android use browser WASM in the current design.
+
+## Inherited fixture stability correction
+
+The v28 treasure/local-report routing case now starts with empty injected
+report ledgers. Previously it cleared log entries but kept random startup
+monthly reports; unrelated events could fail its empty-province assertion.
+Its event-routing assertions are retained, without changing game behavior.

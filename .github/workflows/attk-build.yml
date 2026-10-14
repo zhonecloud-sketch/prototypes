@@ -63,17 +63,17 @@ jobs:
           NODE_OPTIONS: --import=./tests/rust-preload.mjs
         run: npm test
       - name: Mounted UI and arrival raster using compiled Rust
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         env:
           NODE_OPTIONS: --import=./tests/rust-preload.mjs
         run: npm run test:v56:ui
       - name: Install browser validation tools
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium webkit
       - name: Real browser boot and compact layout cases
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         run: node tests/attk-browser-tests.mjs
       - name: Package self-contained platform output
         run: node tools/package-attk.mjs ${{ matrix.package }}
