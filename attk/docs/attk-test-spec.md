@@ -162,3 +162,12 @@ The v28 treasure/local-report routing case now starts with empty injected
 report ledgers. Previously it cleared log entries but kept random startup
 monthly reports; unrelated events could fail its empty-province assertion.
 Its event-routing assertions are retained, without changing game behavior.
+
+## Windows standalone-runtime dependency check
+
+- Script: `node tools/check-windows-runtime.mjs`.
+- Inputs: the actual release PE executable from build.bat.
+- Method: parse PE sections, normal imports and delayed imports.
+- Output: the Windows DLL import list, or a failed dependency assertion.
+- Success: no external Visual C++/UCRT runtime DLL is required.
+- Scope: standard Windows OS libraries remain necessary.

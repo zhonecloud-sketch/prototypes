@@ -7,7 +7,7 @@ if errorlevel 1 (
   exit /b 1
 )
 set "CARGO_TARGET_DIR=%CD%\target"
-cargo build --locked --release -p attk-server
+cargo rustc --locked --release -p attk-server -- -C target-feature=+crt-static
 if errorlevel 1 exit /b 1
 cargo build --locked --release -p attk-engine --target wasm32-unknown-unknown
 if errorlevel 1 exit /b 1

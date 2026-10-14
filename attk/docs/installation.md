@@ -37,6 +37,8 @@ below to confirm that.
 Rust is pinned to 1.90.0 in `rust-toolchain.toml`. Both Rust crates use
 only the standard library. There are no downloaded Cargo dependencies,
 wasm-bindgen, wasm-pack, Python server or native webview requirements.
+The Windows build statically links its C runtime. CI inspects the actual
+executable's normal and delayed DLL imports to verify that property.
 
 Build outputs live in `attk/target`, `attk/bin`, `attk/wasm` and
 `attk/dist`. These are ignored by Git.

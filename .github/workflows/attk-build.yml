@@ -50,6 +50,9 @@ jobs:
       - name: Build Unix runtime and WASM
         if: runner.os != 'Windows'
         run: sh build.sh
+      - name: Verify standalone Windows runtime
+        if: runner.os == 'Windows'
+        run: node tools/check-windows-runtime.mjs
       - name: Native Rust unit cases
         run: cargo test --locked --workspace
       - name: Compiled WASM equations and real server cases

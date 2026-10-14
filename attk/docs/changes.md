@@ -4056,3 +4056,6 @@ Runtime-only artifacts allow existing clones to download only bin/wasm.
 The inherited v28 report test clears its unrelated startup report ledger.
 This removes a clock-seeded fixture failure without changing gameplay.
 Package source-commit metadata now records the actual build commit.
+
+The Windows launcher binary statically links its C runtime. A PE import
+test rejects external Visual C++/UCRT runtime DLL dependencies.
