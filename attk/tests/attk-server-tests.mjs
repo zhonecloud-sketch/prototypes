@@ -2,13 +2,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
 import assert from 'node:assert/strict';
-import {spawn} from 'node:child_process';
-const exe=process.platform==='win32'?'bin/attk-server.exe':'bin/attk-server';
-const child=spawn(path.resolve(exe),['--root',process.cwd(),'--port','0'],{stdio:['ignore','pipe','pipe']});
+import {spawn,spawnSync} from 'node:child_process';
+const windows=process.platform==='win32';
+const child=windows
+ ?spawn('start-game.bat',['--port','0','--no-open'],{shell:true,stdio:['ignore','pipe','pipe']})
+ :spawn('sh',[path.resolve('start-game.sh'),'--port','0','--no-open'],{stdio:['ignore','pipe','pipe']});
+const stop=()=>{if(windows)spawnSync('taskkill',['/PID',String(child.pid),'/T','/F']);else child.kill();};
 let output='',errors='';
 child.stderr.on('data',b=>errors+=b);
 const url=await new Promise((resolve,reject)=>{
- const timer=setTimeout(()=>{child.kill();reject(Error('Server startup timeout: '+errors));},15000);
+ const timer=setTimeout(()=>{stop();reject(Error('Server startup timeout: '+errors));},15000);
  child.once('error',e=>{clearTimeout(timer);reject(e);});
  child.once('exit',code=>{clearTimeout(timer);reject(Error('Server exited '+code+': '+errors));});
  child.stdout.on('data',b=>{
@@ -49,5 +52,5 @@ try{
  assert.equal((await request('/vendor/js-yaml.js')).status,200);
  const partial=await request('/wasm/attk_engine.wasm',{Range:'bytes=-4'});
  assert.deepEqual(partial.body,wasm.body.subarray(-4));
- console.log('PASS real Rust HTTP startup, WASM MIME, assets, source isolation and audio ranges');
-}finally{child.kill();}
+ console.log('PASS real launcher and Rust HTTP startup, WASM MIME, assets, source isolation and audio ranges');
+}finally{stop();}

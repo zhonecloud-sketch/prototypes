@@ -220,9 +220,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             "--bind" => bind = args.next().ok_or("Missing --bind value")?.parse()?,
             "--port" => port = args.next().ok_or("Missing --port value")?.parse()?,
             "--open" => open = true,
+            "--no-open" => open = false,
             "--lan" => bind = Ipv4Addr::UNSPECIFIED.into(),
             "--help" => {
-                println!("attk-server [--root FOLDER] [--port 8765] [--bind IP] [--lan] [--open]");
+                println!("attk-server [--root FOLDER] [--port 8765] [--bind IP] [--lan] [--open|--no-open]");
                 return Ok(());
             }
             _ => return Err(format!("Unknown option: {arg}").into()),

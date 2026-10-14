@@ -65,18 +65,21 @@ sibling `lib` and the original `rtk2` files are unchanged.
 
 1. Sign in to GitHub and open [ATTK builds][builds].
 2. Open a completed successful run for the commit you have checked out.
-3. Under Artifacts, download the appropriate platform package:
-   - `attk-windows-x64`: Windows 10/11, 64-bit Intel/AMD.
-   - `attk-macos-arm64`: Apple Silicon Mac.
-   - `attk-macos-x64`: Intel Mac.
-   - `attk-linux-x64`: 64-bit Linux with compatible glibc.
-4. Extract the artifact into a temporary folder. It contains `attk`.
-5. For your existing Git checkout, copy only the extracted `bin` and
-   `wasm` folders into `C:\automation\prototypes\attk`.
-6. If you have no checkout, the whole extracted `attk` folder is portable.
-   Put it in a user-writable location and run the launcher there.
-7. Inspect `BUILD-INFO.json` in the package for commit, file sizes and hashes.
-   Do not mix a binary/WASM artifact with source from another commit.
+3. For an existing checkout, download the small runtime-only artifact:
+   - `attk-windows-x64-runtime`: Windows 10/11, 64-bit Intel/AMD.
+   - `attk-macos-arm64-runtime`: Apple Silicon Mac.
+   - `attk-macos-x64-runtime`: Intel Mac.
+   - `attk-linux-x64-runtime`: 64-bit Linux with compatible glibc.
+4. Extract it directly into your matching `attk` checkout. Its root
+   contains `bin`, `wasm` and `RUNTIME-INFO.json`.
+5. Inspect RUNTIME-INFO.json for commit, runtime sizes and SHA-256 hashes.
+   Do not mix runtime outputs with source from another commit.
+6. If you have no checkout, choose the full artifact without `-runtime`.
+   Extract its complete `attk` folder into a user-writable location.
+   BUILD-INFO.json records that full package's file hashes.
+
+The small runtime artifact avoids downloading the artwork/music again.
+Full packages include assets and source for a standalone folder.
 
 Artifacts are compiled build outputs, delivered by GitHub's artifact
 download mechanism. They are not a replacement for normal Git source

@@ -26,3 +26,4 @@ RTK2-Remastered-*.zip
 
 # Keep this project's authored instructions tracked.
 !AGENTS.md
+/RUNTIME-INFO.json

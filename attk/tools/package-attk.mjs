@@ -5,7 +5,7 @@ const name=process.argv[2];
 if(!name||!/^[a-z0-9-]+$/.test(name))throw Error('Pass a platform package name.');
 const root=process.cwd(),output=path.join(root,'dist',name,'attk');
 fs.mkdirSync(output,{recursive:true});
-const ignored=new Set(['node_modules','target','dist','.git','bin','wasm']);
+const ignored=new Set(['node_modules','target','dist','.git','bin','wasm','RUNTIME-INFO.json']);
 for(const entry of fs.readdirSync(root,{withFileTypes:true})){
  if(ignored.has(entry.name))continue;
  fs.cpSync(path.join(root,entry.name),path.join(output,entry.name),{recursive:true});
@@ -19,4 +19,7 @@ const report={platform:name,commit:process.env.GITHUB_SHA||null,rust:'1.90.0',
  files:rows};
 fs.writeFileSync(path.join(output,'BUILD-INFO.json'),JSON.stringify(report,null,2)+'\n');
 const summary=rows.filter(r=>/^bin\/|^wasm\//.test(r.path));
+fs.writeFileSync(path.join(root,'RUNTIME-INFO.json'),JSON.stringify({
+ platform:name,commit:report.commit,rust:report.rust,runtime:summary
+},null,2)+'\n');
 console.log(JSON.stringify({platform:name,totalBytes:report.totalBytes,runtime:summary},null,2));

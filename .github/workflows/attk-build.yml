@@ -85,6 +85,16 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
+      - name: Save small runtime-only output
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ matrix.package }}-runtime
+          path: |
+            attk/bin/
+            attk/wasm/
+            attk/RUNTIME-INFO.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Save compact layout evidence
         if: runner.os == 'Linux' && always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

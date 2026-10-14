@@ -4039,3 +4039,16 @@ Normal/Simultaneous now use the user's Pixabay sword recording; Charge uses the 
 - Keep AI weights and profiles unchanged; no training or asset generation.
 
 See [installation](installation.md) and [test cases](attk-test-spec.md).
+
+### Compact setup regression and cross-platform launch validation
+
+BUG-ATTK-01: the scenario page could place Next below a 667x375 viewport.
+Keep the body scrollable and Back/Next visible in fixed wizard rows.
+The real-browser case now catches this failure and starts a campaign.
+
+Validate the real desktop launcher, not only its server executable.
+Keep Unix scripts/modules in LF form on Windows checkouts. Normalize
+CRLF when checking the source fingerprint without changing AI weights.
+
+The engine compatibility fingerprint includes Rust arithmetic source.
+Runtime-only artifacts allow existing clones to download only bin/wasm.

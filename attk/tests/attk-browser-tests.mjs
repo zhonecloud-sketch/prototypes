@@ -31,10 +31,21 @@ try{
     await page.locator('#newGame').click();
     await page.locator('#setupWizard').waitFor({state:'visible'});
     const next=await page.locator('#wizardNext').boundingBox();
-    assert(next.x>=0&&next.y>=0&&next.x+next.width<=width&&next.y+next.height<=height);
+    assert(next.x>=0&&next.y>=0&&next.x+next.width<=width&&next.y+next.height<=height,
+     JSON.stringify({browser:name,width,height,next}));
+    await page.evaluate(()=>{const body=document.getElementById('wizardBody');body.scrollTop=body.scrollHeight;});
+    const pinned=await page.locator('#wizardNext').boundingBox();
+    assert.equal(pinned.y,next.y,'BUG-ATTK-01 setup footer remains visible after body scroll');
+    await page.locator('#wizardNext').click();
+    await page.locator('[data-count="1"]').click();
+    await page.locator('#wizardNext').click();
+    await page.locator('[data-ruler]:not([disabled])').first().click();
+    await page.locator('#wizardNext').click();
+    await page.locator('#wizardNext').click();
+    await page.locator('#game').waitFor({state:'visible',timeout:30000});
     assert.deepEqual(errors,[]);
     await page.screenshot({path:'dist/screenshots/'+name+'-'+width+'x'+height+'.png'});
-    console.log('PASS',name,width+'x'+height,'real WASM boot, compact title and setup controls');
+    console.log('PASS',name,width+'x'+height,'real WASM boot, pinned setup controls and campaign start');
     await context.close();
    }
    const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});

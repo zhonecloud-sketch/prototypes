@@ -1,0 +1,13 @@
+# Keep browser modules and Unix launchers identical on every checkout.
+*.mjs text eol=lf
+*.json text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.command text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf

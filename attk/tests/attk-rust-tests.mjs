@@ -31,7 +31,7 @@ for(let i=0;i<10000;i++){
  equal('giveFoodGain',[integer(3000001),integer(101),integer(101),integer(3000001),integer(4)]);
  const values=Array.from({length:8},()=>random());
  exchange('meleeExchange',[a,b,integer(7),integer(7)],values,[factor]);
- exchange('ambushExchange',[a,b,integer(7)],values);
+ exchange('ambushExchange',[a,b,integer(7)],values,[factor]);
 }
 for(const soldiers of [0,1,99,100,10000])for(const weapons of [0,1,99,100,10000]){
  equal('equipmentPercent',[{soldiers,weapons}]);

@@ -44,7 +44,8 @@ The original `docs/test_spec.md` still describes the inherited v56 suite.
 - Script: `node tests/attk-server-tests.mjs`.
 - Inputs: the platform executable, a dynamic local port and actual
   index, media, js-yaml and WASM files.
-- Method: spawn the server, wait for its listening URL, make HTTP
+- Method: run the actual desktop launcher with --no-open, wait for its
+  listening URL, make HTTP
   requests, instantiate the served WASM and inspect byte-range content.
 - Cases: readiness, index title, WASM MIME, blocked source/traversal,
   GET/HEAD, rejected POST, first audio bytes, invalid audio range,
@@ -88,7 +89,9 @@ The original `docs/test_spec.md` still describes the inherited v56 suite.
 - Viewports: 667x375, 844x390, 915x412 and 1280x720, plus 390x844 portrait.
 - Method: load the real HTTP index, await the launch screen, confirm the
   live WASM ABI, inspect title and overflow, click New Game, then inspect
-  setup controls. Portrait checks verify rotation guidance.
+  setup controls. Scroll scenario content and verify the footer stays
+  visible (BUG-ATTK-01), then complete setup and start a campaign.
+  Portrait checks verify rotation guidance.
 - Output: per-browser/viewport pass lines and setup screenshots.
 - Success: no page errors; engine ABI is 1; menu/setup controls fit;
   no horizontal document overflow; rotation guidance is visible.
@@ -137,7 +140,7 @@ The original `docs/test_spec.md` still describes the inherited v56 suite.
 
 ### P-ATTK-04: full campaign rendered in browser automation
 
-- Gap: current real-browser test reaches setup, not every gameplay screen.
+- Gap: the browser test starts a campaign, not every gameplay screen.
 - Design: seed a public game state fixture through a test-only entry,
   then exercise deployment, dialogs, attacks, messenger and save flows
   at the smallest supported viewport without shipping the test entry.

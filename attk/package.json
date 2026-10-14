@@ -10,7 +10,7 @@
     "benchmark:ai": "node tools/benchmark-ai.mjs",
     "test:audio:ui": "node tests/v55-ui-tests.mjs",
     "test:v56:ui": "node tools/verify-charge-arrival-raster-v56.mjs && node tests/v56-ui-tests.mjs",
-    "test:rust": "node tests/attk-rust-tests.mjs && node tests/attk-server-tests.mjs"
+    "test:rust": "node tools/ai-rules.mjs --check && node tests/attk-rust-tests.mjs && node tests/attk-server-tests.mjs"
   },
   "devDependencies": {
     "jsdom": "30.1.2",
