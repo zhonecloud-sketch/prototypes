@@ -40,8 +40,9 @@ wasm-bindgen, wasm-pack, Python server or native webview requirements.
 The Windows build statically links its C runtime. CI inspects the actual
 executable's normal and delayed DLL imports to verify that property.
 
-Build outputs live in `attk/target`, `attk/bin`, `attk/wasm` and
-`attk/dist`. These are ignored by Git.
+Build intermediates in target/dist and local Mac/Linux host binaries stay
+ignored. The Windows executable, shared WASM and RUNTIME-INFO.json are
+tracked in Git so a current Windows checkout can play without a compiler.
 
 ## Get the project into the existing Windows clone
 
@@ -54,38 +55,53 @@ cd C:\automation\prototypes
 git status
 git pull --ff-only
 cd attk
+.\start-game.bat
 ```
 
-The repository now has both `rtk2` and `attk`. If Git reports a conflict,
+The repository now has both `rtk2` and `attk`. Windows runtime files are
+included in the checkout. If Git reports a conflict,
 dirty tracked files or diverged branches, stop and resolve that condition.
 Do not use reset, clean or forced replacement to proceed.
 
 This fork uses a private copy of js-yaml in `attk/vendor`. The original
 sibling `lib` and the original `rtk2` files are unchanged.
 
-## Prebuilt installation: simplest first test
+## Windows: run the committed runtime
 
-1. Sign in to GitHub and open [ATTK builds][builds].
-2. Open a completed successful run for the commit you have checked out.
-3. For an existing checkout, download the small runtime-only artifact:
-   - `attk-windows-x64-runtime`: Windows 10/11, 64-bit Intel/AMD.
-   - `attk-macos-arm64-runtime`: Apple Silicon Mac.
-   - `attk-macos-x64-runtime`: Intel Mac.
-   - `attk-linux-x64-runtime`: 64-bit Linux with compatible glibc.
-4. Extract it directly into your matching `attk` checkout. Its root
-   contains `bin`, `wasm` and `RUNTIME-INFO.json`.
-5. Inspect RUNTIME-INFO.json for commit, runtime sizes and SHA-256 hashes.
-   Do not mix runtime outputs with source from another commit.
-6. If you have no checkout, choose the full artifact without `-runtime`.
-   Extract its complete `attk` folder into a user-writable location.
-   BUILD-INFO.json records that full package's file hashes.
+A Git pull now provides both compiled files at these exact paths:
 
-The small runtime artifact avoids downloading the artwork/music again.
-Full packages include assets and source for a standalone folder.
+```text
+C:\automation\prototypes\attk\bin\attk-server.exe
+C:\automation\prototypes\attk\wasm\attk_engine.wasm
+```
 
-Artifacts are compiled build outputs, delivered by GitHub's artifact
-download mechanism. They are not a replacement for normal Git source
-updates. Artifacts can expire; rebuild from source when necessary.
+No Rust, C++ tools, Python or Node installation is required to play.
+RUNTIME-INFO.json records SHA-256 hashes, sizes, Git blob identities and
+a fingerprint of the compiled source inputs. Its commit is the build
+source commit. Later documentation changes may have a different HEAD.
+
+Validated Windows builds publish only the two runtime files and their
+provenance. They reject source changes made while the build is running.
+A second Windows job checks the resulting fresh checkout and launches
+the runtime with Cargo absent from PATH and the test user's profile.
+
+If local edits stop a fast-forward pull, retain those edits and resolve
+them before updating. Do not reset or discard your work to obtain binaries.
+
+## Optional prebuilt packages for other platforms
+
+The build Artifacts remain available for Apple Silicon Mac, Intel Mac,
+Linux x64 and a complete portable Windows folder. Sign in to GitHub and
+open [ATTK builds][builds]. Choose the package matching your host.
+
+For an existing checkout, the small runtime artifact contains bin, wasm
+and RUNTIME-INFO.json. For a separate portable installation, extract the
+whole attk folder from the full artifact. The Windows Git checkout needs
+no separate runtime ZIP.
+
+Artifact outputs can expire. Source and the committed Windows runtime
+remain available through Git. Inspect the package's BUILD-INFO.json or
+RUNTIME-INFO.json before mixing package files with a checkout.
 
 Builds are unsigned test outputs. Windows or macOS may show a warning.
 Verify the source and download before choosing an OS-specific exception.
@@ -111,27 +127,36 @@ task, system browser change or firewall rule is installed by the launcher.
 Do not double-click index.html. Browser module/data security requires
 HTTP for this game; the launcher opens that exact file through the server.
 
-## If the launcher reports Cargo is missing
+## If compiled files are missing
 
-A Git checkout supplies source, not the ignored bin/wasm build outputs.
-At least one required runtime file is missing if the launcher tries to
-build. A runtime ZIP may also have been extracted one folder too deeply.
+A current Windows Git checkout includes bin/attk-server.exe and
+wasm/attk_engine.wasm. Update the clone first:
 
-Check these exact paths in PowerShell:
+```powershell
+git -C C:\automation\prototypes pull --ff-only
+```
+
+Check the exact locations:
 
 ```powershell
 Test-Path C:\automation\prototypes\attk\bin\attk-server.exe
 Test-Path C:\automation\prototypes\attk\wasm\attk_engine.wasm
 ```
 
-Both must return True to use the prebuilt route. Extract the small Windows
-runtime so bin and wasm sit directly inside attk, then rerun start-game.bat.
-Rust is not required to play with these prebuilt files.
+Both must return True. A portable artifact can still be extracted one
+folder too deeply; bin and wasm must be directly inside attk.
 
-If you want a source build instead, install Rust and the C++ prerequisites
-below. The updated scripts also check the standard user Cargo location
-when a newly installed Rust toolchain has not yet appeared on PATH.
-They do not install Rust or change your system PATH.
+If you intentionally removed the local runtime while cleaning the setup,
+a pull does not undo tracked local deletions. Restore just those files:
+
+```powershell
+cd C:\automation\prototypes\attk
+git restore -- bin/attk-server.exe wasm/attk_engine.wasm RUNTIME-INFO.json
+```
+
+Use this restore command only to recover the runtime files you removed.
+For compilation, install Rust and C++ prerequisites below. The scripts
+also check the standard user Cargo location when it is absent from PATH.
 
 ## Source installation on Windows
 
@@ -351,9 +376,10 @@ untouched; normal compatibility checks can reject older profiles.
 4. macOS/Linux: run `sh uninstall.sh`.
 5. Type REMOVE when asked.
 
-This deletes only ATTK's `target`, `bin`, `wasm` and `dist` outputs.
-It keeps source, assets, docs, the RTK2 project, shared tools and saves.
-The folder can be rebuilt later.
+This deletes ATTK's local target/bin/wasm/dist folders. The Windows runtime
+files in bin/wasm are now tracked, so Git reports their local deletion.
+Source, assets, docs, RTK2, shared tools and saves remain. Recover the
+committed runtime with the targeted restore command above, or rebuild.
 
 Remove `attk/node_modules` separately if you installed test dependencies.
 That directory contains only the project's npm installation.

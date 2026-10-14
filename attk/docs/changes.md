@@ -4059,3 +4059,20 @@ Package source-commit metadata now records the actual build commit.
 
 The Windows launcher binary statically links its C runtime. A PE import
 test rejects external Visual C++/UCRT runtime DLL dependencies.
+
+<a id="attk-tracked-runtime"></a>
+
+## ATTK runtime delivery through Git
+
+14 October 2026.
+
+Track bin/attk-server.exe, wasm/attk_engine.wasm and RUNTIME-INFO.json.
+Publish validated Windows outputs after the build checks pass. Retain
+binary bytes across OS checkouts and record hashes/source provenance.
+Reject concurrent changes to main during publication.
+
+BUG-ATTK-03 validates exact files in a fresh checkout and starts the game
+with Cargo unavailable. Windows users can git pull and run start-game.bat
+without a separate runtime download. Sites had no connected build terminal
+in the authoring session; GitHub's Windows runner performed compilation.
+No AI profiles, artworks, gameplay mechanics or shared lib files changed.

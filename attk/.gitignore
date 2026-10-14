@@ -18,12 +18,14 @@ library-helpers*/
 RTK2-Remastered-*.zip
 *-deployment.tar.gz
 
-# Reproducible local Rust outputs; distributed through build artifacts.
+# Rust intermediates and host-local binaries stay untracked.
 /target/
-/bin/
-/wasm/
+/bin/*
+!/bin/attk-server.exe
+/wasm/*
+!/wasm/attk_engine.wasm
 /dist/
 
 # Keep this project's authored instructions tracked.
 !AGENTS.md
-/RUNTIME-INFO.json
+!/RUNTIME-INFO.json

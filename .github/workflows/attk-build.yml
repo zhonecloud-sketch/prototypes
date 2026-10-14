@@ -108,3 +108,72 @@ jobs:
           name: attk-browser-screenshots
           path: attk/dist/screenshots/
           if-no-files-found: ignore
+
+  publish-runtime:
+    name: Commit validated Windows runtime
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: windows-2022
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    outputs:
+      runtime_commit: ${{ steps.commit.outputs.runtime_commit }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Fetch validated Windows runtime
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: attk-windows-x64-runtime
+          path: attk
+      - name: Record source fingerprint and verify exact bytes
+        working-directory: attk
+        env:
+          ATTK_BUILD_COMMIT: ${{ github.sha }}
+        run: node tools/runtime-files.mjs --record
+      - name: Commit only the requested runtime files and provenance
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          current=$(git rev-parse FETCH_HEAD)
+          if [ "$current" != "$GITHUB_SHA" ]; then
+            echo "Main changed during validation; refusing to overwrite it."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- attk/bin/attk-server.exe attk/wasm/attk_engine.wasm attk/RUNTIME-INFO.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish validated ATTK Windows runtime"
+            git push origin HEAD:main
+          fi
+          echo "runtime_commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  verify-checkout:
+    name: Fresh checkout launches without Cargo
+    needs: publish-runtime
+    runs-on: windows-2022
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: attk
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.publish-runtime.outputs.runtime_commit }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Verify tracked files, source fingerprint and ABI
+        run: node tests/tracked-runtime-tests.mjs
+      - name: Run the checkout launcher with Cargo unavailable
+        run: node tests/windows-launcher-tests.mjs

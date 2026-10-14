@@ -186,3 +186,19 @@ Its event-routing assertions are retained, without changing game behavior.
 - Success: a complete prebuilt runtime runs without Cargo; missing outputs
   explain their installation route; available Cargo still selects a build.
 - Cleanup: stop the owned child process and remove only temporary fixtures.
+
+## BUG-ATTK-03: runtime files supplied by Git
+
+- Script: `node tests/tracked-runtime-tests.mjs`.
+- Inputs: a fresh checkout of the published runtime commit.
+- Method: require the executable, WASM and provenance to be Git tracked;
+  verify byte sizes, SHA-256, Git blobs and compiled-source fingerprint;
+  instantiate the committed WASM and check its exported ABI.
+- Output: a named pass line or the exact failed identity/input assertion.
+- Success: both runtime files are present and match the validated build.
+- The follow-up Windows job runs windows-launcher-tests.mjs, including
+  actual HTTP startup with Cargo removed from PATH and the test profile.
+- Publication: runtime-files.mjs validates the build-source commit before
+  recording provenance. The Git push refuses a concurrently changed main.
+- Cost control: unchanged compiled inputs/bytes retain existing provenance
+  so documentation-only builds do not add another runtime commit.

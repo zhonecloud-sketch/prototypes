@@ -11,3 +11,7 @@
 *.css text eol=lf
 *.bat text eol=crlf
 *.ps1 text eol=crlf
+
+# Preserve the committed runtime bytes on every OS.
+*.exe binary
+*.wasm binary

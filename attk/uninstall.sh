@@ -10,4 +10,5 @@ for name in target bin wasm dist; do
  [ ! -L "$root/$name" ] || { echo "Refusing linked folder: $name"; exit 1; }
  rm -rf -- "$root/$name"
 done
-echo "Generated ATTK files removed. Source can be rebuilt."
+echo "Local runtime/build folders removed. Git reports tracked runtime deletions."
+echo "Restore the committed runtime files, or rebuild for this host."

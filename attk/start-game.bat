@@ -27,7 +27,7 @@ echo Download attk-windows-x64-runtime from the ATTK build Artifacts.
 echo https://github.com/zhonecloud-sketch/prototypes/actions
 echo Copy its bin and wasm folders directly into the folder shown above.
 echo Do not leave them inside an extra extracted archive folder.
-echo Git pull supplies source files; compiled runtime files are separate.
+echo In a Git checkout, git pull --ff-only normally supplies both runtime files.
 echo.
 echo To compile from source, install Rust and the Windows C++ Build Tools.
 echo Full instructions: docs\installation.md

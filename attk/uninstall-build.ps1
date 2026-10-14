@@ -17,4 +17,5 @@ foreach ($Name in @('target', 'bin', 'wasm', 'dist')) {
         Remove-Item -LiteralPath $Item -Recurse -Force
     }
 }
-Write-Host 'Generated ATTK files removed. Source can be rebuilt.'
+Write-Host 'Local runtime/build folders removed. Git reports tracked runtime deletions.'
+Write-Host 'Restore bin/attk-server.exe and wasm/attk_engine.wasm to play again.'
