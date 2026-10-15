@@ -2,7 +2,7 @@ import {ENTRY_SLOTS,DEFENDER_ZONES,ATTACKER_ZONES} from './original-deployment.m
 import {meleeExchange,ambushExchange,fleeChance} from './native-combat.mjs?v=56';
 import {provinceTerrain,recruitmentProtection} from './campaign-fidelity.mjs?v=56';
 import {provinceDirection} from './geography.mjs?v=56';
-import {resolvePersonalCombat} from './personal-combat.mjs?v=58';
+import {resolvePersonalCombat} from './personal-combat.mjs?v=60';
 // Original province layouts with offset-column hex geometry and revised battle rules.
 export const TERRAIN=['Plain','Jungle','Hill','Mountain','Water','Castle','Palace'];
 export const WEATHER={sunny:'Clear',fewclouds:'Few clouds',cloudy:'Cloudy',rain:'Rain'};
@@ -184,7 +184,7 @@ function advance(game){const b=game.s.battle;for(const u of living(b).filter(u=>
  b.side=b.side==='attack'?'defend':'attack';for(const u of living(b).filter(u=>u.side===b.side)){u.ordered=u.orderDay===b.day;if(!u.ordered)u.mobility=Math.max(u.mobility,dailyMobility(u.training));}b.selected=living(b).find(u=>u.side===b.side&&!u.ordered)?.id??living(b).find(u=>u.side===b.side)?.id??null;outcome(b);return event(b,`${b.side==='attack'?'Attacker':'Defender'}’s turn`);
 }
 // Compatibility exports; tactical policy lives in ai-battle.mjs.
-export {planBattleRoute,palaceGuard,minimumStrikeLoss,aiAttackTarget,armyPower,safeFireTarget,tacticalPosition,aiBattle} from './ai-battle.mjs?v=58';
+export {planBattleRoute,palaceGuard,minimumStrikeLoss,aiAttackTarget,armyPower,safeFireTarget,tacticalPosition,aiBattle} from './ai-battle.mjs?v=60';
 const cOpening=b=>b.challenge?.opening===true&&!!b.openingChallenge;
 export function validateBattle(b,state,terrains){
  if(b?.openingComplete!==undefined&&typeof b.openingComplete!=='boolean')throw Error('Invalid personal combat completion.');

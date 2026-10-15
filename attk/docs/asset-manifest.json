@@ -121,6 +121,27 @@
       "bytes": 1609827,
       "reason": "Unreferenced intermediate PNG working export; final WebP remains active or separately retained.",
       "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/52c4d359dd5576b220b98c2a0329e34473e854bd/rtk2/assets/weather.png"
+    },
+    {
+      "path": "assets/artwork/personal-combat-close-2.webp",
+      "gitBlob": "bb644c91f9a28a2c3fe67ef510241605906357cf",
+      "bytes": 473502,
+      "reason": "User requested one still combat scene; frames 2-4 removed.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-2.webp"
+    },
+    {
+      "path": "assets/artwork/personal-combat-close-3.webp",
+      "gitBlob": "8de55c2c4bb381486f8b676e19e5a0d85ca08873",
+      "bytes": 463800,
+      "reason": "User requested one still combat scene; frames 2-4 removed.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-3.webp"
+    },
+    {
+      "path": "assets/artwork/personal-combat-close-4.webp",
+      "gitBlob": "453180f499e61c8482cbebfc6d32fd46f346cac2",
+      "bytes": 470134,
+      "reason": "User requested one still combat scene; frames 2-4 removed.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-4.webp"
     }
   ],
   "relocated": [
@@ -1309,8 +1330,8 @@
     }
   ],
   "totals": {
-    "retiredFiles": 17,
-    "retiredBytes": 19542031,
+    "retiredFiles": 20,
+    "retiredBytes": 20949467,
     "relocatedFiles": 169
   },
   "documentationMigrated": [
@@ -1540,10 +1561,7 @@
     "assets/artwork/personal-combat-win.webp",
     "assets/artwork/personal-combat-loss.webp",
     "assets/artwork/personal-combat-sprites.webp",
-    "assets/artwork/personal-combat-close-1.webp",
-    "assets/artwork/personal-combat-close-2.webp",
-    "assets/artwork/personal-combat-close-3.webp",
-    "assets/artwork/personal-combat-close-4.webp"
+    "assets/artwork/personal-combat-close-1.webp"
   ],
   "generatedManifest": "artwork/personal-combat-manifest.json"
 }

@@ -121,7 +121,10 @@
           "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
         }
       ],
-      "runtime": true
+      "runtime": false,
+      "retired": true,
+      "status": "Removed at user request; prompt, hashes and source metadata retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-2.webp"
     },
     {
       "role": "close-3",
@@ -148,7 +151,10 @@
           "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
         }
       ],
-      "runtime": true
+      "runtime": false,
+      "retired": true,
+      "status": "Removed at user request; prompt, hashes and source metadata retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-3.webp"
     },
     {
       "role": "close-4",
@@ -175,7 +181,10 @@
           "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
         }
       ],
-      "runtime": true
+      "runtime": false,
+      "retired": true,
+      "status": "Removed at user request; prompt, hashes and source metadata retained.",
+      "archive": "https://github.com/zhonecloud-sketch/prototypes/blob/370a91128ff3a0a14032ab7664219e98e0e6493b/attk/assets/artwork/personal-combat-close-4.webp"
     }
   ]
 }

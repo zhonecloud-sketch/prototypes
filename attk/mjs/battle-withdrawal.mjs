@@ -1,5 +1,5 @@
 // main.exe 2cfbe: defeated field list, 25810 destinations, 25670 escape.
-import {retreatOptions,withdrawUnit,unitOwner} from './battle.mjs?v=58';
+import {retreatOptions,withdrawUnit,unitOwner} from './battle.mjs?v=60';
 export const defeatedUnits=g=>{const b=g.s.battle;return b?.outcome&&!b.abstractResolution?b.units.filter(u=>u.side!==b.outcome.winner&&!u.killed&&!u.fled&&!u.captured):[];};
 function captureWithoutExit(g,u){const b=g.s.battle;u.captured=true;u.routed=true;u.capturedBy=b.outcome.winner==='attack'?b.attacker:b.defender;b.eventSerial=(b.eventSerial||0)+1;const text=u.soldiers===0?`${g.officer(u.id).name}: army depleted to 0; captured.`:`${g.officer(u.id).name} could not retreat — captured; no adjacent friendly or unoccupied province.`;b.events.unshift(text);b.events=b.events.slice(0,50);b.messages.push({serial:b.eventSerial,text,day:b.day});b.messages=b.messages.slice(-50);}
 export function prepareDefeatedWithdrawal(g,autoHuman=false){

@@ -113,18 +113,6 @@
     {
       "file": "assets/artwork/personal-combat-close-1.webp",
       "sha256": "2591323e66ca4e0579b6417146a797226a41979fdbe66140e4a114c370c669f8"
-    },
-    {
-      "file": "assets/artwork/personal-combat-close-2.webp",
-      "sha256": "4eda674a95cf4915b5983c433fd2f20bdb02a521676139df92d5ff738c0a32ed"
-    },
-    {
-      "file": "assets/artwork/personal-combat-close-3.webp",
-      "sha256": "b9c658dbc42aa62c3057c36772556ce30e4efce5cc0f10fcbf2ac446c1a271bd"
-    },
-    {
-      "file": "assets/artwork/personal-combat-close-4.webp",
-      "sha256": "3810809861672727b2e2f09f8fe5947e1a067a55af0f729832aabf59df0fa98a"
     }
   ],
   "historicalAssets": "Scheduled history uses 15 standalone native 1983x793 v36 scenes plus a fallback, loaded on demand. v30 remains active for disasters, omens, stories and portraits; old history atlases remain for provenance/regression.",

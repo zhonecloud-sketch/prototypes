@@ -107,14 +107,15 @@ captions, no watermark.
 
 ## Close combat replacement frames
 
-Use the production prompt for frame 1, then the edit prompts for frames
-2–4 with the generated frame 1 as the edit target. Inspect frame 1 before
-editing. The runtime uses four opaque 1983 × 793 full-scene images. The
-original sprite atlas above is retained only as historical provenance.
+Historical generation instructions: use the production prompt for frame 1,
+then the edit prompts for frames 2-4 with generated frame 1 as the target.
+The original sequence was high guard, low block, counterattack, reset.
+These canonical prompt variants and source metadata remain unchanged.
 
-Expected sequence: high guard, low block, counterattack, reset. Each image
-lasts three seconds; the game ends the loop when strength decides a result.
-Source files, dimensions, conversion and hashes are in the manifest.
+The current runtime keeps only frame 1 as an opaque 1983 x 793 still image.
+Frames 2-4 were removed at the user's request. Their hashes, source-image
+requirements and Git archive links remain in the [asset manifest][manifest].
+The older sprite atlas is retained only as historical provenance.
 
 ## close-1 — production
 

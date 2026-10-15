@@ -1,8 +1,8 @@
 import {aiMode,AI_RULES_ID} from './ai-profile.mjs?v=56';
-import {aiGovernance} from './ai-governance.mjs?v=58';
-import {aiBattle,nextAIUnit} from './ai-battle.mjs?v=58';
-import {planGovernance} from './ai-planner-governance.mjs?v=58';
-import {planBattlefield,battlefieldObservation} from './ai-planner-battlefield.mjs?v=58';
+import {aiGovernance} from './ai-governance.mjs?v=60';
+import {aiBattle,nextAIUnit} from './ai-battle.mjs?v=60';
+import {planGovernance} from './ai-planner-governance.mjs?v=60';
+import {planBattlefield,battlefieldObservation} from './ai-planner-battlefield.mjs?v=60';
 import {forkAI,applyAIOrder,describeAIOrder} from './ai-simulation.mjs?v=56';
 const cache=new WeakMap();
 export function aiPlan(g,domain){const p=g.s.aiExtensions?.profiles[domain];if(!p||p.rulesId!==AI_RULES_ID||domain==='battlefield'&&!g.s.battle)return null;const stamp=JSON.stringify([domain,p,g.s.difficulty,g.s.ai,g.s.aiRulers,domain==='battlefield'?battlefieldObservation(g):g.s]),old=cache.get(g);if(old?.stamp===stamp)return old.plan;const plan=domain==='battlefield'?planBattlefield(g,p):planGovernance(g,p);cache.set(g,{stamp,plan});return plan;}

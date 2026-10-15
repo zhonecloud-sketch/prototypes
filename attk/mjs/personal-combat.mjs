@@ -1,4 +1,3 @@
-import {VISUAL_INTERVAL} from './message-playback.mjs?v=58';
 // Ordinary main.exe duel: 293AA bounds, 29304 counters and ten-round stop.
 // Counters are duel strength, not permanent WAR or soldiers. Native side 0
 // is defender; both damage calls occur even after the first reaches zero.
@@ -20,5 +19,5 @@ export function resolvePersonalCombat(defender,attacker,random,compromised=false
 export const personalCombatDuration=(duel,roundMs)=>duel.rounds.length*roundMs;
 export function personalCombatFrame(duel,elapsed,roundMs){
  const completed=Math.min(duel.rounds.length,Math.floor(Math.max(0,elapsed)/roundMs));
- return {round:Math.min(duel.rounds.length,completed+1),pose:Math.floor(Math.max(0,elapsed)/VISUAL_INTERVAL)%4,strength:completed?duel.rounds[completed-1]:duel.initial};
+ return {round:Math.min(duel.rounds.length,completed+1),strength:completed?duel.rounds[completed-1]:duel.initial};
 }

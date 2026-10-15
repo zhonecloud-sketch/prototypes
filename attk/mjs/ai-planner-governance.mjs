@@ -1,4 +1,4 @@
-import {hireCapacity} from './province-rules.mjs?v=58';
+import {hireCapacity} from './province-rules.mjs?v=60';
 import {invasionFoodPlan} from './war-provisions.mjs?v=56';
 import {forkAI,observationSeed,weighted,applyAIOrder} from './ai-simulation.mjs?v=56';
 const power=o=>o.soldiers*(.35+.35*o.training/100+.3*Math.min(1,o.weapons/Math.max(1,o.soldiers)))*(.5+o.war/100);

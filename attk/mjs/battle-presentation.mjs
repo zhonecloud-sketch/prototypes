@@ -1,7 +1,7 @@
 import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
-import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=58';
+import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=60';
 import {VISUAL_INTERVAL,messageDuration} from './message-playback.mjs?v=58';
-import {personalCombatDuration} from './personal-combat.mjs?v=58';
+import {personalCombatDuration} from './personal-combat.mjs?v=60';
 const lossMessage=text=>/\b(?:lost|loss(?:es)?|depleted|deserted)\b/i.test(text)&&/\b(?:men|soldiers|training|weapons|enemy|own|ambushed)\b/i.test(text);
 export const battleMessageDuration=(item,state)=>item?.personalCombat?.duel?personalCombatDuration(item.personalCombat.duel,messageDuration(state)):item?.personalCombat||item?.visualInterval||lossMessage(item?.text||'')?VISUAL_INTERVAL:messageDuration(state);
 export const activeBattleUnit=(battle,unit)=>battle?.phase==='battle'&&!battle.outcome&&!battle.suspended&&battle.selected===unit.id&&unit.side===battle.side&&unit.placed&&!unit.ordered&&!unit.fled&&!unit.routed&&unit.soldiers>0;

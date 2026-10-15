@@ -24,10 +24,10 @@ native entries 293AA and 29304 in the witness file above.
 
 `personalCombatDuration(duel, roundMs)` returns milliseconds for the recorded
 rounds at the supplied Game Speed. `personalCombatFrame(duel, elapsed,
-roundMs)` returns `{round, pose, strength}`. Strength updates once per
-`roundMs`; the four poses loop with each pose lasting `VISUAL_INTERVAL`
-(3000 ms). The final recorded result ends playback immediately, including
-mid-pose. Evidence: `tests/personal-combat-tests.mjs`, timing cases.
+roundMs)` returns `{round, strength}`. Strength updates once per
+`roundMs`. The combat view keeps `personal-combat-close-1.webp` visible
+throughout playback. The final recorded result ends playback immediately.
+Evidence: `tests/personal-combat-tests.mjs`, timing cases.
 
 The native timing remains recorded in the witness file. The requested
 presentation uses the independent clocks above. Evidence: native
