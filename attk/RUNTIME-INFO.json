@@ -1,13 +1,13 @@
 {
   "platform": "attk-windows-x64",
-  "commit": "dfde7fdbcf813c20aca0dcd6d72a0032a6e1d026",
+  "commit": "24aa7df0e05a4f3d82bd654cbd3727b3bd6659f0",
   "rust": "1.90.0",
   "runtime": [
     {
       "path": "bin/attk-server.exe",
       "bytes": 367616,
-      "sha256": "5661baf2acf01c8481dc1762f665e8724f5fa79930859c5aac26d68d7b6274c2",
-      "gitBlob": "4e8a4b57e69972466a9c937028bee301044cfd7b"
+      "sha256": "2828cd79fc9bf6d513509d7aa0262cd18dbc8ac151d79d35d510d1ee6743afd9",
+      "gitBlob": "b05dfa982f47c1c2c694e7fddfc158558147f84d"
     },
     {
       "path": "wasm/attk_engine.wasm",
