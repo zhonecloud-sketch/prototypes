@@ -5,7 +5,7 @@ const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirector
 const exists=p=>assert(fs.existsSync(path.join(root,p)),p);
 for(const row of manifest.relocated){exists(row.to);assert(!fs.existsSync(path.join(root,row.from)),row.from);const data=fs.readFileSync(path.join(root,row.to));assert.equal(data.length,row.bytes,row.to);const blob=crypto.createHash('sha1').update('blob '+data.length+'\0').update(data).digest('hex');assert.equal(blob,row.gitBlob,row.to);}
 for(const row of manifest.retired)assert(!fs.existsSync(path.join(root,row.path)),row.path);
-const media=walk(path.join(root,'assets')).map(p=>path.relative(root,p).replaceAll(path.sep,'/')).sort();assert.deepEqual(media,manifest.relocated.map(r=>r.to).sort());assert(media.every(p=>/^assets\/(artwork|sounds|music)\//.test(p)));
+const media=walk(path.join(root,'assets')).map(p=>path.relative(root,p).replaceAll(path.sep,'/')).sort();assert.deepEqual(media,[...manifest.relocated.map(r=>r.to),...(manifest.generated||[])].sort());assert(media.every(p=>/^assets\/(artwork|sounds|music)\//.test(p)));
 assert.equal(manifest.totals.retiredBytes,manifest.retired.reduce((n,r)=>n+r.bytes,0));assert.equal(manifest.totals.relocatedFiles,manifest.relocated.length);
 console.log('PASS retired media absent; all retained artwork/audio grouped and byte-identical to original Git blobs');
 const requests=[];globalThis.Image=class{set src(value){requests.push(value);queueMicrotask(()=>this.onload());}};await loadRasterAssets();

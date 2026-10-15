@@ -1,0 +1,77 @@
+{
+  "generator": "Built-in imagegen tool",
+  "date": "2026-10-15",
+  "inputImages": [],
+  "sourceImageRequirements": "No original DOS image or reference image was supplied.",
+  "conversion": "Uniform proportional fit, centered; WebP quality 90. Event matte #172021; sprite alpha retained.",
+  "assets": [
+    {
+      "role": "challenge",
+      "file": "assets/artwork/personal-combat-challenge.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 380910,
+      "sha256": "413eb1c8311695fbd37fb609bb9d30a75b65fdfb5e64a73ab783b8906192bba0",
+      "sourceFile": "exec-c4250348-1fc7-42d4-ad0a-0d45023c4b9a.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "6b13ecb6d2e23976f08ce1ee39cf1569fdd1adb9f555775c2d561cc4203de9a0",
+      "prompt": "../prompts/personal-combat.md#challenge--production"
+    },
+    {
+      "role": "win",
+      "file": "assets/artwork/personal-combat-win.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 369006,
+      "sha256": "f3353db06426ac55e4f2d967bbd5d8f39262770b7313754bb9dfb76511993358",
+      "sourceFile": "exec-71c9a5fd-1b84-4277-bd32-84e6a385ff30.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "bf63f722da56836967ac859ea79cfea9ed02c9fb18b0e9db2f958d98e30361d6",
+      "prompt": "../prompts/personal-combat.md#win--production"
+    },
+    {
+      "role": "loss",
+      "file": "assets/artwork/personal-combat-loss.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 372284,
+      "sha256": "e957e73236605003eddacb6cfc7d42e25dc95d10736c953a3f3edfe7a8ab5768",
+      "sourceFile": "exec-100f28e1-94b1-4d09-850d-d84768b3233a.png",
+      "sourceDimensions": [
+        1984,
+        793
+      ],
+      "sourceSha256": "ecebb32abaf7c4eeb0dda6b0af83c239c84f6f7fc5d828cfb7fb88db6d55467a",
+      "prompt": "../prompts/personal-combat.md#loss--production"
+    },
+    {
+      "role": "sprites",
+      "file": "assets/artwork/personal-combat-sprites.webp",
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "bytes": 667654,
+      "sha256": "160d997f129e17e625f31eaab932938f67a74b31ec1cec6651a5e281000bdce7",
+      "sourceFile": "exec-89c44923-ff77-489a-a334-ad5eb8d7aa2c.png",
+      "sourceDimensions": [
+        1774,
+        887
+      ],
+      "sourceSha256": "63727659c2444db479844cca114abcad8728ddad3c6867a74e4d5affaa1256d7",
+      "prompt": "../prompts/personal-combat.md#sprites--production"
+    }
+  ]
+}

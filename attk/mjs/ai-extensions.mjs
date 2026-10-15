@@ -1,6 +1,6 @@
 import {aiMode,AI_RULES_ID} from './ai-profile.mjs?v=56';
 import {aiGovernance} from './ai-governance.mjs?v=56';
-import {aiBattle,nextAIUnit} from './ai-battle.mjs?v=56';
+import {aiBattle,nextAIUnit} from './ai-battle.mjs?v=57';
 import {planGovernance} from './ai-planner-governance.mjs?v=56';
 import {planBattlefield,battlefieldObservation} from './ai-planner-battlefield.mjs?v=56';
 import {forkAI,applyAIOrder,describeAIOrder} from './ai-simulation.mjs?v=56';

@@ -5,7 +5,7 @@ try{
   throw Error('Start with start-game.bat, start-game.command or start-game.sh.');
  status.textContent='Loading the Rust engine…';
  await initializeRustKernel();
- await import('./app.mjs?v=attk1');
+ await import('./app.mjs?v=attk2');
 }catch(error){
  status.textContent=error.message;
  const retry=document.getElementById('retry');

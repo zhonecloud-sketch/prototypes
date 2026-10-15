@@ -68,3 +68,12 @@ The six initial v56 groups failed on v55 (concealed Charge, empty-miss handoff, 
 | BUG-56-07 captive recruitment | `v56-tests`:64 human/AI native vectors match acceptance, INT+WAR69/70 choices, exact new loyalty and one jitter/no refusal draw, including old loyalty90/99/100, former hostility100, ownership and former-advisor cleanup. Legacy refused ordinary captive is recruitable. Updatedv29 retains serving-general immunity and separately confirms Guan Yu/Zhang Fei captive acceptance. Ruler menu remains separately tested. |
 
 Native witness sources: `tools/verify-native-concealed-v56.py`, `verify-native-charge-arrival-v56.py`, `verify-native-charge-terminal-v56.py`, `verify-native-settlement-v56.py`. Original executable SHA256 `25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8`; the executable itself is not packaged. Their JSON and notes list hooked input/render/casualty/geometry boundaries. 190 witnesses are bounded execution evidence, not complete DOS-game certification. Commercial licence findings are source research rather than test assertions.
+
+## Personal combat follow-up
+
+PC-01 through PC-04 now have deployment, native arithmetic, mounted UI and
+actual browser regressions. See [the case mapping and commands][pc-cases].
+The original executable contributes 106 bounded witnesses. Physical phone
+and sound-enabled DOS hardware timing limits remain explicit there.
+
+[pc-cases]: personal-combat.md

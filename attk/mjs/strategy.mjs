@@ -17,7 +17,7 @@ import {runMonthlyEvents,validateMonthlyState,EVENT_TYPES} from './monthly-event
 import {Game as Domestic,createCampaign as baseCreate,validateSave as baseValidate,clamp,DEFAULT_RULES} from './engine.mjs?v=56';
 import {applyGeography} from './geography.mjs?v=56';
 import {NEW_ORDERS,executeProvinceOrder,validateProvinceOrders,updateVisitors,covertUpkeep,hireCapacity} from './province-rules.mjs?v=56';
-import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=56';
+import {spawnBattle,act,aiBattle,outcome,validateBattle,WEATHER,setWeather,controllerSide,ownerFor,unitOwner,living,dailyMobility} from './battle.mjs?v=57';
 export {DEFAULT_RULES};export const AI_DEFAULTS={intelligence:60,aggression:55};
 const clone=v=>JSON.parse(JSON.stringify(v));
 export const activeRulers=s=>s.rulers.filter(r=>s.provinces.some(p=>p.owner===r.id)||(s.roaming||[]).some(p=>p.owner===r.id));
@@ -28,7 +28,7 @@ export class Game extends Domestic{
  isHuman(id=this.s.player){return this.s.humanRulers.includes(id);}
  battleDetailed(b=this.s.battle){if(!b)return false;if(this.s.settings.battleView==='all')return true;return this.s.humanRulers.some(id=>{const r=this.ruler(id);return (id===b.attacker&&b.units.some(u=>u.side==='attack'&&u.id===r.leader))||(id===b.defender&&this.province(b.target).officers.includes(r.leader));});}
  battleOwner(){return this.s.battle?ownerFor(this.s.battle,controllerSide(this.s.battle)):this.s.player;}
- battleHuman(){return this.battleDetailed()&&this.isHuman(this.battleOwner());}
+ battleHuman(){return this.battleDetailed()&&this.s.battle?.challenge?.automatic===undefined&&this.isHuman(this.battleOwner());}
  resolveUnwatchedBattle(){
  if(!this.s.battle||this.battleDetailed())return false;const b=this.s.battle;
  resolveAbstractBattle(this,b);this.resolveBattle();return true;

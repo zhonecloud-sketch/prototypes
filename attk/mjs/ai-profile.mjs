@@ -1,4 +1,4 @@
-import {AI_RULES_ID} from './ai-rules-id.mjs?v=56';
+import {AI_RULES_ID} from './ai-rules-id.mjs?v=57';
 export {AI_RULES_ID};
 export const AI_POLICY_VERSION=1;
 export const AI_WEIGHTS={

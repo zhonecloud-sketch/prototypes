@@ -63,7 +63,7 @@ export function orderInsight(g,purpose,officer,data={}){
 export function enhanceControls(root,g){
  enhanceNumericControls(root);enhanceTextControls(root);
  for(const select of root.querySelectorAll('select')){
-  if(select.dataset.themed==='true'||select.id==='battleQuickUnit'&&select.closest('#deploymentDetails'))continue;select.dataset.themed='true';select.classList.add('native-choice');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
+  if(select.dataset.themed==='true'||['duelInitiator','duelResponder'].includes(select.id)||select.id==='battleQuickUnit'&&select.closest('#deploymentDetails'))continue;select.dataset.themed='true';select.classList.add('native-choice');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
   const board=document.createElement('div');board.className='choice-board';board.setAttribute('role','group');board.setAttribute('aria-label',select.getAttribute('aria-label')||select.previousElementSibling?.textContent||'Choose');select.after(board);
   const purpose=select.dataset.purpose||document.getElementById('dialogTitle')?.textContent||select.getAttribute('aria-label')||'',officerIds=['officer','allocationOfficer','battleUnit','battleQuickUnit','inspectTarget','challengeTarget','bribeTarget','reinforceOfficer'];
   const cards=[];for(const option of select.options){

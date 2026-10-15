@@ -1,4 +1,4 @@
-import {unitOwner} from './battle.mjs?v=56';
+import {unitOwner} from './battle.mjs?v=57';
 import {hireCapacity} from './province-rules.mjs?v=56';
 import {eligibleRoyalChildren} from './ruler-family.mjs?v=56';
 

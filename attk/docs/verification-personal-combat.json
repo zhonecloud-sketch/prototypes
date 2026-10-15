@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-15",
+  "node": "v24.21.0",
+  "originalMainExeSha256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "nativeWitnesses": {
+    "command": "python tools/verify-native-duel.py MAIN.EXE OUTPUT.json",
+    "passed": 106,
+    "evidence": "native-personal-combat.json"
+  },
+  "rustWasm": {
+    "command": "node tests/attk-rust-tests.mjs",
+    "checks": 100055,
+    "passed": true
+  },
+  "server": {
+    "command": "node tests/attk-server-tests.mjs",
+    "passed": true,
+    "environment": "Outside sandbox: loopback blocked inside sandbox"
+  },
+  "enginePlayback": {
+    "command": "node tests/personal-combat-tests.mjs",
+    "groups": 10,
+    "passed": true
+  },
+  "mountedCombat": {
+    "command": "node tests/personal-combat-ui-tests.mjs",
+    "groups": 4,
+    "passed": true
+  },
+  "inheritedArrivalRaster": {
+    "command": "node tools/verify-charge-arrival-raster-v56.mjs . docs/native-charge-arrival-v56.json OUTPUT.json",
+    "cases": 24,
+    "passed": true
+  },
+  "inheritedMounted": {
+    "command": "node tests/v56-ui-tests.mjs",
+    "groups": 3,
+    "passed": true,
+    "environment": "Ignored verification copy with Windows URL/temp-path and vendored YAML adapters"
+  },
+  "browser": {
+    "command": "node tests/personal-combat-browser-tests.mjs",
+    "browser": "Microsoft Edge 155.0.4283.45",
+    "viewports": [
+      [
+        568,
+        270
+      ],
+      [
+        640,
+        360
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "passed": true,
+    "physicalPhone": false
+  },
+  "rawWindowsRegression": {
+    "passed": 52,
+    "total": 56,
+    "failed": [
+      "node tests/v29-tests.mjs",
+      "node tests/v30-tests.mjs",
+      "node tests/v56-tests.mjs",
+      "node tests/asset-layout-tests.mjs"
+    ]
+  },
+  "portableVerification": {
+    "passed": 56,
+    "total": 56,
+    "environment": "Ignored copy; only three inherited test URL paths and SVG CRLF checkout normalized",
+    "failures": []
+  },
+  "limits": [
+    "Physical iOS Safari and Android Chrome pending",
+    "Native timing witnesses use sound-disabled BIOS waits; full DOS graphics intro and sound-enabled hardware timing are not certified"
+  ],
+  "noTraining": true,
+  "noSitesDeployment": true
+}

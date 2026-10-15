@@ -97,6 +97,18 @@
     {
       "file": "assets/artwork/officers-custom-v49.webp",
       "sha256": "453dde1d2e133079ec42a07107e658723923464a20ecf109a43c824affd8d773"
+    },
+    {
+      "file": "assets/artwork/personal-combat-challenge.webp",
+      "sha256": "413eb1c8311695fbd37fb609bb9d30a75b65fdfb5e64a73ab783b8906192bba0"
+    },
+    {
+      "file": "assets/artwork/personal-combat-win.webp",
+      "sha256": "f3353db06426ac55e4f2d967bbd5d8f39262770b7313754bb9dfb76511993358"
+    },
+    {
+      "file": "assets/artwork/personal-combat-loss.webp",
+      "sha256": "e957e73236605003eddacb6cfc7d42e25dc95d10736c953a3f3edfe7a8ab5768"
     }
   ],
   "historicalAssets": "Scheduled history uses 15 standalone native 1983x793 v36 scenes plus a fallback, loaded on demand. v30 remains active for disasters, omens, stories and portraits; old history atlases remain for provenance/regression.",
@@ -190,5 +202,6 @@
   "verification": "docs/verification-v56.json",
   "soundDocumentation": "docs/native_sound.md",
   "testSpecification": "docs/test_spec.md",
-  "assetManifest": "docs/asset-manifest.json"
+  "assetManifest": "docs/asset-manifest.json",
+  "personalCombatArtManifest": "docs/artwork/personal-combat-manifest.json"
 }

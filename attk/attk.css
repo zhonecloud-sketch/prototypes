@@ -21,3 +21,18 @@
 }
 #setupWizard .wizard-footer{margin-top:0;padding-top:4px}
 #setupWizard #launchError:empty{display:none}
+/* Personal combat stays inside the battlefield on compact landscape screens. */
+#personalCombat{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:stretch;padding:8px;background:#111d19;color:#f5e5be;overflow:auto}
+#personalCombat[hidden]{display:none}
+#personalCombat h2{margin:0 0 4px;text-align:center;font-size:clamp(12px,2vw,20px)}
+.personal-combat-generals{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex-shrink:0}
+.personal-combat-general{display:flex;flex-direction:column;align-items:center;min-width:0;line-height:1.15;font-size:clamp(10px,1.6vw,15px)}
+.personal-combat-general strong,.personal-combat-general span{max-width:100%;overflow-wrap:anywhere}
+.personal-combat-general small{color:#9ebfdf}
+.personal-combat-general.attack small{color:#efaaa1}
+.personal-combat-general output{font-variant-numeric:tabular-nums}
+.personal-combat-general progress{width:90%;height:8px;accent-color:#7faed5}
+.personal-combat-general.attack progress{accent-color:#ce7162}
+.personal-combat-art{display:block;width:100%;aspect-ratio:1983/793;min-height:0;flex:1;object-fit:contain}
+.personal-combat-copy{margin:4px 0 0;text-align:center;font-size:clamp(10px,1.5vw,15px);line-height:1.2;flex-shrink:0}
+#duelInitiator,#duelResponder{width:100%;min-width:0;min-height:28px;padding:3px;font:inherit;background:#101d17;color:var(--text);border:1px solid var(--line)}

@@ -5,8 +5,8 @@ export function createMessagePlayer({show,hide=()=>{},duration=()=>2000,onIdle=(
  let queue=[],current=null,timer=null,remaining=0,total=0,started=0,paused=false,generation=0;
  const cancel=()=>{if(timer!==null)clock.clearTimeout(timer);timer=null;generation++;};
  const arm=()=>{if(!current||paused||timer!==null)return;started=clock.now();const token=++generation;timer=clock.setTimeout(()=>{if(token!==generation)return;timer=null;const item=current;current=null;hide(item);item.onDone?.();next();},remaining);};
- const next=()=>{if(current||!queue.length){if(!current&&!queue.length)onIdle();return;}current=queue.shift();total=remaining=duration();show(current);arm();};
- return {enqueue(item){queue.push(typeof item==='string'?{text:item}:item);next();},pause(){if(paused)return;paused=true;if(timer!==null)remaining=Math.max(0,remaining-(clock.now()-started));cancel();},resume(){paused=false;arm();},clear(){cancel();queue=[];if(current)hide(current);current=null;},retime(){if(!current)return;const elapsed=total-remaining+(timer!==null?clock.now()-started:0);cancel();total=duration();remaining=Math.max(0,total-elapsed);arm();},get busy(){return !!current||queue.length>0;},get active(){return current;}};
+ const next=()=>{if(current||!queue.length){if(!current&&!queue.length)onIdle();return;}current=queue.shift();total=remaining=duration(current);show(current);arm();};
+ return {enqueue(item){queue.push(typeof item==='string'?{text:item}:item);next();},pause(){if(paused)return;paused=true;if(timer!==null)remaining=Math.max(0,remaining-(clock.now()-started));cancel();},resume(){paused=false;arm();},clear(){cancel();queue=[];if(current)hide(current);current=null;},retime(){if(!current)return;const elapsed=total-remaining+(timer!==null?clock.now()-started:0);cancel();total=duration(current);remaining=Math.max(0,total-elapsed);arm();},get elapsed(){return total-remaining+(timer!==null?Math.max(0,clock.now()-started):0);},get busy(){return !!current||queue.length>0;},get active(){return current;}};
 }
 
 // Atomic order rejection can replace state with a clone. Compare log content, not object identity.

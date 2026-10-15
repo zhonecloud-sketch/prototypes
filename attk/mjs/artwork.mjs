@@ -24,7 +24,7 @@ export function createArtwork(assets) {
    image.onerror=()=>{pending.delete(key);};image.src=file;
   }
   if(!assets[key])return;
-  const single=['launch','triumph','clan','heir'].includes(key)||!!file;
+  const single=['launch','triumph','clan','heir'].includes(key)||key.startsWith('personalCombat')||!!file;
   const columns=single?1:key==='courier'?4:key==='history'||key==='portraits'||key.startsWith('officers')?4:2;
   const rows=single||key==='courier'?1:key==='history'||key==='portraits'||key.startsWith('officers')?4:2;
   paintAtlas(node,assets[key],columns,rows,Number(node.dataset.cell)||0,Math.min(globalThis.devicePixelRatio||1,2));

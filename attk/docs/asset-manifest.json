@@ -1534,5 +1534,12 @@
       "to": "docs/changes.md#record-native-turns-v43",
       "gitBlob": "62f1ee11fd50372ded7b07a99efbb728bf90ffe2"
     }
-  ]
+  ],
+  "generated": [
+    "assets/artwork/personal-combat-challenge.webp",
+    "assets/artwork/personal-combat-win.webp",
+    "assets/artwork/personal-combat-loss.webp",
+    "assets/artwork/personal-combat-sprites.webp"
+  ],
+  "generatedManifest": "artwork/personal-combat-manifest.json"
 }

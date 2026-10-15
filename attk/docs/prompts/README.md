@@ -154,3 +154,9 @@ terrain arrays and production AI profile files are unchanged.
 canonical document/section and SHA-256 of whitespace-normalized text.
 This detects lost words independently of the Markdown line wrapping.
 
+
+## Personal combat additions
+
+The challenge, win, loss and mounted sprite production prompts are in
+[personal-combat.md](personal-combat.md). Source hashes, dimensions and
+conversion provenance are linked from that canonical prompt document.
