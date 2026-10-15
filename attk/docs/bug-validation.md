@@ -77,3 +77,28 @@ The original executable contributes 106 bounded witnesses. Physical phone
 and sound-enabled DOS hardware timing limits remain explicit there.
 
 [pc-cases]: personal-combat.md
+
+## Visual interval follow-up
+
+Run `node tests/visual-interval-tests.mjs` and the combat UI commands in
+[the personal combat note][pc-cases]. Expected: all interval, combat and
+mounted UI groups pass. The renderer command there runs 96 cases.
+
+- VI-01: one 3000 ms constant; fixed events survive speed changes and pause.
+  Evidence: `visual-interval-tests.mjs`, queue and duration assertions.
+- VI-02: challenge card lasts three seconds for either human side.
+  Evidence: `personal-combat-ui-tests.mjs`, deployment/challenge cases.
+- VI-03: four distinct full scenes loop every three seconds; counters use
+  Game Speed and the result ends playback immediately. Evidence:
+  `personal-combat-tests.mjs` and the mounted four-frame pixel checks.
+- VI-04: initiator win/loss card and subsequent capture notice each last
+  three seconds. Evidence: both mounted outcome sequences.
+- VI-05: charge landing ambushes use Game Speed with eight flashes each.
+  Evidence: `verify-charge-arrival-raster-v56.mjs`, 96 actual Canvas queues.
+- VI-06: ruler, commander and general capture notices use three seconds.
+  Evidence: `visual-interval-tests.mjs`, three real engine capture cases.
+- VI-07: fireball success/failure precedes the ignition loss report; each
+  uses three seconds. Evidence: `visual-interval-tests.mjs` and
+  `v23-tests.mjs`, successful/failed orders and event serial ordering.
+
+Physical phone verification remains pending as described in the note.

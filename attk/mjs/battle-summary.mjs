@@ -1,4 +1,4 @@
-import {living} from './battle.mjs?v=57';
+import {living} from './battle.mjs?v=58';
 
 export function armySummary(game,battle,side){
  const province=game.province(side==='attack'?battle.source:battle.target);

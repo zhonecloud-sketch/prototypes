@@ -1,5 +1,5 @@
-import {unitOwner} from './battle.mjs?v=57';
-import {hireCapacity} from './province-rules.mjs?v=56';
+import {unitOwner} from './battle.mjs?v=58';
+import {hireCapacity} from './province-rules.mjs?v=58';
 import {eligibleRoyalChildren} from './ruler-family.mjs?v=56';
 
 // Read-only presentation checks. The engine remains the authority when an order executes.

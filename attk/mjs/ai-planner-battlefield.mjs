@@ -1,5 +1,5 @@
-import {living,visibleUnit,reachable,distance,at,jointAttackers,act,reinforcementOptions,placementCells,blindAttackOrder,rememberVisible} from './battle.mjs?v=57';
-import {aiBattle,armyPower,safeFireTarget,planBattleRoute,palaceReturnOrder,aiFlightOrder,nextAIUnit} from './ai-battle.mjs?v=57';
+import {living,visibleUnit,reachable,distance,at,jointAttackers,act,reinforcementOptions,placementCells,blindAttackOrder,rememberVisible} from './battle.mjs?v=58';
+import {aiBattle,armyPower,safeFireTarget,planBattleRoute,palaceReturnOrder,aiFlightOrder,nextAIUnit} from './ai-battle.mjs?v=58';
 import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
 import {forkAI,observationSeed,weighted} from './ai-simulation.mjs?v=56';
 export function battlefieldObservation(g){const b=g.s.battle;const units=b.units.filter(u=>u.side===b.side||visibleUnit(b,u,b.side)),keys=['phase','side','attacker','defender','source','target','firstSide','day','completedDays','weather','wind','windStrength','terrain','fire','palace','food','gold','entryDirection','leaders','rulers','challengeWar','challengeIssued','deployment','lastKnown'];return {...structuredClone(Object.fromEntries(keys.map(k=>[k,b[k]]))),lastKnown:{[b.side]:structuredClone(b.lastKnown?.[b.side]||{}),[b.side==='attack'?'defend':'attack']:{}},units:structuredClone(units),messages:[],events:[],eventSerial:0,actionSerial:0,outcome:null};}

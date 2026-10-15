@@ -1,3 +1,4 @@
+export const VISUAL_INTERVAL=3000;
 export const MESSAGE_SPEEDS=[[3000,'Slow'],[2000,'Normal'],[1000,'Fast'],[500,'Very Fast']];
 export const messageDuration=state=>{const ms=state?.speed??state?.settings?.messageSpeed;return MESSAGE_SPEEDS.some(([n])=>n===ms)?ms:2000;};
 // One queue owns one timer. Pausing retains unread time; cancellation invalidates stale callbacks.

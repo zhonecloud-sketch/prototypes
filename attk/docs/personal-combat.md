@@ -4,6 +4,7 @@ Run from `attk` after installing the pinned Node dependencies:
 
 ```powershell
 node tests/personal-combat-tests.mjs
+node tests/visual-interval-tests.mjs
 npm run test:personal-combat:ui
 npm run test:personal-combat:browser
 ```
@@ -13,8 +14,9 @@ validation job. On Windows it uses installed Edge; elsewhere it uses
 Playwright Chromium. It does not install a browser. See the test scripts
 for their exact inputs and assertions.
 
-Expected output: ten engine/playback groups, four mounted UI groups and
-three actual browser viewport cases pass. An assertion or nonzero process
+Expected output: ten combat groups, five interval groups, five mounted UI
+groups and three actual browser viewport cases pass. An assertion or nonzero
+process
 exit fails the corresponding command. Browser screenshots are written to
 `dist/screenshots/personal-combat-*.png`.
 
@@ -61,16 +63,46 @@ unit's soldiers and weapons, with one roll per unit. Evidence: native
 The mounted presentation reads the resolved trace without changing state
 or consuming randomness. Defender information is left; attacker information
 is right. Challenge, initiator-win and initiator-loss scenes use independent
-1983 × 793 images, matching the existing event assets. Image duration uses
-Game Speed. Evidence: `tests/personal-combat-tests.mjs`,
+1983 × 793 images, matching the existing event assets. Each card lasts three
+seconds.
+Evidence: `tests/personal-combat-tests.mjs`,
 `tests/personal-combat-ui-tests.mjs` and the [art manifest][art].
 
-Each animated round preserves the sound-disabled native sequence: 32
-single-BIOS-tick waits followed by an 11-tick counter hold. One BIOS
-(Basic Input/Output System) timer tick is 65536/1193182 seconds. Evidence:
-250F8/250AE, 29396 and 581E, executed by the verifier. Native sound-enabled
-hardware delays and the full DOS tile relocation introduction are not
-certified by these bounded probes. Mounted horse poses are new artwork.
+The current presentation follows the October 15 visual-interval correction.
+`VISUAL_INTERVAL` is 3000 milliseconds. Four complete 1983 x 793 combat
+scenes replace the runtime sprite atlas and background. Each image lasts
+three seconds and loops; strength updates once per Game Speed interval.
+Playback ends immediately at the final strength result, even mid-image.
+The outcome card and subsequent capture notice each last three seconds.
+Evidence: `mjs/message-playback.mjs`, `mjs/personal-combat.mjs`,
+`tests/personal-combat-tests.mjs` and the mounted four-frame case.
+
+The native timing remains historical evidence in the witness file: 32
+single-BIOS-tick waits followed by an 11-tick hold. BIOS means Basic
+Input/Output System; its timer tick is 65536/1193182 seconds. These old
+presentation delays no longer control this remaster. Native combat
+arithmetic and RNG draw order remain covered by the witness comparisons.
+Evidence: native 250F8/250AE, 29396, 581E and the ordinary/covert vectors.
+
+Run the charge/ambush renderer checks with:
+
+```powershell
+node tools/verify-charge-arrival-raster-v56.mjs . `
+  docs/native-charge-arrival-v56.json `
+  node_modules/visual-interval-arrival.json
+```
+
+Expected output: 96 mounted raster queue cases pass. The 24 native landing
+cases each run at four Game Speeds. Each resolved landing ambush follows
+Charge, with eight flashes over one Game Speed interval. Playback neither
+repeats casualties nor draws randomness. Evidence: the verifier's phase,
+cue count, duration and state assertions.
+
+Capture notices for rulers, commanders and generals last three seconds.
+Fireball success/failure messages also last three seconds, followed by a
+separate three-second ignition loss report on success. Fire damage still
+resolves at its original engine step; only message order and timing change.
+Evidence: `tests/visual-interval-tests.mjs` and `tests/v23-tests.mjs`.
 
 ## Bug-to-test mapping
 
@@ -80,10 +112,10 @@ certified by these bounded probes. Mounted horse poses are new artwork.
 - PC-02, missing challenge event: image, initiator/ruler names and
   opposing commander. Cases: engine event metadata and both mounted sides.
 - PC-03, missing mounted duel: native counters and RNG traces, left/right
-  order, pause, cancellation and fixed native round duration. Cases:
+  order, pause, cancellation and independent image/counter clocks. Cases:
   native comparison, deterministic clock and mounted Canvas playback.
 - PC-04, missing result event: initiator-relative win/loss, both ruler
-  affiliations, separate images, draw handling and speed-based expiry.
+  affiliations, separate images, draw handling and fixed three-second expiry.
   Cases: result metadata, message queue and mounted result sequences.
 
 These cases are wired into `npm test` and the existing `test:v56:ui` CI
@@ -111,11 +143,11 @@ source tests were retained. Other inherited suites and the new combat
 cases passed using the actual Rust WebAssembly engine.
 
 An ignored verification copy adapted those three Windows URL paths and
-normalized only the inherited SVG checkout line endings. All 56 commands
+normalized only the inherited SVG checkout line endings. All 57 commands
 from `npm test` then passed against the final engine. The inherited v56
 mounted suite also passed its three groups after equivalent path, temporary
-directory and vendored-YAML adaptations in that copy. The 24 inherited
-Charge-arrival raster cases passed directly with an explicit app path.
+directory and vendored-YAML adaptations in that copy. The 96 charge/ambush
+renderer cases passed directly with an explicit app path.
 These adaptations are validation-environment changes, not claimed fixes
 to the retained source tests. Summary: [verification record][verification].
 

@@ -22,11 +22,17 @@ including the final one. Bounds below two do not consume randomness.
 Evidence: `personal-combat.mjs`, the native 4B38 small-bound witnesses;
 native entries 293AA and 29304 in the witness file above.
 
-`personalCombatDuration(duel)` returns milliseconds for its recorded rounds.
-`personalCombatFrame(duel, elapsed)` returns `{round, pose, strength}`.
-`DUEL_TICK_MS` and `DUEL_ROUND_MS` expose the measured BIOS tick and native
-round durations. Counters update after 32 ticks, then remain for 11 ticks.
-Evidence: native 250F8/250AE, 29396 and 581E; recorded `delays` arrays.
+`personalCombatDuration(duel, roundMs)` returns milliseconds for the recorded
+rounds at the supplied Game Speed. `personalCombatFrame(duel, elapsed,
+roundMs)` returns `{round, pose, strength}`. Strength updates once per
+`roundMs`; the four poses loop with each pose lasting `VISUAL_INTERVAL`
+(3000 ms). The final recorded result ends playback immediately, including
+mid-pose. Evidence: `tests/personal-combat-tests.mjs`, timing cases.
+
+The native timing remains recorded in the witness file. The requested
+presentation uses the independent clocks above. Evidence: native
+250F8/250AE, 29396 and 581E, recorded `delays` arrays; the user's October 15
+visual-interval correction.
 
 Use the frame and duration helpers for playback. Do not call the resolver
 again while animating: doing so would consume new campaign randomness.

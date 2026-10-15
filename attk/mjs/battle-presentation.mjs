@@ -1,13 +1,16 @@
 import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
-import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=57';
+import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=58';
+import {VISUAL_INTERVAL,messageDuration} from './message-playback.mjs?v=58';
+import {personalCombatDuration} from './personal-combat.mjs?v=58';
+export const battleMessageDuration=(item,state)=>item?.personalCombat?.duel?personalCombatDuration(item.personalCombat.duel,messageDuration(state)):item?.personalCombat||item?.visualInterval?VISUAL_INTERVAL:messageDuration(state);
 export const activeBattleUnit=(battle,unit)=>battle?.phase==='battle'&&!battle.outcome&&!battle.suspended&&battle.selected===unit.id&&unit.side===battle.side&&unit.placed&&!unit.ordered&&!unit.fled&&!unit.routed&&unit.soldiers>0;
 // Native 0x250F8 alternates eight source/target flashes per exchange.
 export const combatAnimationCycles=action=>8*(action?.type==='charge'?Math.max(1,Math.min(10,action.exchanges??10)):1);
-export const combatAnimationCycleMs=action=>action?.type==='charge'?75:375;
-const combatAttackMs=action=>combatAnimationCycleMs(action)*combatAnimationCycles(action);
-export const combatAnimationDuration=action=>combatAttackMs(action)+(action?.type==='charge'?1300:action?.delay||0);
-export function combatAnimationPhase(action,elapsed){
- const delay=action.type==='charge'?650:action.delay||0,attack=combatAttackMs(action),step=combatAnimationCycleMs(action),time=Math.max(0,Math.min(attack-1,elapsed-delay));
+export const combatAnimationCycleMs=(action,state)=>action?.type==='ambush'&&action.afterCharge?messageDuration(state)/8:action?.type==='charge'?75:375;
+const combatAttackMs=(action,state)=>combatAnimationCycleMs(action,state)*combatAnimationCycles(action);
+export const combatAnimationDuration=(action,state)=>combatAttackMs(action,state)+(action?.type==='charge'?1300:action?.delay||0);
+export function combatAnimationPhase(action,elapsed,state){
+ const delay=action.type==='charge'?650:action.delay||0,attack=combatAttackMs(action,state),step=combatAnimationCycleMs(action,state),time=Math.max(0,Math.min(attack-1,elapsed-delay));
  return {phase:elapsed<delay?'march':elapsed<delay+attack?'attack':'return',cycle:Math.floor(time/step)+1,frame:Math.floor(time/(step/2))%2};
 }
 export function chargePosition(action,unit,elapsed){
@@ -29,9 +32,9 @@ export function combatAnimations(action){
 export function ambushAnimations(battle,action,officerName){
  if(!action?.messageSerial)return [];
  return (battle.messages||[]).filter(m=>m.serial>=action.messageSerial).flatMap(m=>{
-  if(m.ambush)return [{type:'ambush',...m.ambush}];
+  if(m.ambush)return [{type:'ambush',...m.ambush,...(action.type==='charge'?{afterCharge:true}:{})}];
   const unit=battle.units.find(u=>m.text.startsWith(officerName(u.id)+' ambushed '));
-  return unit?[{type:'ambush',unit:unit.id,combatUnits:[{id:unit.id,q:unit.q,r:unit.r,side:unit.side,soldiers:unit.soldiers}]}]:[];
+  return unit?[{type:'ambush',unit:unit.id,...(action.type==='charge'?{afterCharge:true}:{}),combatUnits:[{id:unit.id,q:unit.q,r:unit.r,side:unit.side,soldiers:unit.soldiers}]}]:[];
  });
 }
 export function battleOrderUnavailable(battle,unit,order){
@@ -52,7 +55,7 @@ export function battleStatusMessages(battle,serial,officerName,human,announceTur
   messages.push({text:`Simultaneous attack: Attacker lost ${total('attack').toLocaleString()} men; Defender lost ${total('defend').toLocaleString()} men.`});
   for(const row of action.lossRows)messages.push({text:`${officerName(row.unit)}: ${row.loss.toLocaleString()} men lost (${row.side==='attack'?'attacker':'defender'}).`});
  }
- for(const m of fresh){if(announceTurns&&m.turnUnit!==undefined)messages.push(turn(m.turnUnit));if(jointSummary&&m.serial>=action.messageSerial&&m.text.includes('initiated a simultaneous attack'))continue;messages.push({text:m.text,...(m.personalCombat?{personalCombat:m.personalCombat}:{})});}
+ for(const m of fresh){if(announceTurns&&m.turnUnit!==undefined)messages.push(turn(m.turnUnit));if(jointSummary&&m.serial>=action.messageSerial&&m.text.includes('initiated a simultaneous attack'))continue;messages.push({text:m.text,...(m.visualInterval?{visualInterval:true}:{}),...(m.personalCombat?{personalCombat:m.personalCombat}:{})});}
  const u=battle.units.find(u=>u.id===battle.selected&&u.side===battle.side&&u.placed&&!u.ordered&&!u.fled&&!u.routed&&u.soldiers>0);
  if(announceTurns&&human&&u&&battle.phase==='battle'&&!battle.outcome&&!battle.suspended&&messages.at(-1)?.text===`${battle.side==='attack'?'Attacker':'Defender'}’s turn`)messages.push(turn(u.id));
  return messages;

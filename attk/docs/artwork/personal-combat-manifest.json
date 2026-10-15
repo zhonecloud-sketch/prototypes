@@ -2,7 +2,7 @@
   "generator": "Built-in imagegen tool",
   "date": "2026-10-15",
   "inputImages": [],
-  "sourceImageRequirements": "No original DOS image or reference image was supplied.",
+  "sourceImageRequirements": "No original DOS image was supplied. Replacement frame edits use generated frame 1; per-asset inputImages records those targets.",
   "conversion": "Uniform proportional fit, centered; WebP quality 90. Event matte #172021; sprite alpha retained.",
   "assets": [
     {
@@ -71,7 +71,111 @@
         887
       ],
       "sourceSha256": "63727659c2444db479844cca114abcad8728ddad3c6867a74e4d5affaa1256d7",
-      "prompt": "../prompts/personal-combat.md#sprites--production"
+      "prompt": "../prompts/personal-combat.md#sprites--production",
+      "runtime": false,
+      "status": "Historical provenance; replaced by four close-combat scenes."
+    },
+    {
+      "role": "close-1",
+      "file": "assets/artwork/personal-combat-close-1.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 530568,
+      "sha256": "2591323e66ca4e0579b6417146a797226a41979fdbe66140e4a114c370c669f8",
+      "sourceFile": "exec-bb3e2fce-3534-4583-8e1e-5b0485ced8ad.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916",
+      "prompt": "../prompts/personal-combat.md#close-1--production",
+      "generator": "Built-in imagegen tool",
+      "conversion": "Pillow proportional fit to 1983x793; WebP quality 92, method 6",
+      "inputImages": [],
+      "runtime": true
+    },
+    {
+      "role": "close-2",
+      "file": "assets/artwork/personal-combat-close-2.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 473502,
+      "sha256": "4eda674a95cf4915b5983c433fd2f20bdb02a521676139df92d5ff738c0a32ed",
+      "sourceFile": "exec-886dbf01-53ca-4e00-a45b-2f612a40a1ae.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "8f87165e6be226a27ef2408e2afcac861c78ec26a3259ec48f30e6dd20e7b0dd",
+      "prompt": "../prompts/personal-combat.md#close-2--edit",
+      "generator": "Built-in imagegen tool",
+      "conversion": "Pillow proportional fit to 1983x793; WebP quality 92, method 6",
+      "inputImages": [
+        {
+          "role": "edit target",
+          "sourceFile": "exec-bb3e2fce-3534-4583-8e1e-5b0485ced8ad.png",
+          "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
+        }
+      ],
+      "runtime": true
+    },
+    {
+      "role": "close-3",
+      "file": "assets/artwork/personal-combat-close-3.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 463800,
+      "sha256": "b9c658dbc42aa62c3057c36772556ce30e4efce5cc0f10fcbf2ac446c1a271bd",
+      "sourceFile": "exec-416d2c64-1fb4-450f-ae96-e454d8ae04a8.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "89e6d4c07ed9e6867847d78309305f067eab686094f1beb10b4546667752ff42",
+      "prompt": "../prompts/personal-combat.md#close-3--edit",
+      "generator": "Built-in imagegen tool",
+      "conversion": "Pillow proportional fit to 1983x793; WebP quality 92, method 6",
+      "inputImages": [
+        {
+          "role": "edit target",
+          "sourceFile": "exec-bb3e2fce-3534-4583-8e1e-5b0485ced8ad.png",
+          "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
+        }
+      ],
+      "runtime": true
+    },
+    {
+      "role": "close-4",
+      "file": "assets/artwork/personal-combat-close-4.webp",
+      "dimensions": [
+        1983,
+        793
+      ],
+      "bytes": 470134,
+      "sha256": "3810809861672727b2e2f09f8fe5947e1a067a55af0f729832aabf59df0fa98a",
+      "sourceFile": "exec-84dc8104-89be-4cce-8819-fa10dd3a16b1.png",
+      "sourceDimensions": [
+        1983,
+        793
+      ],
+      "sourceSha256": "b7c914f3d4460db0adf30a8951b7c819a3850820872d9b61c3a7c288edfe189c",
+      "prompt": "../prompts/personal-combat.md#close-4--edit",
+      "generator": "Built-in imagegen tool",
+      "conversion": "Pillow proportional fit to 1983x793; WebP quality 92, method 6",
+      "inputImages": [
+        {
+          "role": "edit target",
+          "sourceFile": "exec-bb3e2fce-3534-4583-8e1e-5b0485ced8ad.png",
+          "sourceSha256": "f2dfeae81af00bd6d836a8fec1d3e0c65aada99cba732b3d4b08722786632916"
+        }
+      ],
+      "runtime": true
     }
   ]
 }

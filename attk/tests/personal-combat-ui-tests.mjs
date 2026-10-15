@@ -7,7 +7,8 @@ import {JSDOM} from 'jsdom';
 import {createCanvas,Image as RasterImage} from '@napi-rs/canvas';
 import {Game,createCampaign} from '../mjs/strategy.mjs';
 import {aiBattle} from '../mjs/battle.mjs';
-import {DUEL_ROUND_MS,DUEL_TICK_MS} from '../mjs/personal-combat.mjs';
+import {VISUAL_INTERVAL} from '../mjs/message-playback.mjs';
+import {createPersonalCombatPresentation} from '../mjs/personal-combat-ui.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const tmp=fs.mkdtempSync(path.join(root,'node_modules/pc-ui-'));
@@ -45,7 +46,7 @@ const click=selector=>{const node=document.querySelector(selector);assert(node,'
 const state=()=>win.rtk2.state;
 await import(pathToFileURL(path.join(tmp,'mjs/app.mjs')).href);
 await until(()=>!!win.rtk2,180000);
-for(const key of ['Challenge','Win','Loss']){const im=images.find(im=>im.file==='./assets/artwork/personal-combat-'+key.toLowerCase()+'.webp');assert.deepEqual([im.width,im.height],[1983,793]);}const sprite=images.find(im=>im.file.endsWith('personal-combat-sprites.webp'));assert.deepEqual([sprite.width,sprite.height],[2048,1024]);
+for(const key of ['Challenge','Win','Loss']){const im=images.find(im=>im.file==='./assets/artwork/personal-combat-'+key.toLowerCase()+'.webp');assert.deepEqual([im.width,im.height],[1983,793]);}for(let i=1;i<=4;i++){const im=images.find(im=>im.file.endsWith('personal-combat-close-'+i+'.webp'));assert.deepEqual([im.width,im.height],[1983,793]);}assert(!images.some(im=>im.file.endsWith('personal-combat-sprites.webp')));
 const scenarios=JSON.parse(fs.readFileSync(path.join(root,'config/scenarios.json'))),terrains=JSON.parse(fs.readFileSync(path.join(root,'config/province-terrain.json')));
 function fixture(){const g=new Game(createCampaign(scenarios[0],[0]),{},structuredClone(terrains));g.s.monthlyReview=null;g.s.settings.battleView='all';g.s.paused=true;g.s.speed=g.s.settings.messageSpeed=500;for(const o of g.s.officers)o.ambition=0;g.invade({province:9,target:8,governor:33,officers:[0,34],food:20000});const b=g.s.battle;g.s.humanRulers=[b.attacker,b.defender];while(!(b.side==='defend'&&b.units.every(u=>u.placed)))aiBattle(g);return g;}
 async function load(g){const before=state(),payload=JSON.stringify(g.s);win.showOpenFilePicker=async()=>[{getFile:async()=>({name:'duel.json',size:payload.length,text:async()=>payload})}];click('#loadGame');click('#readSave');await until(()=>state()&&state()!==before);}
@@ -59,16 +60,22 @@ try{
   if(document.querySelector('#acceptArmy'))click('#acceptArmy');
   await advance(32);assert.equal(document.querySelector('#personalCombat').dataset.stage,'challenge');assert(document.querySelector('#personalCombat').textContent.includes(state().rulers.find(r=>r.id===b.attacker).name));
   assert.equal(document.querySelectorAll('.personal-combat-general')[0].dataset.side,'defend');assert.equal(document.querySelectorAll('.personal-combat-general')[1].dataset.side,'attack');
-  await advance(510);assert(document.querySelector('#personalCombat').hidden);assert(document.querySelector('#duelResponder'));click('#refuseChallenge');if(document.querySelector('#acceptArmy'))click('#acceptArmy');await advance(1010);assert.equal(b.phase,'battle');leave();await advance(32);groups++;console.log('PASS mounted human '+side+' initiates after deployment, including WAR 20 and affiliations');
+  await advance(VISUAL_INTERVAL-64);assert(!document.querySelector('#personalCombat').hidden);await advance(64);assert(document.querySelector('#personalCombat').hidden);assert(document.querySelector('#duelResponder'));click('#refuseChallenge');if(document.querySelector('#acceptArmy'))click('#acceptArmy');await advance(1010);assert.equal(b.phase,'battle');leave();await advance(32);groups++;console.log('PASS mounted human '+side+' initiates after deployment, including WAR 20 and affiliations');
  }
  for(const wins of [true,false]){
-  const g=fixture(),b=g.s.battle;while(!b.openingChallenge)aiBattle(g);g.battleAction('openingChallenge',{accept:false});const u=b.units.find(u=>u.side==='attack'&&u.id!==b.leaders.attack),v=b.units.find(u=>u.side==='defend'&&u.id!==b.leaders.defend);u.war=wins?100:1;v.war=wins?1:100;g.battleAction('openingChallenge',{accept:true,unit:u.id});await load(g);document.querySelector('#duelResponder').value=v.id;click('#acceptChallenge');if(document.querySelector('#acceptArmy'))click('#acceptArmy');await advance(32);
+  const g=fixture(),b=g.s.battle;while(!b.openingChallenge)aiBattle(g);g.battleAction('openingChallenge',{accept:false});const u=b.units.find(u=>u.side==='attack'&&u.id!==b.leaders.attack),v=b.units.find(u=>u.side==='defend'&&u.id!==b.leaders.defend);u.war=wins?100:30;v.war=wins?30:100;g.battleAction('openingChallenge',{accept:true,unit:u.id});await load(g);document.querySelector('#duelResponder').value=v.id;click('#acceptChallenge');if(document.querySelector('#acceptArmy'))click('#acceptArmy');await advance(32);
   const live=state().battle,combat=live.messages.findLast(m=>m.personalCombat?.stage==='combat').personalCombat.duel;assert.equal(document.querySelector('#personalCombat').dataset.stage,'combat');const before=JSON.stringify(live.units),seed=state().seed;
-  await advance(32*DUEL_TICK_MS+32);for(const card of document.querySelectorAll('.personal-combat-general'))assert.equal(Number(card.querySelector('output').dataset.strength),combat.rounds[0][card.dataset.side]);
+  await advance(500);for(const card of document.querySelectorAll('.personal-combat-general'))assert.equal(Number(card.querySelector('output').dataset.strength),combat.rounds[0][card.dataset.side]);
   document.querySelector('#battleMenu').click();const frozen=document.querySelector('.personal-combat-general output').textContent;await advance(10000);assert.equal(document.querySelector('.personal-combat-general output').textContent,frozen);click('#menuClose');
-  await advance(combat.rounds.length*DUEL_ROUND_MS-32*DUEL_TICK_MS);assert.equal(document.querySelector('#personalCombat').dataset.stage,wins?'win':'loss');assert.equal(JSON.stringify(live.units),before);assert.equal(state().seed,seed);
+  await advance(combat.rounds.length*500-500);assert.equal(document.querySelector('#personalCombat').dataset.stage,wins?'win':'loss');assert.equal(JSON.stringify(live.units),before);assert.equal(state().seed,seed);
   for(const size of [{width:568,height:270},{width:640,height:360},{width:844,height:390}]){viewport=size;assert.equal(win.getComputedStyle(document.querySelector('#personalCombat')).overflow,'auto');}
-  await advance(1010);assert(document.querySelector('#personalCombat').hidden);leave();await advance(32);groups++;console.log('PASS mounted native counters, pause, initiator '+(wins?'win':'loss')+' scene and unchanged state/RNG');
+  await advance(VISUAL_INTERVAL-100);assert(!document.querySelector('#personalCombat').hidden);await advance(100);assert(document.querySelector('#personalCombat').hidden);assert(document.querySelector('#toast').textContent.includes('was captured'));await advance(VISUAL_INTERVAL);leave();await advance(32);groups++;console.log('PASS mounted native counters, pause, initiator '+(wins?'win':'loss')+' scene and unchanged state/RNG');
+ }
+ {
+  let elapsed=0;const assets=Object.fromEntries(images.filter(im=>/personal-combat-close-[1-4]/.test(im.file)).map(im=>['personalCombatClose'+im.file.match(/close-(\d)/)[1],im])),duel={initial:{defend:100,attack:100},rounds:Array.from({length:10},(_,i)=>({defend:99-i,attack:98-i}))},fighters=['defend','attack'].map((side,id)=>({side,id,name:side,ruler:side+' ruler',war:100})),presentation=createPersonalCombatPresentation(document.querySelector('#world'),assets,()=>elapsed,()=>false,()=>2000),pixels=new Set();
+  presentation.show({text:'Crossed weapons',personalCombat:{stage:'combat',duel,fighters}});
+  for(const [time,pose]of [[0,0],[2999,0],[3000,1],[6000,2],[9000,3],[12000,0]]){elapsed=time;await advance(16);const panel=document.querySelector('#personalCombat'),canvas=panel.querySelector('canvas');assert.equal(Number(panel.dataset.pose),pose);assert.equal(Number(panel.querySelector('output').dataset.strength),time<2000?100:duel.rounds[Math.floor(time/2000)-1].defend);pixels.add(canvas._canvas.toBuffer('image/png').toString('base64'));}
+  assert.equal(pixels.size,4);presentation.destroy();groups++;console.log('PASS four distinct full-scene frames loop every 3 seconds while counters advance every 2 seconds');
  }
  console.log(`${groups} mounted personal-combat groups passed.`);
 }finally{closeWindow();timers.clear();}

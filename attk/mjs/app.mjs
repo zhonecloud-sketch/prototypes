@@ -1,36 +1,35 @@
 import {courierMotion} from './courier-motion.mjs?v=56';
 import {createBattleTurnCue} from './battle-turn-cue.mjs?v=56';
-import {tileCombatInfo} from './battle-presentation.mjs?v=57';
-import {diagnosticUnits,battleAIDiagnostics} from './ai-diagnostics.mjs?v=56';
+import {tileCombatInfo} from './battle-presentation.mjs?v=58';
+import {diagnosticUnits,battleAIDiagnostics} from './ai-diagnostics.mjs?v=58';
 import {createScreenWakeLock} from './screen-wake-lock.mjs?v=56';
 import {prunePastEvents} from './event-chronicle.mjs?v=56';
 import {captiveActions,interceptionEffects} from './campaign-decisions.mjs?v=56';
 import {acrossChinaChronology,provinceCurrentEvents,datedEventText} from './event-chronicle.mjs?v=56';
-import {MESSAGE_SPEEDS,messageDuration,createMessagePlayer,newLogEntries} from './message-playback.mjs?v=57';
+import {MESSAGE_SPEEDS,messageDuration,createMessagePlayer,newLogEntries} from './message-playback.mjs?v=58';
 import {validateAIConfig} from './ai-parameters.mjs?v=56';
 import {provinceChoice,provinceLabel as provinceOwnerLabel} from './province-choice.mjs?v=56';
-import {battleOrderUnavailable,battleStatusMessages} from './battle-presentation.mjs?v=57';
-import {orderUnavailable} from './order-availability.mjs?v=56';
+import {battleOrderUnavailable,battleStatusMessages,battleMessageDuration} from './battle-presentation.mjs?v=58';
+import {orderUnavailable} from './order-availability.mjs?v=58';
 import {childAge,eligibleRoyalChildren,initializeRoyalFamilies} from './ruler-family.mjs?v=56';
 import {warProvisions} from './war-provisions.mjs?v=56';
-import {ITEMS,createCustomRuler,supportCandidates,aiAlly} from './campaign-completion.mjs?v=56';
+import {ITEMS,createCustomRuler,supportCandidates,aiAlly} from './campaign-completion.mjs?v=58';
 import {provinceTerrain} from './campaign-fidelity.mjs?v=56';
-import {enhanceControls,generalStats,orderInsight} from './game-ui.mjs?v=57';
-import {createProvinceCommands} from './province-ui.mjs?v=56';
-import {Game,createCampaign,validateSave,DEFAULT_RULES} from './strategy.mjs?v=57';
-import {loadRasterAssets,createRasterWorld,ownershipColor} from './raster-world.mjs?v=57';
+import {enhanceControls,generalStats,orderInsight} from './game-ui.mjs?v=58';
+import {createProvinceCommands} from './province-ui.mjs?v=58';
+import {Game,createCampaign,validateSave,DEFAULT_RULES} from './strategy.mjs?v=58';
+import {loadRasterAssets,createRasterWorld,ownershipColor} from './raster-world.mjs?v=58';
 import {portraitIndex,portraitAssigned,portraitFrame,CUSTOM_PORTRAITS} from './portraits.mjs?v=56';
 import {eventFor,eventCell,eventFrame,presentEvent} from './events.mjs?v=56';
 import {importAIProfiles,setAIMode,extensionSettings,AI_RULES_ID} from './ai-profile.mjs?v=56';
-import {compareAI} from './ai-extensions.mjs?v=56';
+import {compareAI} from './ai-extensions.mjs?v=58';
 import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
-import {armySummary,pendingBattleResult,reviewBattleResult,triumphBattleResult,battleResultCopy} from './battle-summary.mjs?v=56';
+import {armySummary,pendingBattleResult,reviewBattleResult,triumphBattleResult,battleResultCopy} from './battle-summary.mjs?v=58';
 import {createArtwork} from './artwork.mjs?v=57';
-import {personalCombatDuration} from './personal-combat.mjs?v=57';
-import {createPersonalCombatPresentation} from './personal-combat-ui.mjs?v=57';
+import {createPersonalCombatPresentation} from './personal-combat-ui.mjs?v=58';
 import {AudioBus} from './audio.mjs?v=56';
 import {regionName,provinceLabel,provinceDirection} from './geography.mjs?v=56';
-import {living,visibleUnit,viewedUnit,at,reachable,TERRAIN,distance,DIRECTIONS,WEATHER,windLabel,windDescription,direction,placementCells,reinforcementOptions,isLeader,controllerSide,retreatOptions,terrainCost,inside} from './battle.mjs?v=57';
+import {living,visibleUnit,viewedUnit,at,reachable,TERRAIN,distance,DIRECTIONS,WEATHER,windLabel,windDescription,direction,placementCells,reinforcementOptions,isLeader,controllerSide,retreatOptions,terrainCost,inside} from './battle.mjs?v=58';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>Math.round(n).toLocaleString('en-GB'),compact=n=>n>=1000000?(n/1e6).toFixed(2)+'m':n>=10000?(n/1000).toFixed(1)+'k':num(n);
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'],regions=['You','Bing','Ji','Qing','Yan','Si','Yong','Liang','Xu','Yu','Jing','Yang','Yi','Jiao'];
@@ -43,7 +42,7 @@ const owns=p=>p.owner===game.s.player;
 const selected=()=>game.province(game.s.selected);
 function save(){if(!game)return;prunePastEvents(game.s);try{localStorage.setItem(KEY,JSON.stringify(game.s));game.checkpointStatus='Saved on this device';if($('saveStatus'))$('saveStatus').textContent=game.checkpointStatus;}catch{game.checkpointStatus='Storage unavailable · save externally';if($('saveStatus'))$('saveStatus').textContent=game.checkpointStatus;}}
 function showToast(message){clearTimeout(toastTimer);$('toast').classList.remove('battle-result');$('toast').textContent=presentedEvent?presentEvent(game,{...presentedEvent,text:message}).text:message;$('toast').classList.add('show');}
-const battleMessages=createMessagePlayer({show:item=>{clearTimeout(toastTimer);if(item.personalCombat){duelPresentation??=createPersonalCombatPresentation($('world'),assets,()=>battleMessages.elapsed,()=>game.s.settings.names==='chinese');duelPresentation.show(item);}presentedEvent=item.event||null;audio?.playEvent(presentedEvent);showToast(item.text);$('toast').classList.toggle('battle-result',!!item.battleResult);if(presentedEvent)renderFrames();},hide:()=>{duelPresentation?.hide();presentedEvent=null;$('toast').classList.remove('show','battle-result');if(game)renderFrames();},duration:item=>item?.personalCombat?.duel?personalCombatDuration(item.personalCombat.duel):messageDuration(game?.s),onIdle:()=>queueMicrotask(()=>{queueBattleResult();syncPlayback();showPendingDecisions();ensureBattleTurn();if(pendingAIStep&&!battleMessages.busy){const run=pendingAIStep;pendingAIStep=null;run();}})});
+const battleMessages=createMessagePlayer({show:item=>{clearTimeout(toastTimer);if(item.personalCombat){duelPresentation??=createPersonalCombatPresentation($('world'),assets,()=>battleMessages.elapsed,()=>game.s.settings.names==='chinese',()=>messageDuration(game?.s));duelPresentation.show(item);}presentedEvent=item.event||null;audio?.playEvent(presentedEvent);showToast(item.text);$('toast').classList.toggle('battle-result',!!item.battleResult);if(presentedEvent)renderFrames();},hide:()=>{duelPresentation?.hide();presentedEvent=null;$('toast').classList.remove('show','battle-result');if(game)renderFrames();},duration:item=>battleMessageDuration(item,game?.s),onIdle:()=>queueMicrotask(()=>{queueBattleResult();syncPlayback();showPendingDecisions();ensureBattleTurn();if(pendingAIStep&&!battleMessages.busy){const run=pendingAIStep;pendingAIStep=null;run();}})});
 let pendingAIStep=null,pendingBattleOrder=null;
 const battleTurnCue=createBattleTurnCue({announce:(u,human,done)=>{const text=`${name(game.officer(u.id))}’s turn`;if(human){toast(text);done();}else{battleMessages.enqueue({text,turnAnnouncement:true,onDone:done});syncPlayback();}},highlight:()=>world?.update()});
 function ensureBattleTurn(){const b=game?.s.battle;if(!b||!game.battleDetailed(b)||b.phase!=='battle'||b.outcome||b.suspended||b.challenge||battleMessages.busy||world?.combatAnimating||$('game').hidden||document.hidden||$('dialog').open||!$('cheatHud').hidden)return;const u=game.battleHuman()?b.units.find(u=>u.id===b.selected&&!u.ordered&&!u.routed&&!u.fled&&u.soldiers>0):game.battleAIUnit();if(u)battleTurnCue.begin(b,u,game.battleHuman());}
@@ -55,7 +54,7 @@ function toast(message){const event=game?.s.lastEvent?.text===message?game.s.las
 function archiveEvent(e){const existing=game.s.log.find(x=>x.year===game.s.year&&x.month===game.s.month&&x.text===e.text);if(existing)existing.event={...e};else{game.record(e.text,e.kind||'war');game.s.log[0].event={...e};}}
 function showBattleMessages(b,serial){if(!b||!game.battleDetailed(b))return;audio?.playBattle(b,serial,!!world?.combatAnimating);const items=battleStatusMessages(b,serial,id=>name(game.officer(id)),game.battleHuman(),false).map(item=>{const actor=b.units.find(u=>u.id===b.lastAction?.unit);return actor&&!viewedUnit(game,actor,b)&&['move','moveEnemy'].includes(b.lastAction?.type)&&item.text.includes(' moved to ')?{...item,text:`${name(game.officer(actor.id))} moved under jungle cover.`}:item;}),present=()=>{for(const item of items)battleMessages.enqueue(item);queueBattleResult();render();syncPlayback();save();};world?.combatAnimating?world.afterCombat(present):present();syncPlayback();save();}
 function queueBattleResult(){const b=game?.s.battle;if(world?.combatAnimating||!b?.awaitingResult||resultQueued===b||b.resultReviewed||!game.battleDetailed(b))return;resultQueued=b;const winner=b.outcome.winner,loser=winner==='attack'?'defend':'attack';
- battleMessages.enqueue({battleResult:true,text:`${winner==='attack'?'Attacker':'Defender'} ${name(game.ruler(ownerForBattle(b,winner)))} won · ${loser==='attack'?'Attacker':'Defender'} defeated. #${b.target} ${game.province(b.target).name}. ${b.outcome.reason}`,onDone:()=>{if(game.s.battle!==b)return;game.acknowledgeBattleResult();resultQueued=null;refresh();showPendingDecisions();}});syncPlayback();
+ battleMessages.enqueue({battleResult:true,visualInterval:b.outcome.reason.includes('captur'),text:`${winner==='attack'?'Attacker':'Defender'} ${name(game.ruler(ownerForBattle(b,winner)))} won · ${loser==='attack'?'Attacker':'Defender'} defeated. #${b.target} ${game.province(b.target).name}. ${b.outcome.reason}`,onDone:()=>{if(game.s.battle!==b)return;game.acknowledgeBattleResult();resultQueued=null;refresh();showPendingDecisions();}});syncPlayback();
 }
 const ownerForBattle=(b,side)=>side==='attack'?b.attacker:b.defender;
 function syncPlayback(){

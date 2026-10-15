@@ -1,5 +1,5 @@
 import {combatPower,nativeCasualty,COMBAT_DIVISORS} from './native-combat.mjs?v=56';
-import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions,openingDuelCandidate} from './battle.mjs?v=57';
+import {living,visibleUnit,neighbors,terrainCost,at,distance,weaponPower,direction,inside,WIND_CLOCKWISE,act,placementCells,jointAttackers,reinforcementOptions,reachable,blindAttackOrder,rememberVisible,retreatOptions,openingDuelCandidate} from './battle.mjs?v=58';
 import {provinceDirection} from './geography.mjs?v=56';
 import {DEFAULT_AI} from './ai-parameters.mjs?v=56';
 // Plan across the whole field, independent of today's mobility. Enemy contact

@@ -1539,7 +1539,11 @@
     "assets/artwork/personal-combat-challenge.webp",
     "assets/artwork/personal-combat-win.webp",
     "assets/artwork/personal-combat-loss.webp",
-    "assets/artwork/personal-combat-sprites.webp"
+    "assets/artwork/personal-combat-sprites.webp",
+    "assets/artwork/personal-combat-close-1.webp",
+    "assets/artwork/personal-combat-close-2.webp",
+    "assets/artwork/personal-combat-close-3.webp",
+    "assets/artwork/personal-combat-close-4.webp"
   ],
   "generatedManifest": "artwork/personal-combat-manifest.json"
 }
