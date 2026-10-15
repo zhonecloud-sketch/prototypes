@@ -14,7 +14,7 @@ validation job. On Windows it uses installed Edge; elsewhere it uses
 Playwright Chromium. It does not install a browser. See the test scripts
 for their exact inputs and assertions.
 
-Expected output: ten combat groups, five interval groups, five mounted UI
+Expected output: ten combat groups, seven interval groups, five mounted UI
 groups and three actual browser viewport cases pass. An assertion or nonzero
 process
 exit fails the corresponding command. Browser screenshots are written to
@@ -103,6 +103,21 @@ Fireball success/failure messages also last three seconds, followed by a
 separate three-second ignition loss report on success. Fire damage still
 resolves at its original engine step; only message order and timing change.
 Evidence: `tests/visual-interval-tests.mjs` and `tests/v23-tests.mjs`.
+
+The subsequent loss-message correction applies the same three-second
+interval to men, training and weapons loss reports, including normal and
+simultaneous summaries, charge, ambush, post-order fire and desertion.
+Ordinary attribute messages retain Game Speed. The timing policy reads
+existing messages without changing battle state or RNG. Current training
+loss wording is covered by a presentation fixture; the engine does not
+currently emit a separate training-loss notice or reduce training in
+combat. Evidence: `mjs/battle-presentation.mjs`, `mjs/battle.mjs` and the
+last two `visual-interval-tests.mjs` groups.
+
+Run `npm run test:battle-feedback:browser` to check the actual fast-speed
+loss toast. Expected: a 500 ms Game Speed battle displays its loss report
+for about 3000 ms, without repeating a casualty or random draw. The same
+command verifies that Edge decodes the requested effect-9 replacement.
 
 ## Bug-to-test mapping
 

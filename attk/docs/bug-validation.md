@@ -102,3 +102,27 @@ mounted UI groups pass. The renderer command there runs 96 cases.
   `v23-tests.mjs`, successful/failed orders and event serial ordering.
 
 Physical phone verification remains pending as described in the note.
+
+## Loss notices and sound follow-up
+
+Run `node tests/visual-interval-tests.mjs`,
+`node tests/audio-v55-tests.mjs` and
+`npm run test:battle-feedback:browser`. Expected: all groups pass.
+
+- FB-01: effect 7 replacement is a suggestion only. Existing prison and
+  betrayal routing remains covered by the audio tests. Candidate and
+  generator evidence: [sound note][feedback-sound].
+- FB-02: effect 9 uses the supplied charge scream for direct calls,
+  reinforcement events/actions and message fallback. Evidence:
+  `audio-v50-tests.mjs`, `audio-v55-tests.mjs` and the browser decode check.
+- FB-03: men/training/weapons losses use `VISUAL_INTERVAL`, including
+  generated simultaneous totals and individual rows, normal/charge,
+  ambush, fire and desertion. Evidence: `visual-interval-tests.mjs`,
+  real engine messages, training/weapons fixtures, negative controls and
+  queue transitions at all four speeds. The browser checks an actual
+  loss toast at 500 ms Game Speed lasts three seconds.
+
+The training-loss fixture tests message presentation; it does not claim
+that combat reduces training. Physical-phone listening remains pending.
+
+[feedback-sound]: native_sound.md#effect-9-replacement

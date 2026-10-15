@@ -37,3 +37,19 @@ console.log('PASS charge landing queues resolved ambushes with eight flashes ove
  for(const text of ['attempt','impact','capture'])player.enqueue({text,visualInterval:true});assert.equal(at,3000);now=1000;state.speed=3000;player.retime();assert.equal(at,3000);now=2000;player.pause();now=12000;player.resume();assert.equal(at,13000);now=at;callback();assert.deepEqual(shown,['attempt','impact']);assert.equal(at,16000);now=at;callback();assert.deepEqual(shown,['attempt','impact','capture']);assert.equal(at,19000);player.clear();assert(!callback);
 }
 console.log('PASS shared interval survives Game Speed changes, pause and sequential notices');
+for(const action of ['attack','charge','simultaneous','ambush','fire','refusal']){
+ const {g,b,u,v,reserve,calls}=fixture();
+ if(action==='simultaneous')Object.assign(reserve,{side:'attack',q:5,r:6});
+ if(action==='ambush'){Object.assign(v,{q:6,r:7});b.terrain[v.r*13+v.q]=1;act(g,'move',{unit:u.id,q:6,r:6});}
+ else if(action==='fire'){b.fire[u.r*13+u.q]=3;act(g,'wait',{unit:u.id});}
+ else if(action==='refusal'){b.challenge={challenger:u.id,target:v.id};act(g,'challengeResponse',{accept:false});}
+ else act(g,action,{unit:u.id,target:v.id});
+ const before=JSON.stringify(b),draws=calls(),items=battleStatusMessages(b,0,id=>'General'+id,false,false),losses=items.filter(m=>/enemy losses|own losses|men lost|soldiers to fire|ambushed|deserted/i.test(m.text));assert(losses.length,action);timed(losses);assert.equal(JSON.stringify(b),before);assert.equal(calls(),draws);
+}
+console.log('PASS real Normal/Charge/Simultaneous, ambush, post-order fire and refusal loss reports use visual interval');
+{
+ const {b}=fixture(),losses=['General0 lost 2 training.','General0: weapons losses 12.','General0: 0 men lost.'],ordinary=['Training is now 80.','General0 has 3000 men, 80 training and 2900 weapons.','General0 inspected for 100 gold.'];b.messages=[...losses,...ordinary].map((text,i)=>({serial:i+1,text}));
+ const before=JSON.stringify(b),items=battleStatusMessages(b,0,id=>'General'+id,false,false);timed(items.slice(0,losses.length));assert.equal(JSON.stringify(b),before);
+ for(const [speed]of MESSAGE_SPEEDS){for(const item of items.slice(losses.length))assert.equal(battleMessageDuration(item,{speed}),speed,item.text);let now=0,callback,at;const shown=[],clock={now:()=>now,setTimeout:(fn,ms)=>{callback=fn;at=now+ms;return 1;},clearTimeout:()=>{callback=null;}},player=createMessagePlayer({clock,duration:item=>battleMessageDuration(item,{speed}),show:item=>shown.push(item.text)});for(const item of items.slice(0,losses.length))player.enqueue(item);for(let i=0;i<losses.length;i++){assert.equal(at,(i+1)*VISUAL_INTERVAL);now=at-1;assert.equal(shown.length,i+1);now=at;callback();}assert(!player.busy);}
+}
+console.log('PASS men/training/weapons loss messages each last exactly 3 seconds; ordinary stat messages retain Game Speed');

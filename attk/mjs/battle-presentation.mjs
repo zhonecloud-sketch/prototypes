@@ -2,7 +2,8 @@ import {COMBAT_DIVISORS} from './native-combat.mjs?v=56';
 import {tilePoint,neighbors,TERRAIN} from './battle.mjs?v=58';
 import {VISUAL_INTERVAL,messageDuration} from './message-playback.mjs?v=58';
 import {personalCombatDuration} from './personal-combat.mjs?v=58';
-export const battleMessageDuration=(item,state)=>item?.personalCombat?.duel?personalCombatDuration(item.personalCombat.duel,messageDuration(state)):item?.personalCombat||item?.visualInterval?VISUAL_INTERVAL:messageDuration(state);
+const lossMessage=text=>/\b(?:lost|loss(?:es)?|depleted|deserted)\b/i.test(text)&&/\b(?:men|soldiers|training|weapons|enemy|own|ambushed)\b/i.test(text);
+export const battleMessageDuration=(item,state)=>item?.personalCombat?.duel?personalCombatDuration(item.personalCombat.duel,messageDuration(state)):item?.personalCombat||item?.visualInterval||lossMessage(item?.text||'')?VISUAL_INTERVAL:messageDuration(state);
 export const activeBattleUnit=(battle,unit)=>battle?.phase==='battle'&&!battle.outcome&&!battle.suspended&&battle.selected===unit.id&&unit.side===battle.side&&unit.placed&&!unit.ordered&&!unit.fled&&!unit.routed&&unit.soldiers>0;
 // Native 0x250F8 alternates eight source/target flashes per exchange.
 export const combatAnimationCycles=action=>8*(action?.type==='charge'?Math.max(1,Math.min(10,action.exchanges??10)):1);

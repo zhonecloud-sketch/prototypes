@@ -12,7 +12,8 @@
     "test:v56:ui": "node tools/verify-charge-arrival-raster-v56.mjs && node tests/v56-ui-tests.mjs && node tests/personal-combat-ui-tests.mjs",
     "test:rust": "node tools/ai-rules.mjs --check && node tests/attk-rust-tests.mjs && node tests/attk-server-tests.mjs",
     "test:personal-combat:ui": "node tests/personal-combat-ui-tests.mjs",
-    "test:personal-combat:browser": "node tests/personal-combat-browser-tests.mjs"
+    "test:personal-combat:browser": "node tests/personal-combat-browser-tests.mjs",
+    "test:battle-feedback:browser": "node tests/battle-feedback-browser-tests.mjs"
   },
   "devDependencies": {
     "jsdom": "30.1.2",
