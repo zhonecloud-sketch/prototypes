@@ -36,3 +36,5 @@
 .personal-combat-art{display:block;width:100%;aspect-ratio:1983/793;min-height:0;flex:1;object-fit:contain}
 .personal-combat-copy{margin:4px 0 0;text-align:center;font-size:clamp(10px,1.5vw,15px);line-height:1.2;flex-shrink:0}
 #duelInitiator,#duelResponder{width:100%;min-width:0;min-height:28px;padding:3px;font:inherit;background:#101d17;color:var(--text);border:1px solid var(--line)}
+/* Wrapped HUD labels must not lift the neighbouring slider. */
+#hudForm .form-grid:has(#hud_day){align-items:end}

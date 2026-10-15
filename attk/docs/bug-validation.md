@@ -126,3 +126,21 @@ The training-loss fixture tests message presentation; it does not claim
 that combat reduces training. Physical-phone listening remains pending.
 
 [feedback-sound]: native_sound.md#effect-9-replacement
+
+## Still combat, surrounding ambush and HUD alignment
+
+Run `node tests/personal-combat-ui-tests.mjs`,
+`node tests/charge-surrounding-tests.mjs` and
+`npm run test:battle-feedback:browser`. Expected: all cases pass.
+
+- SC-01: combat uses only frame 1; removed frames are absent and never
+  requested. Counter changes, pause and outcomes retain their timing.
+  Evidence: the mounted still-image pixel and asset-loader assertions.
+- SC-02: two isolated side/rear jungle enemies cause two ambushes and two
+  animations after Charge. The new test fails on the published engine and
+  passes after correction. See [the root cause and native boundary][sc].
+- SC-03: Battle day and Challenge war slider tops align within one pixel
+  at 568 x 270, 640 x 360 and 844 x 390 in Edge. Their ranges are retained.
+  Evidence: `battle-feedback-browser-tests.mjs`, actual DOM rectangles.
+
+[sc]: charge-surroundings.md

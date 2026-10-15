@@ -68,14 +68,13 @@ seconds.
 Evidence: `tests/personal-combat-tests.mjs`,
 `tests/personal-combat-ui-tests.mjs` and the [art manifest][art].
 
-The current presentation follows the October 15 visual-interval correction.
-`VISUAL_INTERVAL` is 3000 milliseconds. Four complete 1983 x 793 combat
-scenes replace the runtime sprite atlas and background. Each image lasts
-three seconds and loops; strength updates once per Game Speed interval.
-Playback ends immediately at the final strength result, even mid-image.
-The outcome card and subsequent capture notice each last three seconds.
-Evidence: `mjs/message-playback.mjs`, `mjs/personal-combat.mjs`,
-`tests/personal-combat-tests.mjs` and the mounted four-frame case.
+The current presentation keeps `personal-combat-close-1.webp` visible
+throughout combat. Strength updates once per Game Speed interval, and the
+final recorded result ends playback immediately. Challenge, outcome and
+capture cards retain `VISUAL_INTERVAL` (3000 milliseconds). Frames 2-4 were
+removed at the user's request; prompts, hashes and archive links remain in
+the art manifest. Evidence: the personal-combat engine and mounted UI
+regressions, including the unchanged-image pixel comparison.
 
 The native timing remains historical evidence in the witness file: 32
 single-BIOS-tick waits followed by an 11-tick hold. BIOS means Basic
@@ -93,7 +92,9 @@ node tools/verify-charge-arrival-raster-v56.mjs . `
 ```
 
 Expected output: 96 mounted raster queue cases pass. The 24 native landing
-cases each run at four Game Speeds. Each resolved landing ambush follows
+cases each run at four Game Speeds. The requested all-adjacent check adds
+the surrounding enemies beyond the native forward scan. Each resolved landing
+ambush follows
 Charge, with eight flashes over one Game Speed interval. Playback neither
 repeats casualties nor draws randomness. Evidence: the verifier's phase,
 cue count, duration and state assertions.
@@ -127,7 +128,7 @@ command verifies that Edge decodes the requested effect-9 replacement.
 - PC-02, missing challenge event: image, initiator/ruler names and
   opposing commander. Cases: engine event metadata and both mounted sides.
 - PC-03, missing mounted duel: native counters and RNG traces, left/right
-  order, pause, cancellation and independent image/counter clocks. Cases:
+  order, pause, cancellation and live counters over one still image. Cases:
   native comparison, deterministic clock and mounted Canvas playback.
 - PC-04, missing result event: initiator-relative win/loss, both ruler
   affiliations, separate images, draw handling and fixed three-second expiry.
@@ -158,7 +159,7 @@ source tests were retained. Other inherited suites and the new combat
 cases passed using the actual Rust WebAssembly engine.
 
 An ignored verification copy adapted those three Windows URL paths and
-normalized only the inherited SVG checkout line endings. All 57 commands
+normalized only the inherited SVG checkout line endings. All 58 commands
 from `npm test` then passed against the final engine. The inherited v56
 mounted suite also passed its three groups after equivalent path, temporary
 directory and vendored-YAML adaptations in that copy. The 96 charge/ambush
@@ -169,3 +170,9 @@ to the retained source tests. Summary: [verification record][verification].
 [witnesses]: native-personal-combat.json
 [art]: artwork/personal-combat-manifest.json
 [verification]: verification-personal-combat.json
+
+Charge landing scope, the before/after failure, original executable
+observations and the earlier coverage gap are documented in
+[charge surroundings][surroundings].
+
+[surroundings]: charge-surroundings.md
