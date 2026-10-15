@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';import {pathToFileURL} from 'node:url';
 const app=path.resolve(process.argv[2]||new URL('../',import.meta.url).pathname);
-const {act,direction,ambushCells,distance}=await import(pathToFileURL(path.join(app,'mjs/battle.mjs')));
+const {act,direction,neighbors,distance}=await import(pathToFileURL(path.join(app,'mjs/battle.mjs')));
 const {ambushAnimations,combatAnimations}=await import(pathToFileURL(path.join(app,'mjs/battle-presentation.mjs')));
 const vectors=JSON.parse(fs.readFileSync(process.argv[3]||path.join(app,'docs/native-charge-arrival-v56.json'))).cases.filter(v=>v.branch!=='occupation-ended'),results=[];
 for(const v of vectors){
@@ -13,8 +13,8 @@ for(const v of vectors){
  if(v.branch==='blocked')b.terrain[dest.r*13+dest.q]=3;
  const g={s:{battle:b,difficulty:1},int:()=>1,random:()=>v.branch==='failed-chance'?1:.5,isHuman:()=>false,officer:id=>({name:'General'+id}),ruler:id=>({name:'Ruler'+id})};
  if(v.branch==='failed-chance')u.war=0;
- const text=act(g,'charge',{unit:u.id,target:target.id});const actual=ambushAnimations(b,b.lastAction,id=>g.officer(id).name),expected=v.calls.filter(x=>x.ambusher),actualCells=actual.map(x=>{const e=b.units.find(z=>z.id===x.unit);return [e.q,e.r]}),pass=JSON.stringify(actualCells)===JSON.stringify(expected.map(x=>x.ambusher))&&JSON.stringify([u.q,u.r])===JSON.stringify(v.landing);
- results.push({branch:v.branch,start:v.start,nativeDirection:v.nativeDirection,landing:[u.q,u.r],expectedLanding:v.landing,nativeAmbushes:expected.map(x=>x.ambusher),actualAmbushes:actual.map(x=>{const e=b.units.find(z=>z.id===x.unit);return[e.q,e.r]}),pass,exchanges:b.lastAction.exchanges,queue:[...combatAnimations(b.lastAction),...actual].map(x=>x.type),moverFinalMen:u.soldiers});
+ act(g,'charge',{unit:u.id,target:target.id});const actual=ambushAnimations(b,b.lastAction,id=>g.officer(id).name),native=v.calls.filter(x=>x.ambusher).map(x=>x.ambusher),actualCells=actual.map(x=>{const e=b.units.find(z=>z.id===x.unit);return [e.q,e.r]}),extra=['occupation','breakthrough'].includes(v.branch)?neighbors(u.q,u.r).filter(p=>b.units.some(e=>e.side!=='attack'&&!e.captured&&e.soldiers>0&&e.q===p.q&&e.r===p.r&&b.terrain[e.r*13+e.q]===1)&&!native.some(c=>c[0]===p.q&&c[1]===p.r)).map(p=>[p.q,p.r]):[],expected=[...native,...extra],pass=JSON.stringify(actualCells)===JSON.stringify(expected)&&JSON.stringify([u.q,u.r])===JSON.stringify(v.landing);
+ results.push({branch:v.branch,start:v.start,nativeDirection:v.nativeDirection,landing:[u.q,u.r],expectedLanding:v.landing,nativeForwardAmbushes:native,requestedAdditionalAmbushes:extra,actualAmbushes:actual.map(x=>{const e=b.units.find(z=>z.id===x.unit);return[e.q,e.r]}),pass,exchanges:b.lastAction.exchanges,queue:[...combatAnimations(b.lastAction),...actual].map(x=>x.type),moverFinalMen:u.soldiers});
 }
 fs.writeFileSync(process.argv[4]||'/tmp/charge-arrival-remaster-v56.json',JSON.stringify(results,null,2)+'\n');console.log(results.length,'cases',results.filter(x=>!x.pass).length,'failed');console.log(results.filter(x=>!x.pass));
 if(results.some(row=>!row.pass))process.exitCode=1;

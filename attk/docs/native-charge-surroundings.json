@@ -1,0 +1,1614 @@
+{
+  "originalSHA256": "25f92228309660160cbd6b5cd55098b26b8ece266899aa9f262848c017b1efd8",
+  "cases": [
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        5,
+        5
+      ],
+      "jungles": [
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        5,
+        5
+      ],
+      "jungles": [
+        [
+          6,
+          6
+        ],
+        [
+          5,
+          4
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "jungles": [
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "jungles": [
+        [
+          5,
+          5
+        ],
+        [
+          7,
+          5
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "jungles": [
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        7,
+        5
+      ],
+      "jungles": [
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "jungles": [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "jungles": [
+        [
+          5,
+          5
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        4
+      ],
+      "jungles": [
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        4
+      ],
+      "jungles": [
+        [
+          5,
+          4
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "jungles": [
+        [
+          8,
+          5
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [
+        [
+          8,
+          5
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "jungles": [
+        [
+          7,
+          5
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "jungles": [
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        6
+      ],
+      "jungles": [
+        [
+          7,
+          6
+        ],
+        [
+          6,
+          5
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        6
+      ],
+      "jungles": [
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          7
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        6
+      ],
+      "jungles": [
+        [
+          6,
+          6
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "jungles": [
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "jungles": [
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          5
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "jungles": [
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          4
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        6,
+        5
+      ],
+      "jungles": [
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "jungles": [
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        4
+      ],
+      "jungles": [
+        [
+          6,
+          5
+        ],
+        [
+          8,
+          5
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        8,
+        5
+      ],
+      "jungles": [
+        [
+          9,
+          5
+        ],
+        [
+          8,
+          4
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [
+        [
+          9,
+          5
+        ],
+        [
+          8,
+          4
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "occupation",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        8,
+        5
+      ],
+      "jungles": [
+        [
+          8,
+          6
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        4,
+        6
+      ],
+      "jungles": [
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          7
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        5
+      ],
+      "landing": [
+        4,
+        6
+      ],
+      "jungles": [
+        [
+          5,
+          6
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        7
+      ],
+      "jungles": [
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          8
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          8
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        6,
+        7
+      ],
+      "jungles": [
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          6
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "jungles": [
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        5
+      ],
+      "landing": [
+        8,
+        6
+      ],
+      "jungles": [
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          5
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        4,
+        4
+      ],
+      "jungles": [
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          3
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        5,
+        4
+      ],
+      "landing": [
+        4,
+        4
+      ],
+      "jungles": [
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        3
+      ],
+      "jungles": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        6,
+        4
+      ],
+      "landing": [
+        6,
+        3
+      ],
+      "jungles": [
+        [
+          5,
+          3
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        8,
+        4
+      ],
+      "jungles": [
+        [
+          9,
+          4
+        ],
+        [
+          8,
+          3
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [
+        [
+          9,
+          4
+        ],
+        [
+          8,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        6,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        8,
+        4
+      ],
+      "jungles": [
+        [
+          8,
+          5
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        5,
+        6
+      ],
+      "jungles": [
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        6
+      ],
+      "landing": [
+        5,
+        6
+      ],
+      "jungles": [
+        [
+          6,
+          7
+        ],
+        [
+          5,
+          5
+        ]
+      ],
+      "nativeDirection": 0,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        7
+      ],
+      "jungles": [
+        [
+          6,
+          8
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [
+        [
+          6,
+          8
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        6
+      ],
+      "landing": [
+        7,
+        7
+      ],
+      "jungles": [
+        [
+          6,
+          7
+        ],
+        [
+          8,
+          7
+        ]
+      ],
+      "nativeDirection": 1,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        9,
+        6
+      ],
+      "jungles": [
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        6
+      ],
+      "landing": [
+        9,
+        6
+      ],
+      "jungles": [
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          5
+        ]
+      ],
+      "nativeDirection": 2,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "jungles": [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        6,
+        5
+      ],
+      "landing": [
+        5,
+        4
+      ],
+      "jungles": [
+        [
+          5,
+          5
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "nativeDirection": 3,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        3
+      ],
+      "jungles": [
+        [
+          6,
+          3
+        ],
+        [
+          7,
+          2
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [
+        [
+          6,
+          3
+        ],
+        [
+          7,
+          2
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        7,
+        4
+      ],
+      "landing": [
+        7,
+        3
+      ],
+      "jungles": [
+        [
+          6,
+          4
+        ],
+        [
+          8,
+          4
+        ]
+      ],
+      "nativeDirection": 4,
+      "nativeAmbushes": [],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "forward-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        9,
+        4
+      ],
+      "jungles": [
+        [
+          10,
+          5
+        ],
+        [
+          9,
+          3
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [
+        [
+          10,
+          5
+        ],
+        [
+          9,
+          3
+        ]
+      ],
+      "pass_": true
+    },
+    {
+      "branch": "breakthrough",
+      "layout": "side-rear-pair",
+      "start": [
+        7,
+        5
+      ],
+      "target": [
+        8,
+        5
+      ],
+      "landing": [
+        9,
+        4
+      ],
+      "jungles": [
+        [
+          9,
+          5
+        ],
+        [
+          8,
+          4
+        ]
+      ],
+      "nativeDirection": 5,
+      "nativeAmbushes": [],
+      "pass_": true
+    }
+  ],
+  "limits": "Native full charge relocation, occupancy, jungle/hostile eligibility and three-entry scan at 24938 execute. Rendering, RNG and casualty bodies are controlled; this does not establish physical DOS timing."
+}
