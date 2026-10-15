@@ -9,8 +9,8 @@ export const nativeMusicFor=(theme,region,won=true)=>{if(theme==='triumph')retur
 const customEffects=['order','fire','month','message','gallop','flood','locust','typhoon','epidemic','uprising','meteor','death','march','train','trade','recruit','retreat','charge-shout','sword-attack'];
 const nativeName=id=>`native-effect-${id}`;
 // User-supplied v55 recordings are kept byte-for-byte; native reference media remains archived.
-const replacementFiles={'sword-attack':'freesound_community-sword-battle-jingle-loop-96983.mp3','charge-shout':'audiomass-charge_scream.mp3',gallop:'audiomass-horse_gallop.mp3'};
-const effectSource=name=>`./assets/sounds/${replacementFiles[name]||name+'.mp3'}${name.startsWith('native-effect-')?'?v=56':''}`;
+const replacementFiles={'native-effect-9':'audiomass-charge_scream.mp3','sword-attack':'freesound_community-sword-battle-jingle-loop-96983.mp3','charge-shout':'audiomass-charge_scream.mp3',gallop:'audiomass-horse_gallop.mp3'};
+const effectSource=name=>`./assets/sounds/${replacementFiles[name]||name+'.mp3'}${name.startsWith('native-effect-')&&!replacementFiles[name]?'?v=56':''}`;
 export function orderSound(type,args={}){
  return nativeName(14);
 }

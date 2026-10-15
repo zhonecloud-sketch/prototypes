@@ -22,7 +22,16 @@ await test('BUG-55-03 supplied gallop loops only during outward/return movement 
 await test('BUG-55-01/02 unrelated Ambush, Fireball, silent menus and original remaster BGM retain their routes',async bus=>{
  bus.playCombat({type:'ambush'},1);await flush();assert(sources.at(-1).buffer.src.includes('/native-effect-13.mp3'));bus.playBattle({lastAction:{type:'fireball',sequence:1,messageSerial:1},messages:[{serial:1,text:'Fireball failed'}]},0,true);await flush();assert(sources.at(-1).buffer.src.endsWith('/fire.mp3'));const n=sources.length;bus.play('select');await flush();assert.equal(sources.length,n);assert.equal(bus.tracks.council.src,'./assets/music/council-music.mp3');assert.equal(bus.tracks.battle.src,'./assets/music/battle-music-v17.mp3');assert.equal(bus.tracks.triumph.src,'./assets/music/triumph-music.mp3');
 });
+await test('Effect 9 uses supplied charge scream through every Web Audio entry point; effect 7 stays unchanged',async bus=>{
+ const calls=[()=>bus.playNative(9),()=>bus.play('native-effect-9'),()=>bus.playEvent({kind:'reinforcement'}),()=>bus.playBattle({lastAction:{type:'reinforce',sequence:1,messageSerial:1},messages:[{serial:1,text:'Reinforcements'}]},0,true),()=>bus.playBattle({messages:[{serial:1,text:'Reinforcements have arrived'}]},0,true)];
+ for(const call of calls){const before=sources.length;call();await flush();assert.equal(sources.length,before+1);assert(sources.at(-1).buffer.src.endsWith('/'+charge));}
+ bus.playNative(7);await flush();assert(sources.at(-1).buffer.src.endsWith('/native-effect-7.mp3?v=56'));assert(!fetches.some(url=>url.includes('/native-effect-9.mp3')));
+});
 delete globalThis.AudioContext;
+await test('Effect 9 replacement also uses HTML audio fallback without changing effect 7',async bus=>{
+ for(const call of [()=>bus.playNative(9),()=>bus.playEvent({kind:'reinforcement'}),()=>bus.playBattle({lastAction:{type:'reinforce',sequence:1,messageSerial:1},messages:[{serial:1,text:'Reinforcements'}]},0,false)]){const before=media.length;call();assert.equal(media.length,before+1);assert(media.at(-1).src.endsWith('/'+charge));}
+ bus.playEvent({kind:'prison'});assert(media.at(-1).src.endsWith('/native-effect-7.mp3?v=56'));
+});
 await test('BUG-55-01/02 supplied combat clips also route through HTML audio when Web Audio is unavailable',async bus=>{
  for(const [type,file]of [['attack',sword],['simultaneous',sword],['charge',charge]]){bus.playBattle({lastAction:{type,sequence:1,messageSerial:1},messages:[{serial:1,text:'Resolved'}]},0,false);await flush();assert(media.at(-1).src.endsWith('/'+file));}
 });

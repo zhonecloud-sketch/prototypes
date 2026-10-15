@@ -17,7 +17,7 @@ IDs below are zero-based. Files are `assets/sounds/native-effect-N.mp3`. `DS` be
 | 6 / 7198 | Settle province; 215C5 / 22452 | Settlement events and matching settlement text, native 6. |
 | 7 / 71FC | Betrayal / field status at 25056; captive prompt at A286 | Betrayal and prison/captive presentation, native 7. |
 | 8 / 7212 | Personal-combat result; 289E0 | Challenge action / duel event, native 8. Routing does not prove identical native result timing. |
-| 9 / 7228 | Reinforcement arrival/request/return; 29D9C; text DS:C166, C18B, C1AB, C1CF | Reinforce action and reinforcement event, native 9. |
+| 9 / 7228 | Reinforcements; see [catalogue][cat]. | [Override][nine]. |
 | 10 / 724E | Input/wait opening at 58F3; v54 captive result traces also identify refusal feedback | Retained and explicitly callable. Ordinary button/selector clicks are silent; the generic order mapper does not implement a separate native refusal cue. |
 | 11 / 7274 | Sprite animation at 13053; v53 courier witness identifies native messenger travel cue 11 | Retained and callable. Messenger travel is overridden by the supplied horse recording. March movement uses remaster march.mp3. |
 | 12 / 72AE | Yellow Turban attack; 21A90, text DS:B00D | Reports containing Yellow Turban attack text, native 12. |
@@ -98,3 +98,37 @@ Unresolved original callers (effect 15 and music contexts listed above), exact n
 ## Rights and provenance
 
 Moving or retaining an asset does not grant permission to sell it. Native-derived media retains the Koei rights concern. The user's replacements retain the Pixabay/Mixkit provenance, AudioMass edit history and standalone redistribution limitations documented in [the consolidated audio licensing assessment](changes.md#record-audio-licenses-v55) and [commercial rights audit](changes.md#record-commercial-rights-audit-v56). This maintenance does not alter those conclusions.
+
+## Effect 9 replacement
+
+Run the routing checks from the project root:
+
+```powershell
+node tests/audio-v50-tests.mjs
+node tests/audio-v55-tests.mjs
+npm run test:battle-feedback:browser
+```
+
+Expected output: native-ID routing, all effect-9 entry points and both
+Web Audio and HTML Audio fallback pass. The browser test also confirms
+that the supplied MP3 decodes and the old effect-9 URL is never requested.
+The browser command uses the existing Playwright environment and installed
+Edge on Windows; it does not install a browser.
+
+Effect 9 now plays `audiomass-charge_scream.mp3`, as requested on October
+15. This applies to direct ID calls, reinforcement events/actions and the
+arrival/request/return message fallback. Charge retains its existing
+single-cry behavior. The old native export remains archived with its
+original bytes and provenance. Sources: `mjs/audio.mjs`, `replacementFiles`,
+and the tests above.
+
+For effect 7, the suggested candidate is the existing `message.mp3`.
+Its generator defines a 0.65-second notice with a 220 Hz plucked tone and
+a decaying noise component. Source: `tools/build-audio.py`, message branch.
+This is a recommendation for audition; effect 7 is still active for
+betrayal and captive prompts. The audio tests explicitly check that route.
+
+Physical-phone listening and subjective sound preference remain pending.
+
+[cat]: native-audio-v50.json
+[nine]: #effect-9-replacement

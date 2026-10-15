@@ -5,7 +5,7 @@ import {AudioBus,NATIVE_EFFECT_COUNT,NATIVE_MUSIC_COUNT,nativeMusicFor,orderSoun
 const media=[];globalThis.Audio=class{constructor(src){this.src=src;this.paused=true;this.currentTime=0;media.push(this);}play(){this.paused=false;return Promise.resolve();}pause(){this.paused=true;}};
 let listener;globalThis.document={hidden:false,addEventListener(type,fn){if(type==='visibilitychange')listener=fn;},removeEventListener(){}};
 const bus=new AudioBus();bus.setActive(true);bus.unlock();
-for(let id=0;id<NATIVE_EFFECT_COUNT;id++){bus.playNative(id);assert.equal(media.at(-1).src,`./assets/sounds/native-effect-${id}.mp3?v=56`);assert(fs.statSync(new URL(`../assets/sounds/native-effect-${id}.mp3`,import.meta.url)).size>1000);}
+for(let id=0;id<NATIVE_EFFECT_COUNT;id++){bus.playNative(id);assert.equal(media.at(-1).src,id===9?'./assets/sounds/audiomass-charge_scream.mp3':`./assets/sounds/native-effect-${id}.mp3?v=56`);assert(fs.statSync(new URL(`../assets/sounds/native-effect-${id}.mp3`,import.meta.url)).size>1000);}
 assert.equal(NATIVE_EFFECT_COUNT,16);const beforeInvalid=media.length;bus.playNative(16);assert.equal(media.length,beforeInvalid);
 console.log('PASS all 16 catalogued native effect replacements exist and route by bounded ID');
 for(const [type,sound]of [['trainArmy','train'],['trade','trade'],['recruitMethod','recruit'],['moveParty','march'],['selfExile','retreat'],['diplomaticMission','message'],['relief','order']]){assert.equal(orderSound(type),'native-effect-14');bus.playOrder(type,{});assert.equal(media.at(-1).src,'./assets/sounds/native-effect-14.mp3?v=56');}
