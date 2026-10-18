@@ -8,7 +8,7 @@
 #login .source-control select{max-width:100%;width:100%;font-size:11px}
 #login .source-control button{width:auto;font-size:11px;padding:6px}
 #clubDialog,#clubConfirm{font-family:var(--sans,Arial,sans-serif);color:#ede9da;background:#101a16;border:1px solid #c9b27435;box-shadow:0 30px 100px #0008}
-#clubDialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;border-radius:0;transform:none!important;overflow:auto;overscroll-behavior:contain}
+#clubDialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;border-radius:0;transform:none;overflow:auto;overscroll-behavior:contain}
 #clubDialog::backdrop,#clubConfirm::backdrop{background:#050c09cf;backdrop-filter:blur(8px)}
 #clubDialog button,#clubConfirm button{cursor:pointer;min-height:42px;padding:10px 16px;border:1px solid #c4b48240;border-radius:7px;background:#ffffff04;color:#ede9da;font-size:12px;letter-spacing:.015em;transition:background .15s,border-color .15s}
 #clubDialog button:hover,#clubConfirm button:hover{background:#c6ad6e15;border-color:#c4b48290}
@@ -106,10 +106,71 @@
 .club-table-scroll{overflow:auto}.club-table-scroll table{border-collapse:collapse;width:100%;font-size:11px}
 .club-table-scroll th,.club-table-scroll td{padding:10px;text-align:right;border-bottom:1px solid #ffffff12;white-space:nowrap}
 .club-table-scroll th:first-child,.club-table-scroll td:first-child{text-align:left}
-#clubConfirm{position:fixed;inset:0;margin:auto;padding:0;width:min(520px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);transform:none!important;border-radius:12px;overflow:auto}
+#clubConfirm{position:fixed;inset:0;margin:auto;padding:0;width:min(520px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);transform:none;border-radius:12px;overflow:auto}
 .club-confirm-content>img{width:100%;height:auto;max-height:280px;object-fit:cover;display:block}
 .club-confirm-content>div{padding:28px}.club-confirm-content h2{font:30px Georgia,serif;margin:0 0 15px}
 .club-confirm-content p{font-size:13px;color:#b0c0b3;line-height:1.8}.club-confirm-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:23px}
 @media(max-width:900px){.club-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.club-packs{grid-template-columns:repeat(3,1fr)}.club-main{padding:28px 24px}.club-insights-offer,.club-unlock{align-items:flex-start;flex-direction:column}.club-preview-label{display:none}}
 @media(max-width:560px){.club-header{height:66px;padding:0 16px;gap:9px}.club-wordmark{font-size:15px}.club-wallet small{display:none}.club-main{padding:27px 16px}.club-heading h1{font-size:34px}.club-grid{grid-template-columns:1fr;gap:22px}.club-item-copy>p:not(.club-eyebrow){min-height:0}.club-banner{grid-template-columns:1fr}.club-banner>div{padding:26px}.club-banner img{max-height:210px}.club-packs{grid-template-columns:repeat(2,1fr)}.club-analysis-controls{grid-template-columns:1fr}.club-sample-values{grid-template-columns:1fr 1fr;gap:20px}.club-sample-values>div:last-child{grid-column:1/-1}.club-verdict{padding:23px}.club-verdict h2{font-size:29px}.club-metrics{grid-template-columns:1fr}.club-metrics>div{display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:18px}.club-metrics small{margin:0}.club-metrics strong{text-align:right;font-size:25px}.club-metrics span{grid-column:1/-1}.club-detail-grid{grid-template-columns:1fr}.club-record-heading{align-items:flex-start}.club-record-heading button{font-size:10px!important;padding:10px!important}.club-record-actions{flex-direction:column}.club-section-heading{display:block}.club-chart{padding:18px}.club-chart svg{margin-top:14px}.club-orders li{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.club-art img{transition:none}.club-art:hover img{transform:none}}
+
+/* Match the game's 1120px landscape surface, including its portrait fallback. */
+.phone-layout #clubDialog,.phone-layout #clubConfirm{inset:auto;left:50%;top:50%;margin:0;transform-origin:center;transform:translate(-50%,-50%) scale(var(--desktop-scale))}
+.phone-layout #clubDialog{width:var(--surface-width);height:var(--surface-height);max-width:none;max-height:none;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;touch-action:pan-y pinch-zoom}
+.phone-layout #clubConfirm{width:650px;max-width:calc(var(--surface-width) - 32px);max-height:calc(var(--surface-height) - 28px)}
+.portrait-landscape #clubDialog,.portrait-landscape #clubConfirm{transform:translate(-50%,-50%) rotate(90deg) scale(var(--desktop-scale))}
+.phone-layout #clubDialog button,.phone-layout #clubConfirm button{min-height:34px;padding:6px 12px}
+.phone-layout .club-header{height:44px;padding:0 18px;gap:12px;position:sticky;top:0;z-index:3;background:#101a16}
+.phone-layout .club-wordmark{font-size:19px}.phone-layout .club-wallet small{display:inline}
+.phone-layout .club-main{width:100%;padding:10px 18px 24px}
+.phone-layout .club-heading{margin-bottom:8px;gap:16px}
+.phone-layout .club-heading .club-eyebrow{display:none}
+.phone-layout .club-heading h1{font-size:28px;margin-bottom:5px}
+.phone-layout .club-heading p{display:none}
+.phone-layout .club-preview-label{display:inline-block;padding:6px}
+.phone-layout .club-tabs{margin-bottom:10px;gap:24px}
+.phone-layout #clubDialog .club-tabs button{padding:6px 2px}
+.phone-layout .club-collection-toolbar{margin-bottom:12px}
+.phone-layout .club-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.phone-layout #clubDialog .club-art{aspect-ratio:16/9}
+.phone-layout .club-item-copy{padding:12px}
+.phone-layout .club-item-copy h2{font-size:21px;margin-bottom:9px}
+.phone-layout .club-item-copy>p{display:none}
+.phone-layout .club-item-bottom{padding-top:9px}.phone-layout .club-item-bottom small{display:inline;margin-left:5px}
+.phone-layout .club-banner{grid-template-columns:1.4fr 1fr;min-height:0}
+.phone-layout .club-banner>div{padding:12px 18px}.phone-layout .club-banner img{max-height:110px}
+.phone-layout .club-banner .club-eyebrow{display:none}
+.phone-layout .club-banner h2,.phone-layout .club-insights-offer h2,.phone-layout .club-unlock h2{font-size:24px;margin-bottom:7px}
+.phone-layout .club-banner p,.phone-layout .club-insights-offer p,.phone-layout .club-unlock p{font-size:11px;line-height:1.5;margin:6px 0}
+.phone-layout .club-simulator-note{padding:8px 12px;margin:10px 0}
+.phone-layout .club-packs{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.phone-layout .club-pack{padding:14px 10px}.phone-layout .club-chip-illustration{width:44px;height:44px;border-width:5px;font-size:15px;margin-bottom:10px}
+.phone-layout .club-pack h2{font-size:24px}.phone-layout .club-pack p,.phone-layout .club-pack>strong{margin-bottom:9px}
+.phone-layout .club-insights-offer,.phone-layout .club-unlock{flex-direction:row;align-items:center;padding:18px;margin:14px 0;gap:20px}
+.phone-layout .club-record-heading{align-items:center;margin-bottom:8px}
+.phone-layout .club-record-heading strong{font-size:13px;margin-top:2px}
+.phone-layout .club-analysis-controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.phone-layout .club-analysis-controls select,.phone-layout .club-field select,.phone-layout .club-field input{padding:8px;min-height:34px;margin-top:5px}
+.phone-layout .club-verdict{padding:12px 20px}.phone-layout .club-verdict h2{font-size:23px;margin-bottom:5px;color:#ede9da}
+.phone-layout .club-verdict>p{font-size:11px;line-height:1.5;margin:4px 0}
+.phone-layout .club-verdict>.club-eyebrow{margin:0 0 5px!important}
+.phone-layout .club-sample-values{grid-template-columns:1fr 1fr 1.2fr;gap:18px;margin:8px 0}
+.phone-layout .club-sample-values>div:last-child{grid-column:auto}
+.phone-layout .club-sample-values small,.phone-layout .club-metrics small{margin-bottom:5px}
+.phone-layout .club-sample-values strong{font-size:23px}
+.phone-layout #clubDialog .club-small{font-size:10px;line-height:1.5}
+.phone-layout .club-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.phone-layout .club-metrics>div{display:block;padding:12px 18px}
+.phone-layout .club-metrics strong{font-size:24px;text-align:left}.phone-layout .club-metrics span{margin-top:5px}
+.phone-layout .club-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.phone-layout .club-data-card,.phone-layout .club-chart{padding:18px}.phone-layout .club-chart{margin:14px 0}
+.phone-layout .club-section-heading{display:flex}.phone-layout .club-section-heading h2,.phone-layout .club-data-card h2{font-size:21px;margin-bottom:12px}
+.phone-layout .club-chart svg{margin-top:0}
+.phone-layout .club-record-actions{flex-direction:row;padding-top:16px}
+.phone-layout .club-details{padding:14px 0;margin-top:14px}.phone-layout .club-footer{padding-top:18px;margin-top:20px}
+.phone-layout .club-confirm-content{display:flex;align-items:stretch}
+.phone-layout .club-confirm-content>img{width:40%;height:auto;max-height:none;object-fit:cover}
+.phone-layout .club-confirm-content>div{flex:1;min-width:0;padding:20px}
+.phone-layout .club-confirm-content h2{font-size:25px;margin-bottom:10px}
+.phone-layout .club-confirm-content p{font-size:12px;line-height:1.6}
+.phone-layout .club-confirm-actions{margin-top:16px}

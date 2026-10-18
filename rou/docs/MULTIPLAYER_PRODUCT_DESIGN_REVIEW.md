@@ -118,9 +118,13 @@ Recent spins                Insights >      Wheel >
 
 On phones, preserve the existing landscape table approach. Seat labels may
 shorten, but tap targets and bet cells must remain usable. Open Shop and
-Insights as full-screen pages with a clear return action; use portrait-friendly
-reading layouts for those pages where practical. Avoid adding a permanent
-multi-item navigation bar over the betting surface.
+Insights on the same compact landscape surface as launch, wagering and wheel
+views, with a clear return action. Use the existing 1120-pixel logical width,
+scale it to the phone and rotate it when the phone is held in portrait. Keep
+the collection in three columns, chip packs in five, and analysis controls
+and headline figures in three. Purchase confirmations follow the same
+orientation. Keep Back accessible while scrolling longer content. Avoid
+adding a permanent multi-item navigation bar over the betting surface.
 
 Opening another page does not pause a shared round. Show a small round-status
 line and retain accepted wagers. Do not automatically repeat bets while the

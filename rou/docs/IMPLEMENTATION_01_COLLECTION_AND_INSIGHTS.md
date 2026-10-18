@@ -117,6 +117,30 @@ On 18 October 2026:
 Additional captures: [narrow collection](implementation_01/collection-narrow.jpg)
 and [narrow Insights](implementation_01/insights-narrow.jpg).
 
+### Compact mobile landscape correction
+
+Shop, Insights and their confirmations now share the game's 1120-pixel
+logical landscape surface. They scale to the phone and rotate with the
+existing portrait-held fallback. The compact header keeps Back accessible
+while scrolling. Collection cards use three columns, chip packs use five,
+and Insights controls, sample figures and result totals use three. Longer
+reports and the remaining collectibles remain scrollable.
+
+Browser layout checks used 844-by-390 and 390-by-844 viewports, with phone
+detection enabled only in the temporary local test response. Both full-page
+dialogs filled the viewport without horizontal overflow. Rotation while
+Insights and checkout were open preserved their landscape layout. The chip
+purchase buttons fit in the landscape screen, and item and Insights
+confirmations remained centered. These are emulated layout checks; physical
+touch-device testing remains outstanding. The earlier narrow captures above
+predate this correction.
+
+![Mobile landscape collection](implementation_01/collection-mobile-landscape.jpg)
+
+![Mobile landscape Insights](implementation_01/insights-mobile-landscape.jpg)
+
+[Portrait-held rotation check](implementation_01/insights-mobile-portrait-held.jpg)
+
 ## Storage and current limits
 
 Collection ownership, showcased item, test orders, pass expiry and reset ID
