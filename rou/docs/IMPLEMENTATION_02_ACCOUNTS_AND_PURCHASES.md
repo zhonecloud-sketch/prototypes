@@ -8,14 +8,25 @@ accepted solo wager can still settle:
 <https://atelier-roulette-test.zhonecloud.chatgpt.site>
 
 Published on 19 October 2026 (Malaysia time). Sites confirmed successful
-deployment of source commit `351f9630561c8dae0b2cd9ee563be1277658c7fe`.
+deployment of version 2, source commit
+`a61bf1504c1a50dae4e1232ef789324948bcef7f`, with environment revision 1.
 Access is restricted to the owner and the supplied tester address. The
 Sites access response confirms one external viewer; email receipt has not
 been independently checked. The main game is maintained and published
 separately through GitHub Pages.
 
-Expected account flow: Sites access gate → game email login / New user →
-email verification → player account → Collection, Chips and Orders.
+The main-game release is commit `dea06da`, pushed to GitHub Pages and
+checked in the live browser. Multiplayer appears between Enter as Guest
+and Sign in with Google and opens the account Site.
+
+Current test account flow: Sites access gate → New user → enter email,
+username and a password of at least 12 characters → Send verification code
+→ enter the six-digit TEST INBOX code shown on screen → create account.
+Then use the same email and password to log in. Guest play and Google Drive
+sign-in do not automatically create a multiplayer account.
+
+Forgot password uses the same clearly labelled on-screen test-code flow.
+No email is sent in this mode; mailbox ownership is not verified.
 The new server source is in `rou/sites-server/`. This is the accounts and
 commerce test slice; shared multiplayer wagering is not connected yet.
 
@@ -102,10 +113,13 @@ The user selected invited testers and supplied one invitation address.
 Sites access and game account verification are separate. An invitation does not
 create a game account or prove a game password.
 
-Real email delivery requires the chosen provider and sender configuration.
-The published Site currently has no email sender configured. Registration
-and password recovery therefore cannot send codes yet. Hosted test-inbox
-mode is not enabled.
+The user selected clearly labelled on-screen test codes for invited testers
+on 19 October 2026. The published Site now has `EMAIL_MODE=test` configured
+through Sites, with access still restricted to the owner and invited tester.
+Registration and recovery display codes on screen. No sender is required
+for this test mode. Existing-player login uses email and password.
+
+Real email delivery still requires provider and sender configuration.
 The prepared Resend adapter uses these Sites runtime values:
 
 - `RESEND_API_KEY`: secret sending-only API key.
@@ -114,11 +128,11 @@ The prepared Resend adapter uses these Sites runtime values:
 
 Never put a provider key into the repository, browser or hosting manifest.
 Deploy after setting runtime values. If email is unconfigured, registration
-and recovery fail clearly without creating an account. Delivery failures
-also create no usable account. Test-inbox mode is currently used only by the
-ignored local `.dev.vars` file for browser checks. It displays a labelled
-code and does **not** validate real mailbox ownership. Local preview data
-and this file are excluded from publication.
+and recovery fail clearly without creating an account unless explicit
+test-inbox mode is enabled. Delivery failures also create no usable account.
+Test-inbox mode displays a labelled code and does **not** validate real
+mailbox ownership. The local `.dev.vars` file and local preview data remain
+excluded from publication; hosted mode is configured through Sites.
 
 The application sends only the requested verification/recovery message.
 Provider delivery and inbox receipt must be checked after the sender is
@@ -132,6 +146,13 @@ sender, and explicit test-inbox registration, login and password recovery
 work without sending email. The setup warning is limited to registration
 and recovery; it no longer appears on the login form. Test-code screens
 explicitly say no email was sent.
+
+Live browser checks on the same date confirmed the Multiplayer button's
+position and server destination, on-screen registration code, successful
+account creation, logout and login with the test account, and recovery-code
+display. Password replacement and old-session revocation are covered by
+the automated service tests. These checks used a clearly named QA account,
+not the tester's personal account. No real email or payment was sent.
 
 On 18 October 2026:
 
@@ -163,9 +184,8 @@ starter's Sites build integration was preserved.
 Publication used Git Bash on PATH and `TAR_OPTIONS=--force-local` to let
 the standard Sites packager handle Windows drive-letter archive paths.
 The source helper confirmed the pushed commit and archive before Sites
-reported a successful deployment. A fresh browser recheck on 19 October
-was blocked by browser-access policy; the preceding local browser checks
-and saved screenshot remain the available visual evidence.
+reported a successful deployment. An earlier browser recheck was blocked;
+the later live browser checks described above completed successfully.
 
 ## Next boundary
 
@@ -184,3 +204,9 @@ Provider references: [Resend email API](https://resend.com/docs/api-reference/em
 [Cloudflare crypto support](https://developers.cloudflare.com/workers/runtime-apis/nodejs/crypto/).
 
 ![Repeat ownership and wealth](implementation_02/server-collection-two-copies.jpg)
+
+![Live Multiplayer launch](implementation_02/live-multiplayer-launch.jpg)
+
+![On-screen registration code](implementation_02/live-test-code.jpg)
+
+![Successful account login](implementation_02/live-login-success.jpg)
