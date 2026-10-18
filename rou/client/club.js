@@ -1,4 +1,5 @@
-import { COLLECTIBLES, CHIP_PACKS, INSIGHTS_PASS, acquire, simulatePurchase } from './catalogue.js';
+import { COLLECTIBLES, CHIP_PACKS, INSIGHTS_PASS, collectionWealth } from './catalogue.js';
+import { openMultiplayer } from './multiplayer.js';
 import { makeRecord, MODEL } from './insights-model.js';
 import { saveRecord, readRecords } from './insights-records.js';
 
@@ -10,7 +11,6 @@ const signedDecimal = n => `${n < 0 ? '−' : '+'}${new Intl.NumberFormat('en-US
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const date = n => new Date(n).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 const compact = n => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
-const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 
 export function mountClub(api) {
   const dialog = document.createElement('dialog');
@@ -26,7 +26,6 @@ export function mountClub(api) {
   const profile = () => api.profile();
   const user = () => api.user();
   const premium = () => (profile()?.insightsUntil || 0) > Date.now();
-  const guestPreview = () => localHost && user()?.type === 'guest';
   const status = message => {
     const el = dialog.querySelector('#clubNotice');
     if (el) { el.textContent = message; el.hidden = !message; }
@@ -34,7 +33,7 @@ export function mountClub(api) {
 
   function frame(title, subtitle, content) {
     dialog.innerHTML = `<div class="club-shell">
-      <header class="club-header"><button class="club-back" data-club="close">← Back</button><span class="club-wordmark">ATELIER</span><button class="club-wallet" data-club="chips"><span data-club-wallet>${money(api.balance())}</span> <small>PLAY CHIPS</small> <b>+</b></button></header>
+      <header class="club-header"><button class="club-back" data-club="close">← Back</button><span class="club-wordmark">ATELIER</span><span class="page-tools"><button data-wide-view>Wide view ↗</button><button data-launch-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span><button class="club-wallet" data-club="chips"><span data-club-wallet>${money(api.balance())}</span> <small>PLAY CHIPS</small> <b>+</b></button></header>
       <main class="club-main"><div class="club-heading"><div><p class="club-eyebrow">${page === 'insights' ? 'YOUR PERSONAL RECORD' : 'THE ATELIER COLLECTION'}</p><h1 id="clubTitle">${title}</h1><p>${subtitle}</p></div><span class="club-preview-label">LOCAL PREVIEW</span></div>
       <p id="clubNotice" class="club-notice" role="status" hidden></p>${content}
       <footer class="club-footer">Virtual collectibles · No cash-out or transfers<br>Collection saved with your bankroll. Personal analysis is stored on this device.</footer></main></div>`;
@@ -43,19 +42,20 @@ export function mountClub(api) {
   function shop() {
     page = 'collection';
     const owned = new Set(profile()?.items.map(i => i.id) || []);
+    const wealth = collectionWealth(profile(), api.balance());
     const nav = `<nav class="club-tabs" aria-label="Shop sections"><button data-club="collection" aria-pressed="${tab === 'collection'}">Collection</button><button data-club="chips" aria-pressed="${tab === 'chips'}">Chips</button></nav>`;
     let content;
     if (tab === 'collection') {
       const items = COLLECTIBLES.filter(c => !onlyOwned || owned.has(c.id));
-      content = `${nav}<div class="club-collection-toolbar"><span>${owned.size} of ${COLLECTIBLES.length} collected</span><button data-club="owned" aria-pressed="${onlyOwned}">${onlyOwned ? 'Show all collectibles' : 'My collection'}</button></div>
+      content = `${nav}<div class="club-collection-toolbar"><span>${wealth.copies} items · ${owned.size}/${COLLECTIBLES.length} styles · Wealth ${compact(wealth.total)} chips</span><button data-club="owned" aria-pressed="${onlyOwned}">${onlyOwned ? 'Show all collectibles' : 'My collection'}</button></div>
         <div class="club-grid">${items.map(item => `<article class="club-item">
-          <button class="club-art" data-club="detail" data-id="${item.id}" aria-label="View ${item.name}"><img src="${item.image}" alt="${item.name}" width="1536" height="1024" loading="lazy" decoding="async">${owned.has(item.id) ? '<span class="club-owned">IN YOUR COLLECTION</span>' : ''}</button>
-          <div class="club-item-copy"><p class="club-eyebrow">${item.category}</p><h2>${item.name}</h2><p>${item.description}</p><div class="club-item-bottom"><span>${compact(item.price)} <small>CHIPS</small></span><button data-club="${owned.has(item.id) ? 'showcase' : 'detail'}" data-id="${item.id}">${owned.has(item.id) ? profile().showcase === item.id ? 'On display ✓' : 'Display' : 'View item ↗'}</button></div></div></article>`).join('')}</div>
+          <button class="club-art" data-club="detail" data-id="${item.id}" aria-label="View ${item.name}"><img src="${item.image}" alt="${item.name}" width="1536" height="1024" loading="lazy" decoding="async">${owned.has(item.id) ? `<span class="club-owned">OWNED ×${profile().items.filter(i => i.id === item.id).length}</span>` : ''}</button>
+          <div class="club-item-copy"><p class="club-eyebrow">${item.category}</p><h2>${item.name}</h2><p>${item.description}</p><div class="club-item-bottom"><span>${compact(item.price)} <small>CHIPS</small></span><button data-club="detail" data-id="${item.id}">${owned.has(item.id) ? 'View / buy another ↗' : 'View item ↗'}</button></div></div></article>`).join('')}</div>
         ${!items.length ? '<div class="club-empty"><h2>Your collection starts here.</h2><p>Choose a piece you would like to make your own.</p><button class="club-primary" data-club="owned">Explore the collection</button></div>' : ''}`;
     } else {
       content = `${nav}<div class="club-banner"><div><p class="club-eyebrow">A LITTLE MORE ROOM TO PLAY</p><h2>Build your collection.</h2><p>Optional play-chip packs for the table and the things you love.</p></div><img src="assets/collectibles/watch.png" alt="Gold and platinum luxury watch" width="1536" height="1024"></div>
-        <p class="club-simulator-note">${localHost ? 'Payment simulator · No card details and no real charge. Test purchases are available for local guest play.' : 'Preview prices · Online payments are not available yet.'}</p>
-        <div class="club-packs">${CHIP_PACKS.map((p, i) => `<article class="club-pack"><div class="club-chip-illustration" aria-hidden="true">${i+1}</div><h2>${compact(p.chips)}</h2><p>play chips</p><strong>${usd(p.cents)}</strong><button class="club-primary" data-club="checkout" data-id="${p.id}" ${!localHost ? 'disabled' : ''}>${localHost ? 'Test purchase' : 'Coming soon'}</button></article>`).join('')}</div>
+        <p class="club-simulator-note">Log in to Multiplayer to purchase. Test payments are processed by the server; no real card details or money are used.</p>
+        <div class="club-packs">${CHIP_PACKS.map((p, i) => `<article class="club-pack"><div class="club-chip-illustration" aria-hidden="true">${i+1}</div><h2>${compact(p.chips)}</h2><p>play chips</p><strong>${usd(p.cents)}</strong><button class="club-primary" data-club="checkout" data-id="${p.id}" >Log in to purchase</button></article>`).join('')}</div>
         <div class="club-insights-offer"><div><p class="club-eyebrow">A CLOSER LOOK AT YOUR PLAY</p><h2>Atelier Insights</h2><p>Your full record since reset. Understand your results, sample size and playing style.</p></div><button data-club="insights">Explore Insights →</button></div>
         <details class="club-details"><summary>Test order history</summary>${orders()}</details>`;
     }
@@ -65,16 +65,11 @@ export function mountClub(api) {
   function orders() {
     const history = profile()?.orders || [];
     if (!history.length) return '<p>No test orders yet.</p>';
-    return `<ul class="club-orders">${history.slice(-20).reverse().map(o => `<li><span>${escape(o.productId)}<small>${date(o.createdAt)} · ${escape(o.status)} · simulated</small></span><span>${usd(o.cents)}</span>${o.status === 'pending' && guestPreview() ? `<button data-club="complete" data-id="${escape(o.id)}">Complete test order</button>` : ''}</li>`).join('')}</ul>`;
-  }
-
-  function ensurePlayer() {
-    if (!user()) api.startGuest();
-    if (!profile()) throw new Error('Enter the table to start your collection.');
+    return `<ul class="club-orders">${history.slice(-20).reverse().map(o => `<li><span>${escape(o.productId)}<small>${date(o.createdAt)} · ${escape(o.status)} · simulated</small></span><span>${usd(o.cents)}</span></li>`).join('')}</ul>`;
   }
 
   function confirm(title, text, actionText, action, image = null, extra = '') {
-    confirmation.innerHTML = `<div class="club-confirm-content">${image ? `<img src="${image}" alt="" width="1536" height="1024">` : ''}<div><p class="club-eyebrow">ATELIER</p><h2 id="clubConfirmTitle">${title}</h2><p>${text}</p>${extra}<p id="clubConfirmError" class="club-notice" hidden role="alert"></p><div class="club-confirm-actions"><button id="clubCancel">Back</button><button id="clubAccept" class="club-primary">${actionText}</button></div></div></div>`;
+    confirmation.innerHTML = `<div class="club-confirm-content">${image ? `<img src="${image}" alt="" width="1536" height="1024">` : ''}<div><div class="page-tools"><button data-wide-view>Wide view ↗</button><button data-launch-menu aria-label="Menu — return to launch" title="Menu">⚙</button></div><p class="club-eyebrow">ATELIER</p><h2 id="clubConfirmTitle">${title}</h2><p>${text}</p>${extra}<p id="clubConfirmError" class="club-notice" hidden role="alert"></p><div class="club-confirm-actions"><button id="clubCancel">Back</button><button id="clubAccept" class="club-primary">${actionText}</button></div></div></div>`;
     confirmation.querySelector('#clubCancel').onclick = () => confirmation.close();
     confirmation.querySelector('#clubAccept').onclick = async () => {
       if (busy) return;
@@ -89,31 +84,13 @@ export function mountClub(api) {
   function itemDetail(id) {
     const item = COLLECTIBLES.find(c => c.id === id);
     if (!item) return;
-    const owned = profile()?.items.some(i => i.id === id);
-    confirm(item.name, `${item.description} ${owned ? 'This piece is already in your collection.' : `${money(item.price)} play chips. A virtual collectible with no resale or cash value.`}`,
-      owned ? 'Show in my profile' : 'Add to collection', () => {
-        ensurePlayer();
-        if (owned) { const next = structuredClone(profile()); next.showcase = id; api.commit(next, api.balance()); }
-        else { const next = acquire(profile(), api.balance(), id); api.commit(next.profile, next.balance); }
-        updateShowcase(); shop(); status(`${item.name} is on display in your profile.`);
-      }, item.image);
+    const count = profile()?.items.filter(i => i.id === id).length || 0;
+    confirm(item.name, `${item.description} ${money(item.price)} play chips per copy. ${count ? `You own ${count} on this solo profile. ` : ''}Log in to Multiplayer to buy copies for your server collection.`,
+      'Open Multiplayer', () => openMultiplayer('collection'), item.image);
   }
 
-  function checkout(id, pendingId = null) {
-    const product = CHIP_PACKS.find(p => p.id === id) || (id === INSIGHTS_PASS.id ? INSIGHTS_PASS : null);
-    if (!product || !localHost) return;
-    const orderId = pendingId || crypto.randomUUID();
-    confirm(product.chips ? `${compact(product.chips)} play chips` : '30 days of Insights',
-      `${usd(product.cents)} preview price. This is a local test purchase. No money will be charged. ${product.chips ? '' : 'The Insights price is a test proposal. Access does not renew automatically.'}`,
-      'Run test purchase', () => {
-        ensurePlayer();
-        if (!guestPreview()) throw new Error('Use local Guest play for simulated purchases. Google saves cannot receive test purchases.');
-        const result = pendingId ? 'success' : confirmation.querySelector('#clubScenario').value;
-        const next = simulatePurchase(profile(), api.balance(), id, orderId, result);
-        api.commit(next.profile, next.balance);
-        if (page === 'insights') insights(); else shop();
-        status(result === 'success' ? 'Test purchase completed. No real charge.' : result === 'pending' ? 'Test order pending. Complete it in test order history.' : 'Test payment declined. Your chips and access are unchanged.');
-      }, null, pendingId ? '' : '<label class="club-field">Simulator result<select id="clubScenario"><option value="success">Success</option><option value="decline">Declined</option><option value="pending">Pending</option></select></label>');
+  function checkout(id) {
+    openMultiplayer(id === INSIGHTS_PASS.id ? 'insights' : 'chips');
   }
 
   function insights() {
@@ -188,7 +165,7 @@ export function mountClub(api) {
       <div class="club-detail-grid"><section class="club-data-card"><h2>The evidence</h2><dl><div><dt>Two-sided p-value</dt><dd>${e.p?.toExponential(4) || '—'}</dd></div><div><dt>False-alarm threshold</dt><dd>${e.alpha}</dd></div><div><dt>Detection power target</dt><dd>${pct(e.power)}</dd></div><div><dt>95% Bayesian interval</dt><dd>${e.interval ? e.interval.map(pct).join(' – ') : '—'}</dd></div><div><dt>Descriptive risk score</dt><dd>${result.riskScore?.toFixed(2) ?? '—'}</dd></div><div><dt>Largest drawdown</dt><dd>${money(result.drawdown)} chips</dd></div></dl><p class="club-small">The interval assumes a stable probability and the calculator's Beta(1,1) prior. A signal describes this record; it does not establish permanent luck or future profit.</p></section>
       <section class="club-data-card"><h2>Your bet mix</h2>${result.mix.length ? result.mix.map(m => `<div class="club-mix-row"><span>${m.coverage === 1 ? 'Straight bets' : `${m.coverage}-number coverage`}</span><strong>${money(m.stake)} staked</strong><small>${signed(m.returned-m.stake)} net</small></div>`).join('') : '<p>No settled wagers yet.</p>'}</section></div>
       <details class="club-details"><summary>Wheel patterns · pockets, outside groups and sectors</summary><p>These use the distinct draws observed on this device since reset, including rounds you watched without betting. They describe the source, rather than the player. Adjusted p-values use Holm correction across 53 categories at this look; repeated looks remain exploratory.</p><div class="club-table-scroll"><table><thead><tr><th>Pattern</th><th>Hits</th><th>Expected</th><th>Observed</th><th>Adjusted p</th></tr></thead><tbody>${result.patterns.map(s => `<tr><td>${s.name}</td><td>${money(s.wins)}</td><td>${pct(s.p0)}</td><td>${s.n ? pct(s.wins/s.n) : '—'}</td><td>${s.adjustedP.toPrecision(3)}</td></tr>`).join('')}</tbody></table></div></details>
-      <button class="club-primary" data-club="report">Download analysis report</button>` : `<section class="club-unlock"><div><p class="club-eyebrow">GO A LITTLE DEEPER</p><h2>Your play has a story.</h2><p>Explore your bet mix, actual versus expected results, uncertainty and wheel-sector patterns. Ordinary results deserve a clear explanation too.</p><p class="club-small">One 30-day pass · ${usd(INSIGHTS_PASS.cents)} test price · No automatic renewal</p></div><button class="club-primary" data-club="checkout" data-id="${INSIGHTS_PASS.id}" ${!localHost ? 'disabled' : ''}>${localHost ? 'Try Insights · test purchase' : 'Paid Insights coming soon'}</button></section>`}`;
+      <button class="club-primary" data-club="report">Download analysis report</button>` : `<section class="club-unlock"><div><p class="club-eyebrow">GO A LITTLE DEEPER</p><h2>Your play has a story.</h2><p>Explore your bet mix, actual versus expected results, uncertainty and wheel-sector patterns. Ordinary results deserve a clear explanation too.</p><p class="club-small">One 30-day pass · ${usd(INSIGHTS_PASS.cents)} test price · No automatic renewal</p></div><button class="club-primary" data-club="checkout" data-id="${INSIGHTS_PASS.id}" >Log in to purchase Insights</button></section>`}`;
   }
 
   function download(name, content, type) {

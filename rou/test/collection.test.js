@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { newProfile, restoreProfile, acquire, simulatePurchase, COLLECTIBLES } from '../client/catalogue.js';
+import { newProfile, restoreProfile, acquire, simulatePurchase, collectionWealth, COLLECTIBLES } from '../client/catalogue.js';
 
 test('collection purchase debits once, retains ownership and display after restore', () => {
   const initial=newProfile(100);
@@ -9,7 +9,10 @@ test('collection purchase debits once, retains ownership and display after resto
   assert.equal(purchased.balance,10000);
   assert.equal(purchased.profile.showcase,'watch');
   assert.equal(initial.items.length,0);
-  assert.throws(()=>acquire(purchased.profile,210000,'watch'),/already yours/);
+  const second=acquire(purchased.profile,210000,'watch',300);
+  assert.equal(second.profile.items.length,2);
+  assert.deepEqual(collectionWealth(second.profile,second.balance),{chips:10000,itemValue:400000,total:410000,copies:2});
+  assert.deepEqual(restoreProfile(JSON.parse(JSON.stringify(second.profile))),second.profile);
   assert.deepEqual(restoreProfile(JSON.parse(JSON.stringify(purchased.profile))),purchased.profile);
 });
 

@@ -33,7 +33,7 @@ export function restoreProfile(value, now = Date.now()) {
   }
   const ids = new Set();
   for (const item of value.items) {
-    if (!COLLECTIBLES.some(c => c.id === item.id) || ids.has(item.id) || !Number.isSafeInteger(item.paid) || item.paid < 0) {
+    if (!COLLECTIBLES.some(c => c.id === item.id) || !Number.isSafeInteger(item.paid) || item.paid < 0) {
       throw new Error('The saved collectible ownership is invalid.');
     }
     ids.add(item.id);
@@ -45,12 +45,19 @@ export function restoreProfile(value, now = Date.now()) {
 export function acquire(profile, balance, id, now = Date.now()) {
   const item = COLLECTIBLES.find(c => c.id === id);
   if (!item) throw new Error('This collectible is not in the catalogue.');
-  if (profile.items.some(c => c.id === id)) throw new Error('This collectible is already yours.');
   if (!Number.isSafeInteger(balance) || balance < item.price) throw new Error('You need more play chips for this collectible.');
   const next = structuredClone(profile);
   next.items.push({ id, paid: item.price, acquiredAt: now });
   next.showcase = id;
   return { profile: next, balance: balance - item.price };
+}
+
+// Each acquisition is a separate copy. Spending converts chips to item value.
+export function collectionWealth(profile, balance) {
+  const itemValue = (profile?.items || []).reduce((sum, item) => sum + item.paid, 0);
+  const total = balance + itemValue;
+  if (!Number.isSafeInteger(total) || total < 0) throw new Error('Invalid wealth total.');
+  return { chips: balance, itemValue, total, copies: profile?.items.length || 0 };
 }
 
 export function simulatePurchase(profile, balance, productId, orderId, result, now = Date.now()) {

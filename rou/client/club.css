@@ -1,4 +1,14 @@
 /* Shop and Insights extend the existing Atelier palette. */
+.launch-tools,.page-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.launch-tools{margin-bottom:12px}.launch-tools button{width:auto!important;margin:0!important;padding:6px 12px!important;min-height:34px}
+#wideView{display:inline-flex!important;align-items:center}
+:fullscreen #wideView,:fullscreen [data-wide-view]{display:none!important}
+.phone-layout #login{align-items:flex-start;touch-action:auto;scrollbar-color:#bca46c #18271f}
+.phone-layout #login .login-copy{margin:10px;padding:12px 28px}
+.phone-layout #login .login-copy h1{font-size:26px;margin:10px 0 7px}
+.phone-layout #login .login-copy>p{margin-bottom:10px}
+.phone-layout #login .login-copy>button{min-height:34px;padding:8px 12px;margin-bottom:6px;font-size:12px}
+.phone-layout #login .launch-tools{margin-bottom:7px}
 .club-launch-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .club-launch-nav button{width:auto!important;flex:1;padding:11px!important;font-size:12px}
 .club-wallet-entry{width:100%;margin-top:15px;color:var(--gold)}
@@ -116,7 +126,10 @@
 
 /* Match the game's 1120px landscape surface, including its portrait fallback. */
 .phone-layout #clubDialog,.phone-layout #clubConfirm{inset:auto;left:50%;top:50%;margin:0;transform-origin:center;transform:translate(-50%,-50%) scale(var(--desktop-scale))}
-.phone-layout #clubDialog{width:var(--surface-width);height:var(--surface-height);max-width:none;max-height:none;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;touch-action:pan-y pinch-zoom}
+.phone-layout #clubDialog{width:var(--surface-width);height:var(--surface-height);max-width:none;max-height:none;overflow-x:hidden;overflow-y:scroll;scrollbar-width:auto;scrollbar-gutter:stable;scrollbar-color:#bca46c #18271f;touch-action:auto}
+.phone-layout #clubDialog::-webkit-scrollbar{display:block;width:14px}
+.phone-layout #clubDialog::-webkit-scrollbar-thumb{background:#bca46c;border:3px solid #18271f;border-radius:8px}
+.phone-layout #clubDialog::-webkit-scrollbar-track{background:#18271f}
 .phone-layout #clubConfirm{width:650px;max-width:calc(var(--surface-width) - 32px);max-height:calc(var(--surface-height) - 28px)}
 .portrait-landscape #clubDialog,.portrait-landscape #clubConfirm{transform:translate(-50%,-50%) rotate(90deg) scale(var(--desktop-scale))}
 .phone-layout #clubDialog button,.phone-layout #clubConfirm button{min-height:34px;padding:6px 12px}

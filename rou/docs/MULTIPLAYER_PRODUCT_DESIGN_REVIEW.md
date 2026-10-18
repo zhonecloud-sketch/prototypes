@@ -135,6 +135,21 @@ Purchases and analysis should never take over the screen during betting.
 
 Use two tabs in one shop: **Chips** and **Collection**.
 
+The 18 October account-test implementation supersedes the local guest
+purchase preview: purchases require a verified server login, and test
+payments are processed on the invited Sites server. The launch Multiplayer
+button sits between Return to table and Google sign-in. See
+[account and navigation implementation](IMPLEMENTATION_02_ACCOUNTS_AND_PURCHASES.md)
+for delivered behavior, email setup and remaining gameplay integration.
+
+Allow multiple copies of each luxury item. Show quantity, Buy another and
+one showcased item type. Wealth is remaining chips plus the price paid for
+every owned copy; spending on an item converts chips into collectible value.
+The collection must scroll vertically through every row while its return
+controls remain accessible. Use the cog for Menu / return to launch on all
+game screens; keep settings under Setup on launch. Offer Wide view whenever
+the page is not fullscreen.
+
 The Chips tab initially shows three package cards, with **More packs** for
 the larger amounts. Each shows the USD charge, exact chips, any actual bonus,
 and a purchase button. Retain all accepted package prices unless the owner

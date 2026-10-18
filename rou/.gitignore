@@ -1,3 +1,5 @@
 node_modules/
 .env
 *.log
+# Separate source repository managed and published by Sites.
+/sites-server/
