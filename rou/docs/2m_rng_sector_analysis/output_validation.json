@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "input_unchanged": true,
+    "frontend_unchanged": true,
+    "calculator_unchanged": true,
+    "all_region_hits_match_independent_counter": true,
+    "all_arc_starts_and_lengths_present": true,
+    "named_regions_match_expected_sizes": true,
+    "named_partition_counts_sum_to_n": true,
+    "all_corrected_regions_non_significant": true,
+    "complement_counts_reconcile": true,
+    "monitor_rows_complete": true,
+    "last_prefix_matches_full_regions": true,
+    "corrected_monitor_alerts_recounted": true,
+    "simulation_exceedances_recounted": true,
+    "simulation_p_reproduces": true,
+    "rolling_scan_matches_direct_region_masks": true,
+    "app_math_parity_passed": true,
+    "local_report_links_resolve": true,
+    "markdown_fences_balanced": true,
+    "chart_valid": true
+  },
+  "all_passed": true,
+  "report_sha256": "df709c3b318418e090bb3356416b03be4089c807092194362cbd476625160f3b"
+}

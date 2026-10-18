@@ -1,0 +1,55 @@
+{
+  "generatedOn": "2026-10-18",
+  "tool": "Built-in image_gen",
+  "format": "PNG",
+  "artwork": "Fictional, non-redeemable virtual collectibles",
+  "commonPrompt": "Photorealistic premium catalogue photograph; landscape 3:2; centred subject; realistic materials; restrained green/gold accents; no branding, people, UI, prices or watermark.",
+  "assets": [
+    {
+      "id": "watch",
+      "file": "watch.png",
+      "prompt": "An unbranded platinum and rose-gold mechanical wristwatch with a deep emerald dial, realistically detailed hands, polished case and articulated metal bracelet, on a dark stone display plinth. Full watch visible at a three-quarter angle."
+    },
+    {
+      "id": "pendant",
+      "file": "pendant.png",
+      "prompt": "An unbranded emerald-cut green gemstone pendant surrounded by small clear diamonds, suspended from a fine warm-gold chain draped on a charcoal velvet jewellery stand. Realistic facets and restrained luxury."
+    },
+    {
+      "id": "limo",
+      "file": "limo.png",
+      "prompt": "An elegant unbranded long-wheelbase black luxury limousine, complete car visible in a three-quarter front view, parked on a quiet stone driveway outside a refined modern hotel at dusk."
+    },
+    {
+      "id": "yacht",
+      "file": "yacht.png",
+      "prompt": "A sleek white 45-metre private motor yacht, full vessel visible in a three-quarter view, moored in calm turquoise Mediterranean water with distant rocky coastline. Realistic hull, railings, decks and reflections."
+    },
+    {
+      "id": "mansion",
+      "file": "mansion.png",
+      "prompt": "A refined contemporary coastal mansion with natural limestone walls, broad glazing, a palm-framed infinity pool and sea beyond at golden hour. Entire main house clearly visible, believable architectural photography."
+    },
+    {
+      "id": "golf-course",
+      "file": "golf-course.png",
+      "prompt": "An immaculate private coastal golf course: curved fairway, carefully raked pale sand bunkers, a putting green and a small understated clubhouse in the distance. Realistic aerial landscape photography in warm afternoon light."
+    },
+    {
+      "id": "jet",
+      "file": "jet.png",
+      "prompt": "An unbranded elegant white private business jet with a subtle dark green stripe, complete aircraft including both wings visible, parked on a clean airport apron at golden hour. Realistic aviation photography."
+    },
+    {
+      "id": "island",
+      "file": "island.png",
+      "prompt": "A beautiful small private tropical island surrounded by turquoise water and coral shallows, with palm trees, a few discreet luxury villas and a slender wooden jetty. Realistic oblique aerial photography, whole island visible."
+    },
+    {
+      "id": "shuttle",
+      "file": "shuttle.png",
+      "prompt": "A realistic reusable winged orbital space shuttle, complete vehicle visible on a quiet illuminated launch facility apron at blue hour. White thermal tiles, black underside and metallic details, generic fictional operator, technically plausible proportions.",
+      "edit": "Removed incidental fuselage lettering while preserving the scene."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "statistic": "max absolute standardized count deviation",
+  "observed_max_abs_z": 2.769683992203196,
+  "replications": 50000,
+  "seed": 20261016,
+  "exceedances": 21775,
+  "p_plus_one": 0.4355112897742045,
+  "estimated_mc_standard_error": 0.0022173691146384392,
+  "binomial_mc_interval95": [
+    0.43114785557021074,
+    0.43985963430081354
+  ],
+  "null_95th_percentile": 3.614612014295821,
+  "p_holm_headline6": 1.0
+}

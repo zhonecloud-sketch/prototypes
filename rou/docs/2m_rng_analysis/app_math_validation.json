@@ -1,0 +1,595 @@
+{
+  "cases": 54,
+  "max_abs_p_error": 1.954758632738418e-08,
+  "max_abs_above_error": 1.0835624730809457e-08,
+  "max_abs_ci_error": 7.528977441495499e-13,
+  "passed": true,
+  "app_sha256": "2338c4c3900007dfca6ca5027067994f9ec968fe73637ca5cc31e941c22112f2",
+  "math_functions": [
+    "logGamma",
+    "betacf",
+    "incBeta",
+    "binomCDF",
+    "binomSF",
+    "twoSidedP",
+    "criticalRegion",
+    "exactPower",
+    "requiredN",
+    "betaQuantile"
+  ],
+  "original_math": "function logGamma(x) {\n  const g = 7;\n  const C = [\n    0.99999999999980993, 676.5203681218851, -1259.1392167224028,\n    771.32342877765313, -176.61502916214059, 12.507343278686905,\n    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7\n  ];\n  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);\n  x -= 1;\n  let a = C[0];\n  const t = x + g + 0.5;\n  for (let i = 1; i < g + 2; i++) a += C[i] / (x + i);\n  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);\n}\n\nfunction betacf(a, b, x) {\n  const MAXIT = 300, EPS = 3e-12, FPMIN = 1e-300;\n  const qab = a + b, qap = a + 1, qam = a - 1;\n  let c = 1;\n  let d = 1 - qab * x / qap;\n  if (Math.abs(d) < FPMIN) d = FPMIN;\n  d = 1 / d;\n  let h = d;\n  for (let m = 1; m <= MAXIT; m++) {\n    const m2 = 2 * m;\n    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));\n    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;\n    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;\n    d = 1 / d; h *= d * c;\n    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));\n    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;\n    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;\n    d = 1 / d;\n    const del = d * c;\n    h *= del;\n    if (Math.abs(del - 1) < EPS) break;\n  }\n  return h;\n}\n\nfunction incBeta(a, b, x) {\n  if (x <= 0) return 0;\n  if (x >= 1) return 1;\n  const logBt = logGamma(a + b) - logGamma(a) - logGamma(b)\n              + a * Math.log(x) + b * Math.log(1 - x);\n  const bt = Math.exp(logBt);\n  if (x < (a + 1) / (a + b + 2)) return bt * betacf(a, b, x) / a;\n  return 1 - bt * betacf(b, a, 1 - x) / b;\n}\n\nfunction binomCDF(k, n, p) {\n  if (k < 0) return 0;\n  if (k >= n) return 1;\n  if (p <= 0) return 1;\n  if (p >= 1) return k >= n ? 1 : 0;\n  return incBeta(n - k, k + 1, 1 - p);\n}\nfunction binomSF(k, n, p) {\n  if (k <= 0) return 1;\n  if (k > n) return 0;\n  if (p <= 0) return 0;\n  if (p >= 1) return 1;\n  return incBeta(k, n - k + 1, p);\n}\nfunction twoSidedP(k, n, p0) {\n  if (n === 0) return 1;\n  const lower = binomCDF(k, n, p0);\n  const upper = binomSF(k, n, p0);\n  return Math.min(1, 2 * Math.min(lower, upper));\n}\n\nfunction criticalRegion(n, p0, alpha) {\n  const target = alpha / 2;\n  let cLow = -1;\n  if (binomCDF(0, n, p0) <= target) {\n    let lo = 0, hi = n;\n    while (lo < hi) {\n      const mid = Math.floor((lo + hi + 1) / 2);\n      if (binomCDF(mid, n, p0) <= target) lo = mid; else hi = mid - 1;\n    }\n    cLow = lo;\n  }\n  let cHigh = n + 1;\n  if (binomSF(n, n, p0) <= target) {\n    let lo = 0, hi = n;\n    while (lo < hi) {\n      const mid = Math.floor((lo + hi) / 2);\n      if (binomSF(mid, n, p0) <= target) hi = mid; else lo = mid + 1;\n    }\n    cHigh = lo;\n  }\n  return [cLow, cHigh];\n}\n\nfunction exactPower(n, p1, p0, alpha) {\n  const [cLow, cHigh] = criticalRegion(n, p0, alpha);\n  let power = 0;\n  if (cLow >= 0) power += binomCDF(cLow, n, p1);\n  if (cHigh <= n) power += binomSF(cHigh, n, p1);\n  return Math.min(1, power);\n}\n\nfunction requiredN(p1, p0, alpha, power) {\n  if (Math.abs(p1 - p0) < 1e-12) return Infinity;\n  const zA = 1.959963984540054, zB = 0.8416212335729143;\n  const est = Math.pow(zA * Math.sqrt(p0 * (1 - p0)) + zB * Math.sqrt(p1 * (1 - p1)), 2) / Math.pow(p1 - p0, 2);\n  let lo = Math.max(1, Math.floor(est * 0.3));\n  let hi = Math.max(lo + 1, Math.ceil(est * 3));\n  let guard = 0;\n  while (exactPower(hi, p1, p0, alpha) < power && guard < 40) {\n    hi *= 2; guard++;\n    if (hi > 1e8) return Infinity;\n  }\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (exactPower(mid, p1, p0, alpha) >= power) hi = mid; else lo = mid + 1;\n  }\n  return lo;\n}\n\nfunction betaQuantile(p, a, b) {\n  if (p <= 0) return 0;\n  if (p >= 1) return 1;\n  let lo = 0, hi = 1;\n  for (let i = 0; i < 80; i++) {\n    const mid = (lo + hi) / 2;\n    if (incBeta(a, b, mid) < p) lo = mid; else hi = mid;\n  }\n  return (lo + hi) / 2;\n}\n\n",
+  "sample_size_examples": [
+    {
+      "category": "number_09",
+      "p1": 0.027261,
+      "p0": 0.02702702702702703,
+      "app_power_current": 0.5300481098860319,
+      "app_required_n": 3790704,
+      "scipy_power_current": 0.5300481074327524,
+      "abs_current_power_error": 2.4532794684617443e-09,
+      "scipy_power_at_app_required_n": 0.8000001694288154
+    },
+    {
+      "category": "number_29",
+      "p1": 0.0272575,
+      "p0": 0.02702702702702703,
+      "app_power_current": 0.5179488065437893,
+      "app_required_n": 3907088,
+      "scipy_power_current": 0.5179488039680697,
+      "abs_current_power_error": 2.57571952655411e-09,
+      "scipy_power_at_app_required_n": 0.8000184692216563
+    },
+    {
+      "category": "number_13",
+      "p1": 0.026798,
+      "p0": 0.02702702702702703,
+      "app_power_current": 0.5151555655999708,
+      "app_required_n": 3925210,
+      "scipy_power_current": 0.5151555664605205,
+      "abs_current_power_error": 8.60549742576211e-10,
+      "scipy_power_at_app_required_n": 0.8004295219411536
+    }
+  ],
+  "comparisons": [
+    {
+      "category": "number_00",
+      "p": 0.9986208702192045,
+      "above": 0.4992634186159116,
+      "low": 0.026802680535261914,
+      "high": 0.02725216136441394,
+      "p_error": 6.063556323709918e-10,
+      "above_error": 5.153539262003903e-10,
+      "ci_error": 4.487729632352e-14
+    },
+    {
+      "category": "number_01",
+      "p": 0.45452529113957013,
+      "above": 0.7740135895581857,
+      "low": 0.026888831017945362,
+      "high": 0.027339010544877584,
+      "p_error": 2.39270048218998e-10,
+      "above_error": 3.4755831546107174e-10,
+      "ci_error": 7.015221736850208e-14
+    },
+    {
+      "category": "number_02",
+      "p": 0.1480394930874012,
+      "above": 0.07400324998051022,
+      "low": 0.026637850961622078,
+      "high": 0.02708599158255215,
+      "p_error": 2.1013274453807185e-10,
+      "above_error": 6.847795941400392e-11,
+      "ci_error": 4.0255992983517785e-14
+    },
+    {
+      "category": "number_03",
+      "p": 0.8842060951793077,
+      "above": 0.44205653386503885,
+      "low": 0.02678624727521628,
+      "high": 0.027235594688713227,
+      "p_error": 1.6680511416566901e-09,
+      "above_error": 1.9129142714291447e-10,
+      "ci_error": 2.6662699825763525e-14
+    },
+    {
+      "category": "number_04",
+      "p": 0.13389352154134285,
+      "above": 0.06693149092306416,
+      "low": 0.02663187530910282,
+      "high": 0.027079967258437365,
+      "p_error": 6.5102367940994554e-12,
+      "above_error": 1.518484504803297e-10,
+      "ci_error": 1.0549547346805355e-13
+    },
+    {
+      "category": "number_05",
+      "p": 1,
+      "above": 0.5010029996639818,
+      "low": 0.026803178513035153,
+      "high": 0.027252663384694287,
+      "p_error": 0,
+      "above_error": 2.057511605535467e-09,
+      "ci_error": 1.9702295350754184e-13
+    },
+    {
+      "category": "number_06",
+      "p": 0.9318826807113098,
+      "above": 0.5357445332855741,
+      "low": 0.02681313807590513,
+      "high": 0.02726270378288037,
+      "p_error": 8.683487262572953e-10,
+      "above_error": 8.367684323218327e-10,
+      "ci_error": 8.398490236594114e-14
+    },
+    {
+      "category": "number_07",
+      "p": 0.9076560309188326,
+      "above": 0.5478525020061069,
+      "low": 0.026816623924848848,
+      "high": 0.027266217920306757,
+      "p_error": 3.6900704714071253e-10,
+      "above_error": 2.7336444219372424e-10,
+      "ci_error": 2.4365925943570232e-14
+    },
+    {
+      "category": "number_08",
+      "p": 0.22983770610008344,
+      "above": 0.885900735998588,
+      "low": 0.02694062119495278,
+      "high": 0.02739122016536738,
+      "p_error": 1.4549700333432725e-10,
+      "above_error": 6.872924451784002e-11,
+      "ci_error": 2.4653890040582382e-14
+    },
+    {
+      "category": "number_09",
+      "p": 0.04173682278039787,
+      "above": 0.9793430110745638,
+      "low": 0.027036234401850878,
+      "high": 0.027487606584621183,
+      "p_error": 1.5772146783055163e-10,
+      "above_error": 2.3677726446180714e-12,
+      "ci_error": 1.1608769501236793e-14
+    },
+    {
+      "category": "number_10",
+      "p": 0.8492241916484429,
+      "above": 0.5770490285416533,
+      "low": 0.02682508956184737,
+      "high": 0.027274752250207424,
+      "p_error": 8.695530961944087e-10,
+      "above_error": 1.5056088598086603e-09,
+      "ci_error": 1.7071066782392563e-13
+    },
+    {
+      "category": "number_11",
+      "p": 0.3084703926019403,
+      "above": 0.15420722914139084,
+      "low": 0.026686652233794295,
+      "high": 0.02713519011956106,
+      "p_error": 1.6274874226063218e-09,
+      "above_error": 9.846054527251624e-11,
+      "ci_error": 3.6474295805888346e-14
+    },
+    {
+      "category": "number_12",
+      "p": 0.3939760770619169,
+      "above": 0.8041853519040644,
+      "low": 0.02690078257773299,
+      "high": 0.027351058938359374,
+      "p_error": 1.0212608536619427e-09,
+      "above_error": 7.959547465574701e-10,
+      "ci_error": 1.9490312141989818e-13
+    },
+    {
+      "category": "number_13",
+      "p": 0.04580144771799483,
+      "above": 0.022894335861784687,
+      "low": 0.02657510675815722,
+      "high": 0.027022736031355687,
+      "p_error": 4.145106480279992e-11,
+      "above_error": 5.660875587731873e-11,
+      "ci_error": 1.1636178132157227e-13
+    },
+    {
+      "category": "number_14",
+      "p": 0.6709675602049023,
+      "above": 0.3354408366853787,
+      "low": 0.02675437677315174,
+      "high": 0.027203465315395137,
+      "p_error": 5.907947464578456e-10,
+      "above_error": 6.569203514494859e-10,
+      "ci_error": 9.066358774845185e-14
+    },
+    {
+      "category": "number_15",
+      "p": 0.05729813608638171,
+      "above": 0.028641362129723236,
+      "low": 0.026586062071833456,
+      "high": 0.027033780674841468,
+      "p_error": 4.593831565147255e-11,
+      "above_error": 2.8612560237784024e-11,
+      "ci_error": 4.298644773470528e-14
+    },
+    {
+      "category": "number_16",
+      "p": 0.6960847361834611,
+      "above": 0.6535236946943452,
+      "low": 0.026847996609558493,
+      "high": 0.027297845112927377,
+      "p_error": 1.683544748054544e-09,
+      "above_error": 7.081546460341315e-11,
+      "ci_error": 4.333339242990064e-15
+    },
+    {
+      "category": "number_17",
+      "p": 0.25254825876101755,
+      "above": 0.8746018652999287,
+      "low": 0.02693414741069145,
+      "high": 0.027384693974945085,
+      "p_error": 4.337485370875527e-10,
+      "above_error": 6.004274855087033e-10,
+      "ci_error": 2.306765889414919e-13
+    },
+    {
+      "category": "number_18",
+      "p": 0.18450466605186003,
+      "above": 0.9084460779473292,
+      "low": 0.026955062725275702,
+      "high": 0.027405778578580675,
+      "p_error": 1.4532205994122194e-10,
+      "above_error": 5.019796800453946e-10,
+      "ci_error": 2.655167752330101e-13
+    },
+    {
+      "category": "number_19",
+      "p": 0.2787071724230133,
+      "above": 0.8615841422235239,
+      "low": 0.026927175647144523,
+      "high": 0.027377665765749126,
+      "p_error": 1.0518386162061688e-10,
+      "above_error": 4.079561133352172e-10,
+      "ci_error": 1.3916298668981142e-13
+    },
+    {
+      "category": "number_20",
+      "p": 0.28064385013550325,
+      "above": 0.8606202423009194,
+      "low": 0.026926677664246057,
+      "high": 0.02737716375059568,
+      "p_error": 7.966993731400862e-11,
+      "above_error": 2.1937862637599892e-10,
+      "ci_error": 7.30526750203353e-14
+    },
+    {
+      "category": "number_21",
+      "p": 0.6641495238957186,
+      "above": 0.6694631675850777,
+      "low": 0.0268529764080434,
+      "high": 0.027302865294973777,
+      "p_error": 9.43377043149951e-10,
+      "above_error": 9.834504322014936e-10,
+      "ci_error": 1.4174078577511295e-13
+    },
+    {
+      "category": "number_22",
+      "p": 0.18690324154319612,
+      "above": 0.09343196327793479,
+      "low": 0.026652292133617195,
+      "high": 0.02710055035409381,
+      "p_error": 3.59133833782721e-11,
+      "above_error": 6.351854459074602e-10,
+      "ci_error": 3.295419492843621e-13
+    },
+    {
+      "category": "number_23",
+      "p": 0.8533131786309706,
+      "above": 0.4266103802254949,
+      "low": 0.026781765480589748,
+      "high": 0.02723107650086748,
+      "p_error": 1.9930629369113717e-09,
+      "above_error": 2.0461436434082714e-09,
+      "ci_error": 2.317764036252612e-13
+    },
+    {
+      "category": "number_24",
+      "p": 0.7521903131239109,
+      "above": 0.37605044029133017,
+      "low": 0.026766826178064917,
+      "high": 0.027216015861803278,
+      "p_error": 2.476879923385411e-09,
+      "above_error": 6.551803544141421e-10,
+      "ci_error": 8.01581023779363e-14
+    },
+    {
+      "category": "number_25",
+      "p": 0.8800757805086112,
+      "above": 0.5616346160020003,
+      "low": 0.026820607753319743,
+      "high": 0.027270234076259336,
+      "p_error": 1.2251762937509625e-09,
+      "above_error": 6.469549340692993e-10,
+      "ci_error": 6.790401574363614e-14
+    },
+    {
+      "category": "number_26",
+      "p": 0.8396514459567543,
+      "above": 0.4197796680025565,
+      "low": 0.026779773572710212,
+      "high": 0.027229068416532998,
+      "p_error": 7.870434304280138e-10,
+      "above_error": 2.774058205368135e-10,
+      "ci_error": 2.784925068333166e-14
+    },
+    {
+      "category": "number_27",
+      "p": 0.8090934000978,
+      "above": 0.40450104806151943,
+      "low": 0.02677529178061544,
+      "high": 0.027224550226152833,
+      "p_error": 3.0592722799482885e-09,
+      "above_error": 1.1165197655316206e-09,
+      "ci_error": 1.3128734210887671e-13
+    },
+    {
+      "category": "number_28",
+      "p": 0.4731277706613186,
+      "above": 0.7647413228789157,
+      "low": 0.02688534514848695,
+      "high": 0.02733549642796501,
+      "p_error": 6.993392531740028e-10,
+      "above_error": 4.088513971822749e-10,
+      "ci_error": 8.006442731023355e-14
+    },
+    {
+      "category": "number_29",
+      "p": 0.04488871337617404,
+      "above": 0.9777805038911472,
+      "low": 0.027032748490651626,
+      "high": 0.027484092509451108,
+      "p_error": 1.0706204672805697e-10,
+      "above_error": 7.168488025399711e-12,
+      "ci_error": 1.0699774399824946e-14
+    },
+    {
+      "category": "number_30",
+      "p": 0.9221975893168373,
+      "above": 0.46105200778531175,
+      "low": 0.02679172502612536,
+      "high": 0.02724111691638592,
+      "p_error": 3.430640327373169e-09,
+      "above_error": 1.5722340096502307e-10,
+      "ci_error": 2.274222477005594e-14
+    },
+    {
+      "category": "number_31",
+      "p": 0.28228294197681636,
+      "above": 0.14111511880340988,
+      "low": 0.02668017858408645,
+      "high": 0.027128663794584063,
+      "p_error": 3.8692887782687535e-10,
+      "above_error": 6.879783687185892e-10,
+      "ci_error": 2.3372623281225913e-13
+    },
+    {
+      "category": "number_32",
+      "p": 0.8732022639445288,
+      "above": 0.5650690611428208,
+      "low": 0.026821603710669883,
+      "high": 0.02727123811501425,
+      "p_error": 3.852762553435696e-11,
+      "above_error": 4.750211335391441e-10,
+      "ci_error": 4.849592949440762e-14
+    },
+    {
+      "category": "number_33",
+      "p": 0.7782126004968523,
+      "above": 0.6125188118963475,
+      "low": 0.026835547121848442,
+      "high": 0.02728529464931656,
+      "p_error": 2.091557926853227e-09,
+      "above_error": 2.8628210912984287e-10,
+      "ci_error": 3.0905833448002795e-14
+    },
+    {
+      "category": "number_34",
+      "p": 0.28621070035667484,
+      "above": 0.1430787498671079,
+      "low": 0.026681174530005958,
+      "high": 0.027129667844770167,
+      "p_error": 1.9288604047318358e-10,
+      "above_error": 4.704658607135315e-10,
+      "ci_error": 1.568987995081983e-13
+    },
+    {
+      "category": "number_35",
+      "p": 0.5662178499192914,
+      "above": 0.7183239422759834,
+      "low": 0.026868911777269355,
+      "high": 0.027318929863438812,
+      "p_error": 4.3982939512687835e-10,
+      "above_error": 6.571255761755879e-10,
+      "ci_error": 1.0948880690975216e-13
+    },
+    {
+      "category": "number_36",
+      "p": 0.10035574421116883,
+      "above": 0.05016569948118721,
+      "low": 0.026615442279999783,
+      "high": 0.027063400351796607,
+      "p_error": 3.307722984402517e-10,
+      "above_error": 1.947777911182058e-10,
+      "ci_error": 1.855147979679117e-13
+    },
+    {
+      "category": "red",
+      "p": 0.2568185378913381,
+      "above": 0.8717429841579576,
+      "low": 0.4861948125413553,
+      "high": 0.48758023852265453,
+      "p_error": 5.413952619548468e-11,
+      "above_error": 4.317034507650419e-10,
+      "ci_error": 5.181965967437918e-13
+    },
+    {
+      "category": "black",
+      "p": 0.2574430965986882,
+      "above": 0.12857706076608533,
+      "low": 0.48539334413405033,
+      "high": 0.48677871005124784,
+      "p_error": 1.094288548664224e-10,
+      "above_error": 3.662913028446013e-10,
+      "ci_error": 4.62463400907609e-13
+    },
+    {
+      "category": "odd",
+      "p": 0.512883340841491,
+      "above": 0.7437921871632965,
+      "low": 0.4860253190740429,
+      "high": 0.487410732650044,
+      "p_error": 1.809705718613941e-10,
+      "above_error": 5.982868644949235e-10,
+      "ci_error": 3.6848302187308946e-13
+    },
+    {
+      "category": "even",
+      "p": 0.5138490176825682,
+      "above": 0.25670273854019554,
+      "low": 0.48556283730467054,
+      "high": 0.4869482162205393,
+      "p_error": 1.236135194204735e-09,
+      "above_error": 5.44446709938029e-11,
+      "ci_error": 4.785061236134425e-14
+    },
+    {
+      "category": "low_1_18",
+      "p": 0.9149733701424154,
+      "above": 0.45721369608028484,
+      "low": 0.48575582962490826,
+      "high": 0.48714122314870145,
+      "p_error": 1.954758632738418e-08,
+      "above_error": 1.0835624730809457e-08,
+      "ci_error": 1.8801626922027026e-13
+    },
+    {
+      "category": "high_19_36",
+      "p": 0.913780421158662,
+      "above": 0.5433978964631168,
+      "low": 0.4858323266094,
+      "high": 0.48721772586630163,
+      "p_error": 1.3956120592517607e-08,
+      "above_error": 8.413598706624725e-09,
+      "ci_error": 3.113065361048939e-13
+    },
+    {
+      "category": "dozen_1",
+      "p": 0.6968587534005566,
+      "above": 0.6519479002416493,
+      "low": 0.32380500329043094,
+      "high": 0.325102680340306,
+      "p_error": 8.043160582005271e-10,
+      "above_error": 1.2692999984409425e-09,
+      "ci_error": 5.148104165186851e-13
+    },
+    {
+      "category": "dozen_2",
+      "p": 0.813601910409378,
+      "above": 0.40661089896433134,
+      "low": 0.3235976115969086,
+      "high": 0.3248950728419059,
+      "p_error": 1.1553294987365348e-09,
+      "above_error": 1.5935163744096315e-09,
+      "ci_error": 4.662381591913345e-13
+    },
+    {
+      "category": "dozen_3",
+      "p": 0.8798258725580783,
+      "above": 0.4397197360578047,
+      "low": 0.3236255969732924,
+      "high": 0.3249230873564902,
+      "p_error": 8.193502654130214e-09,
+      "above_error": 6.913453198809094e-09,
+      "ci_error": 7.528977441495499e-13
+    },
+    {
+      "category": "column_1",
+      "p": 0.2181946199095959,
+      "above": 0.10900580062129672,
+      "low": 0.3232682838818699,
+      "high": 0.32456540184011373,
+      "p_error": 7.849471628240678e-10,
+      "above_error": 1.5496436078787923e-10,
+      "ci_error": 2.195466031196247e-13
+    },
+    {
+      "category": "column_2",
+      "p": 0.31743688886827126,
+      "above": 0.8415283494762138,
+      "low": 0.32400689799440596,
+      "high": 0.3253047848496916,
+      "p_error": 3.4368857759758953e-10,
+      "above_error": 5.975775430044905e-10,
+      "ci_error": 5.324629626102251e-13
+    },
+    {
+      "category": "column_3",
+      "p": 0.8161659903026086,
+      "above": 0.5923132305890034,
+      "low": 0.3237530304190077,
+      "high": 0.32505065341425887,
+      "p_error": 1.6391519253033948e-09,
+      "above_error": 4.335983794234721e-10,
+      "ci_error": 1.4516166046973922e-13
+    },
+    {
+      "category": "check_n10_k0",
+      "p": 0.001953124999999997,
+      "above": 0.00048828125,
+      "low": 0.0022989722138142665,
+      "high": 0.28491415291815414,
+      "p_error": 3.0357660829594124e-18,
+      "above_error": 0,
+      "ci_error": 2.220446049250313e-16
+    },
+    {
+      "category": "check_n10_k5",
+      "p": 1,
+      "above": 0.499999999999998,
+      "low": 0.23379359765934532,
+      "high": 0.7662064023406545,
+      "p_error": 0,
+      "above_error": 1.9984014443252818e-15,
+      "ci_error": 3.3306690738754696e-16
+    },
+    {
+      "category": "check_n10_k10",
+      "p": 0.001953124999999997,
+      "above": 0.99951171875,
+      "low": 0.7150858470818455,
+      "high": 0.9977010277861857,
+      "p_error": 3.0357660829594124e-18,
+      "above_error": 0,
+      "ci_error": 0
+    },
+    {
+      "category": "check_n25_k3",
+      "p": 0.05826932009004857,
+      "above": 0.9950444620302582,
+      "low": 0.0435634765389238,
+      "high": 0.3015404001075678,
+      "p_error": 9.159339953157541e-16,
+      "above_error": 0,
+      "ci_error": 5.551115123125783e-17
+    },
+    {
+      "category": "check_n40_k20",
+      "p": 0.9886404541551584,
+      "above": 0.5691252795574687,
+      "low": 0.3513423938174117,
+      "high": 0.6486576061825882,
+      "p_error": 4.340972026284362e-14,
+      "above_error": 3.9968028886505635e-15,
+      "ci_error": 4.274358644806853e-15
+    }
+  ]
+}

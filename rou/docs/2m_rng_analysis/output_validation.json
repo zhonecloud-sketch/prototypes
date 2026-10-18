@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "independent_counter_matches_pocket_counts": true,
+    "pocket_counts_sum_to_2m": true,
+    "all49_category_memberships_reconcile": true,
+    "weekly_segments_are_contiguous": true,
+    "49_final_prefixes_match_full_sample": true,
+    "audit_test_count_matches": true,
+    "all_adjusted_p_values_valid": true,
+    "zero_audit_rejections_recounted": true,
+    "bayesian_direction_complements": true,
+    "input_unchanged": true,
+    "equation_app_unchanged": true,
+    "all_report_local_links_exist": true,
+    "markdown_code_fences_balanced": true,
+    "source_app_math_parity_passed": true,
+    "chart_decodes_at_expected_resolution": true
+  },
+  "all_passed": true,
+  "chart_dimensions": [
+    2380,
+    1530
+  ],
+  "report_sha256": "97bf7d4e6a5a5308f742c6e2ea4a0bc4a7dc641c7c9758dc00b369a460df30dc"
+}

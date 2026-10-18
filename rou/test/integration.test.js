@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { WebSocket } from 'ws';
 import { createServer } from 'node:http';
+import { fileURLToPath } from 'node:url';
 import { RouletteEngine, numberFrom } from '../server/roulette.js';
 import { BetLedger } from '../server/ledger.js';
 import { attachWebSocket } from '../server/transport/websocket.js';
@@ -25,7 +26,7 @@ async function startTestServer(t) {
   // Raised above the 10 sockets the fan-out test opens, otherwise the per-IP
   // ceiling would (correctly) reject some of them.
   const config = {
-    publicDir: new URL('../public', import.meta.url).pathname,
+    publicDir: fileURLToPath(new URL('../public', import.meta.url)),
     historyLimit: 20, heartbeatMs: 5_000, maxPayloadBytes: 1024,
     maxConnsPerIp: 25, maxConnections: 100, token: '', allowedOrigins: [],
     startingBalance: 1000, maxStake: 100,
