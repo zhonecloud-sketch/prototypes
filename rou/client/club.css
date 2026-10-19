@@ -2,7 +2,7 @@
 .launch-tools,.page-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px}
 .launch-tools{margin-bottom:12px}.launch-tools button{width:auto!important;margin:0!important;padding:6px 12px!important;min-height:34px}
 #wideView{display:inline-flex!important;align-items:center}
-:fullscreen #wideView,:fullscreen [data-wide-view]{display:none!important}
+
 .phone-layout #login{align-items:flex-start;touch-action:auto;scrollbar-color:#bca46c #18271f}
 .phone-layout #login .login-copy{margin:10px;padding:12px 28px}
 .phone-layout #login .login-copy h1{font-size:26px;margin:10px 0 7px}
