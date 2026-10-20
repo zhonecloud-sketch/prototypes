@@ -1,4 +1,4 @@
-import { account,accountRequest } from './account-api.js';
+import { account,accountRequest } from './account-api.js?v=20261020-public2';
 export function openMultiplayer(destination = 'account') {
   document.dispatchEvent(new CustomEvent('atelier-open-account',{detail:destination}));
 }

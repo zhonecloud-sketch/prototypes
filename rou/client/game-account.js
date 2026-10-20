@@ -1,6 +1,6 @@
-import { account } from './account-api.js';
-import { mountAccount } from './account.js';
-import { createMultiplayer } from './multiplayer.js';
+import { account } from './account-api.js?v=20261020-public2';
+import { mountAccount } from './account.js?v=20261020-public2';
+import { createMultiplayer } from './multiplayer.js?v=20261020-public2';
 import { toggleWideView } from './wide-view.js';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10,6 +10,10 @@ export function installAccounts(api){
   function launchInfo(){
     $('accountSignIn').textContent=account.player?`♙ ${account.player.username}`:'♙ Sign in';
     $('accountSignIn').setAttribute('aria-label',account.player?'View player information':'Sign in or create account');
+    $('accountSignIn').title=account.player?.email||'';
+    const name=account.player?.username||state.user?.name||'Guest';
+    $('username').textContent=name;$('avatar').textContent=name[0].toUpperCase();
+    $('username').title=account.player?.email||'Guest solo play';
     $('guestLogin').textContent=state.active&&state.user?.type!=='multiplayer'?'Return to table ↗':'Enter as Guest ↗';
     $('multiplayerLogin').textContent=multi.active?'Return to Multiplayer ↗':'Multiplayer ↗';
   }
@@ -38,7 +42,7 @@ export function installAccounts(api){
     try{if(state.active&&state.user?.type!=='multiplayer'){await api.leaveSession();if(state.active)return;}if(await multi.join())api.returnToTable();}catch(e){api.toast(e.message);}
   };
   const solo=$('guestLogin').onclick;
-  $('guestLogin').onclick=async()=>{if(state.user?.type==='multiplayer'){if(api.hasWagers()){api.toast('Wait for the current wager to settle first.');return;}try{await leave();await api.leaveSession();}catch(e){api.toast(e.message);return;}}solo();strip.hidden=true;};
+  $('guestLogin').onclick=async()=>{if(state.user?.type==='multiplayer'){if(api.hasWagers()){api.toast('Wait for the current wager to settle first.');return;}try{await leave();await api.leaveSession();}catch(e){api.toast(e.message);return;}}solo();strip.hidden=true;launchInfo();};
   for(const id of ['googleLogin','connectGoogle']){const original=$(id).onclick;$(id).onclick=()=>{if(state.user?.type==='multiplayer'){api.toast('Leave the multiplayer table before switching to Google solo play.');return;}original();};}
   document.addEventListener('click',e=>{const entry=e.target.closest('[data-club-open]');if(account.player&&entry&&['collection','chips'].includes(entry.dataset.clubOpen)){e.preventDefault();e.stopImmediatePropagation();panel.open(entry.dataset.clubOpen);}},true);
   function tick(){

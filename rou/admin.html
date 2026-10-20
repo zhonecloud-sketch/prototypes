@@ -12,14 +12,13 @@
 <header><a href="index.html">← Game</a><span class="wordmark">ATELIER</span><button data-wide-view>Wide view ↗</button></header>
 <main>
 <h1>Developer controls</h1>
-<p>Manage the invited test room, player accounts and recorded RNG databases.</p>
+<p>Manage the test room, player accounts and recorded RNG databases.</p>
 <section id="access" class="panel">
 <h2>Operator sign-in</h2>
 <p id="operatorIdentity">Use an existing game account. Create your account through Sign in on the game first.</p>
 <form id="operatorLogin">
 <div id="loginFields" class="fields">
 <label>Email<input name="email" type="email" autocomplete="email"></label>
-<label>Tester invitation code<input name="invite" type="password" autocomplete="off"></label>
 <label>Game password<input name="password" type="password" autocomplete="current-password"></label>
 </div>
 <label>Private operator key<input name="operatorKey" type="password" autocomplete="off" required></label>
@@ -43,7 +42,7 @@
 <form id="searchUsers" class="actions"><input name="search" aria-label="Find email or username" placeholder="Find email or username"><button>Search</button></form>
 <div class="table-scroll"><table><thead><tr><th>Player</th><th>Chips</th><th>Wealth</th><th>Actions</th></tr></thead><tbody id="userRows"></tbody></table></div>
 <div class="actions"><button id="previousUsers">← Previous</button><button id="nextUsers">Next →</button></div>
-<details><summary>Add a test player</summary><form id="addUser"><div class="fields"><label>Email<input name="email" type="email" required></label><label>Username<input name="username" pattern="[a-zA-Z0-9_]{3,24}" required></label></div><p>Creates a test account with 10,000 chips and private invitation credentials. No verification email is sent.</p><button>Add test player</button></form></details>
+<details><summary>Add a test player</summary><form id="addUser"><div class="fields"><label>Email<input name="email" type="email" required></label><label>Username<input name="username" minlength="3" maxlength="24" required></label></div><p>Creates a test account with 10,000 chips and a generated password. No verification email is sent.</p><button>Add test player</button></form></details>
 <div id="userEditor"></div>
 </section>
 <section id="rng" class="panel" hidden>
@@ -56,6 +55,6 @@
 </div>
 <section id="privateResult" class="panel" hidden><h2>Private tester credentials</h2><p>Shown for this action only. Give them only to the intended tester.</p><pre id="credentialResult"></pre><button id="dismissCredentials">Dismiss</button></section>
 </main>
-<script type="module" src="client/admin.js"></script>
+<script type="module" src="client/admin.js?v=20261020-public2"></script>
 </body>
 </html>

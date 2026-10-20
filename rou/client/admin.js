@@ -1,4 +1,4 @@
-import {account,accountRequest,restoreAccount} from './account-api.js';
+import {account,accountRequest,restoreAccount} from './account-api.js?v=20261020-public2';
 import {toggleWideView} from './wide-view.js';
 import {parseRngFile} from './rng-import.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -12,7 +12,7 @@ async function run(work){
 }
 function showCredentials(result){
   if(!result.credentials)return;
-  $('privateResult').hidden=false;$('credentialResult').textContent=Object.entries(result.credentials).map(([k,v])=>`${k}: ${v}`).join('\n');notice(result.message);
+  $('privateResult').hidden=false;$('credentialResult').textContent=Object.entries(result.credentials).filter(([k])=>k!=='invite').map(([k,v])=>`${k}: ${v}`).join('\n');notice(result.message);
 }
 async function refresh(){
   status=await request('status');
@@ -23,7 +23,7 @@ async function refresh(){
 }
 async function loadUsers(){
   const data=await request('users',{offset,search});users=data.users;
-  $('userRows').innerHTML=users.map(p=>`<tr><td><b>${esc(p.username)}</b><small>${esc(p.email)}</small></td><td>${money(p.balance)}</td><td>${money(p.wealth.total)}<small>${p.wealth.copies} collectibles</small></td><td>${[['edit','Edit'],['reset-records','Reset records…'],['reset-player','Reset player…'],['invite','Replace invitation…'],['delete','Delete…']].map(([a,label])=>`<button data-user="${a}" data-id="${p.id}">${label}</button>`).join('')}</td></tr>`).join('');
+  $('userRows').innerHTML=users.map(p=>`<tr><td><b>${esc(p.username)}</b><small>${esc(p.email)}</small></td><td>${money(p.balance)}</td><td>${money(p.wealth.total)}<small>${p.wealth.copies} collectibles</small></td><td>${[['edit','Edit'],['reset-records','Reset records…'],['reset-player','Reset player…'],['delete','Delete…']].map(([a,label])=>`<button data-user="${a}" data-id="${p.id}">${label}</button>`).join('')}</td></tr>`).join('');
   $('previousUsers').hidden=!offset;$('nextUsers').hidden=!data.hasMore;
 }
 function tab(name){for(const id of ['server','users','rng'])$(id).hidden=id!==name;return name==='users'?loadUsers():refresh();}
@@ -31,7 +31,7 @@ await restoreAccount();
 $('loginFields').hidden=!!account.player;
 if(account.player)$('operatorIdentity').textContent=`Game account: ${account.player.username} · ${account.player.email}`;
 $('operatorLogin').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.target));run(async()=>{
-  if(!account.player){await accountRequest('connect',{email:data.email,invite:data.invite});await accountRequest('login',{email:data.email,password:data.password});}
+  if(!account.player){await accountRequest('login',{email:data.email,password:data.password});}
   key=data.operatorKey;await refresh();e.target.reset();$('access').hidden=true;$('console').hidden=false;
 });};
 $('lock').onclick=()=>{key='';$('console').hidden=true;$('access').hidden=false;$('loginFields').hidden=!!account.player;$('privateResult').hidden=true;$('credentialResult').textContent='';notice('Controls locked.');};
@@ -46,8 +46,8 @@ $('addUser').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new F
 $('dismissCredentials').onclick=()=>{$('privateResult').hidden=true;$('credentialResult').textContent='';};
 $('userRows').onclick=e=>{
   const b=e.target.closest('[data-user]');if(!b||busy)return;const p=users.find(p=>p.id===b.dataset.id),op=b.dataset.user;
-  const help={edit:'Update the username or whole-chip balance. The email remains bound to the invitation.',delete:'Permanently deletes this account, wallet, collection, orders and raw records.', 'reset-records':'Restarts profit and analysis records. Chips and collectibles are preserved; historical raw records remain in their earlier record epoch.','reset-player':'Resets this player to 10,000 chips with an empty collection, no orders or Insights pass, and a new analysis record. The login account is preserved.',invite:'Issues a replacement private invitation and revokes previous invitation connections.'};
-  $('userEditor').innerHTML=`<form class="confirmation"><h3>${esc(p.username)}</h3><p>${help[op]}</p>${op==='edit'?`<div class="fields"><label>Username<input name="username" value="${esc(p.username)}" pattern="[a-zA-Z0-9_]{3,24}" required></label><label>Chip balance<input name="balance" type="number" min="0" step="1" value="${p.balance}" required></label></div>`:op==='invite'?'':`<label>Type ${esc(p.username)} to confirm<input name="confirmation" autocomplete="off" required></label>`}<div class="actions"><button>Confirm ${esc(op)}</button><button type="button" data-cancel>Cancel</button></div></form>`;
+  const help={edit:'Update the username or whole-chip balance. The email remains the account login address.',delete:'Permanently deletes this account, wallet, collection, orders and raw records.', 'reset-records':'Restarts profit and analysis records. Chips and collectibles are preserved; historical raw records remain in their earlier record epoch.','reset-player':'Resets this player to 10,000 chips with an empty collection, no orders or Insights pass, and a new analysis record. The login account is preserved.'};
+  $('userEditor').innerHTML=`<form class="confirmation"><h3>${esc(p.username)}</h3><p>${help[op]}</p>${op==='edit'?`<div class="fields"><label>Username<input name="username" value="${esc(p.username)}" minlength="3" maxlength="24" required></label><label>Chip balance<input name="balance" type="number" min="0" step="1" value="${p.balance}" required></label></div>`:`<label>Type ${esc(p.username)} to confirm<input name="confirmation" autocomplete="off" required></label>`}<div class="actions"><button>Confirm ${esc(op)}</button><button type="button" data-cancel>Cancel</button></div></form>`;
   $('userEditor').querySelector('[data-cancel]').onclick=()=>{$('userEditor').innerHTML='';};
   $('userEditor').querySelector('form').onsubmit=e=>{e.preventDefault();const fields=Object.fromEntries(new FormData(e.target));run(async()=>{const r=await request('user',{operation:op,id:p.id,revision:p.revision,...fields,...(op==='edit'?{balance:Number(fields.balance)}:{})});$('userEditor').innerHTML='';notice(r.message);showCredentials(r);await loadUsers();});};
 };

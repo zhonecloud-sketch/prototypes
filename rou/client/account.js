@@ -1,42 +1,42 @@
-import { account,accountRequest,restoreAccount,testerEmail,disconnectTester } from './account-api.js';
+import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261020-public2';
 import { COLLECTIBLES,CHIP_PACKS,INSIGHTS_PASS } from './catalogue.js';
 import { toggleWideView,refreshWideView } from './wide-view.js';
-import { installMobileEntry } from './mobile-entry.js';
+import { installMobileEntry } from './mobile-entry.js?v=20261020-public2';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n||0),usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
 export function mountAccount(api){
   const page=document.createElement('section');page.id='accountPage';page.inert=true;page.setAttribute('aria-label','Player account');
   document.getElementById('landscapeSurface').append(page);installMobileEntry();
   let view='login',challenge='',testCode='',message='',busy=false,checkout=null,codeValue='',opened=false;
-  const mode=()=>!account.connected?'connect':account.player?view:['verify','recover','reset','register'].includes(view)?view:'login';
+  const draft={email:accountEmail()};
+  const mode=()=>account.player?view:['verify','recover','reset','register'].includes(view)?view:'login';
   function status(text){message=text;const el=page.querySelector('[data-account-message]');if(el){el.textContent=text;el.hidden=!text;}}
   function close(){opened=false;document.documentElement.classList.remove('account-open');page.inert=true;document.getElementById('login').inert=false;document.getElementById('app').inert=false;api.closed?.();}
   function open(next='account'){
     document.querySelectorAll('dialog[open]').forEach(d=>d.close());view=account.player?next:next==='register'?'register':'login';message='';checkout=null;opened=true;
     document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;render();
-    if(account.connected)accountRequest('session').then(()=>{if(opened)render();}).catch(e=>status(e.message));
+    if(account.player)accountRequest('session').then(()=>{if(opened)render();}).catch(e=>status(e.message));
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
-  const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" ${extra} required></label>`;
+  const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" value="${escape(draft[name]||'')}" ${extra} required></label>`;
   const pass=()=>field('password',view==='reset'?'New password':'Password','password',`autocomplete="${view==='login'?'current-password':'new-password'}" minlength="${view==='login'?1:12}" maxlength="128"`);
   function authForm(){
     const m=mode();
-    const titles={connect:'Connect your invitation.',login:'Welcome back.',register:'Create your account.',verify:'Enter your test code.',recover:'Recover your account.',reset:'Choose a new password.'};
+    const titles={login:'Welcome back.',register:'Create your account.',verify:'Enter your code.',recover:'Recover your account.',reset:'Choose a new password.'};
     let fields='';
-    if(m==='connect')fields=field('email','Invited email','email','autocomplete="email"')+field('invite','Tester invitation code','password','autocomplete="off"');
-    if(['login','register','recover'].includes(m))fields=field('email','Email','email',`autocomplete="email" value="${escape(testerEmail())}" readonly`);
-    if(m==='register')fields+=field('username','Username','text','autocomplete="nickname" pattern="[a-zA-Z0-9_]{3,24}" minlength="3" maxlength="24"');
+    if(['login','register','recover'].includes(m))fields=field('email','Email','email','autocomplete="email" maxlength="254"');
+    if(m==='register')fields+=field('username','Username','text','autocomplete="nickname" minlength="3" maxlength="24"');
     if(['login','register','reset'].includes(m))fields+=pass();
     if(m==='register')fields+=field('repeatPassword','Confirm password','password','autocomplete="new-password" minlength="12" maxlength="128"');
     if(['verify','reset'].includes(m))fields=`<label class="full">Verification code<input name="code" class="account-code" readonly inputmode="none" aria-label="Verification code" value="${codeValue}" maxlength="6"></label><div class="account-keypad full">${['1','2','3','4','5','6','7','8','9','0','⌫','Clear'].map(k=>`<button type="button" data-digit="${k}">${k}</button>`).join('')}</div>`+fields;
     return `<div class="account-layout"><section class="account-welcome"><p class="eyebrow">YOUR ATELIER</p><h1>One account.<br>Your own collection.</h1><p>Play together, collect extraordinary things, and keep your chips safe on the server.</p><img src="assets/collectibles/watch.webp" alt="Luxury watch"></section><section class="account-form">
-      ${m!=='connect'?`<nav aria-label="Account access"><button data-view="login" aria-pressed="${m==='login'}">Sign in</button><button data-view="register" aria-pressed="${m==='register'}">New user</button></nav>`:''}
-      <h1>${titles[m]}</h1>${m==='connect'?'<p class="account-note">Invited test release. Use the private invitation code supplied by the organiser. You only need to connect once per browser session.</p>':account.emailMode==='test'?'<p class="account-note">TEST MODE · Verification and recovery codes appear on screen. No email is sent.</p>':''}
+      <nav aria-label="Account access"><button data-view="login" aria-pressed="${m==='login'}">Sign in</button><button data-view="register" aria-pressed="${m==='register'}">New user</button></nav>
+      <h1>${titles[m]}</h1>${account.emailMode==='test'?'<p class="account-note">TEST MODE · New-account codes appear on screen. No email is sent. Email recovery is not connected yet.</p>':''}
       ${testCode&&['verify','reset'].includes(m)?`<p class="account-note">TEST INBOX <strong class="account-test-code">${escape(testCode)}</strong></p>`:''}${note()}
-      <form data-auth><div class="account-fields">${fields}</div>${['login','register','reset','connect'].includes(m)?'<label class="account-check"><input type="checkbox" data-show-password>Show password / code</label>':''}
-      <button class="primary" ${busy?'disabled':''}>${busy?'Please wait…':({connect:'Connect invitation',login:'Sign in',register:'Get test verification code',verify:'Verify and create account',recover:'Get recovery code',reset:'Update password'})[m]}</button></form>
-      <div class="account-actions">${m==='login'?'<button data-view="recover">Forgot password?</button><button data-disconnect>Use another invitation</button>':''}${['verify','reset'].includes(m)?'<button data-resend>Resend code</button>':''}</div>
-      <small>Virtual chips only · No cash-out or transfers</small></section></div>`;
+      <form data-auth><div class="account-fields">${fields}</div>${['login','register','reset'].includes(m)?'<label class="account-check"><input type="checkbox" data-show-password>Show password</label>':''}
+      <button class="primary" ${busy?'disabled':''}>${busy?'Please wait…':({login:'Sign in',register:account.emailMode==='test'?'Get test verification code':'Send verification email',verify:'Verify and create account',recover:'Get recovery code',reset:'Update password'})[m]}</button></form>
+      <div class="account-actions">${m==='login'?'<button data-view="recover">Forgot password?</button>':''}${['verify','reset'].includes(m)?'<button data-resend>Resend code</button>':''}</div>
+      <button type="button" data-open-keyboard>On-screen keyboard</button><small>Virtual chips only · No cash-out or transfers</small></section></div>`;
   }
   function playerPage(){
     const p=account.player,wealth=p.wealth,profile=p.profile;
@@ -52,17 +52,18 @@ export function mountAccount(api){
     return `<h1>${checkout?'Checkout':view==='account'?`Welcome, ${escape(p.username)}.`:view==='collection'?'Your collection.':view==='chips'?'More room to play.':view==='orders'?'Your orders.':'Your account.'}</h1><nav class="account-tabs">${tabs.map(t=>`<button data-view="${t}" aria-pressed="${view===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>${note()}<div class="account-wealth"><div><small>PLAY CHIPS</small><strong>${money(p.balance)}</strong></div><div><small>COLLECTIBLES · ${wealth.copies} COPIES</small><strong>${money(wealth.itemValue)}</strong></div><div><small>TOTAL WEALTH</small><strong>${money(wealth.total)}</strong></div></div>${content}`;
   }
   function render(){page.innerHTML=`<header><button class="account-back" data-back>← Back</button><span class="wordmark">ATELIER</span><button data-account-wide>Wide view ↗</button></header><main>${account.player?playerPage():authForm()}</main>`;refreshWideView();}
+  page.addEventListener('input',e=>{if(e.target.name&&e.target.closest('[data-auth]'))draft[e.target.name]=e.target.value;});
   async function run(fn){if(busy)return;busy=true;status('');page.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){status(e.message);}finally{busy=false;if(opened){const values=Array.from(page.querySelectorAll('input')).map(e=>[e.name,e.value,e.checked]);render();for(const [name,value,checked] of values){const input=page.querySelector(`input[name="${name}"]`);if(input&&name){input.value=value;input.checked=checked;}}}}}
   page.addEventListener('submit',e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.target));
     if(e.target.matches('[data-delete]'))return run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await accountRequest('delete-account',values);close();api.authenticated(null);});
     if(!e.target.matches('[data-auth]'))return;
     const current=mode();run(async()=>{
-      if(current==='connect'){await accountRequest('connect',values);await accountRequest('session');view='login';return;}
+      Object.assign(draft,values);
       if(current==='register'&&values.password!==values.repeatPassword)throw Error('The passwords do not match.');
       const result=await accountRequest(current==='reset'?'reset-password':current,{...values,code:codeValue,challengeId:challenge});
       if(['register','recover'].includes(current)){challenge=result.challengeId;testCode=result.testCode||'';codeValue='';view=current==='register'?'verify':'reset';message=result.message;}
       else if(current==='reset'){view='login';testCode='';message='Password updated. Sign in with your new password.';}
-      else{close();api.authenticated(account.player);}
+      else{draft.password='';draft.repeatPassword='';close();api.authenticated(account.player);}
     });
   });
   page.addEventListener('change',e=>{if(e.target.matches('[data-show-password]'))page.querySelectorAll('input[name=password],input[name=repeatPassword],input[name=invite]').forEach(input=>input.type=e.target.checked?'text':'password');});
@@ -72,7 +73,6 @@ export function mountAccount(api){
     if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();page.scrollTop=0;}
     if(b.hasAttribute('data-digit')){codeValue=b.dataset.digit==='Clear'?'':b.dataset.digit==='⌫'?codeValue.slice(0,-1):(codeValue+b.dataset.digit).slice(0,6);page.querySelector('[name=code]').value=codeValue;}
     if(b.hasAttribute('data-resend'))run(async()=>{const d=await accountRequest('resend',{challengeId:challenge});challenge=d.challengeId;testCode=d.testCode||'';message=d.message;});
-    if(b.hasAttribute('data-disconnect')){disconnectTester();render();}
     if(b.hasAttribute('data-logout')||b.hasAttribute('data-logout-all'))run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await api.leaveRoom();await accountRequest(b.hasAttribute('data-logout-all')?'logout-all':'logout',{});close();api.authenticated(null);});
     if(b.dataset.buyItem){const item=COLLECTIBLES.find(i=>i.id===b.dataset.buyItem);checkout={kind:'item',id:item.id,title:item.name,price:item.price,requestId:crypto.randomUUID()};render();}
     if(b.dataset.buyPack){const pack=CHIP_PACKS.find(i=>i.id===b.dataset.buyPack)||INSIGHTS_PASS;checkout={kind:'payment',id:pack.id,title:pack.chips?`${money(pack.chips)} chips`:'30-day Insights test pass',price:pack.cents,requestId:crypto.randomUUID()};render();}

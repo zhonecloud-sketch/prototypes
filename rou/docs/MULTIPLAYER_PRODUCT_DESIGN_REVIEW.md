@@ -14,18 +14,25 @@ local implementation is now available: Shop, collectible ownership and
 showcase, chip/Insights test checkout, and personal analysis since reset.
 Run it using [the implementation guide][L7].
 
-Updated 20 October 2026: invited accounts, simulated purchases, repeat
+Updated 20 October 2026: public accounts, simulated purchases, repeat
 collectibles and a shared six-seat test room now use a Sites backend.
 All player and developer pages remain on GitHub. A separate developer
 page manages users, recorded RNG databases and persistent Start/Stop.
 The nine collectible images now use WebP, reducing their total size by
 89.9%. Setup, controls and verification are in [the current guide][L10].
 
-The API is public with owner approval; game accounts still require private
-tester invitations and login. Developer actions require an operator
-account and a separate key. Sites serves requests on demand, with stored
+The API and account registration are public with owner approval. Players
+use email and password without a tester invitation. Developer actions
+require an operator account and a separate key. Sites serves requests
+on demand, with stored
 game availability until Stop; this does not provision a permanent
 background process or unattended scheduled jobs.
+
+The [public-login update](IMPLEMENTATION_04_PUBLIC_LOGIN_AND_KEYBOARD.md)
+adds separate duplicate-email and duplicate-name messages, authenticated
+player labels, and an attk-style landscape keyboard. A Sites database
+query fix restores entry to the six-seat room. New-account test codes
+remain on screen; signed-out recovery awaits real email delivery.
 
 Full paid multiplayer Insights remains unfinished: server raw records are
 stored, but the complete record since reset is not connected to the model

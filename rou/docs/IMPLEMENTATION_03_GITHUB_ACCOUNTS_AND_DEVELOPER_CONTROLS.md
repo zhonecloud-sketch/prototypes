@@ -5,10 +5,10 @@ Updated: 20 October 2026 | Asia/Kuala_Lumpur
 ## Use the test release
 
 1. Open the [game][game] and choose **Sign in**.
-2. Enter your invited email and its private tester invitation code.
-3. Choose **Create account**, supply a username and password, then enter
+2. Enter your email and password, or choose **New user** to register.
+3. For a new account, supply a username and password, then enter
    the clearly labelled on-screen test code. Existing players choose
-   **Sign in**. Recovery also uses an on-screen code.
+   **Sign in**. Signed-out recovery awaits a connected email sender.
 4. Successful activation or login returns to launch. Your player button
    opens account information, wealth, collection, purchases and orders.
 5. Choose **Multiplayer** to enter the shared six-seat table. **Enter as
@@ -16,23 +16,22 @@ Updated: 20 October 2026 | Asia/Kuala_Lumpur
 6. Open [developer controls][admin] for account and RNG maintenance.
    Sign in with an operator game account and the separate operator key.
 
-The private invitation codes and operator key are in
+The operator key is in
 `atelier-private-access.json` in the local **European Roulette** workspace.
-This file is outside the GitHub repository. Do not publish it. The invited
-emails are `zhone@hotmail.com` and `zhonecloud@gmail.com`; either can be an
-operator only when the separate operator key is also supplied.
+This file is outside the GitHub repository. Do not publish it. Only
+configured operator accounts can use the key. Legacy invitation values
+in this file are no longer needed for player registration or login.
 
 Expected result: every visible page stays on GitHub. Sites processes
 requests and stores data. No Sites tab is needed for account creation,
 login, purchases, play or developer controls. Test codes do not prove
 mailbox ownership, and simulated purchases never charge a card. [S1–S4]
 
-The owner approved public API access on 20 October. Public hosting makes
-the endpoint reachable from GitHub; it does not grant a game invitation
-or access to a player's wallet. The backend requires an email-bound
-invitation, then the game login. An ordinary Sites login does not replace
-that invitation. Developer actions additionally require an operator email
-and key. [S1, S2, S5]
+The owner approved public API access and open player registration on
+20 October. Anyone can register; account login protects player data.
+Developer actions additionally require an operator email and key.
+The [public-login update][public-login] supersedes the invitation flow.
+[S1, S2, S5]
 
 ## Start, stop and availability
 
@@ -70,11 +69,10 @@ round finishes, then retry. [S5]
 | Action | Expected result |
 | --- | --- |
 | Search | Find accounts by email or username, 50 per page. |
-| Add test player | Create an account with 10,000 chips and private codes. |
+| Add test player | Create an account with 10,000 chips and a password. |
 | Edit | Change username or whole-chip balance. |
 | Reset records | Start a new profit/analysis epoch; retain wealth. |
 | Reset player | Restore 10,000 chips and clear collection/orders/pass. |
-| Replace invitation | Issue a new private code and revoke old connections. |
 | Delete | Remove the account and dependent game data permanently. |
 
 Reset player preserves the login account and starts a new analysis epoch.
@@ -125,8 +123,9 @@ slide within the same landscape surface; Back reverses the transition.
 Menu cogs elsewhere return to launch. Wide view is a toggle with a
 **Default view** label when fullscreen is active. [S3, S9]
 
-Compact account entry uses a focused field editor with Next/Done and
-available-viewport sizing. Verification has an on-screen number keypad.
+Compact account entry uses a landscape button keyboard with Next/Done,
+letters, digits, spaces and password symbols. Verification uses a number
+keypad. Both avoid editable fields inside the keyboard overlay.
 Collection pages scroll vertically, support multiple copies of the same
 item, and count every copy in total wealth. Purchases require login and
 run through the server's simulated checkout. [S3, S4, S9]
@@ -145,7 +144,7 @@ in the local workspace's `original-collectibles-png` folder. [S10]
 | Account, wallet and room processing | Sites Worker |
 | Accounts, orders, wager records and runtime state | Sites D1 database |
 | Uploaded RNG numbers and operator action audit | Sites D1 database |
-| Invitation hashes and operator-key hash | Sites runtime secrets |
+| Operator account allowlist and key hash | Sites runtime secrets |
 
 The separate backend checkout is `rou/sites-server/`, which is ignored by
 the parent GitHub repository. It has its own Sites source repository.
@@ -158,8 +157,9 @@ the source, save a version and publish the existing project:
 Preserve its database and runtime secrets. The backend home URL redirects
 to the GitHub game. [S11]
 
-Required settings are `FRONTEND_ORIGIN`, `EMAIL_MODE`, `TEST_INVITES`,
-`ADMIN_EMAILS` and `ADMIN_KEY_HASH`. The frontend origin is exactly
+Required settings are `FRONTEND_ORIGIN`, `EMAIL_MODE`, `ADMIN_EMAILS`
+and `ADMIN_KEY_HASH`. Legacy `TEST_INVITES` is unused by public login.
+The frontend origin is exactly
 `https://zhonecloud-sketch.github.io`; the email mode is currently `test`.
 Do not place secret values in source files or documentation. [S1, S2, S5]
 
@@ -179,14 +179,15 @@ node node_modules/typescript/bin/tsc --noEmit
 node scripts/run-framework.mjs build
 ```
 
-Expected results for this release: 82 root tests and 16 Sites tests pass;
+Expected results after the public-login update: 84 root tests and 16 Sites
+tests pass;
 type checking and the production build succeed. Root tests include the
 older Node server as well as shared game mathematics and the new importer.
 The Sites suite separately covers the currently deployed API. [S12]
 
 Checks performed:
 
-- Invited signup, on-screen code, login and return to launch.
+- Public signup, on-screen code, login and return to launch.
 - Two local players sharing one room, wager settlement and reload.
 - Simulated chip purchase and buying two copies of one collectible.
 - Landscape collection scrolling and focused field entry at 896 × 414.
@@ -197,8 +198,10 @@ Checks performed:
   concurrent wallet updates, six-seat limits, draw secrecy, settlement
   once, maintenance guards, user resets/deletion and RNG lifecycle.
 - Live GitHub-origin preflight returning 204 with the exact allowed
-  origin; anonymous account/operator requests returning 401; Site home
-  redirecting to GitHub.
+  origin; anonymous session returns no player, protected requests reject
+  missing authentication, and Site home redirects to GitHub.
+- Two live disposable players join, see each other, share a draw and
+  settle once after the Sites seat-query compatibility fix.
 
 Browser checks use local disposable accounts unless described as live.
 Native keyboard behavior on a physical phone and sustained multiplayer
@@ -238,3 +241,4 @@ delivery remain separate integrations.
 
 [game]: https://zhonecloud-sketch.github.io/prototypes/rou/
 [admin]: https://zhonecloud-sketch.github.io/prototypes/rou/admin.html
+[public-login]: IMPLEMENTATION_04_PUBLIC_LOGIN_AND_KEYBOARD.md
