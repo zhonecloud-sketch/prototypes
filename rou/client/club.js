@@ -53,7 +53,7 @@ export function mountClub(api) {
           <div class="club-item-copy"><p class="club-eyebrow">${item.category}</p><h2>${item.name}</h2><p>${item.description}</p><div class="club-item-bottom"><span>${compact(item.price)} <small>CHIPS</small></span><button data-club="detail" data-id="${item.id}">${owned.has(item.id) ? 'View / buy another ↗' : 'View item ↗'}</button></div></div></article>`).join('')}</div>
         ${!items.length ? '<div class="club-empty"><h2>Your collection starts here.</h2><p>Choose a piece you would like to make your own.</p><button class="club-primary" data-club="owned">Explore the collection</button></div>' : ''}`;
     } else {
-      content = `${nav}<div class="club-banner"><div><p class="club-eyebrow">A LITTLE MORE ROOM TO PLAY</p><h2>Build your collection.</h2><p>Optional play-chip packs for the table and the things you love.</p></div><img src="assets/collectibles/watch.png" alt="Gold and platinum luxury watch" width="1536" height="1024"></div>
+      content = `${nav}<div class="club-banner"><div><p class="club-eyebrow">A LITTLE MORE ROOM TO PLAY</p><h2>Build your collection.</h2><p>Optional play-chip packs for the table and the things you love.</p></div><img src="assets/collectibles/watch.webp" alt="Gold and platinum luxury watch" width="1536" height="1024"></div>
         <p class="club-simulator-note">Log in to Multiplayer to purchase. Test payments are processed by the server; no real card details or money are used.</p>
         <div class="club-packs">${CHIP_PACKS.map((p, i) => `<article class="club-pack"><div class="club-chip-illustration" aria-hidden="true">${i+1}</div><h2>${compact(p.chips)}</h2><p>play chips</p><strong>${usd(p.cents)}</strong><button class="club-primary" data-club="checkout" data-id="${p.id}" >Log in to purchase</button></article>`).join('')}</div>
         <div class="club-insights-offer"><div><p class="club-eyebrow">A CLOSER LOOK AT YOUR PLAY</p><h2>Atelier Insights</h2><p>Your full record since reset. Understand your results, sample size and playing style.</p></div><button data-club="insights">Explore Insights →</button></div>
@@ -225,6 +225,7 @@ export function mountClub(api) {
   });
 
   function open(destination = 'collection') {
+    if (user()?.type === 'multiplayer') { openMultiplayer(destination); return; }
     if (!dialog.open) dialog.showModal();
     if (destination === 'insights') insights();
     else { tab = destination === 'chips' ? 'chips' : 'collection'; shop(); }

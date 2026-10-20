@@ -46,15 +46,15 @@ export function installAccounts(api){
     state.round.locked=!betting;
     const time=new Date(Date.now()+state.offset+8*3600000);$('wallClock').textContent=[time.getUTCHours(),time.getUTCMinutes(),time.getUTCSeconds()].map(n=>String(n).padStart(2,'0')).join(':');$('roundCode').textContent=state.round.id;$('motionLabel').textContent=betting?'SHARED TABLE':spinning?'SERVER DRAW · BALL IN PLAY':'RESULT CONFIRMED';
     for(const id of ['countdown','wheelTimer'])$(id).textContent=String(left).padStart(2,'0');
-    $('phaseLabel').textContent=!multi.fresh?'RECONNECTING':betting?'PLACE YOUR BETS':spinning?'NO MORE BETS':'ROUND COMPLETE';
+    $('phaseLabel').textContent=snapshot.running===false?'SERVER STOPPED':!multi.fresh?'RECONNECTING':betting?'PLACE YOUR BETS':spinning?'NO MORE BETS':'ROUND COMPLETE';
     $('wheelPhase').textContent=betting?'BETTING OPEN':spinning?'BALL IN PLAY':'NEXT ROUND';$('wheelTitle').textContent='Roulette';$('wheelSubtitle').textContent='SHARED ROOM · ROUND '+state.round.id;
     $('progress').style.width=Math.max(0,(betting?(20-elapsed)/20:spinning?(27-elapsed)/7:(30-elapsed)/3)*100)+'%';
     $('motionCaption').textContent=betting?'Every player shares this draw.':spinning?'No more bets.':'Next betting window in '+left+' seconds.';
     if(elapsed>=27&&state.round.outcome!==null){const number=state.round.outcome;$('winnerNumber').textContent=number;$('winnerNumber').className='winner-disc '+api.color(number);$('winnerLabel').textContent=api.color(number).toUpperCase();$('payoutLabel').textContent=state.round.settled?`Return ${api.money(state.round.returned)} · Net ${api.signed(state.round.net)}`:state.round.bets.length?'Confirming server settlement…':'Watching this round';$('winner').classList.add('visible');}
-    $('connectionStatus').textContent=multi.fresh?'Connected · server-authoritative room':'Reconnecting · betting paused';
+    $('connectionStatus').textContent=snapshot.running===false?'Multiplayer stopped by developer · accepted wagers will settle':multi.fresh?(snapshot.source==='recorded'?'Connected · recorded replay source':'Connected · live server RNG'):'Reconnecting · betting paused';
     $('roundMessage').textContent=state.round.settled?`Return ${api.money(state.round.returned)} · Net ${api.signed(state.round.net)}`:'';api.updateButtons();
   }
-  function canBet(){return multi.active&&multi.fresh&&!multi.busy&&snapshot&&Date.now()+state.offset<snapshot.round.start+20000;}
+  function canBet(){return multi.active&&multi.fresh&&!multi.busy&&snapshot&&snapshot.running!==false&&Date.now()+state.offset<snapshot.round.start+20000;}
   function bet(operation,entries=[]){if(!canBet()){api.toast('Wait for the next open betting window.');return false;}multi.bet(operation,entries,state.round.id).then(()=>api.sound('chip')).catch(e=>api.toast(e.message)).finally(()=>api.paintMoney());api.paintMoney();return true;}
   launchInfo();return {panel,multi,leave,tick,canBet,bet,launchInfo,toggleWideView};
 }

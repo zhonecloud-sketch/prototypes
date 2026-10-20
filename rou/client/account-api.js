@@ -5,8 +5,8 @@ export const account={player:null,emailMode:'test',connected:!!credentials.acces
 const notify=()=>document.dispatchEvent(new CustomEvent('atelier-account',{detail:account}));
 export function storePlayer(player){account.player=player;notify();}
 function persist(){sessionStorage.setItem(key,JSON.stringify(credentials));account.connected=!!credentials.accessToken;}
-export async function accountRequest(action,body) {
-  const headers={'X-Atelier-Request':'1'};
+export async function accountRequest(action,body,extraHeaders={}) {
+  const headers={'X-Atelier-Request':'1',...extraHeaders};
   if(credentials.accessToken)headers['X-Atelier-Access']=credentials.accessToken;
   if(credentials.sessionToken)headers.Authorization='Bearer '+credentials.sessionToken;
   if(body!==undefined)headers['Content-Type']='application/json';

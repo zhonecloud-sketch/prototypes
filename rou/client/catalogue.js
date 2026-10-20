@@ -9,7 +9,7 @@ export const COLLECTIBLES = Object.freeze([
   { id: 'jet', name: 'Private jet', price: 300_000_000, category: 'Above it all', description: 'A long-range business jet, ready for the next horizon.' },
   { id: 'island', name: 'Private island', price: 500_000_000, category: 'Estates', description: 'Your own palm-lined retreat, surrounded by turquoise shallows.' },
   { id: 'shuttle', name: 'Space shuttle', price: 5_000_000_000, category: 'Above it all', description: 'A winged orbital explorer. The collection reaches beyond Earth.' },
-].map(item => Object.freeze({ ...item, image: `assets/collectibles/${item.id}.png` })));
+].map(item => Object.freeze({ ...item, image: `assets/collectibles/${item.id}.webp` })));
 
 export const CHIP_PACKS = Object.freeze([
   { id: 'chips-100k', chips: 100_000, cents: 490 },

@@ -12,8 +12,26 @@ products: optional chip purchases and paid personal analysis.
 Updated after the owner authorized coding on 18 October 2026. The first
 local implementation is now available: Shop, collectible ownership and
 showcase, chip/Insights test checkout, and personal analysis since reset.
-Run it using [the implementation guide][L7]. This is a local product preview;
-shared multiplayer tables and real billing are subsequent backend work.
+Run it using [the implementation guide][L7].
+
+Updated 20 October 2026: invited accounts, simulated purchases, repeat
+collectibles and a shared six-seat test room now use a Sites backend.
+All player and developer pages remain on GitHub. A separate developer
+page manages users, recorded RNG databases and persistent Start/Stop.
+The nine collectible images now use WebP, reducing their total size by
+89.9%. Setup, controls and verification are in [the current guide][L10].
+
+The API is public with owner approval; game accounts still require private
+tester invitations and login. Developer actions require an operator
+account and a separate key. Sites serves requests on demand, with stored
+game availability until Stop; this does not provision a permanent
+background process or unattended scheduled jobs.
+
+Full paid multiplayer Insights remains unfinished: server raw records are
+stored, but the complete record since reset is not connected to the model
+yet. Guest Insights continues using local records. The multiplayer page
+states this limitation, and its simulated pass tests checkout/access only.
+Real billing and email delivery remain subsequent integration work.
 
 Two additional owner decisions are confirmed: the attached Bias Calculator
 must determine the required sample size for either direction of advantage,
@@ -709,6 +727,7 @@ explicit. Do not activate live billing or deploy during this phase.
 [L7]: IMPLEMENTATION_01_COLLECTION_AND_INSIGHTS.md
 [L8]: ../assets/collectibles/manifest.json
 [L9]: ../client/insights-model.js
+[L10]: IMPLEMENTATION_03_GITHUB_ACCOUNTS_AND_DEVELOPER_CONTROLS.md
 [E1]: https://arxiv.org/abs/1810.08240
 [E2]: https://www.itl.nist.gov/div898/handbook/prc/section4/prc473.htm
 [E3]: https://www.gamblingcommission.gov.uk/consultation-response/changes-to-the-licence-conditions-and-codes-of-practice-on-age-and-identity/av-ci-consultation-responses-summary-av-proposed-changes-to-social

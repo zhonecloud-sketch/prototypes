@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Atelier · Developer controls</title>
+<link rel="stylesheet" href="client/admin.css">
+</head>
+<body>
+<header><a href="index.html">← Game</a><span class="wordmark">ATELIER</span><button data-wide-view>Wide view ↗</button></header>
+<main>
+<h1>Developer controls</h1>
+<p>Manage the invited test room, player accounts and recorded RNG databases.</p>
+<section id="access" class="panel">
+<h2>Operator sign-in</h2>
+<p id="operatorIdentity">Use an existing game account. Create your account through Sign in on the game first.</p>
+<form id="operatorLogin">
+<div id="loginFields" class="fields">
+<label>Email<input name="email" type="email" autocomplete="email"></label>
+<label>Tester invitation code<input name="invite" type="password" autocomplete="off"></label>
+<label>Game password<input name="password" type="password" autocomplete="current-password"></label>
+</div>
+<label>Private operator key<input name="operatorKey" type="password" autocomplete="off" required></label>
+<p class="small">The operator key is kept only in this page’s memory. It is never saved in browser storage.</p>
+<button class="primary">Unlock developer controls</button>
+</form>
+</section>
+<p id="notice" role="status"></p>
+<div id="console" hidden>
+<nav><button data-tab="server">Server</button><button data-tab="users">Users</button><button data-tab="rng">RNG databases</button><button id="lock">Lock controls</button></nav>
+<section id="server" class="panel">
+<h2>Multiplayer service</h2>
+<div id="serverStatus"></div>
+<div class="actions"><button data-command="start" class="primary">Start multiplayer</button><button data-command="stop">Stop multiplayer</button><button id="refreshStatus">Refresh status</button></div>
+<p>Start stays enabled until you issue Stop. Players can connect without this page or your computer staying open. Stop blocks new joins and wagers; accepted wagers still settle.</p>
+<p class="small">Sites keeps the API available on demand. It does not run a permanent background process. Players refresh the shared room automatically; an interrupted wager is settled on the next account or room request. These controls pause the game, while keeping account and operator services available.</p>
+<h3>Recent operator actions</h3><div id="audit"></div>
+</section>
+<section id="users" class="panel" hidden>
+<h2>Player accounts</h2>
+<form id="searchUsers" class="actions"><input name="search" aria-label="Find email or username" placeholder="Find email or username"><button>Search</button></form>
+<div class="table-scroll"><table><thead><tr><th>Player</th><th>Chips</th><th>Wealth</th><th>Actions</th></tr></thead><tbody id="userRows"></tbody></table></div>
+<div class="actions"><button id="previousUsers">← Previous</button><button id="nextUsers">Next →</button></div>
+<details><summary>Add a test player</summary><form id="addUser"><div class="fields"><label>Email<input name="email" type="email" required></label><label>Username<input name="username" pattern="[a-zA-Z0-9_]{3,24}" required></label></div><p>Creates a test account with 10,000 chips and private invitation credentials. No verification email is sent.</p><button>Add test player</button></form></details>
+<div id="userEditor"></div>
+</section>
+<section id="rng" class="panel" hidden>
+<h2>Real-life RNG databases</h2>
+<p>Recorded sources replay in sequence and loop at the end. They are labelled as replay in the room. Changing a source takes effect from the next full round after Start.</p>
+<form id="uploadRng"><div class="fields"><label>Database name<input name="name" maxlength="120" required></label><label>Number file<input name="file" type="file" accept=".txt,.csv,.json,.html" required></label></div><p class="small">Accepts integer results from 0–36, a JSON number array, or the generated real.html format. Maximum: 2 million results / 32 MB. Files stay in the Sites database.</p><button>Import database</button></form>
+<div class="actions"><button id="useCrypto">Use live server RNG</button><button id="refreshRng">Refresh databases</button></div>
+<div id="rngRows"></div><div id="rngEditor"></div>
+</section>
+</div>
+<section id="privateResult" class="panel" hidden><h2>Private tester credentials</h2><p>Shown for this action only. Give them only to the intended tester.</p><pre id="credentialResult"></pre><button id="dismissCredentials">Dismiss</button></section>
+</main>
+<script type="module" src="client/admin.js"></script>
+</body>
+</html>
