@@ -3,9 +3,6 @@ import { LANDMASK } from './landmask.js';
 const TAU = Math.PI * 2;
 const mix = (a, b, t) => a + (b - a) * t;
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
-const copper = '#c99b75';
-const pale = '#b7cbc0';
-const green = '#739b8b';
 
 function line(ctx, points, color, width = 1) {
   ctx.beginPath();
@@ -20,16 +17,6 @@ function circle(ctx, x, y, radius, color, fill = false) {
   if (fill) { ctx.fillStyle = color; ctx.fill(); }
   else { ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.stroke(); }
 }
-function text(ctx, label, x, y, color, size = 9, align = 'left') {
-  ctx.fillStyle = color;
-  ctx.font = `${size}px Consolas, monospace`;
-  ctx.textAlign = align;
-  ctx.fillText(label, x, y);
-}
-function cross(ctx, x, y, color, size = 4) {
-  line(ctx, [[x - size, y], [x + size, y]], color);
-  line(ctx, [[x, y - size], [x, y + size]], color);
-}
 function trace(ctx, fn, color, width = 1, count = 120) {
   const points = [];
   for (let i = 0; i <= count; i++) points.push(fn(i / count));
@@ -38,17 +25,21 @@ function trace(ctx, fn, color, width = 1, count = 120) {
 
 // Each canvas is an intentionally symbolic technical drawing, not simulated
 // hardware. All profile claims and locations stay in profile.yaml.
-export function createScenes({ hero, value, atlas, paused: initialPaused }) {
+export function createScenes({ hero, values, atlas, paused: initialPaused }) {
+  const style = getComputedStyle(document.documentElement);
+  const surface = style.getPropertyValue('--surface').trim();
+  const ink = style.getPropertyValue('--ink').trim();
+  const copper = style.getPropertyValue('--accent').trim();
+  const secondary = style.getPropertyValue('--secondary').trim();
+  const grid = style.getPropertyValue('--line').trim();
   let paused = initialPaused;
-  let activeValue = 0;
   let job = null;
   let time = 0;
   let last = 0;
   let frameId = 0;
   let jobTime = 0;
-  let valueTime = 0;
   const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
-  const states = [hero, value, atlas].map((canvas) => ({
+  const states = [hero, ...values, atlas].map((canvas) => ({
     canvas, ctx: canvas.getContext('2d'), width: 1, height: 1, visible: false,
   }));
   const bytes = Uint8Array.from(atob(LANDMASK.data), (char) => char.charCodeAt(0));
@@ -68,20 +59,16 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
     ctx.save();
     ctx.translate(cx, cy);
     // The graticule is stationary; the three bundles gently come into phase.
-    circle(ctx, 0, 0, r * 1.14, '#c4c9b9');
-    circle(ctx, 0, 0, r * 1.19, '#d6d6c9');
+    circle(ctx, 0, 0, r * 1.14, grid);
+    circle(ctx, 0, 0, r * 1.19, grid);
     for (let i = 0; i < 120; i++) {
       const angle = i * TAU / 120;
       const inner = r * (i % 10 === 0 ? 1.065 : 1.105);
       line(ctx, [[Math.cos(angle) * inner, Math.sin(angle) * inner],
         [Math.cos(angle) * r * 1.14, Math.sin(angle) * r * 1.14]],
-      i % 10 === 0 ? '#9fa995' : '#c4c9b9', .7);
+      i % 10 === 0 ? secondary : grid, .7);
     }
-    ctx.setLineDash([2, 6]);
-    line(ctx, [[-r * 1.3, 0], [r * 1.3, 0]], '#b7beb0', .7);
-    line(ctx, [[0, -r * 1.26], [0, r * 1.26]], '#b7beb0', .7);
-    ctx.setLineDash([]);
-    const colors = ['#9b5939', '#294c47', '#758979'];
+    const colors = [copper, ink, secondary];
     for (let group = 0; group < 3; group++) {
       ctx.save();
       const angle = -.48 + group * 1.047 + Math.sin(time * .14) * .055;
@@ -105,34 +92,41 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
       const py = Math.sin(angleOnPath) * r * .4 +
         Math.sin(angleOnPath * 3 + Math.sin(time * .25 + group * .7) * .09) * r * .055;
       circle(ctx, px, py, 3, colors[group], true);
-      circle(ctx, px, py, 6, colors[group]);
       ctx.restore();
     }
-    circle(ctx, 0, 0, 19, '#f2efe7', true);
-    circle(ctx, 0, 0, 19, '#9b5939');
-    cross(ctx, 0, 0, '#9b5939', 5);
-    text(ctx, 'E', 0, -r * 1.32, '#6d7969', 9, 'center');
-    text(ctx, 'D', r * 1.32, 3, '#6d7969', 9, 'center');
-    text(ctx, 'P', 0, r * 1.37, '#6d7969', 9, 'center');
+    circle(ctx, 0, 0, 5, copper, true);
     ctx.restore();
   }
 
-  function drawValue({ ctx, width: w, height: h }) {
+  function drawValue({ canvas, ctx, width: w, height: h }) {
     ctx.clearRect(0, 0, w, h);
     const pad = w * .1;
     const top = h * .17;
     const bottom = h * .82;
     ctx.globalAlpha = .45;
     for (let x = pad; x <= w - pad; x += 25) {
-      for (let y = top; y <= bottom; y += 25) circle(ctx, x, y, .65, '#789185', true);
+      for (let y = top; y <= bottom; y += 25) circle(ctx, x, y, .65, secondary, true);
     }
     ctx.globalAlpha = 1;
-    cross(ctx, pad - 12, top - 12, '#627e70');
-    cross(ctx, w - pad + 12, bottom + 12, '#627e70');
-    const progress = paused ? 1 : clamp((time - valueTime) / 1.3, 0, 1);
     ctx.save();
-    ctx.globalAlpha = .4 + .6 * progress;
-    if (activeValue === 0) {
+    if (canvas.dataset.animation === 'technical') {
+      // Two signal studies echo the two video-detection innovations.
+      for (let channel = 0; channel < 2; channel++) {
+        const cy = h * (.34 + channel * .32);
+        for (let row = 0; row < 5; row++) {
+          trace(ctx, (u) => {
+            const offset = channel === 0
+              ? Math.sin(u * TAU * 3 + row * .6) * 7
+              : (u > .43 && u < .55 ? 13 : 0);
+            return [mix(pad, w - pad, u), cy + (row - 2) * 7 + offset];
+          }, row === 2 ? copper : secondary, row === 2 ? 1.4 : .7);
+        }
+        const scan = (time * .14 + channel * .35) % 1;
+        const x = mix(pad, w - pad, scan);
+        line(ctx, [[x, cy - 30], [x, cy + 30]], copper);
+        circle(ctx, x, cy, 3, copper, true);
+      }
+    } else if (canvas.dataset.animation === 'optimisation') {
       const x0 = pad, x1 = w - pad;
       const cy = h * .49;
       for (let i = 0; i < 11; i++) {
@@ -141,44 +135,14 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
           return [mix(x0, x1, u), cy + (i - 5) * 2.4 +
             Math.sin(u * TAU * 1.55 + time * .45 + i * .22) * amplitude];
         };
-        trace(ctx, signal, i === 5 ? copper : '#74978a', i === 5 ? 1.5 : .7);
+        trace(ctx, signal, i === 5 ? copper : secondary, i === 5 ? 1.5 : .7);
         const t = (time * .16 + i * .087) % 1;
         const point = signal(t);
-        circle(ctx, point[0], point[1], i === 5 ? 3 : 1.5, i === 5 ? copper : pale, true);
+        circle(ctx, point[0], point[1], i === 5 ? 3 : 1.5, i === 5 ? copper : ink, true);
       }
       ctx.setLineDash([3, 5]);
-      line(ctx, [[w * .69, top], [w * .69, bottom]], '#698c7b');
+      line(ctx, [[w * .69, top], [w * .69, bottom]], secondary);
       ctx.setLineDash([]);
-      text(ctx, 'EXPLORE', pad, h * .91, '#a1b8aa');
-      text(ctx, 'VERIFY', w * .69, h * .91, copper, 9, 'center');
-      text(ctx, 'DELIVER', w - pad, h * .91, '#a1b8aa', 9, 'right');
-      text(ctx, 'FROM UNCERTAINTY TO WORKING SYSTEM', pad, h * .1, '#a1b8aa', 9);
-    } else if (activeValue === 1) {
-      const lanes = ['CUSTOMER', 'ENGINEERING', 'VALIDATION', 'OPERATIONS'];
-      const start = pad + 8;
-      const end = w - pad;
-      for (let i = 0; i < 4; i++) {
-        const y = mix(top + 40, bottom - 30, i / 3);
-        text(ctx, lanes[i], start, y - 13, '#a1b8aa', 8);
-        line(ctx, [[start, y], [end, y]], '#607d70', .7);
-        const gateX = [start + (end - start) * .19, start + (end - start) * .48, start + (end - start) * .8];
-        for (let gate = 0; gate < 3; gate++) {
-          const x = gateX[gate];
-          ctx.fillStyle = '#152e2f';
-          ctx.fillRect(x - 4, y - 4, 8, 8);
-          ctx.strokeStyle = gate === 2 ? copper : '#96b3a2';
-          ctx.strokeRect(x - 4, y - 4, 8, 8);
-          if (i < 3 && gate === 2) {
-            line(ctx, [[x, y + 5], [x, mix(top + 40, bottom - 30, (i + 1) / 3) - 5]], copper, .8);
-          }
-        }
-        const flow = (time * .12 + (i < 2 ? .13 * i : .05 * i)) % 1;
-        circle(ctx, mix(start, end, flow), y, 3, copper, true);
-      }
-      text(ctx, 'SEPARATE DISCIPLINES. SHARED MILESTONES.', pad, h * .1, '#a1b8aa', 9);
-      text(ctx, 'ALIGN', start, h * .94, '#a1b8aa');
-      text(ctx, 'INTEGRATE', w * .5, h * .94, '#a1b8aa', 9, 'center');
-      text(ctx, 'RELEASE', end, h * .94, copper, 9, 'right');
     } else {
       const levels = [1, 2, 4, 8];
       const positions = levels.map((count, level) => Array.from({ length: count }, (_, i) => ({
@@ -192,18 +156,16 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
             const ease = u * u * (3 - 2 * u);
             return [mix(start.x, end.x, ease), mix(start.y, end.y, u)];
           };
-          trace(ctx, branch, level === 1 ? copper : '#83a592', level === 1 ? 1.4 : 1);
+          trace(ctx, branch, level === 1 ? copper : secondary, level === 1 ? 1.4 : 1);
           const flow = (time * .28 - level * .24 + i * .06 + 10) % 1;
           const point = branch(flow);
-          circle(ctx, point[0], point[1], 2, pale, true);
+          circle(ctx, point[0], point[1], 2, ink, true);
         });
       }
       positions.forEach((level, n) => level.forEach((point) => {
-        circle(ctx, point.x, point.y, n === 0 ? 9 : 4, '#152e2f', true);
-        circle(ctx, point.x, point.y, n === 0 ? 9 : 4, n === 0 ? copper : pale);
+        circle(ctx, point.x, point.y, n === 0 ? 9 : 4, surface, true);
+        circle(ctx, point.x, point.y, n === 0 ? 9 : 4, n === 0 ? copper : secondary);
       }));
-      text(ctx, 'CAPABILITY THAT MULTIPLIES', pad, h * .1, '#a1b8aa', 9);
-      text(ctx, 'COACHING → OWNERSHIP → LEADERSHIP', w / 2, h * .94, copper, 9, 'center');
     }
     ctx.restore();
   }
@@ -217,12 +179,14 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
     for (const [lon, lat] of land) {
       if (lat < -58 || lat > 80) continue;
       const [x, y] = project(lon, lat);
-      ctx.fillStyle = '#acb7a6';
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = .5;
       ctx.fillRect(x, y, pointSize, pointSize);
     }
+    ctx.globalAlpha = 1;
     ctx.setLineDash([2, 5]);
     for (const lat of [-30, 0, 30, 60]) {
-      line(ctx, [project(-170, lat), project(170, lat)], '#c5cbbb', .5);
+      line(ctx, [project(-170, lat), project(170, lat)], grid, .5);
     }
     ctx.setLineDash([]);
     if (!job) return;
@@ -242,28 +206,23 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
       const curve = Math.min(60, distance * .25);
       const route = (u) => [mix(start[0], end[0], u),
         mix(start[1], end[1], u) - Math.sin(u * Math.PI) * curve];
-      trace(ctx, (u) => route(u * reveal), '#a46d48', .8, 60);
+      trace(ctx, (u) => route(u * reveal), copper, .8, 60);
       const travel = ((time * .17 + i * .13) % 1) * reveal;
       const point = route(travel);
-      circle(ctx, point[0], point[1], 1.8, '#a46d48', true);
+      circle(ctx, point[0], point[1], 1.8, copper, true);
     });
     customers.forEach((place) => {
       const [x, y] = project(place.lon, place.lat);
-      circle(ctx, x, y, 2.2, '#9b5939', true);
+      circle(ctx, x, y, 2.2, copper, true);
     });
     origins.forEach((place) => {
       const [x, y] = project(place.lon, place.lat);
-      circle(ctx, x, y, 3, '#24483e', true);
-      circle(ctx, x, y, 6, '#567e66');
+      circle(ctx, x, y, 3, ink, true);
+      circle(ctx, x, y, 6, secondary);
     });
-    const [px, py] = start;
-    text(ctx, origin.city?.toUpperCase() || 'WORK SITE', px + 10, py + 17, '#315647', 8);
-    if (!customers.length) {
-      text(ctx, 'GLOBAL CUSTOMER LOCATIONS UNSPECIFIED', 18, h - 15, '#697c6b', 8);
-    }
   }
 
-  const draws = [drawHero, drawValue, drawAtlas];
+  const draws = [drawHero, ...values.map(() => drawValue), drawAtlas];
   function schedule() {
     if (!frameId && !document.hidden) frameId = requestAnimationFrame(frame);
   }
@@ -317,7 +276,6 @@ export function createScenes({ hero, value, atlas, paused: initialPaused }) {
 
   return {
     setPaused(next) { paused = next; last = 0; schedule(); },
-    setValue(next) { activeValue = next; valueTime = time; schedule(); },
     setJob(next) { job = next; jobTime = time; schedule(); },
   };
 }

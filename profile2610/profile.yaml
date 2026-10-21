@@ -1,162 +1,163 @@
-# ============================================================
-# profile.yaml — single source of truth
-# ============================================================
-# Digital profile content and presentation configuration.
-#
-# Information hierarchy:
-#   HERO
-#     ↓
-#   SIGNATURE VALUES
-#     ↓
-#   PROFESSIONAL EXPERIENCE
-#     ↓
-#   EDUCATION
-#
-# The renderer must treat this file as the only source of
-# personal/profile facts.
-# ============================================================
+# profile.yaml — profile content and presentation labels
+# Edit this file, then reload the page. No JavaScript changes are needed
+# for names, copy, value evidence, career records, or navigation labels.
+# Facts and metrics originate in ../profile2609/profile.yaml.
 
 meta:
   schema: profile-v3
   basedOn: jsonresume.org/schema
   lastUpdated: "2026-10-21"
   defaultView: chrono
-
-# ============================================================
-# PERSONAL PROFILE
-# ============================================================
-
 basics:
   name: Chong Boo Chean
   label: Software & Test Engineering Leader
-  tagline: Technical depth · Disciplined delivery · Talent elevation
-
+  tagline: Technical management · Project/program management · Talent elevation
   email: gzhone@yahoo.co.uk
-  phone: "+60-11 2600 8641"
-
+  phone: +60-11 2600 8641
   location:
     city: Penang
     country: Malaysia
     countryCode: MY
-
-  summary: >
-    20+ years connecting software, systems, and people across semiconductor,
-    automotive, and test & measurement. Technical judgement meets rapid
-    exploration, disciplined validation, and the development of stronger teams.
-
+  summary: >-
+    20+ years in software engineering across semiconductor, automotive, and
+    test & measurement. Hands-on technical leadership, project/program
+    delivery, and talent development, supported by rapid prototyping and
+    automated validation.
   profiles:
     - network: LinkedIn
       handle: chongboochean
       url: https://www.linkedin.com/in/chongboochean
-
-    - network: Profile
-      handle: zhonecloud-sketch
-      url: https://zhonecloud-sketch.github.io/prototypes/profile2610/
-
-# ============================================================
-# SIGNATURE VALUES
-# ============================================================
-
+  image: assets/cbc.jpg
+presentation:
+  navigationLabel: Profile sections
+  navigation:
+    - section: hero
+      label: Profile
+    - section: values
+      label: Value signatures
+    - section: career
+      label: Career & education
+  hero:
+    continueLabel: Explore value signatures
+  values:
+    title: Value signatures
+    description: >-
+      Technical innovation, delivery and quality optimisation, and talent
+      elevation.
+  career:
+    title: Career history
+    description: >-
+      Scroll through the roles. The map follows the work sites and customer
+      connections for each role.
+    present: Present
+    mapTitle: Work sites and customer connections
+    workLegend: Work sites
+    customerLegend: Customers
+    mapNote: Connections shown for the role alongside the map.
+    unspecifiedLocations: Customer locations are not specified for this role.
+    toolsLabel: Tools, products, and practices
+    customerLabel: Customer connections
+  education:
+    title: Academic achievement
+  footer:
+    updatedLabel: Updated
+    backLabel: Back to profile
+  motion:
+    pause: Pause animation
+    resume: Resume animation
 signatureValues:
-
-  - id: technical-depth
+  - id: technical
     number: "01"
-    label: Technical depth
-    shortLabel: Depth
-    title: Make the difficult workable.
-    statement: >
-      Stays close to the engineering. Frames the right questions, turns
-      hypotheses into working prototypes, and validates them on real systems.
-      Assisted exploration shortens the path to a first implementation;
-      technical judgement determines what is ready to deliver.
-    method: >
-      Rapid synthesis, code-assisted experimentation, and repeatable checks
-      form one practical loop: understand, build, verify, refine.
-    diagramLabel: Uncertainty → clarity
-    diagramNote: >
-      Exploratory signals converge into a verified result. Speed is useful
-      when it leads to something that works.
+    label: Technical
+    animation: technical
+    statement: >-
+      Develops practical solutions to difficult engineering problems,
+      combining hands-on software expertise with hypothesis-led
+      experimentation and validation on real systems.
+    method: >-
+      Uses assisted exploration and code-assisted prototyping to test ideas
+      quickly, with engineering judgement and repeatable checks guiding the
+      result.
+    evidence:
+      - metric: 1 quarter
+        title: Video colour-corruption detection
+        text: Innovated a detection algorithm within a quarter.
+        source: Intel
+      - metric: 1 quarter
+        title: Video-tearing detection
+        text: Innovated a detection algorithm within a quarter.
+        source: Intel
+    more: >-
+      Technical leadership across Media and Imaging software, and validation
+      across Media, Imaging, and SR-IOV (I/O virtualisation).
+  - id: optimisation
+    number: "02"
+    label: Optimisation
+    animation: optimisation
+    statement: >-
+      Improves delivery speed and product quality through focused technical
+      execution, test automation, and coordination across engineering,
+      programs, customers, and operations.
+    method: >-
+      Combines rapid synthesis, assisted implementation, and automated
+      checks to shorten iteration cycles while retaining validation at
+      product milestones.
     evidence:
       - metric: 5 days
-        source: Intel / driver enablement
-        text: >
-          GMSL2 camera driver enabled for a next-generation platform within
-          five days. GMSL2 is the camera's high-speed serial connection.
+        title: Camera-driver enablement
+        text: >-
+          Enabled a GMSL2 camera driver for a next-generation platform
+          within five days.
+        source: Intel
       - metric: 85 tests
-        source: Intel / automation
-        text: >
-          Manual test cases automated and validated in product milestones
+        title: Manual testing automated
+        text: >-
+          Automated and validated 85 manual test cases in product milestones
           within two quarters.
-    more: >
-      Intel: video colour-corruption and video-tearing detection algorithms
-      each developed within a quarter. Logged defects reduced from 12 to 4
-      per week within two years.
-
-  - id: delivery-orchestration
-    number: "02"
-    label: Delivery orchestration
-    shortLabel: Delivery
-    title: Bring the whole system forward.
-    statement: >
-      Connects technical decisions to program commitments. Aligns customers,
-      engineering, validation, and operations around clear priorities,
-      visible dependencies, and measurable outcomes.
-    method: >
-      Carries the same rapid exploration and verification discipline into
-      delivery: make uncertainty visible early and turn validated progress
-      into a shared basis for decisions.
-    diagramLabel: Disciplines → shared direction
-    diagramNote: >
-      Parallel workstreams meet at shared milestones. The whole program
-      moves when its dependencies move together.
-    evidence:
+        source: Intel
       - metric: 140+ → 5
-        source: Continental / quality
-        text: Customer-found defects reduced within three years.
-      - metric: End to end
-        source: Blaupunkt / program management
-        text: >
-          Delivery across R&D, finance, procurement, circuit-board assembly,
-          product assembly, and reliability testing.
-    more: >
-      Continental: Functional Test Site Lead and Business Owner for Penang.
-      Intel: software leadership across Media and Imaging; validation
-      leadership across Media, Imaging, and SR-IOV (I/O virtualisation).
-
-  - id: talent-elevation
+        title: Customer-found defects
+        text: Reduced within three years.
+        source: Continental
+      - metric: 12 → 4
+        title: Logged defects per week
+        text: Reduced within two years.
+        source: Intel
+    more: >-
+      Program delivery at Blaupunkt spanned R&D, finance, procurement,
+      circuit-board assembly, product assembly, and reliability tests.
+      Functional Test Site Lead and Business Owner for Continental Penang.
+  - id: people
     number: "03"
-    label: Talent elevation
-    shortLabel: People
-    title: Build capability that carries on.
-    statement: >
-      Develops people through coaching, practical ownership, and opportunities
-      to take on more demanding work. Makes engineering reasoning visible,
-      so that the team grows in judgement as well as output.
-    method: >
-      The tools can accelerate an iteration. Coaching turns that iteration
-      into understanding, independent decisions, and lasting capability.
-    diagramLabel: Individual growth → wider capability
-    diagramNote: >
-      Knowledge branches outward. The measure of leadership is what others
-      become capable of doing for themselves.
+    label: People
+    animation: people
+    statement: >-
+      Elevates talent through practical coaching, clear ownership, and
+      opportunities to grow into stronger technical and organisational
+      roles.
+    method: >-
+      Makes the reasoning behind prototypes and validation visible, so
+      faster iterations also develop understanding, judgement, and
+      independent ownership.
     evidence:
       - metric: 1 year
-        source: Intel / capability development
-        text: An engineer developed from non-performing to key contributor.
+        title: Key-contributor development
+        text: >-
+          Developed an engineer from non-performing to key contributor
+          within one year.
+        source: Intel
       - metric: 3 years
-        source: Continental / career development
-        text: A validation engineer progressed to global Project Manager.
-    more: >
-      The foundation includes lecturing in Computer Engineering, C/C++,
-      Java, and Assembly Language, followed by people leadership at
-      Agilent, Blaupunkt, Continental, and Intel.
+        title: Progression to global Project Manager
+        text: >-
+          Supported an engineer’s progression from validation engineer to
+          global Project Manager within three years.
+        source: Continental
+    more: >-
+      People management at Agilent, Blaupunkt, Continental, and Intel,
+      grounded in earlier teaching of Computer Engineering, C/C++, Java, and
+      Assembly Language.
 
-# ============================================================
-# WORK HISTORY
-# Personal facts retained from profile2609/profile.yaml.
-# Newest first. Locations are work sites and customer connections.
-# ============================================================
-
+# Career and education records retained from the source.
 work:
 
   - id: intel-2025
