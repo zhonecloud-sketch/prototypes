@@ -179,7 +179,7 @@ async function main() {
   }, { passive: true });
   window.addEventListener('resize', updateScroll, { passive: true });
   // Resolve section links after the YAML-built content exists.
-  document.getElementById(location.hash.slice(1))?.scrollIntoView({
+  document.getElementById(window.location.hash.slice(1))?.scrollIntoView({
     behavior: 'instant', block: 'start',
   });
   updateScroll();
