@@ -1,0 +1,733 @@
+# ============================================================
+# profile.yaml — single source of truth
+# ============================================================
+# Digital profile content and presentation configuration.
+#
+# Information hierarchy:
+#   HERO
+#     ↓
+#   SIGNATURE VALUES
+#     ↓
+#   PROFESSIONAL EXPERIENCE
+#     ↓
+#   EDUCATION
+#
+# The renderer must treat this file as the only source of
+# personal/profile facts.
+# ============================================================
+
+meta:
+  schema: profile-v3
+  basedOn: jsonresume.org/schema
+  lastUpdated: "2026-10-21"
+  defaultView: chrono
+
+# ============================================================
+# PERSONAL PROFILE
+# ============================================================
+
+basics:
+  name: Chong Boo Chean
+  label: Software & Test Engineering Leader
+  tagline: Technical depth · Disciplined delivery · Talent elevation
+
+  email: gzhone@yahoo.co.uk
+  phone: "+60-11 2600 8641"
+
+  location:
+    city: Penang
+    country: Malaysia
+    countryCode: MY
+
+  summary: >
+    20+ years connecting software, systems, and people across semiconductor,
+    automotive, and test & measurement. Technical judgement meets rapid
+    exploration, disciplined validation, and the development of stronger teams.
+
+  profiles:
+    - network: LinkedIn
+      handle: chongboochean
+      url: https://www.linkedin.com/in/chongboochean
+
+    - network: Profile
+      handle: zhonecloud-sketch
+      url: https://zhonecloud-sketch.github.io/prototypes/profile2610/
+
+# ============================================================
+# SIGNATURE VALUES
+# ============================================================
+
+signatureValues:
+
+  - id: technical-depth
+    number: "01"
+    label: Technical depth
+    shortLabel: Depth
+    title: Make the difficult workable.
+    statement: >
+      Stays close to the engineering. Frames the right questions, turns
+      hypotheses into working prototypes, and validates them on real systems.
+      Assisted exploration shortens the path to a first implementation;
+      technical judgement determines what is ready to deliver.
+    method: >
+      Rapid synthesis, code-assisted experimentation, and repeatable checks
+      form one practical loop: understand, build, verify, refine.
+    diagramLabel: Uncertainty → clarity
+    diagramNote: >
+      Exploratory signals converge into a verified result. Speed is useful
+      when it leads to something that works.
+    evidence:
+      - metric: 5 days
+        source: Intel / driver enablement
+        text: >
+          GMSL2 camera driver enabled for a next-generation platform within
+          five days. GMSL2 is the camera's high-speed serial connection.
+      - metric: 85 tests
+        source: Intel / automation
+        text: >
+          Manual test cases automated and validated in product milestones
+          within two quarters.
+    more: >
+      Intel: video colour-corruption and video-tearing detection algorithms
+      each developed within a quarter. Logged defects reduced from 12 to 4
+      per week within two years.
+
+  - id: delivery-orchestration
+    number: "02"
+    label: Delivery orchestration
+    shortLabel: Delivery
+    title: Bring the whole system forward.
+    statement: >
+      Connects technical decisions to program commitments. Aligns customers,
+      engineering, validation, and operations around clear priorities,
+      visible dependencies, and measurable outcomes.
+    method: >
+      Carries the same rapid exploration and verification discipline into
+      delivery: make uncertainty visible early and turn validated progress
+      into a shared basis for decisions.
+    diagramLabel: Disciplines → shared direction
+    diagramNote: >
+      Parallel workstreams meet at shared milestones. The whole program
+      moves when its dependencies move together.
+    evidence:
+      - metric: 140+ → 5
+        source: Continental / quality
+        text: Customer-found defects reduced within three years.
+      - metric: End to end
+        source: Blaupunkt / program management
+        text: >
+          Delivery across R&D, finance, procurement, circuit-board assembly,
+          product assembly, and reliability testing.
+    more: >
+      Continental: Functional Test Site Lead and Business Owner for Penang.
+      Intel: software leadership across Media and Imaging; validation
+      leadership across Media, Imaging, and SR-IOV (I/O virtualisation).
+
+  - id: talent-elevation
+    number: "03"
+    label: Talent elevation
+    shortLabel: People
+    title: Build capability that carries on.
+    statement: >
+      Develops people through coaching, practical ownership, and opportunities
+      to take on more demanding work. Makes engineering reasoning visible,
+      so that the team grows in judgement as well as output.
+    method: >
+      The tools can accelerate an iteration. Coaching turns that iteration
+      into understanding, independent decisions, and lasting capability.
+    diagramLabel: Individual growth → wider capability
+    diagramNote: >
+      Knowledge branches outward. The measure of leadership is what others
+      become capable of doing for themselves.
+    evidence:
+      - metric: 1 year
+        source: Intel / capability development
+        text: An engineer developed from non-performing to key contributor.
+      - metric: 3 years
+        source: Continental / career development
+        text: A validation engineer progressed to global Project Manager.
+    more: >
+      The foundation includes lecturing in Computer Engineering, C/C++,
+      Java, and Assembly Language, followed by people leadership at
+      Agilent, Blaupunkt, Continental, and Intel.
+
+# ============================================================
+# WORK HISTORY
+# Personal facts retained from profile2609/profile.yaml.
+# Newest first. Locations are work sites and customer connections.
+# ============================================================
+
+work:
+
+  - id: intel-2025
+    company: Intel Corporation
+    position: System Software Development Engineer · Automation Lead
+    kind: semiconductor
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+
+    start: "2025-12"
+    end: null
+    current: true
+
+    highlights:
+      - Post-silicon test automation
+      - Post-silicon validation
+      - Post-silicon driver bring-up
+      - Innovation: video colour-corruption detection
+      - Innovation: video tearing detection
+
+    attributes:
+      Languages:
+        - Python
+        - C#
+        - C
+        - C++
+        - Bash
+        - PowerShell
+      Process:
+        - JIRA
+        - Git
+      Tools:
+        - Claude Opus
+
+    tags:
+      - test-automation
+      - post-silicon-validation
+      - driver-bring-up
+      - rapid-prototyping
+
+  - id: intel-2022
+    company: Intel Corporation
+    position: Software Engineering Manager
+    kind: semiconductor
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+
+    start: "2022-01"
+    end: "2025-12"
+
+    highlights:
+      - People management
+      - Post-silicon software project management
+
+    attributes:
+      Component:
+        - Media
+        - Imaging
+      Process:
+        - Intel SW QRC
+        - JIRA
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+      - media-imaging
+
+  - id: continental-2017
+    company: Continental Automotive
+    position: Manager — Functional Test · Functional Test Site Lead
+    kind: automotive
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Toyota · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Volkswagen Group · Wolfsburg, Germany
+          city: Wolfsburg
+          country: Germany
+          lat: 52.42
+          lon: 10.78
+
+        - name: Perodua · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Suzuki · Hamamatsu, Japan
+          city: Hamamatsu
+          country: Japan
+          lat: 34.71
+          lon: 137.73
+
+    start: "2017-09"
+    end: "2022-01"
+
+    highlights:
+      - Site Lead
+      - AGILE Business Owner
+
+    attributes:
+      Products:
+        - Instrument cluster
+      Process:
+        - AGILE
+        - Functional testing
+        - JIRA
+
+    tags:
+      - site-leadership
+      - agile-leadership
+      - test-automation
+      - automotive
+
+  - id: blaupunkt-2014
+    company: Blaupunkt / Premium Sound Solutions
+    position: Software Section Manager
+    kind: automotive
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Honda · New Delhi, India
+          city: New Delhi
+          country: India
+          lat: 28.61
+          lon: 77.21
+
+        - name: Proton · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+    start: "2014-01"
+    end: "2017-07"
+
+    highlights:
+      - People management
+      - Software project management
+      - SCRUM Master
+      - Technical presentations to global customers
+
+    attributes:
+      Process:
+        - Kanban
+        - SCRUM
+        - JIRA
+        - Vendor management
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+      - agile-leadership
+      - customer-engagement
+
+  - id: blaupunkt-2012
+    company: Blaupunkt / Premium Sound Solutions
+    position: Program Manager
+    kind: automotive
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Proton · Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: Volvo CE Korea · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Renault Iran · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: ICL Japan · Tokyo, Japan
+          city: Tokyo
+          country: Japan
+          lat: 35.68
+          lon: 139.69
+
+        - name: Iran System · Tehran, Iran
+          city: Tehran
+          country: Iran
+          lat: 35.69
+          lon: 51.39
+
+        - name: Agco Fendt · Marktoberdorf, Germany
+          city: Marktoberdorf
+          country: Germany
+          lat: 47.78
+          lon: 10.62
+
+        - name: Belarfonte · Montevideo, Uruguay
+          city: Montevideo
+          country: Uruguay
+          lat: -34.90
+          lon: -56.16
+
+    start: "2012-01"
+    end: "2013-12"
+
+    highlights:
+      - End-to-end program management across R&D, finance, procurement, PCBA assembly, supermarket, product assembly and reliability tests
+      - Pre-sale RFQ technical presentations to customers
+      - Global customers: product specifications, R&D requirements, project status
+
+    attributes:
+      Products:
+        - Android infotainment system
+        - Bare-metal infotainment system
+      Process:
+        - Vendor management
+
+    tags:
+      - program-mgmt
+      - customer-engagement
+      - automotive
+
+  - id: blaupunkt-2011
+    company: Blaupunkt / Premium Sound Solutions
+    position: Software Developer
+    kind: automotive
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          link: true
+
+        - name: Hildesheim, Germany
+          city: Hildesheim
+          country: Germany
+          lat: 52.15
+          lon: 9.95
+          link: false
+
+      customers:
+        - name: Global Intel customers · multiple locations
+
+    start: "2011-03"
+    end: "2011-12"
+
+    highlights:
+      - Proof-of-concept project development
+      - External customer: technical presentation
+
+    attributes:
+      OS:
+        - WinCE
+      Languages:
+        - C++
+
+    tags:
+      - embedded-systems
+      - customer-engagement
+
+  - id: intel-2009
+    company: Intel Corporation
+    position: Project Manager — Software
+    kind: semiconductor
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Global Intel customers · multiple locations
+          same: true
+
+    start: "2009-07"
+    end: "2010-07"
+
+    highlights:
+      - Software project management
+
+    tags:
+      - program-mgmt
+
+  - id: agilent-2007
+    company: Agilent Technologies
+    position: Operating Manager — Software
+    kind: vision measurement
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: Nokia · Helsinki, Finland
+          city: Helsinki
+          country: Finland
+          lat: 60.17
+          lon: 24.94
+
+        - name: Jabil EMS · Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+          same: true
+
+        - name: Rockwell · Milwaukee, Wisconsin, USA
+          city: Milwaukee
+          country: USA
+          region: Wisconsin
+          lat: 43.04
+          lon: -87.91
+
+    start: "2007-07"
+    end: "2009-03"
+
+    highlights:
+      - People management
+      - Software project management
+      - AOI product knowledge transfer from Ireland
+      - AOI/AXI analytics product knowledge transfer from Singapore
+
+    attributes:
+      Process:
+        - Agilent PLC
+
+    tags:
+      - sw-management
+      - people-development
+      - program-mgmt
+
+  - id: bosch-2005
+    company: Bosch / Bosch–Blaupunkt
+    position: Project Manager — Software
+    kind: automotive
+
+    location:
+      city: Penang
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Penang, Malaysia
+          city: Penang
+          country: Malaysia
+          lat: 5.42
+          lon: 100.27
+
+      customers:
+        - name: GM Daewoo · Seoul, South Korea
+          city: Seoul
+          country: South Korea
+          lat: 37.57
+          lon: 126.98
+
+        - name: Zao Volga · Moscow, Russia
+          city: Moscow
+          country: Russia
+          lat: 55.76
+          lon: 37.62
+
+        - name: Nissan Britain · London, United Kingdom
+          city: London
+          country: United Kingdom
+          lat: 51.51
+          lon: -0.13
+
+        - name: GM Holden · Melbourne, Australia
+          city: Melbourne
+          country: Australia
+          lat: -37.81
+          lon: 144.96
+
+    start: "2005-11"
+    end: "2007-07"
+
+    highlights:
+      - Global customers: requirements and project progress
+      - Infotainment software development
+
+    attributes:
+      Process:
+        - PLC
+        - CMM L3
+      Languages:
+        - C
+
+    tags:
+      - program-mgmt
+      - customer-engagement
+      - embedded-systems
+      - automotive
+
+  - id: early-career-1995-2005
+    company: Early Career & Academia
+    position: Foundations in engineering & education
+    kind: academia
+
+    location:
+      city: Malaysia
+      country: Malaysia
+
+    locations:
+      work:
+        - name: Kuala Lumpur, Malaysia
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+          link: false
+
+        - name: Wellington, New Zealand
+          city: Wellington
+          country: New Zealand
+          lat: -41.29
+          lon: 174.78
+          link: false
+
+      customers:
+        - name: Malaysia · Kuala Lumpur
+          city: Kuala Lumpur
+          country: Malaysia
+          lat: 3.14
+          lon: 101.69
+
+        - name: New Zealand · Wellington
+          city: Wellington
+          country: New Zealand
+          lat: -41.29
+          lon: 174.78
+
+    start: "1995"
+    end: "2005"
+
+    highlights:
+      - Maintained Unix money-market systems
+      - Developed RS-232 SIRAS swiping modules on OS/2 in C++
+      - Established campus computer infrastructure and pre-university IT programmes
+      - Lectured Computer Engineering, C/C++, Java and Assembly Language
+
+    attributes:
+      Languages:
+        - C
+        - C++
+        - Java
+        - Assembly
+      OS:
+        - Unix
+        - OS/2
+
+    tags:
+      - embedded-systems
+      - teaching
+      - IT operations
+      - infrastructure
+      - administration
+
+# ============================================================
+# EDUCATION
+# ============================================================
+
+education:
+
+  - institution: University of Technology Malaysia
+    area: Computer Science Engineering (Systems/Industry)
+    studyType: Bachelor
+    start: "1989"
+    end: "1995"
