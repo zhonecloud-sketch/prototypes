@@ -66,7 +66,7 @@ test('Insights reuses unchanged analysis but recalculates filters and a reset ep
     Worker:class{constructor(){workers.push(this);}postMessage(data){jobs.push(data);}},
     accountRequest:async()=>({records:[],cursor:0,until:0,premium:false,resetAt:300001})
   });
-  const root={isConnected:true,innerHTML:''},insights=create();
+  const root={isConnected:true,innerHTML:'',querySelector:()=>null},insights=create();
   insights.open(root);await new Promise(setImmediate);assert.equal(jobs.length,1);
   workers[0].onmessage({data:{id:jobs[0].id,result:analyse([])}});
   assert.match(root.innerHTML,/Your record starts with a wager/);

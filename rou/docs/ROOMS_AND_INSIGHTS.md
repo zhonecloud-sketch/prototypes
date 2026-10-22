@@ -49,6 +49,32 @@ whole record, beyond the recent 222-spin display. While the page remains
 open, later settlements are fetched incrementally. Analysis runs in a
 browser worker using the existing Bias Calculator kernel.
 
+The report identifies the multiplayer player and shows the saved-wager
+count, latest settlement time and last successful record check. The
+account's username is separate from its play mode. The game header labels
+the session **Multiplayer account**.
+
+Settlement notifications trigger record refreshes. If a notification arrives
+while a snapshot is downloading, the client finishes that snapshot and then
+requests a new one from its last cursor. It does not discard the notification
+or keep the completed snapshot's old ceiling. A visible report also checks
+every ten seconds and when the tab becomes visible again. Closing Insights
+stops these checks; hidden tabs do not request records. Rate limits trigger a
+one-minute backoff. These checks reuse the previous analysis when the data
+and filters are unchanged.
+
+The server stores raw multiplayer wagers and settles their payouts. The
+browser worker calculates sample sizes, advantage or inverted-advantage
+signals, expected values, uncertainty, patterns and charts. The server does
+not run the Bias Calculator model. Raw records remain on the server between
+visits; only new records need to be downloaded within an open session.
+
+Only settled wagers count towards a player's personal advantage sample.
+Watching another spin without wagering does not increase that sample. A
+source or bet-profile filter can also leave the eligible count unchanged
+while the overall saved-wager count grows. A verdict may remain the same
+even as its underlying sample and result figures update.
+
 The free summary shows the observed-record signal, eligible sample size,
 calculator-required sample size, observed versus fair profitable-round
 rates, actual net result and theoretical expected net result. An active
@@ -85,7 +111,8 @@ collectibles and pass access. Historical raw records remain archived on
 the server. The new report uses only the new epoch.
 
 Source: `client/insights-model.js`, `bias-math.js`, `server-records.js`,
-`server-insights.js`, and `sites-server/rust/src/insights.rs`.
+`server-insights.js`, `test/insights-live.test.js`, and
+`sites-server/rust/src/insights.rs`.
 
 ## Validation
 
