@@ -32,7 +32,12 @@ http.createServer(async(req,res)=>{
     const relative=decodeURIComponent(url.pathname.replace(/^\/rou\//,''))||'index.html',path=resolve(root,relative);
     if(!path.startsWith(resolve(root)+sep)||!statSync(path).isFile()){res.writeHead(404);res.end();return;}
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'})[extname(path)]||'text/plain');
-    if(relative==='index.html'&&url.searchParams.has('phone')){res.end(readFileSync(path,'utf8').replace('</head>',`<script>Object.defineProperty(navigator,'userAgent',{value:'Atelier local iPhone layout preview'});</script></head>`));return;}
+    if(relative==='index.html'){
+      let html=readFileSync(path,'utf8');
+      if(url.searchParams.has('phone'))html=html.replace('</head>',`<script>Object.defineProperty(navigator,'userAgent',{value:'Atelier local iPhone layout preview'});</script></head>`);
+      if(url.searchParams.has('profile'))html=html.replace('\nboot();',readFileSync(root+'tools/performance-probe.js','utf8')+'\nboot();');
+      res.end(html);return;
+    }
     createReadStream(path).pipe(res);
   }catch(error){res.writeHead(500);res.end(error.message);}
 }).listen(8768,'127.0.0.1',()=>console.log('Local account/game preview: '+origin+'/rou/'));

@@ -1,4 +1,4 @@
-import {account,accountRequest,restoreAccount} from './account-api.js?v=20261020-public2';
+import {account,accountRequest,restoreAccount} from './account-api.js?v=20261022-perf';
 import {toggleWideView} from './wide-view.js';
 import {parseRngFile} from './rng-import.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

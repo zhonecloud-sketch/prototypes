@@ -1,4 +1,4 @@
-import {account,accountRequest} from './account-api.js?v=20261020-public2';
+import {account,accountRequest} from './account-api.js?v=20261022-perf';
 import {MODEL} from './insights-model.js';
 import {INSIGHTS_PASS} from './catalogue.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -18,7 +18,8 @@ function details(r){
     <details class="club-details"><summary>Wheel patterns · numbers, outside groups and sectors</summary><p>These describe distinct draws on which you wagered. Holm-adjusted p-values cover 53 categories at this look.</p><div class="club-table-scroll"><table><thead><tr><th>Pattern</th><th>Hits</th><th>Fair</th><th>Observed</th><th>Adjusted p</th></tr></thead><tbody>${r.patterns.map(p=>`<tr><td>${esc(p.name)}</td><td>${money(p.wins)}</td><td>${pct(p.p0)}</td><td>${p.n?pct(p.wins/p.n):'—'}</td><td>${p.adjustedP.toPrecision(3)}</td></tr>`).join('')}</tbody></table></div></details><button data-insight-report>Download analysis report</button>`;
 }
 export function createServerInsights(){
-  let root=null,worker=null,generation=0,job=0,loading=false,cache=null,source=null,pockets=null,mode='monitor',result=null,premium=false,resetting=false,lastRecord='',retryTimer=null;
+  let root=null,worker=null,generation=0,job=0,loading=false,cache=null,source=null,pockets=null,mode='monitor',result=null,premium=false,resetting=false,lastRecord='',retryTimer=null,evaluatedKey='',requestedKey='';
+  const evaluationKey=()=>JSON.stringify([cache?.identity,cache?.records.length,source,pockets,mode]);
   const active=()=>root?.isConnected&&document.documentElement.classList.contains('account-open');
   function download(name,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   function paint(){
@@ -37,8 +38,9 @@ export function createServerInsights(){
   }
   function evaluate(){
     if(!active()||!cache)return;
-    if(!worker){worker=new Worker(new URL('./insights-worker.js?v=20261022-rooms',import.meta.url),{type:'module'});worker.onmessage=({data})=>{if(!active()||data.id!==job)return;if(data.error){error(data.error);return;}result=data.result;source=result.sourceId;pockets=Math.round(result.evaluation.p0*37);paint();};worker.onerror=()=>error('The analysis worker could not start. Reload Insights to try again.');}
-    worker.postMessage({id:++job,server:true,owner:cache.owner,epoch:cache.epoch,records:cache.records,options:{sourceId:source||(cache.records.length?cache.records[0].sourceId||'legacy':'server-rng'),pockets,alpha:mode==='monitor'?MODEL.monitorAlpha:MODEL.alpha,power:MODEL.power}});
+    if(result&&evaluatedKey===evaluationKey()){paint();return;}
+    if(!worker){worker=new Worker(new URL('./insights-worker.js?v=20261022-rooms',import.meta.url),{type:'module'});worker.onmessage=({data})=>{if(!active()||data.id!==job||requestedKey!==evaluationKey())return;if(data.error){error(data.error);return;}result=data.result;source=result.sourceId;pockets=Math.round(result.evaluation.p0*37);evaluatedKey=evaluationKey();paint();};worker.onerror=()=>error('The analysis worker could not start. Reload Insights to try again.');}
+    requestedKey=evaluationKey();worker.postMessage({id:++job,server:true,owner:cache.owner,epoch:cache.epoch,records:cache.records,options:{sourceId:source||(cache.records.length?cache.records[0].sourceId||'legacy':'server-rng'),pockets,alpha:mode==='monitor'?MODEL.monitorAlpha:MODEL.alpha,power:MODEL.power}});
   }
   function error(message){if(!active())return;const el=root.querySelector('[data-insight-error]');if(el){el.textContent=message;el.hidden=false;}else root.innerHTML=`<p class="account-note account-error" role="status">${esc(message)}</p><button data-insight-refresh>Retry</button>`;}
   async function refresh(){
@@ -53,7 +55,7 @@ export function createServerInsights(){
       }while(true);evaluate();
     }catch(e){if(token===generation){const limited=e.message.startsWith('Too many attempts');error(limited?`Loaded ${money(records.length)} saved rounds. The server paused requests; continuing automatically in one minute.`:e.message);if(limited)retryTimer=setTimeout(()=>{if(token===generation)void refresh();},60000);}}finally{if(token===generation)loading=false;}
   }
-  function open(element){root=element;generation++;loading=false;refresh();}
+  function open(element){root=element;generation++;loading=false;if(result&&cache?.identity===account.player?.id+':'+account.player?.profile.epoch){premium=account.player.profile.insightsUntil>Date.now();paint();}refresh();}
   function close(){clearTimeout(retryTimer);root=null;generation++;job++;loading=false;resetting=false;}
   async function click(e){
     const b=e.target.closest('button');if(!b||!active())return;

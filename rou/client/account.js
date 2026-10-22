@@ -1,8 +1,8 @@
-import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261020-public2';
+import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261022-perf';
 import { COLLECTIBLES,CHIP_PACKS,INSIGHTS_PASS } from './catalogue.js';
 import { toggleWideView,refreshWideView } from './wide-view.js';
 import { installMobileEntry } from './mobile-entry.js?v=20261020-public2';
-import { createServerInsights } from './server-insights.js?v=20261022-rooms2';
+import { createServerInsights } from './server-insights.js?v=20261022-perf';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n||0),usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
 export function mountAccount(api){
@@ -17,7 +17,7 @@ export function mountAccount(api){
   function open(next='account'){
     document.querySelectorAll('dialog[open]').forEach(d=>d.close());view=account.player?next:next==='register'?'register':'login';message='';checkout=null;opened=true;
     document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();page.scrollTop=0;
-    if(account.player)accountRequest('session').then(()=>{if(opened)render();}).catch(e=>status(e.message));
+    if(account.player){const before=JSON.stringify(account.player),openedView=view;accountRequest('session').then(()=>{if(opened&&view===openedView&&!busy&&JSON.stringify(account.player)!==before)render();}).catch(e=>{if(opened&&view===openedView)status(e.message);});}
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
   const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" value="${escape(draft[name]||'')}" ${extra} required></label>`;
