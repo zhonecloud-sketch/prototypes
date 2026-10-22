@@ -13,6 +13,12 @@
 <main>
 <h1>Developer controls</h1>
 <p>Manage the test room, player accounts and recorded RNG databases.</p>
+<section id="localFileNotice" class="panel" hidden>
+<h2>Open developer controls online</h2>
+<p>This page was opened from your computer as a file. Your browser blocks the modules needed for sign-in.</p>
+<p><a class="primary" href="https://zhonecloud-sketch.github.io/prototypes/rou/admin.html?v=20261022-file">Open online developer controls →</a></p>
+<p>Use the online page to manage the Sites backend with your game account and private operator key.</p>
+</section>
 <section id="access" class="panel">
 <h2>Operator sign-in</h2>
 <p id="operatorIdentity">Enter your game email, game password and private operator key. The game password and operator key are separate credentials.</p>
@@ -57,6 +63,17 @@
 <section id="privateResult" class="panel" hidden><h2>Private tester credentials</h2><p>Shown for this action only. Give them only to the intended tester.</p><pre id="credentialResult"></pre><button id="dismissCredentials">Dismiss</button></section>
 </main>
 <noscript>Enable JavaScript to sign in to developer controls.</noscript>
-<script type="module" src="client/admin.js?v=20261022-unlock"></script>
+<script>
+if(location.protocol==='file:'){
+  document.getElementById('localFileNotice').hidden=false;
+  document.getElementById('access').hidden=true;
+  document.getElementById('notice').textContent='';
+  document.querySelector('[data-wide-view]').hidden=true;
+}else{
+  import('./client/admin.js?v=20261022-unlock').catch(()=>{
+    document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
+  });
+}
+</script>
 </body>
 </html>

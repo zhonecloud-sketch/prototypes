@@ -17,6 +17,12 @@ Updated: 22 October 2026 | Asia/Kuala_Lumpur
    Enter the operator account email, its game password and the separate
    private operator key, then choose **Unlock developer controls**.
 
+Open the HTTPS link above rather than double-clicking `admin.html` on
+disk. Browsers block JavaScript modules on `file://` pages, which prevents
+login from starting. A local-file launch now explains this and offers
+**Open online developer controls**. The online page manages the same
+Sites database. Reloading a `file://` page cannot remove that restriction.
+
 Unlock needs the game password as well as the private key. When an
 account is already signed in, the page names that account and asks only
 for the key. **Use another game account** signs out that session and
