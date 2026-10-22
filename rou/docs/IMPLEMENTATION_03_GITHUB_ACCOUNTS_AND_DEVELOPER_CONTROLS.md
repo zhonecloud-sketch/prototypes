@@ -1,6 +1,6 @@
 # GitHub accounts, multiplayer and developer controls
 
-Updated: 20 October 2026 | Asia/Kuala_Lumpur
+Updated: 22 October 2026 | Asia/Kuala_Lumpur
 
 ## Use the test release
 
@@ -14,7 +14,19 @@ Updated: 20 October 2026 | Asia/Kuala_Lumpur
 5. Choose **Multiplayer** to enter the shared six-seat table. **Enter as
    Guest** keeps the existing local game.
 6. Open [developer controls][admin] for account and RNG maintenance.
-   Sign in with an operator game account and the separate operator key.
+   Enter the operator account email, its game password and the separate
+   private operator key, then choose **Unlock developer controls**.
+
+Unlock needs the game password as well as the private key. When an
+account is already signed in, the page names that account and asks only
+for the key. **Use another game account** signs out that session and
+restores the email/password fields. The page shows progress during login
+and key checking, then displays success or the returned error. [S2, S5]
+
+The 22 October frontend update was checked with disposable local accounts:
+wrong-key denial, successful unlock, Lock and account switching. A live
+signed-out request also returned the expected invalid-login message.
+These checks do not verify a particular player's private password/key.
 
 The operator key is in
 `atelier-private-access.json` in the local **European Roulette** workspace.

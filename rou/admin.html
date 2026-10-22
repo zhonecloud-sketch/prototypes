@@ -15,18 +15,19 @@
 <p>Manage the test room, player accounts and recorded RNG databases.</p>
 <section id="access" class="panel">
 <h2>Operator sign-in</h2>
-<p id="operatorIdentity">Use an existing game account. Create your account through Sign in on the game first.</p>
-<form id="operatorLogin">
+<p id="operatorIdentity">Enter your game email, game password and private operator key. The game password and operator key are separate credentials.</p>
+<button id="switchOperator" type="button" hidden>Use another game account</button>
+<form id="operatorLogin" onsubmit="return false">
 <div id="loginFields" class="fields">
-<label>Email<input name="email" type="email" autocomplete="email"></label>
-<label>Game password<input name="password" type="password" autocomplete="current-password"></label>
+<label>Email<input name="email" type="email" autocomplete="email" required></label>
+<label>Game password<input name="password" type="password" autocomplete="current-password" required></label>
 </div>
 <label>Private operator key<input name="operatorKey" type="password" autocomplete="off" required></label>
 <p class="small">The operator key is kept only in this page’s memory. It is never saved in browser storage.</p>
-<button class="primary">Unlock developer controls</button>
+<button id="unlockControls" class="primary" disabled>Connecting…</button>
 </form>
 </section>
-<p id="notice" role="status"></p>
+<p id="notice" role="status" aria-live="polite">Preparing developer sign-in…</p>
 <div id="console" hidden>
 <nav><button data-tab="server">Server</button><button data-tab="users">Users</button><button data-tab="rng">RNG databases</button><button id="lock">Lock controls</button></nav>
 <section id="server" class="panel">
@@ -55,6 +56,7 @@
 </div>
 <section id="privateResult" class="panel" hidden><h2>Private tester credentials</h2><p>Shown for this action only. Give them only to the intended tester.</p><pre id="credentialResult"></pre><button id="dismissCredentials">Dismiss</button></section>
 </main>
-<script type="module" src="client/admin.js?v=20261020-public2"></script>
+<noscript>Enable JavaScript to sign in to developer controls.</noscript>
+<script type="module" src="client/admin.js?v=20261022-unlock"></script>
 </body>
 </html>
