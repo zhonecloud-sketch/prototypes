@@ -1,11 +1,11 @@
 import { account } from './account-api.js?v=20261020-public2';
-import { mountAccount } from './account.js?v=20261020-public2';
+import { mountAccount } from './account.js?v=20261022-insights';
 import { createMultiplayer } from './multiplayer.js?v=20261020-public2';
 import { toggleWideView } from './wide-view.js';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function installAccounts(api){
-  const state=api.state;let snapshot=null,seenRecord=null;
+  const state=api.state;let snapshot=null,seenRecord=null,resultRefresh=null;
   const strip=document.createElement('div');strip.id='roomPlayers';strip.className='account-room-strip';strip.hidden=true;$('bettingView').prepend(strip);
   function launchInfo(){
     $('accountSignIn').textContent=account.player?`♙ ${account.player.username}`:'♙ Sign in';
@@ -29,11 +29,11 @@ export function installAccounts(api){
     const record=room.wager?.record;
     if(record&&record.roundId!==seenRecord){seenRecord=record.roundId;if(record.roundId===current.id){$('winnerNumber').textContent=record.number;$('winnerNumber').className='winner-disc '+api.color(record.number);$('winnerLabel').textContent=api.color(record.number).toUpperCase();$('payoutLabel').textContent=`Return ${api.money(record.returned)} · Net ${api.signed(record.net)}`;$('winner').classList.add('visible');}}
     state.history=room.recent;state.counts=Array(37).fill(0);for(const n of room.recent)state.counts[n]++;state.rounds=room.recent.length;
-    strip.hidden=false;strip.innerHTML=Array.from({length:6},(_,i)=>{const member=room.seats.find(s=>s.seat===i+1);return `<div class="room-seat ${member?.id===player.id?'self':member?'':'empty'}"><b>${member?escape(member.username):'Empty seat'}${member?.id===player.id?' · You':''}</b><span>${member?'At the table':'Waiting for a player'}</span></div>`;}).join('');
+    strip.hidden=false;strip.innerHTML=Array.from({length:6},(_,i)=>{const member=room.seats.find(s=>s.seat===i+1),name=member?escape(member.username):'Empty seat';return `<div class="room-seat ${member?.id===player.id?'self':member?'':'empty'}"><div class="room-player"><span class="room-portrait" aria-hidden="true">${member?escape(Array.from(member.username)[0].toUpperCase()):'♙'}</span><b title="${name}">${name}${member?.id===player.id?' · You':''}</b></div><span class="room-bankroll" aria-label="${member?`${name} bankroll ${api.money(member.balance)} chips`:'Waiting for a player'}"><strong>${member?api.money(member.balance):'—'}</strong> <small>${member?'CHIPS':'OPEN SEAT'}</small></span></div>`;}).join('');
     $('headerSource').textContent='SHARED ROOM';$('saveStatus').textContent='Server account';$('accountDetails').textContent=player.username+' · Multiplayer account · chips and records saved on the server';$('sourceSelect').disabled=true;api.paintBets();api.paintMoney();api.paintHistory();launchInfo();tick();
   },error:api.toast,disconnected(){api.launch();api.toast('Room connection lost. Choose Multiplayer to reconnect.');}});
   async function leave(){await multi.leave();strip.hidden=true;$('sourceSelect').disabled=false;launchInfo();}
-  const panel=mountAccount({canLeave:()=>!api.hasWagers(),leaveRoom:leave,changed(player){launchInfo();if(player&&state.user?.type==='multiplayer'&&state.user.sub===player.id){state.balance=player.balance;state.club=player.profile;api.paintMoney();}},authenticated(player){if(!player&&state.user?.type==='multiplayer'){state.active=false;state.user=null;state.round=null;strip.hidden=true;}api.launch();launchInfo();api.toast(player?`Welcome, ${player.username}. Choose Multiplayer to join the room.`:'Signed out.');}});
+  const panel=mountAccount({opened:api.pauseTravel,inGame:()=>state.active,openMenu:api.launch,returnToGame:api.returnToTable,canLeave:()=>!api.hasWagers(),leaveRoom:leave,changed(player){launchInfo();if(player&&state.user?.type==='multiplayer'&&state.user.sub===player.id){state.balance=player.balance;state.club=player.profile;api.paintMoney();}},authenticated(player){if(!player&&state.user?.type==='multiplayer'){state.active=false;state.user=null;state.round=null;strip.hidden=true;}api.launch();launchInfo();api.toast(player?`Welcome, ${player.username}. Choose Multiplayer to join the room.`:'Signed out.');}});
   $('accountSignIn').onclick=()=>panel.open('account');
   $('multiplayerLogin').onclick=async()=>{
     if(!account.player){panel.open('login');return;}
@@ -48,6 +48,7 @@ export function installAccounts(api){
   function tick(){
     if(!snapshot||!state.round)return;const elapsed=Math.max(0,(Date.now()+state.offset-state.round.start)/1000),betting=elapsed<20,spinning=elapsed>=20&&elapsed<27,left=Math.max(0,Math.ceil((betting?20:spinning?27:30)-elapsed));
     state.round.locked=!betting;
+    if(elapsed>=27&&resultRefresh!==state.round.id&&multi.fresh&&!multi.busy){resultRefresh=state.round.id;void multi.poll();}
     const time=new Date(Date.now()+state.offset+8*3600000);$('wallClock').textContent=[time.getUTCHours(),time.getUTCMinutes(),time.getUTCSeconds()].map(n=>String(n).padStart(2,'0')).join(':');$('roundCode').textContent=state.round.id;$('motionLabel').textContent=betting?'SHARED TABLE':spinning?'SERVER DRAW · BALL IN PLAY':'RESULT CONFIRMED';
     for(const id of ['countdown','wheelTimer'])$(id).textContent=String(left).padStart(2,'0');
     $('phaseLabel').textContent=snapshot.running===false?'SERVER STOPPED':!multi.fresh?'RECONNECTING':betting?'PLACE YOUR BETS':spinning?'NO MORE BETS':'ROUND COMPLETE';

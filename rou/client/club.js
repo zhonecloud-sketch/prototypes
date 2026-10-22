@@ -33,7 +33,7 @@ export function mountClub(api) {
 
   function frame(title, subtitle, content) {
     dialog.innerHTML = `<div class="club-shell">
-      <header class="club-header"><button class="club-back" data-club="close">← Back</button><span class="club-wordmark">ATELIER</span><span class="page-tools"><button data-wide-view>Wide view ↗</button><button data-launch-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span><button class="club-wallet" data-club="chips"><span data-club-wallet>${money(api.balance())}</span> <small>PLAY CHIPS</small> <b>+</b></button></header>
+      <header class="club-header"><button class="club-back" data-club="close">${page === 'insights' && user() ? '← Game room' : '← Back'}</button><span class="club-wordmark">ATELIER</span><span class="page-tools"><button data-wide-view>Wide view ↗</button><button data-launch-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span><button class="club-wallet" data-club="chips"><span data-club-wallet>${money(api.balance())}</span> <small>PLAY CHIPS</small> <b>+</b></button></header>
       <main class="club-main"><div class="club-heading"><div><p class="club-eyebrow">${page === 'insights' ? 'YOUR PERSONAL RECORD' : 'THE ATELIER COLLECTION'}</p><h1 id="clubTitle">${title}</h1><p>${subtitle}</p></div><span class="club-preview-label">LOCAL PREVIEW</span></div>
       <p id="clubNotice" class="club-notice" role="status" hidden></p>${content}
       <footer class="club-footer">Virtual collectibles · No cash-out or transfers<br>Collection saved with your bankroll. Personal analysis is stored on this device.</footer></main></div>`;
@@ -199,7 +199,7 @@ export function mountClub(api) {
     if (!button) return;
     try {
       const action = button.dataset.club, id = button.dataset.id;
-      if (action === 'close') dialog.close();
+      if (action === 'close') { dialog.close(); if (page === 'insights' && user()) api.returnToGame(); }
       if (action === 'collection' || action === 'chips') { tab = action; shop(); }
       if (action === 'owned') { onlyOwned = !onlyOwned; shop(); }
       if (action === 'detail') itemDetail(id);

@@ -14,7 +14,7 @@ export function mountAccount(api){
   function close(){opened=false;document.documentElement.classList.remove('account-open');page.inert=true;document.getElementById('login').inert=false;document.getElementById('app').inert=false;api.closed?.();}
   function open(next='account'){
     document.querySelectorAll('dialog[open]').forEach(d=>d.close());view=account.player?next:next==='register'?'register':'login';message='';checkout=null;opened=true;
-    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;render();
+    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();page.scrollTop=0;
     if(account.player)accountRequest('session').then(()=>{if(opened)render();}).catch(e=>status(e.message));
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
@@ -51,7 +51,7 @@ export function mountAccount(api){
     if(checkout)content=`<section class="account-form"><h2>${escape(checkout.title)}</h2><p>${checkout.kind==='item'?`${money(checkout.price)} chips for one copy.`:`${usd(checkout.price)} · Simulated payment. No money is charged.`}</p><div class="account-actions">${(checkout.kind==='item'?['success']:checkout.kind==='pending'?['success','decline']:['success','decline','pending']).map(result=>`<button data-complete="${result}" class="${result==='success'?'account-primary':''}">${result==='success'?checkout.kind==='item'?'Confirm purchase':'Approve test payment':result==='decline'?'Decline':'Leave pending'}</button>`).join('')}<button data-cancel-checkout>Cancel</button></div></section>`;
     return `<h1>${checkout?'Checkout':view==='account'?`Welcome, ${escape(p.username)}.`:view==='collection'?'Your collection.':view==='chips'?'More room to play.':view==='orders'?'Your orders.':'Your account.'}</h1><nav class="account-tabs">${tabs.map(t=>`<button data-view="${t}" aria-pressed="${view===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>${note()}<div class="account-wealth"><div><small>PLAY CHIPS</small><strong>${money(p.balance)}</strong></div><div><small>COLLECTIBLES · ${wealth.copies} COPIES</small><strong>${money(wealth.itemValue)}</strong></div><div><small>TOTAL WEALTH</small><strong>${money(wealth.total)}</strong></div></div>${content}`;
   }
-  function render(){page.innerHTML=`<header><button class="account-back" data-back>← Back</button><span class="wordmark">ATELIER</span><button data-account-wide>Wide view ↗</button></header><main>${account.player?playerPage():authForm()}</main>`;refreshWideView();}
+  function render(){page.innerHTML=`<header><span class="page-tools"><button class="account-back" data-back>← Back</button>${api.inGame() ? '<button data-account-game>Game room →</button>' : ''}</span><span class="wordmark">ATELIER</span><span class="page-tools"><button data-account-wide>Wide view ↗</button><button data-account-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span></header><main>${account.player?playerPage():authForm()}</main>`;refreshWideView();}
   page.addEventListener('input',e=>{if(e.target.name&&e.target.closest('[data-auth]'))draft[e.target.name]=e.target.value;});
   async function run(fn){if(busy)return;busy=true;status('');page.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){status(e.message);}finally{busy=false;if(opened){const values=Array.from(page.querySelectorAll('input')).map(e=>[e.name,e.value,e.checked]);render();for(const [name,value,checked] of values){const input=page.querySelector(`input[name="${name}"]`);if(input&&name){input.value=value;input.checked=checked;}}}}}
   page.addEventListener('submit',e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.target));
@@ -69,6 +69,8 @@ export function mountAccount(api){
   page.addEventListener('change',e=>{if(e.target.matches('[data-show-password]'))page.querySelectorAll('input[name=password],input[name=repeatPassword],input[name=invite]').forEach(input=>input.type=e.target.checked?'text':'password');});
   page.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||busy)return;
     if(b.hasAttribute('data-back')){if(checkout){checkout=null;render();}else if(account.player&&view!=='account'){view='account';render();}else close();}
+    if(b.hasAttribute('data-account-menu')){close();api.openMenu();}
+    if(b.hasAttribute('data-account-game')){close();api.returnToGame();}
     if(b.hasAttribute('data-account-wide'))toggleWideView().catch(()=>status('Use the browser fullscreen control on this device.'));
     if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();page.scrollTop=0;}
     if(b.hasAttribute('data-digit')){codeValue=b.dataset.digit==='Clear'?'':b.dataset.digit==='⌫'?codeValue.slice(0,-1):(codeValue+b.dataset.digit).slice(0,6);page.querySelector('[name=code]').value=codeValue;}
