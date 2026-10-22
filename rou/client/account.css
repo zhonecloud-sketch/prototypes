@@ -22,4 +22,6 @@
 @media(max-height:450px){#mobileEntry{padding:6px 12px}#mobileEntry button{min-height:33px;font-size:16px}#mobileEntry .entry-content{padding:6px 0;gap:4px}#mobileEntry .entry-row{margin:4px 0}}
 @media(prefers-reduced-motion:reduce){#accountPage{transition:none}}
 .account-room-strip[hidden]{display:none}
+#accountPage main:has(#serverInsights) .account-wealth{display:none}
+.server-insights .club-verdict{padding:18px}.server-insights .club-verdict h2{font-size:26px}.server-insights .club-sample-values{margin:16px 0;gap:16px}.server-insights .club-sample-values strong{font-size:24px}.server-insights .club-analysis-controls{margin:0 0 14px;gap:10px}.server-insights .club-analysis-controls select{min-height:34px;padding:7px;margin-top:4px}.server-insights .club-record-heading{margin-bottom:12px}.server-insights .club-chart svg{display:block;width:100%;max-height:260px}.server-insights .account-actions{margin-top:16px}
 #accountPage{overflow-x:hidden}#accountPage main{width:100%}.account-fields>*{min-width:0}

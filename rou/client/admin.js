@@ -17,7 +17,10 @@ function showCredentials(result){
 async function refresh(){
   status=await request('status');
   const s=status.runtime;
-  $('serverStatus').innerHTML=`<h3>${s.running?'● Running · accepting players':'■ Stopped · new wagers disabled'}</h3><p>${status.users} accounts · ${status.seats.length}/6 active seats · ${s.source==='recorded'?'Recorded replay':'Live server RNG'}</p>`;
+  $('serverStatus').innerHTML=`<h3>${s.running?'● Running · accepting players':'■ Stopped · new wagers disabled'}</h3><p>${status.users} accounts · ${status.seats.length}/${s.maxRooms*6} online players · ${status.rooms.length}/${s.maxRooms} active rooms · ${s.source==='recorded'?'Recorded replay':'Live server RNG'}</p>`;
+  const capacity=$('roomCapacity').elements.maxRooms;capacity.max=s.capacityLimit;capacity.value=s.maxRooms;
+  $('roomCapacityNote').textContent=`Each room seats 6 players. Server allowance: ${s.capacityLimit} rooms / ${s.capacityLimit*6} players. This is a configured operating allowance, not an automatic hardware measurement. Empty rooms close automatically. Occupied rooms are preserved when changing limits.`;
+  $('roomRows').innerHTML=status.rooms.map(r=>`<article><h3>Room ${r.roomId}</h3><p>${r.players}/6 players</p><p class="small">${status.seats.filter(p=>p.roomId===r.roomId).map(p=>esc(p.username)).join(' · ')}</p></article>`).join('')||'<p>No occupied rooms. Rooms open as players join.</p>';
   $('audit').innerHTML=status.audit.length?status.audit.map(a=>`<p class="small">${esc(new Date(a.created_at).toLocaleString())} · ${esc(a.actor)} · ${esc(a.action)} · ${esc(a.target)}</p>`).join(''):'<p>No operator actions yet.</p>';
   $('rngRows').innerHTML=status.datasets.map(d=>`<article><h3>${esc(d.name)}</h3><p>${money(d.count)} records · ${d.ready?'Ready':'Incomplete upload'}${s.datasetId===d.id?' · SELECTED':''}</p><div class="actions"><button data-rng="inspect" data-id="${d.id}">View / edit</button><button data-rng="select" data-id="${d.id}" ${d.ready?'':'disabled'}>Use / reset to record 1</button><button data-rng="export" data-id="${d.id}" ${d.ready?'':'disabled'}>Export</button><button data-rng="delete" data-id="${d.id}">Delete…</button></div></article>`).join('')||'<p>No imported databases yet.</p>';
 }
@@ -39,6 +42,7 @@ $('operatorLogin').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries
   e.target.reset();$('access').hidden=true;$('console').hidden=false;notice('Developer controls unlocked.');
 },account.player?'Checking operator account and key…':'Signing in to your game account…');};
 $('switchOperator').onclick=()=>run(async()=>{key='';await accountRequest('logout',{});$('operatorLogin').reset();showIdentity();notice('Enter the game account you want to use.');});
+$('roomCapacity').onsubmit=e=>{e.preventDefault();run(async()=>{await request('capacity',{maxRooms:Number(e.target.elements.maxRooms.value)});await refresh();notice('Room limit saved. New rooms open automatically within this limit.');});};
 $('lock').onclick=()=>{key='';$('console').hidden=true;$('access').hidden=false;showIdentity();$('privateResult').hidden=true;$('credentialResult').textContent='';notice('Controls locked.');};
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>run(()=>tab(b.dataset.tab)));
 document.querySelector('[data-wide-view]').onclick=()=>toggleWideView().catch(()=>notice('Fullscreen is unavailable in this browser.'));

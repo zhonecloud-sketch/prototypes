@@ -39,6 +39,9 @@
 <section id="server" class="panel">
 <h2>Multiplayer service</h2>
 <div id="serverStatus"></div>
+<form id="roomCapacity" class="actions"><label>Maximum game rooms<input name="maxRooms" type="number" min="1" max="10" required></label><button>Save room limit</button></form>
+<p id="roomCapacityNote" class="small"></p>
+<div id="roomRows" class="actions"></div>
 <div class="actions"><button data-command="start" class="primary">Start multiplayer</button><button data-command="stop">Stop multiplayer</button><button id="refreshStatus">Refresh status</button></div>
 <p>Start stays enabled until you issue Stop. Players can connect without this page or your computer staying open. Stop blocks new joins and wagers; accepted wagers still settle.</p>
 <p class="small">Sites keeps the API available on demand. It does not run a permanent background process. Players refresh the shared room automatically; an interrupted wager is settled on the next account or room request. These controls pause the game, while keeping account and operator services available.</p>
@@ -70,7 +73,7 @@ if(location.protocol==='file:'){
   document.getElementById('notice').textContent='';
   document.querySelector('[data-wide-view]').hidden=true;
 }else{
-  import('./client/admin.js?v=20261022-unlock').catch(()=>{
+  import('./client/admin.js?v=20261022-rooms').catch(()=>{
     document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
   });
 }

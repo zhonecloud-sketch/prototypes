@@ -1,5 +1,5 @@
 import { COLLECTIBLES, CHIP_PACKS, INSIGHTS_PASS, collectionWealth } from './catalogue.js';
-import { openMultiplayer } from './multiplayer.js?v=20261020-public2';
+import { openMultiplayer } from './multiplayer.js?v=20261022-rooms';
 import { makeRecord, MODEL } from './insights-model.js';
 import { saveRecord, readRecords } from './insights-records.js';
 
