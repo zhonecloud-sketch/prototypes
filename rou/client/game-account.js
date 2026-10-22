@@ -1,6 +1,6 @@
 import { account } from './account-api.js?v=20261020-public2';
-import { mountAccount } from './account.js?v=20261022-rooms';
-import { createMultiplayer } from './multiplayer.js?v=20261022-rooms';
+import { mountAccount } from './account.js?v=20261022-rooms2';
+import { createMultiplayer } from './multiplayer.js?v=20261022-rooms2';
 import { toggleWideView } from './wide-view.js';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
