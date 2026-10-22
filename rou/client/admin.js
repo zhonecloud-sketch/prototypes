@@ -17,12 +17,12 @@ function showCredentials(result){
 async function refresh(){
   status=await request('status');
   const s=status.runtime;
-  $('serverStatus').innerHTML=`<h3>${s.running?'● Running · accepting players':'■ Stopped · new wagers disabled'}</h3><p>${status.users} accounts · ${status.seats.length}/${s.maxRooms*6} online players · ${status.rooms.length}/${s.maxRooms} active rooms · ${s.source==='recorded'?'Recorded replay':'Live server RNG'}</p>`;
+  $('serverStatus').innerHTML=`<h3>${s.running?'● Running · accepting players':'■ Stopped · new wagers disabled'}</h3><p>${status.users} accounts · ${status.seats.length}/${s.maxRooms*6} online players · ${status.rooms.length}/${s.maxRooms} active rooms · ${s.source==='recorded'?'Recorded replay':'Previously accepted draw'}</p><p>${s.feed?`2m-rng.txt · week ${s.feed.week} · record ${money(s.feed.record)} / ${money(s.feed.count)} · ${s.feed.repeated?'REPEATED DATA · pass '+s.feed.cycle:'first pass'}`:''}</p>`;
   const capacity=$('roomCapacity').elements.maxRooms;capacity.max=s.capacityLimit;capacity.value=s.maxRooms;
   $('roomCapacityNote').textContent=`Each room seats 6 players. Server allowance: ${s.capacityLimit} rooms / ${s.capacityLimit*6} players. This is a configured operating allowance, not an automatic hardware measurement. Empty rooms close automatically. Occupied rooms are preserved when changing limits.`;
   $('roomRows').innerHTML=status.rooms.map(r=>`<article><h3>Room ${r.roomId}</h3><p>${r.players}/6 players</p><p class="small">${status.seats.filter(p=>p.roomId===r.roomId).map(p=>esc(p.username)).join(' · ')}</p></article>`).join('')||'<p>No occupied rooms. Rooms open as players join.</p>';
   $('audit').innerHTML=status.audit.length?status.audit.map(a=>`<p class="small">${esc(new Date(a.created_at).toLocaleString())} · ${esc(a.actor)} · ${esc(a.action)} · ${esc(a.target)}</p>`).join(''):'<p>No operator actions yet.</p>';
-  $('rngRows').innerHTML=status.datasets.map(d=>`<article><h3>${esc(d.name)}</h3><p>${money(d.count)} records · ${d.ready?'Ready':'Incomplete upload'}${s.datasetId===d.id?' · SELECTED':''}</p><div class="actions"><button data-rng="inspect" data-id="${d.id}">View / edit</button><button data-rng="select" data-id="${d.id}" ${d.ready?'':'disabled'}>Use / reset to record 1</button><button data-rng="export" data-id="${d.id}" ${d.ready?'':'disabled'}>Export</button><button data-rng="delete" data-id="${d.id}">Delete…</button></div></article>`).join('')||'<p>No imported databases yet.</p>';
+  $('rngRows').innerHTML=status.datasets.map(d=>`<article><h3>${esc(d.name)}</h3><p>${money(d.count)} records · ${d.ready?'Ready':'Incomplete upload'}${s.datasetId===d.id?' · SELECTED':''}</p><div class="actions"><button data-rng="inspect" data-id="${d.id}">View / edit</button><button data-rng="export" data-id="${d.id}" ${d.ready?'':'disabled'}>Export</button><button data-rng="delete" data-id="${d.id}">Delete…</button></div></article>`).join('')||'<p>No imported databases yet.</p>';
 }
 async function loadUsers(){
   const data=await request('users',{offset,search});users=data.users;
@@ -64,13 +64,13 @@ $('uploadRng').onsubmit=e=>{e.preventDefault();const fields=new FormData(e.targe
   const file=fields.get('file');if(file.size>32*1024*1024)throw Error('The file exceeds 32 MB.');
   const ns=parseRngFile(await file.text()),created=await request('rng',{operation:'create',name:fields.get('name'),count:ns.length});
   for(let start=0;start<ns.length;start+=created.chunkSize){notice(`Importing ${money(Math.min(start+created.chunkSize,ns.length))} / ${money(ns.length)} records…`);await request('rng',{operation:'chunk',id:created.id,chunkIndex:start/created.chunkSize,numbers:ns.slice(start,start+created.chunkSize)});}
-  await request('rng',{operation:'finish',id:created.id});e.target.reset();await refresh();notice('RNG database imported. Select it, then Start multiplayer to use it.');
+  await request('rng',{operation:'finish',id:created.id});e.target.reset();await refresh();notice('RNG database imported for inspection. Multiplayer continues to use 2m-rng.txt.');
 });};
-$('useCrypto').onclick=()=>run(async()=>{await request('rng',{operation:'source',id:null,startIndex:0});await refresh();notice('Live server RNG selected for the next full round.');});
+
 const download=(name,text)=>{const url=URL.createObjectURL(new Blob([text],{type:'text/plain'})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('rngRows').onclick=e=>{
   const b=e.target.closest('[data-rng]');if(!b||busy)return;const d=status.datasets.find(d=>d.id===b.dataset.id),op=b.dataset.rng;
-  if(op==='select')return run(async()=>{const r=await request('rng',{operation:'source',id:d.id,startIndex:0});await refresh();notice(r.message);});
+
   if(op==='export')return run(async()=>{const chunks=[];for(let i=0;i<Math.ceil(d.count/4000);i++){const r=await request('rng-read',{id:d.id,chunkIndex:i});chunks.push(r.numbers.join('\n'));notice(`Exporting ${money(Math.min((i+1)*4000,d.count))} / ${money(d.count)} records…`);}download(d.name.replace(/[^\w-]/g,'_')+'.txt',chunks.join('\n'));notice('Export prepared.');});
   if(op==='delete'){
     $('rngEditor').innerHTML=`<form class="confirmation"><p>Permanently delete ${esc(d.name)} and all its numbers?</p><label>Type the database name<input name="confirmation" required></label><button>Delete database</button></form>`;
@@ -81,10 +81,10 @@ $('rngRows').onclick=e=>{
     $('rngEditor').innerHTML=`<h3>${esc(d.name)} · first ${Math.min(60,data.numbers.length)} records</h3><div class="record-grid">${data.numbers.slice(0,60).map((n,i)=>`<span>${i+1}: <b>${n}</b></span>`).join('')}</div>
     <form id="renameRng" class="actions"><input name="name" aria-label="Database name" value="${esc(d.name)}" maxlength="120" required><button>Rename</button></form>
     <form id="editRng"><div class="fields"><label>Record position (1–${d.count})<input name="index" type="number" min="1" max="${d.count}" required></label><label>Result (0–36)<input name="number" type="number" min="0" max="36" required></label></div><button>Save result</button></form>
-    <form id="seekRng" class="actions"><label>Start from record<input name="index" type="number" min="1" max="${d.count}" value="1" required></label><button>Select / reset playback</button></form>`;
+`;
     $('renameRng').onsubmit=e=>{e.preventDefault();run(async()=>{await request('rng',{operation:'rename',id:d.id,name:new FormData(e.target).get('name')});await refresh();notice('Database renamed.');});};
     $('editRng').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{await request('rng',{operation:'edit',id:d.id,index:Number(f.get('index'))-1,number:Number(f.get('number'))});notice('Result saved. Reopen View / edit to refresh the preview.');});};
-    $('seekRng').onsubmit=e=>{e.preventDefault();const index=Number(new FormData(e.target).get('index'))-1;run(async()=>{const r=await request('rng',{operation:'source',id:d.id,startIndex:index});await refresh();notice(r.message);});};
+
   });
 };
 await restoreAccount();showIdentity();$('unlockControls').disabled=false;$('unlockControls').textContent='Unlock developer controls';notice('Ready. Sign in with your game account and the separate operator key.');

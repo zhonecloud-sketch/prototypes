@@ -23,7 +23,7 @@ export function installAccounts(api){
     if(state.user?.type!=='multiplayer')api.startSession({type:'multiplayer',sub:player.id,name:player.username},player.balance,null,room.recent,player.profile);
     state.source='multiplayer';state.balance=player.balance;state.club=player.profile;state.sessionNet=room.net||0;state.lastBets=room.lastBets;
     const current=room.round,wager=room.wager?.roundId===current.id&&(room.wager.roomId||1)===room.roomId?room.wager:null,elapsed=Date.now()+state.offset-current.start;
-    const prior=state.round;
+    const prior=state.round;api.engine()?.prime(current.id,current.start+20000,room.roomId);
     state.round={id:current.id,roomId:room.roomId,start:current.start,bets:wager?.bets||[],locked:elapsed>=20000,settled:!!wager?.settled,outcome:current.number,source:'multiplayer',available:true,late:false,returned:wager?.record?.returned||0,net:wager?.record?.net||0};
     if((prior?.id!==current.id||prior?.roomId!==room.roomId)){$('winner').classList.remove('visible');api.travel('table');}
     if(current.number!==null&&((prior?.id!==current.id||prior?.roomId!==room.roomId)||prior?.outcome===null)){api.engine()?.prepare(current.id,current.number,current.start+20000,room.roomId);api.travel('wheel');}
@@ -57,7 +57,7 @@ export function installAccounts(api){
     $('progress').style.width=Math.max(0,(betting?(20-elapsed)/20:spinning?(27-elapsed)/7:(30-elapsed)/3)*100)+'%';
     api.text('motionCaption',betting?'Every player shares this draw.':spinning?'No more bets.':'Next betting window in '+left+' seconds.');
     if(elapsed>=27&&state.round.outcome!==null){const number=state.round.outcome;api.text('winnerNumber',number);$('winnerNumber').className='winner-disc '+api.color(number);api.text('winnerLabel',api.color(number).toUpperCase());api.text('payoutLabel',state.round.settled?`Return ${api.money(state.round.returned)} · Net ${api.signed(state.round.net)}`:state.round.bets.length?'Confirming server settlement…':'Watching this round');$('winner').classList.add('visible');}
-    api.text('connectionStatus',snapshot.running===false?'Multiplayer stopped by developer · accepted wagers will settle':multi.busy?'Sending wager…':multi.fresh?(snapshot.source==='recorded'?'Connected · recorded replay source':'Connected · live server RNG'):'Reconnecting · betting paused');
+    api.text('connectionStatus',snapshot.running===false?'Multiplayer stopped by developer · accepted wagers will settle':multi.busy?'Sending wager…':multi.fresh?(snapshot.source==='recorded'?(snapshot.feed?.repeated?'Connected · recorded replay · REPEATED DATA · pass '+snapshot.feed.cycle:'Connected · recorded replay · week '+(snapshot.feed?.week||1)):'Connected · previously accepted draw'):'Reconnecting · betting paused');
     api.text('roundMessage',state.round.settled?`Return ${api.money(state.round.returned)} · Net ${api.signed(state.round.net)}`:'');api.updateButtons();
   }
   function canBet(){return multi.active&&multi.fresh&&!multi.busy&&snapshot&&snapshot.running!==false&&Date.now()+state.offset<snapshot.round.start+20000;}

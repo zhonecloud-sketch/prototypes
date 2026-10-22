@@ -57,9 +57,9 @@
 </section>
 <section id="rng" class="panel" hidden>
 <h2>Real-life RNG databases</h2>
-<p>Recorded sources replay in sequence and loop at the end. They are labelled as replay in the room. Changing a source takes effect from the next full round after Start.</p>
+<p>Multiplayer always follows the weekly calendar of 2m-rng.txt, shared with real.html. It continues across weeks and loops at the end, labelled as repeated data. Imported databases below are for inspection and editing; they cannot replace or rewind the multiplayer stream.</p>
 <form id="uploadRng"><div class="fields"><label>Database name<input name="name" maxlength="120" required></label><label>Number file<input name="file" type="file" accept=".txt,.csv,.json,.html" required></label></div><p class="small">Accepts integer results from 0–36, a JSON number array, or the generated real.html format. Maximum: 2 million results / 32 MB. Files stay in the Sites database.</p><button>Import database</button></form>
-<div class="actions"><button id="useCrypto">Use live server RNG</button><button id="refreshRng">Refresh databases</button></div>
+<div class="actions"><button id="refreshRng">Refresh databases</button></div>
 <div id="rngRows"></div><div id="rngEditor"></div>
 </section>
 </div>
@@ -73,7 +73,7 @@ if(location.protocol==='file:'){
   document.getElementById('notice').textContent='';
   document.querySelector('[data-wide-view]').hidden=true;
 }else{
-  import('./client/admin.js?v=20261022-perf').catch(()=>{
+  import('./client/admin.js?v=20261022-recorded').catch(()=>{
     document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
   });
 }

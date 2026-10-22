@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {parseArchive,weeklyHtml,FEED_ANCHOR} from '../client/recorded-feed.js';
+const root=new URL('../',import.meta.url),numbers=parseArchive(readFileSync(new URL('assets/2m-rng.txt',root),'utf8')),hash=createHash('sha256').update(numbers).digest('hex');
+writeFileSync(new URL('real.html',root),weeklyHtml(numbers,hash));
+const data=new URL('sites-server/rust/data/',root);mkdirSync(data,{recursive:true});
+writeFileSync(new URL('2m-rng.bin',data),numbers);
+writeFileSync(new URL('archive.rs',data),`pub const ARCHIVE: &[u8] = include_bytes!("2m-rng.bin");\npub const ARCHIVE_SHA: &str = "${hash}";\npub const FEED_ANCHOR: i64 = ${FEED_ANCHOR};\n`);
+console.log(JSON.stringify({records:numbers.length,sha256:hash,week:20160,anchor:new Date(FEED_ANCHOR).toISOString(),root:fileURLToPath(root)}));

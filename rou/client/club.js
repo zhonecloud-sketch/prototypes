@@ -235,8 +235,8 @@ export function mountClub(api) {
   async function sourceFor(round, feed) {
     if (round.source !== 'real') return { sourceId: 'rng', drawKey: `rng:${round.id}` };
     if (!feed || round.row === null) return { sourceId: 'replay:unidentified', drawKey: `unidentified:${round.id}` };
-    if (!feedHashes.has(feed)) feedHashes.set(feed, crypto.subtle.digest('SHA-256', feed.numbers).then(buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('')));
-    const hash = await feedHashes.get(feed);
+    if (!feedHashes.has(feed) && !feed.autoWeekly) feedHashes.set(feed, crypto.subtle.digest('SHA-256', feed.numbers).then(buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('')));
+    const hash = feed.autoWeekly ? feed.archiveHash : await feedHashes.get(feed);
     return { sourceId: `replay:${hash}`, drawKey: `${hash}:${round.row}` };
   }
 

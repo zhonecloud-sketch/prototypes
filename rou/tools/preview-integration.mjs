@@ -29,6 +29,10 @@ http.createServer(async(req,res)=>{
       const result=await service(new Request(url,{method:req.method,headers:req.headers,...(!['GET','HEAD'].includes(req.method)?{body:Buffer.concat(chunks)}:{})}));
       res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
     }
+    if(['/lib/three.core.js','/lib/three.module.js'].includes(url.pathname)){
+      res.setHeader('Content-Type','text/javascript');res.setHeader('Cache-Control','no-store');
+      createReadStream(resolve(root,'..',url.pathname.slice(1))).pipe(res);return;
+    }
     const relative=decodeURIComponent(url.pathname.replace(/^\/rou\//,''))||'index.html',path=resolve(root,relative);
     if(!path.startsWith(resolve(root)+sep)||!statSync(path).isFile()){res.writeHead(404);res.end();return;}
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'})[extname(path)]||'text/plain');
