@@ -2,6 +2,10 @@
 
 Updated: 22 October 2026 | Asia/Kuala_Lumpur
 
+The live Sites backend now processes these actions in Rust WebAssembly.
+The existing accounts, database and operator credentials are reused.
+See the [Rust migration guide][rust-guide] for build, checks and rollback.
+
 ## Use the test release
 
 1. Open the [game][game] and choose **Sign in**.
@@ -260,3 +264,4 @@ delivery remain separate integrations.
 [game]: https://zhonecloud-sketch.github.io/prototypes/rou/
 [admin]: https://zhonecloud-sketch.github.io/prototypes/rou/admin.html
 [public-login]: IMPLEMENTATION_04_PUBLIC_LOGIN_AND_KEYBOARD.md
+[rust-guide]: IMPLEMENTATION_05_RUST_BACKEND.md

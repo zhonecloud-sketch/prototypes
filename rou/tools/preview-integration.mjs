@@ -4,7 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync,readdirSync,createReadStream,statSync } from 'node:fs';
 import { resolve,extname,sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createService } from '../sites-server/lib/service.mjs';
+import { createService } from '../sites-server/rust/node.mjs';
 import { digest,passwordHash } from '../sites-server/lib/security.mjs';
 import { newProfile } from '../client/catalogue.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),sqlite=new DatabaseSync(':memory:');

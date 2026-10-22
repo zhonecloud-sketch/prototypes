@@ -2,6 +2,11 @@
 
 Prepared: 18 October 2026 | Asia/Kuala_Lumpur
 
+Updated 22 October: the active Sites API is migrated to Rust WebAssembly,
+with a small hosting I/O adapter. Existing accounts, database formats,
+credentials and GitHub URLs are retained. Details and rollback are in the
+[Rust migration guide](IMPLEMENTATION_05_RUST_BACKEND.md).
+
 ## Usage and expected result
 
 Read this proposal beside the [playbook][L1] and [accepted decisions][L2].
