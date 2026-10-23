@@ -474,6 +474,7 @@ substituting a different sequential test. Current settings are:
 | Single-evaluation alpha | 0.05 | Calculator's frequentist view. |
 | Monitoring alpha | 0.001 | Default per-check evaluation as play continues. |
 | Detection power | 0.80 | Calculator sample-size target; adjustable in details. |
+| Minimum observed gap | 0.05 | Five percentage points; also the fixed planning effect. |
 | Bayesian prior | Beta(1,1) | Posterior interval and directional probabilities. |
 
 For `wins` among `N` eligible rounds, use the inclusive doubled-tail
@@ -481,8 +482,9 @@ binomial p-value above. The Beta posterior is `Beta(wins+1, N-wins+1)`.
 Display its central 95% interval as a model interval for the event
 probability, never a probability that a person is inherently lucky.
 
-A personal signal requires **both** `N >= calculator required N` and
-`p < selected alpha`. The direction comes from `wins/N - p0`: positive is
+A personal signal requires **all three**: `abs(wins/N-p0) >= 0.05`,
+`N >= planned N`, and `p < selected alpha`. The direction comes from
+`wins/N - p0`: positive is
 an advantage signal; negative is an inverted-advantage signal. Otherwise
 show insufficient evidence or expected variation. Purchasing Insights
 changes the available detail, never these inputs or the verdict [L9].
@@ -509,31 +511,34 @@ cannot claim complete offline or cross-device coverage [L7, L9].
 
 ### Sample size comes from the calculator
 
-Set `p1 = wins/N` and call the calculator's
-`requiredN(p1, p0, alpha, power)`. It initializes a search with its normal
-approximation, then evaluates power using its binomial critical region.
-Preserve that algorithm, including its discrete search behavior. Describe
-the output as the **calculator's required N**, not a proven globally
-smallest sample over every possible discrete size [L6, L9].
+As adopted on 23 October 2026, set a fixed `d=0.05` and call the calculator's
+`requiredN(p1, p0, alpha, power)` for `p1=p0-d` and `p1=p0+d`, omitting
+alternatives outside [0,1]. Start at the larger target and check exact power
+in both feasible directions, advancing until both meet the chosen goal.
+The numerical kernel and its discrete search behavior are preserved.
+This is a planning target, not a proven global minimum over every possible
+discrete size [L6, L9]. Current equations and limitations are maintained in
+[Rooms and Insights](ROOMS_AND_INSIGHTS.md).
 
 There is no fixed 100-, 222- or 1,000-round qualification rule. Show eligible
-rounds, required N, observed rate, baseline and remaining observations at
-the current observed rate. Recalculate as observations accumulate. The
+rounds, planned N, observed rate, baseline and remaining observations.
+The target stays fixed for the same profile, alpha and power. The
 progress display is evidence coverage, not a promise that more play will
-reveal an advantage. Required N uses the observed effect and is a planning
-reference; it is not independent confirmation of that effect.
+reveal an advantage. The 80% goal concerns statistical significance under
+a real five-point difference, before the observed-gap filter; it is not
+the detection probability of the combined alert rule.
 
-For example, 30 wins in 100 trials gives required N = 107 for `p0=0.5`,
-alpha 0.001 and power 0.80. With roulette's `p0=18/37`, the calculator
-returns 123. Both examples therefore remain below the sample requirement
+For example, the fixed plan gives N = 1,739 for `p0=0.5`, alpha 0.001 and
+power 0.80. With roulette's `p0=18/37`, the shared target is 1,740.
+Thirty wins in 100 trials therefore remains below either sample requirement
 even though their raw p-values pass alpha. These values were recomputed
 with the extracted calculator kernel [L9].
 
-Equal observed and expected rates have no finite target for a nonzero
-effect. The preview also bounds planning at 100 million observations to
-avoid pathological computation when the difference is tiny. It displays
-an unsupported/no-finite-target state, never an arbitrary smaller fallback.
-The guard is outside the unchanged calculator kernel and is tested [L9].
+Equal observed and expected rates still have a finite five-point planning
+target, but cannot raise an alert. Small observed gaps are descriptive and
+do not establish fairness. Planning retains the 100-million guard outside
+the unchanged kernel; it never substitutes an arbitrary smaller target
+[L9].
 
 To investigate recurrence, freeze the identified event and evaluation rule
 before collecting a later validation block. Keep the whole-record dashboard

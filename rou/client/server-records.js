@@ -1,4 +1,4 @@
-import {makeRecord} from './insights-model.js';
+import {makeRecord} from './insights-model.js?v=20261023-insights-gaps';
 
 // Reconstruct a round's entire payoff; multiple chips are not extra samples.
 export function serverRecords(records,owner,epoch){

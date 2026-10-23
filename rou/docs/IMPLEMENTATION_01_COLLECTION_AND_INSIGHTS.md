@@ -66,19 +66,23 @@ in [insights-model.js](../client/insights-model.js).
    pockets has fair probability `p0=m/37`.
 3. Group rounds by that probability and source. One draw gives at most one
    player observation. Repeated replay rows do not add statistical samples.
-4. Use the complete current record in the selected profile. Compute observed
-   `p1=wins/N`; pass it to the calculator's `requiredN` function.
+4. Use the complete current record in the selected profile. The 23 October
+   2026 update fixes the planning gap at five percentage points: pass each
+   feasible `p1=p0-0.05` and `p1=p0+0.05` to `requiredN`. Use a shared target
+   with exact power meeting the goal in both feasible directions.
 5. Default to alpha 0.001 and power 0.80. A single-evaluation alpha of 0.05
    is available in details, as in the calculator.
-6. Require both `N >= required N` and `p < alpha` for a signal. Report its
-   direction relative to `p0`. Preserve the exact calculator algorithm;
-   there is no fixed spin-count qualification threshold.
+6. Require `abs(wins/N-p0) >= 0.05`, `N >= planned N` and `p < alpha` for a
+   signal. Report its direction relative to `p0`. Preserve the calculator
+   kernel; the sample-size plan no longer uses the observed effect.
 
-At 30 wins in 100 trials, default monitoring requires 107 observations for
-`p0=.5`, or 123 for `p0=18/37`. Both therefore remain insufficient under the
-combined rule. Test assertions cover these values. Near-zero differences
-can exceed the 100-million-observation planning bound; the UI reports that
-state without substituting an arbitrary target.
+At 30 wins in 100 trials, default monitoring now plans 1,739 observations
+for `p0=.5`, or 1,740 for `p0=18/37`. Both remain insufficient. A smaller
+observed gap cannot raise an alert, regardless of sample size. The 80%
+power goal applies to the statistical check at a real five-point gap,
+before the extra observed-gap filter. Sources and current equations:
+`client/insights-model.js`, `test/insights.test.js` and
+[Rooms and Insights](ROOMS_AND_INSIGHTS.md).
 
 These are per-check signals about the observed record. Repeated looks,
 profile selection and repeated resets are not given lifetime error control.

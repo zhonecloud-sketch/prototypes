@@ -28,6 +28,22 @@ function harness(request){
 }
 const page=(records,extra={})=>({records,cursor:records.length?records.at(-1).roundId:0,until:records.length?records.at(-1).roundId:0,premium:false,resetAt:1,nextCursor:null,...extra});
 
+test('a very large difference stays descriptive until the alert checks pass',async()=>{
+  for(const [n,wins,confirmed] of [[10,7,false],[2000,1400,true],[2000,600,true]]){
+    const records=Array.from({length:n},(_,i)=>({...record(i+1),number:i<wins?1:2,returned:i<wins?50:0,net:i<wins?25:-25}));
+    const h=harness(async()=>page(records));
+    h.insights.open(h.root);await flush();
+    assert.match(h.root.innerHTML,/<strong>Very large difference:<\/strong>/);
+    if(confirmed)assert.match(h.root.innerHTML,/The sample-size and statistical checks also pass for this record/);
+    else{
+      assert.match(h.root.innerHTML,/Not enough rounds to tell yet/);
+      assert.match(h.root.innerHTML,/There aren’t enough rounds to raise an alert yet/);
+      assert.doesNotMatch(h.root.innerHTML,/class="club-verdict (advantage|inverted)"/);
+    }
+    h.insights.close();
+  }
+});
+
 test('a settlement arriving during a record download is fetched before Insights goes idle',async()=>{
   const initial=deferred(),calls=[];
   const h=harness((action,body)=>{calls.push(body);return calls.length===1?initial.promise:Promise.resolve(page([record(2)],{cursor:2,until:2}));});

@@ -18,9 +18,10 @@ sign in and choose **Multiplayer** to join an available seat. Choose
 - The admin page shows occupied rooms and their players. Lowering the
   limit is rejected while a room above the proposed limit has players or
   an accepted wager. Existing games are never silently evicted.
-- Each room has its own live random draw. Recorded replay rooms follow
-  the selected dataset's sequence on the common 30-second clock. Their
-  source is labelled as replay. Player cards expose usernames, bankrolls
+- All rooms follow the recorded dataset on the common 30-second clock.
+  The player-facing source name is **Live reply**; it plays saved draws,
+  rather than generating new random numbers. Player cards expose usernames,
+  bankrolls
   and showcases within that room, without exposing email addresses.
 
 ## Capacity setting
@@ -76,7 +77,7 @@ while the overall saved-wager count grows. A verdict may remain the same
 even as its underlying sample and result figures update.
 
 The free summary shows the observed-record signal, eligible sample size,
-calculator-required sample size, observed versus fair profitable-round
+fixed-effect round target, observed versus fair profitable-round
 rates, actual net result and theoretical expected net result. An active
 30-day Insights pass adds the chart, uncertainty, bet mix, source patterns
 and downloadable analysis report. Payments remain clearly simulated.
@@ -89,21 +90,92 @@ fair comparison probability is K/37. Different probabilities are analysed
 separately. Zero is included; an even-money roulette bet is not a true
 50:50 event.
 
-A signal requires both the calculator's required N and a two-sided p-value
-below the selected threshold. Defaults match the existing app: monitoring
-alpha 0.001, single-evaluation alpha 0.05, and detection power 80%. Required
-N changes with the observed effect. “Inverted advantage” describes an
-unusually low profitable-round rate in this record. Neither direction
+A signal requires all three: an observed gap of at least **5 percentage
+points**, the planned round target, and a two-sided p-value below the
+selected threshold. This is an absolute gap, not a relative 5% change.
+At a fair win rate of 14/37 (37.84%), eligible observed rates are at or below
+32.84%, or at or above 42.84% (rounded for display). A 36.67% rate is only
+1.17 points lower and cannot raise a personal alert, even with a tiny
+p-value. Smaller gaps show a descriptive result without declaring fairness.
+Gaps of at least **10 percentage points** also show **Very large difference**
+in solo and multiplayer Insights and their reports. This describes magnitude
+in either direction, including the exact ten-point boundary. It does not
+change the five-point sample-size plan or bypass the statistical check. A
+short record still says there are not enough rounds to raise an alert.
+**Ongoing review · stricter** uses alpha 0.001;
+**One-time check · more sensitive** uses alpha 0.05. Descriptions explain when
+to choose each mode. These are per-check false-alarm settings, rather than
+win probabilities. For a single planned check of results that follow the
+usual odds, alpha 0.001 is a false-alert benchmark of no more than about 1
+in 1,000 checks; alpha 0.05 corresponds to about 1 in 20. A false alert is
+ordinary random variation being flagged as unusual. These benchmarks do
+not give the chance that an individual flagged conclusion is wrong.
+Repeated checking and selecting bet profiles can increase the overall
+false-alert risk. See the [NIST significance-level definition][alpha].
+The player explanation uses separate fair-wheel records checked once each.
+Each record is assessed on its own; an alert does not require a second
+extreme record, and the number of false alerts is not a fixed quota.
+The default statistical-check power remains 80%, with a fixed planning
+effect of 0.05. The round target covers both feasible directions and stays
+fixed for the same fair probability, alpha and power. At 14/37, alpha 0.001
+and power 0.80, it is 1,652 rounds; alpha 0.05 gives 773 rounds. These values
+come from `evaluateBinomial` and its regression tests.
+
+The 80% goal means the statistical check aims to detect a real, steady
+five-point difference in about 8 out of 10 separate records at the planned
+target. It may miss it in about 2 out of 10. The additional observed-gap
+filter can suppress statistically significant results; 80% is **not** the
+power of the combined alert rule. In particular, at a true gap of exactly
+five points, the observed gap can fall on either side of that boundary.
+See [NIST's definition of statistical power][power]. The solo review's
+adjustable goal is displayed as a percentage. “Inverted advantage” describes
+an unusually low profitable-round rate in this record. Neither direction
 establishes persistent luck, future positive EV or a benefit from reversing
 bets. Repeated checks and selecting profiles remain exploratory.
+
+The current planning and alert equations are:
+
+```text
+p0 = profitable pockets / 37
+p_hat = winning rounds / eligible rounds
+d = 0.05
+A = {p0 - d, p0 + d} intersect [0, 1]
+N_start = max(requiredN(p1, p0, alpha, power) for p1 in A)
+N_plan = first N >= N_start with exactPower(N, p1, p0, alpha) >= power
+         for every p1 in A
+p_two = min(1, 2 * min(P[X <= wins], P[X >= wins])), X ~ Binomial(N, p0)
+alert = (abs(p_hat - p0) >= d) AND (N >= N_plan) AND (p_two < alpha)
+direction = sign(p_hat - p0)
+very_large_description = abs(p_hat - p0) >= 0.10
+```
+
+The calculator's exact-tail kernel is unchanged. Its discrete sample-size
+search provides a starting target; the wrapper checks power in both
+directions at the shared target and advances if needed. Impossible
+alternatives are omitted rather than clamped. The result is a planning
+target, not a proven global minimum across all discrete sample sizes.
+The alert tests departure from the fair probability and filters the
+observed gap. It does not establish that the true gap is at least five
+points. The 95% Bayesian interval remains a separate descriptive interval;
+it does not replace the alpha 0.001 or 0.05 test.
 
 Actual net equals all returns minus all stakes. Expected net is calculated
 from the full round payoff, including overlapping bets and losing outcomes.
 Purchases, gifts and collectible values do not count as roulette profit.
 Repeated replay draw keys are excluded from statistical sample counts;
-their actual stakes and returns remain in financial totals. Older records
-without saved source metadata are kept in a separate legacy group. Their
-original source and replay duplication cannot be reconstructed reliably.
+their actual stakes and returns remain in financial totals. Source IDs and
+duplicate detection keys retain their original format; **Live reply** changes
+only the displayed name.
+
+The owner-requested cleanup on 23 October 2026 removed 94 wager records with
+no saved source and 70 old server-RNG wagers across current and archived
+epochs. All 31 recorded-draw wagers and the total player balance were
+preserved. The one-time migration records before/after counts under the
+`retired-history-cleanup-20261023` key in `runtime_state` and adds an operator
+audit entry. It does not delete immutable room draws, wallets or profiles.
+Source: `sites-server/drizzle/0004_prune-retired-wager-history.sql` and the
+hosted cleanup audit. This is an explicitly requested data cleanup, rather
+than a schema change; later migrations must not re-run this deletion.
 
 **Start new record** requires confirmation and refuses an unsettled wager.
 It changes the player's current analysis epoch while preserving bankroll,
@@ -125,7 +197,8 @@ run `npm run test:rust` after building the Rust module. The suites cover:
 - Database work bounded to at most fifty statements for full-room
   settlement in the tested no-contention case.
 - Current-epoch ownership, pagination, reset safety and wallet preservation.
-- Calculator parity, both advantage directions, insufficient samples,
+- Calculator parity, fixed five-point planning, inclusive gap boundaries,
+  small-gap suppression, both advantage directions, insufficient samples,
   replay duplicate handling and server settlement validation.
 
 For a disposable local visual example, run
@@ -137,3 +210,5 @@ This fixture is never imported into the hosted app or real player records.
 [game]: https://zhonecloud-sketch.github.io/prototypes/rou/
 [d1]: https://developers.cloudflare.com/d1/platform/limits/
 [workers]: https://developers.cloudflare.com/workers/platform/limits/
+[alpha]: https://csrc.nist.gov/glossary/term/level_of_significance_a
+[power]: https://www.nist.gov/glossary-term/44886

@@ -1,5 +1,5 @@
 import { account } from './account-api.js?v=20261022-perf';
-import { mountAccount } from './account.js?v=20261022-live';
+import { mountAccount } from './account.js?v=20261023-insights-gaps';
 import { createMultiplayer } from './multiplayer.js?v=20261022-perf';
 import { toggleWideView } from './wide-view.js';
 const $=id=>document.getElementById(id);

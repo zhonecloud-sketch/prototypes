@@ -69,7 +69,7 @@ test('Insights reuses unchanged analysis but recalculates filters and a reset ep
   const root={isConnected:true,innerHTML:'',querySelector:()=>null},insights=create();
   insights.open(root);await new Promise(setImmediate);assert.equal(jobs.length,1);
   workers[0].onmessage({data:{id:jobs[0].id,result:analyse([])}});
-  assert.match(root.innerHTML,/Your record starts with a wager/);
+  assert.match(root.innerHTML,/Your record starts with a settled bet/);
   insights.close();insights.open(root);await new Promise(setImmediate);
   assert.equal(jobs.length,1,'opening the same record must reuse its analysis');
   insights.change({target:{matches:s=>s==='[data-insight-mode]',value:'snapshot'}});

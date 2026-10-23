@@ -1,31 +1,47 @@
 import { twoSidedP, requiredN, exactPower, incBeta, betaQuantile } from './bias-math.js';
 
-export const MODEL = Object.freeze({ version: 'bias-calculator-2026-10-18', alpha: 0.05, monitorAlpha: 0.001, power: 0.8 });
+export const MODEL = Object.freeze({ version: 'insights-gap-labels-2026-10-23', alpha: 0.05, monitorAlpha: 0.001, power: 0.8, minimumEffect: 0.05, veryLargeEffect: 0.10 });
 const MAX_PLAN = 100_000_000;
+
+function fixedEffectPlan(p0, alpha, power) {
+  // Five percentage points, not five percent of the fair win probability.
+  const targets = [p0 - MODEL.minimumEffect, p0 + MODEL.minimumEffect].filter(p => p >= 0 && p <= 1);
+  let required = Math.max(...targets.map(p1 => requiredN(p1, p0, alpha, power)));
+  if (!Number.isSafeInteger(required) || required > MAX_PLAN) return { required: null, attainedPower: null };
+  let attainedPower = Math.min(...targets.map(p1 => exactPower(required, p1, p0, alpha)));
+  // Exact binomial power has discrete steps. Verify both directions at the
+  // shared target instead of assuming the larger directional N covers both.
+  while (attainedPower < power && required < MAX_PLAN) {
+    required++;
+    attainedPower = Math.min(...targets.map(p1 => exactPower(required, p1, p0, alpha)));
+  }
+  return attainedPower >= power ? { required, attainedPower } : { required: null, attainedPower: null };
+}
 
 export function evaluateBinomial(wins, n, p0, { alpha = MODEL.monitorAlpha, power = MODEL.power } = {}) {
   if (!Number.isSafeInteger(n) || n < 0 || !Number.isSafeInteger(wins) || wins < 0 || wins > n ||
       !(p0 > 0 && p0 < 1) || !(alpha >= 0.000001 && alpha <= 0.5) || !(power >= 0.01 && power <= 0.99)) {
     throw new Error('Invalid Bias Calculator inputs.');
   }
-  if (!n) return { n: 0, wins: 0, p0, alpha, power, observed: null, required: null, remaining: null, status: 'empty', ready: false };
+  const minimumEffect = MODEL.minimumEffect;
+  const lowerTarget = p0 >= minimumEffect ? p0 - minimumEffect : null;
+  const upperTarget = p0 <= 1 - minimumEffect ? p0 + minimumEffect : null;
+  const thresholds = { minimumEffect, lowerTarget, upperTarget };
+  if (!n) return { n: 0, wins: 0, p0, alpha, power, ...thresholds, observed: null, gap: null, meetsEffectThreshold: false, veryLargeGap: false, required: null, remaining: null, status: 'empty', ready: false };
   const observed = wins / n;
-  const delta = Math.abs(observed - p0);
-  // The copied kernel may start above its expansion guard for tiny differences.
-  // Bound the UI's planning workload, never invent a smaller required sample.
-  const initialEstimate = delta < 1e-12 ? Infinity :
-    (1.959963984540054 * Math.sqrt(p0 * (1 - p0)) + 0.8416212335729143 * Math.sqrt(observed * (1 - observed))) ** 2 / delta ** 2;
-  let required = initialEstimate * 3 <= MAX_PLAN ? requiredN(observed, p0, alpha, power) : Infinity;
-  if (!Number.isSafeInteger(required) || required > MAX_PLAN) required = Infinity;
+  const gap = observed - p0;
+  // Only absorb floating-point roundoff at the inclusive five-point boundary.
+  const meetsEffectThreshold = Math.abs(gap) + 4 * Number.EPSILON >= minimumEffect;
+  const veryLargeGap = Math.abs(gap) + 4 * Number.EPSILON >= MODEL.veryLargeEffect;
+  const { required, attainedPower } = fixedEffectPlan(p0, alpha, power);
   const p = twoSidedP(wins, n, p0);
-  const ready = Number.isFinite(required) && n >= required;
-  const status = ready && p < alpha ? (observed > p0 ? 'advantage' : 'inverted') : ready ? 'ordinary' : 'insufficient';
+  const ready = required !== null && n >= required;
+  const status = !meetsEffectThreshold ? 'ordinary' : !ready ? 'insufficient' : p < alpha ? (gap > 0 ? 'advantage' : 'inverted') : 'ordinary';
   const a = wins + 1, b = n - wins + 1;
   return {
-    n, wins, p0, observed, alpha, power, p, ready, status,
-    required: Number.isFinite(required) ? required : null,
-    planningLimit: MAX_PLAN, remaining: Number.isFinite(required) ? Math.max(0, required - n) : null,
-    attainedPower: Number.isFinite(required) ? exactPower(required, observed, p0, alpha) : null,
+    n, wins, p0, observed, alpha, power, p, ready, status, ...thresholds, gap, meetsEffectThreshold, veryLargeGap,
+    required, planningLimit: MAX_PLAN, remaining: required !== null ? Math.max(0, required - n) : null,
+    attainedPower,
     interval: [betaQuantile(0.025, a, b), betaQuantile(0.975, a, b)],
     probabilityAbove: 1 - incBeta(a, b, p0), probabilityBelow: incBeta(a, b, p0),
   };
