@@ -59,8 +59,11 @@ The account screen stays inside the original mobile game frame, which owns
 its size, scaling and portrait fallback. The header is a fixed flex row;
 the remaining content area scrolls vertically in both Default and Wide
 view. Images, selects and chart grids cannot expand its width, and tab
-changes reset both scroll axes of the content area. Source:
-`client/account.js` and `client/account.css`.
+changes reset both scroll axes of the content area. In mobile Default view,
+single-finger swipes scroll this area using the frame's scale and rotation.
+Taps and pinch zoom remain available; Wide view uses native scrolling.
+Source: `client/account.js`, `client/account-scroll.js` and
+`client/account.css`.
 
 Settlement notifications trigger record refreshes. If a notification arrives
 while a snapshot is downloading, the client finishes that snapshot and then
