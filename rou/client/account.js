@@ -16,7 +16,7 @@ export function mountAccount(api){
   function close(){opened=false;insights.close();document.documentElement.classList.remove('account-open');page.inert=true;document.getElementById('login').inert=false;document.getElementById('app').inert=false;api.closed?.();}
   function open(next='account'){
     document.querySelectorAll('dialog[open]').forEach(d=>d.close());view=account.player?next:next==='register'?'register':'login';message='';checkout=null;opened=true;
-    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();page.scrollTop=0;
+    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();page.scrollTop=0;page.scrollLeft=0;
     if(account.player){const before=JSON.stringify(account.player),openedView=view;accountRequest('session').then(()=>{if(opened&&view===openedView&&!busy&&JSON.stringify(account.player)!==before)render();}).catch(e=>{if(opened&&view===openedView)status(e.message);});}
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
@@ -76,7 +76,7 @@ export function mountAccount(api){
     if(b.hasAttribute('data-account-menu')){close();api.openMenu();}
     if(b.hasAttribute('data-account-game')){close();api.returnToGame();}
     if(b.hasAttribute('data-account-wide'))toggleWideView().catch(()=>status('Use the browser fullscreen control on this device.'));
-    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();page.scrollTop=0;}
+    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();page.scrollTop=0;page.scrollLeft=0;}
     if(b.hasAttribute('data-digit')){codeValue=b.dataset.digit==='Clear'?'':b.dataset.digit==='⌫'?codeValue.slice(0,-1):(codeValue+b.dataset.digit).slice(0,6);page.querySelector('[name=code]').value=codeValue;}
     if(b.hasAttribute('data-resend'))run(async()=>{const d=await accountRequest('resend',{challengeId:challenge});challenge=d.challengeId;testCode=d.testCode||'';message=d.message;});
     if(b.hasAttribute('data-logout')||b.hasAttribute('data-logout-all'))run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await api.leaveRoom();await accountRequest(b.hasAttribute('data-logout-all')?'logout-all':'logout',{});close();api.authenticated(null);});
