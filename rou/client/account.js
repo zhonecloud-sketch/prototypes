@@ -2,12 +2,12 @@ import { account,accountRequest,restoreAccount,accountEmail } from './account-ap
 import { COLLECTIBLES,CHIP_PACKS,INSIGHTS_PASS } from './catalogue.js';
 import { toggleWideView,refreshWideView } from './wide-view.js';
 import { installMobileEntry } from './mobile-entry.js?v=20261020-public2';
-import { createServerInsights } from './server-insights.js?v=20261023-insights-gaps';
+import { createServerInsights } from './server-insights.js?v=20261024-insights-scroll';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n||0),usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
 export function mountAccount(api){
   const page=document.createElement('section');page.id='accountPage';page.inert=true;page.setAttribute('aria-label','Player account');
-  document.getElementById('landscapeSurface').append(page);installMobileEntry();
+  document.body.append(page);installMobileEntry();
   const insights=createServerInsights();
   let view='login',challenge='',testCode='',message='',busy=false,checkout=null,codeValue='',opened=false;
   const draft={email:accountEmail()};

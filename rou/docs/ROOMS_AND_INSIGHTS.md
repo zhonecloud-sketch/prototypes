@@ -19,7 +19,7 @@ sign in and choose **Multiplayer** to join an available seat. Choose
   limit is rejected while a room above the proposed limit has players or
   an accepted wager. Existing games are never silently evicted.
 - All rooms follow the recorded dataset on the common 30-second clock.
-  The player-facing source name is **Live reply**; it plays saved draws,
+  The player-facing source name is **Live replay**; it plays saved draws,
   rather than generating new random numbers. Player cards expose usernames,
   bankrolls
   and showcases within that room, without exposing email addresses.
@@ -54,6 +54,11 @@ The report identifies the multiplayer player and shows the saved-wager
 count, latest settlement time and last successful record check. The
 account's username is separate from its play mode. The game header labels
 the session **Multiplayer account**.
+
+The account screen uses its own fixed scrolling layer attached to the body,
+outside the clipped game viewport. Mobile layout keeps the same landscape
+scale and portrait fallback while allowing vertical scrolling in both
+Default and Wide view. Source: `client/account.js` and `client/account.css`.
 
 Settlement notifications trigger record refreshes. If a notification arrives
 while a snapshot is downloading, the client finishes that snapshot and then
@@ -164,7 +169,7 @@ from the full round payoff, including overlapping bets and losing outcomes.
 Purchases, gifts and collectible values do not count as roulette profit.
 Repeated replay draw keys are excluded from statistical sample counts;
 their actual stakes and returns remain in financial totals. Source IDs and
-duplicate detection keys retain their original format; **Live reply** changes
+duplicate detection keys retain their original format; **Live replay** changes
 only the displayed name.
 
 The owner-requested cleanup on 23 October 2026 removed 94 wager records with
