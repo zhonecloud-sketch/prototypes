@@ -46,6 +46,7 @@ main{padding:0 24px;max-width:1500px}.intro{justify-content:flex-end;padding:13p
 .phone-layout #app.show-statistics #appPages{transform:none}.phone-layout #gamePage{scroll-snap-type:y mandatory}
 .phone-layout #gamePage>main{position:relative;padding:0 12px}.phone-layout #bettingView,.phone-layout #wheelStage{height:var(--page-height);min-height:0;scroll-snap-align:start;scroll-snap-stop:always;scroll-margin-top:0}
 .phone-layout #bettingView{display:flex;flex-direction:column;padding:6px 0 0;overflow:hidden}
+.phone-layout:fullscreen #bettingView{--wide-extra-height:max(0px,calc(var(--surface-height) - var(--default-surface-height,var(--surface-height))));padding-top:calc(6px + var(--wide-extra-height)*.5);padding-bottom:calc(var(--wide-extra-height)*.5)}
 .phone-layout .game-grid{flex:1;min-height:0;gap:14px;grid-template-columns:minmax(0,1fr) 252px;align-items:stretch}
 .phone-layout .game-grid>div{display:flex;flex-direction:column;min-height:0}.phone-layout .table-card{display:flex;flex-direction:column;flex:1;min-height:0}
 .phone-layout .table-toolbar{flex:none;height:40px;padding:4px 12px}.phone-layout .progress{flex:none}
@@ -93,7 +94,7 @@ main{padding:0 24px;max-width:1500px}.intro{justify-content:flex-end;padding:13p
 </style>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="client/club.css">
-<link rel="stylesheet" href="client/account.css?v=20261022-rooms2">
+<link rel="stylesheet" href="client/account.css?v=20261023-room-layout">
 </head>
 <body>
 <div id="landscapeViewport"><div id="landscapeSurface">
@@ -746,7 +747,7 @@ function refreshSound(){
  for(const [id,key] of [['soundPref','sound'],['musicPref','music'],['croupierPref','croupier']])$(id).checked=prefs[key];
  for(const [id,key] of [['soundVolume','soundVolume'],['musicVolume','musicVolume']]){$(id).value=Math.round(prefs[key]*100);$(id+'Value').textContent=Math.round(prefs[key]*100)+'%'}
 }
-async function boot(){try{const [{mountClub},{restoreProfile},{installAccounts}]=await Promise.all([import('./client/club.js?v=20261022-recorded'),import('./client/catalogue.js'),import('./client/game-account.js?v=20261022-recorded')]);restoreClubProfile=restoreProfile;buildTable();installEvents();installV2Events();installClub(mountClub);const visibility=new IntersectionObserver(entries=>{for(const e of entries){if(e.target===$('wheelCanvas'))wheelVisible=e.isIntersecting&&e.intersectionRatio>0;else previewVisible=e.isIntersecting&&e.intersectionRatio>0;}});visibility.observe($('wheelCanvas'));visibility.observe($('wheelPreview'));gameAccounts=installAccounts({text,state,startSession,leaveSession,hasWagers,pauseTravel:()=>{scrollTween=null;viewportScrollTo(0,'instant')},launch:showLaunchMenu,returnToTable,toast,paintBets,paintMoney,paintHistory,updateButtons,travel,engine:()=>engine,color,money:formatMoney,signed,sound});const rendering=init3D();await Promise.all([rendering,syncClock(true)]);prepareGoogleSignIn();$('loading').classList.add('hide');$('login').classList.remove('hide');frame(performance.now());setInterval(()=>{if(state.active)tick()},125);try{if(matchMedia('(pointer:coarse)').matches&&screen.orientation?.lock)await screen.orientation.lock('landscape')}catch{}}catch(e){$('loadDetail').textContent='Initialization failed: '+e.message;$('loadRetry').classList.remove('hide');console.error(e)}}
+async function boot(){try{const [{mountClub},{restoreProfile},{installAccounts}]=await Promise.all([import('./client/club.js?v=20261022-recorded'),import('./client/catalogue.js'),import('./client/game-account.js?v=20261023-room-layout')]);restoreClubProfile=restoreProfile;buildTable();installEvents();installV2Events();installClub(mountClub);const visibility=new IntersectionObserver(entries=>{for(const e of entries){if(e.target===$('wheelCanvas'))wheelVisible=e.isIntersecting&&e.intersectionRatio>0;else previewVisible=e.isIntersecting&&e.intersectionRatio>0;}});visibility.observe($('wheelCanvas'));visibility.observe($('wheelPreview'));gameAccounts=installAccounts({text,state,startSession,leaveSession,hasWagers,pauseTravel:()=>{scrollTween=null;viewportScrollTo(0,'instant')},launch:showLaunchMenu,returnToTable,toast,paintBets,paintMoney,paintHistory,updateButtons,travel,engine:()=>engine,color,money:formatMoney,signed,sound});const rendering=init3D();await Promise.all([rendering,syncClock(true)]);prepareGoogleSignIn();$('loading').classList.add('hide');$('login').classList.remove('hide');frame(performance.now());setInterval(()=>{if(state.active)tick()},125);try{if(matchMedia('(pointer:coarse)').matches&&screen.orientation?.lock)await screen.orientation.lock('landscape')}catch{}}catch(e){$('loadDetail').textContent='Initialization failed: '+e.message;$('loadRetry').classList.remove('hide');console.error(e)}}
 boot();
 </script>
 </body>
