@@ -55,14 +55,12 @@ count, latest settlement time and last successful record check. The
 account's username is separate from its play mode. The game header labels
 the session **Multiplayer account**.
 
-The account screen uses its own fixed scrolling layer attached to the body,
-outside the clipped game viewport. Mobile layout keeps the same landscape
-scale and portrait fallback while allowing vertical scrolling in both
-Default and Wide view. Its origin uses the same visible-viewport offsets as
-the game surface, instead of centering against the layout viewport. Images,
-selects and chart grids cannot expand the account page's width, and tab
-changes reset both scroll axes. Source: `client/account.js` and
-`client/account.css`.
+The account screen stays inside the original mobile game frame, which owns
+its size, scaling and portrait fallback. The header is a fixed flex row;
+the remaining content area scrolls vertically in both Default and Wide
+view. Images, selects and chart grids cannot expand its width, and tab
+changes reset both scroll axes of the content area. Source:
+`client/account.js` and `client/account.css`.
 
 Settlement notifications trigger record refreshes. If a notification arrives
 while a snapshot is downloading, the client finishes that snapshot and then

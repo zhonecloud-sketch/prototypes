@@ -7,16 +7,17 @@ const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>'
 const money=n=>new Intl.NumberFormat('en-US').format(n||0),usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
 export function mountAccount(api){
   const page=document.createElement('section');page.id='accountPage';page.inert=true;page.setAttribute('aria-label','Player account');
-  document.body.append(page);installMobileEntry();
+  document.getElementById('landscapeSurface').append(page);installMobileEntry();
   const insights=createServerInsights();
   let view='login',challenge='',testCode='',message='',busy=false,checkout=null,codeValue='',opened=false;
   const draft={email:accountEmail()};
   const mode=()=>account.player?view:['verify','recover','reset','register'].includes(view)?view:'login';
   function status(text){message=text;const el=page.querySelector('[data-account-message]');if(el){el.textContent=text;el.hidden=!text;}}
+  function resetScroll(){page.scrollTop=0;page.scrollLeft=0;const content=page.querySelector('main');if(content){content.scrollTop=0;content.scrollLeft=0;}}
   function close(){opened=false;insights.close();document.documentElement.classList.remove('account-open');page.inert=true;document.getElementById('login').inert=false;document.getElementById('app').inert=false;api.closed?.();}
   function open(next='account'){
     document.querySelectorAll('dialog[open]').forEach(d=>d.close());view=account.player?next:next==='register'?'register':'login';message='';checkout=null;opened=true;
-    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();page.scrollTop=0;page.scrollLeft=0;
+    document.documentElement.classList.add('account-open');page.inert=false;document.getElementById('login').inert=true;document.getElementById('app').inert=true;api.opened();render();resetScroll();
     if(account.player){const before=JSON.stringify(account.player),openedView=view;accountRequest('session').then(()=>{if(opened&&view===openedView&&!busy&&JSON.stringify(account.player)!==before)render();}).catch(e=>{if(opened&&view===openedView)status(e.message);});}
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
@@ -76,7 +77,7 @@ export function mountAccount(api){
     if(b.hasAttribute('data-account-menu')){close();api.openMenu();}
     if(b.hasAttribute('data-account-game')){close();api.returnToGame();}
     if(b.hasAttribute('data-account-wide'))toggleWideView().catch(()=>status('Use the browser fullscreen control on this device.'));
-    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();page.scrollTop=0;page.scrollLeft=0;}
+    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();resetScroll();}
     if(b.hasAttribute('data-digit')){codeValue=b.dataset.digit==='Clear'?'':b.dataset.digit==='⌫'?codeValue.slice(0,-1):(codeValue+b.dataset.digit).slice(0,6);page.querySelector('[name=code]').value=codeValue;}
     if(b.hasAttribute('data-resend'))run(async()=>{const d=await accountRequest('resend',{challengeId:challenge});challenge=d.challengeId;testCode=d.testCode||'';message=d.message;});
     if(b.hasAttribute('data-logout')||b.hasAttribute('data-logout-all'))run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await api.leaveRoom();await accountRequest(b.hasAttribute('data-logout-all')?'logout-all':'logout',{});close();api.authenticated(null);});
