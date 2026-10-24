@@ -55,6 +55,12 @@ count, latest settlement time and last successful record check. The
 account's username is separate from its play mode. The game header labels
 the session **Multiplayer account**.
 
+On mobile, entering Wide view preserves the Default-view text and control
+scale. The game surface expands to use the extra width and height, giving
+the French racetrack more room without enlarging the surrounding controls.
+Exiting Wide view restores the normal sizing for the current viewport.
+Source: `index.html` and `client/wide-view.js`.
+
 The account screen stays inside the original mobile game frame, which owns
 its size, scaling and portrait fallback. The header is a fixed flex row;
 the remaining content area scrolls vertically in both Default and Wide

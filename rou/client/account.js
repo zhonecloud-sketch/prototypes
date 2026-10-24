@@ -1,6 +1,6 @@
 import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261022-perf';
 import { COLLECTIBLES,CHIP_PACKS,INSIGHTS_PASS } from './catalogue.js';
-import { toggleWideView,refreshWideView } from './wide-view.js';
+import { toggleWideView,refreshWideView } from './wide-view.js?v=20261024-wide-proportions';
 import { installMobileEntry } from './mobile-entry.js?v=20261020-public2';
 import { installAccountScroll } from './account-scroll.js?v=20261024-touch-scroll';
 import { createServerInsights } from './server-insights.js?v=20261024-insights-scroll';

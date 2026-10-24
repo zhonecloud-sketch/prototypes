@@ -1,7 +1,7 @@
 import { account } from './account-api.js?v=20261022-perf';
-import { mountAccount } from './account.js?v=20261024-touch-scroll';
+import { mountAccount } from './account.js?v=20261024-wide-proportions';
 import { createMultiplayer } from './multiplayer.js?v=20261022-perf';
-import { toggleWideView } from './wide-view.js';
+import { toggleWideView } from './wide-view.js?v=20261024-wide-proportions';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function installAccounts(api){

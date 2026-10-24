@@ -1,6 +1,6 @@
 export function refreshWideView() {
   const active=!!document.fullscreenElement;
-  if(!active)document.documentElement.style.removeProperty('--default-surface-height');
+  if(!active)document.documentElement.style.removeProperty('--default-desktop-scale');
   document.querySelectorAll('[data-wide-view],[data-account-wide],#wideView').forEach(button=>{
     const label=active?'Default view ↙':'Wide view ↗';
     button.hidden=false;if(button.textContent!==label)button.textContent=label;
@@ -11,8 +11,8 @@ export async function toggleWideView() {
   if(document.fullscreenElement){await document.exitFullscreen();screen.orientation?.unlock?.();}
   else {
     const root=document.documentElement;
-    // Preserve the default mobile table proportions when fullscreen adds height.
-    if(root.classList.contains('phone-layout'))root.style.setProperty('--default-surface-height',getComputedStyle(root).getPropertyValue('--surface-height'));
+    // Keep text and controls at their Default-view size; expand the game surface.
+    if(root.classList.contains('phone-layout'))root.style.setProperty('--default-desktop-scale',getComputedStyle(root).getPropertyValue('--desktop-scale'));
     await root.requestFullscreen();try{await screen.orientation?.lock?.('landscape');}catch{}
   }
   refreshWideView();
