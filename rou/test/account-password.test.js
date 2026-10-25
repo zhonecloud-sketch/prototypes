@@ -10,7 +10,7 @@ function harness(signedIn=false){
     querySelector:selector=>selector==='[name=code]'||selector==='input[name="code"]'?code:selector==='[data-account-message]'?message:null,
     querySelectorAll:selector=>selector==='input'&&page.innerHTML.includes('name="code"')?[code]:[]};
   let markup='';Object.defineProperty(page,'innerHTML',{get:()=>markup,set(value){markup=value;code.value=value.match(/aria-label="Security code" value="([^"]*)"/)?.[1]||'';}});
-  const account={emailMode:'email',player:signedIn?{email:'owner@example.test',username:'Owner',balance:10000,profile:{items:[],orders:[]},wealth:{copies:0,itemValue:0,total:10000}}:null};
+  const account={verificationMode:'screen',player:signedIn?{email:'owner@example.test',username:'Owner',balance:10000,profile:{items:[],orders:[]},wealth:{copies:0,itemValue:0,total:10000}}:null};
   const document={createElement:()=>page,getElementById:()=>({append(){}}),querySelectorAll:()=>[],addEventListener(){},
     documentElement:{classList:{add(){},remove(){}}}};
   const source=readFileSync(new URL('../client/account.js',import.meta.url),'utf8').replace(/^import .*\r?\n/gm,'').replaceAll('export ','');
@@ -19,7 +19,7 @@ function harness(signedIn=false){
     COLLECTIBLES:[],CHIP_PACKS:[],INSIGHTS_PASS:{},installMobileEntry(){},installAccountScroll(){},refreshWideView(){},toggleWideView(){},
     createServerInsights:()=>({close(){},click(){},change(){}}),
     FormData:class{constructor(form){return new Map(Object.entries(form.values));}},
-    accountRequest:async(action,body)=>{calls.push({action,body});if(['register','recover','resend'].includes(action))return {challengeId:'challenge',testCode:'654321',message:'Check your email.'};return {player:account.player};}
+    accountRequest:async(action,body)=>{calls.push({action,body});if(['register','resend'].includes(action))return {challengeId:'challenge',testCode:'654321',message:'Enter the code shown below.'};return {player:account.player};}
   });
   const panel=mount({inGame:()=>false,opened(){},changed(){},authenticated(){}});
   function click(attributes){const button={dataset:{},hasAttribute:name=>Object.hasOwn(attributes,name)};
@@ -30,34 +30,40 @@ function harness(signedIn=false){
   return {panel,page,account,calls,message,click,submit};
 }
 
-test('registration directs the player to email and never renders a returned test code',async()=>{
-  const h=harness();h.panel.open('register');
-  assert.match(h.page.innerHTML,/Send verification email/);
+test('registration displays its code without filling the keypad automatically',async()=>{
+  const h=harness();h.panel.open('register');assert.match(h.page.innerHTML,/Get security code/);
   await h.submit({email:'new@example.test',username:'NewPlayer',password:'long password 2026!',repeatPassword:'long password 2026!'});
-  assert.match(h.page.innerHTML,/Check your email for your six-digit security code/);
-  assert.doesNotMatch(h.page.innerHTML,/654321|TEST INBOX|codes appear on screen/);
+  assert.match(h.page.innerHTML,/data-security-code>654321/);assert.match(h.page.innerHTML,/expires in 10 minutes/);
+  assert.equal(h.page.querySelector('[name=code]').value,'');
+  await h.submit({});assert.match(h.message.textContent,/six-digit security code shown above/);
+  for(const digit of '654321')h.click({'data-digit':digit});await h.submit({});
+  assert.equal(h.calls.at(-1).action,'verify');assert.equal(h.calls.at(-1).body.code,'654321');
 });
 
-test('signed-in password change verifies email, confirms the password and stays signed in',async()=>{
+test('signed-in password changes require current password and confirmation, without a code',async()=>{
   const h=harness(true);h.panel.open();h.click({'data-view':'change-password'});
-  assert.match(h.page.innerHTML,/owner@example.test/);
-  await h.submit({email:'attacker@example.test'});
-  assert.equal(h.calls.at(-1).action,'recover');assert.equal(h.calls.at(-1).body.email,'owner@example.test');
-  assert.match(h.page.innerHTML,/Confirm new password/);assert.doesNotMatch(h.page.innerHTML,/654321/);
-  for(const digit of '123456')h.click({'data-digit':digit});
-  await h.submit({password:'new password 2026!',repeatPassword:'different password'});
+  assert.match(h.page.innerHTML,/name="currentPassword"/);assert.match(h.page.innerHTML,/Confirm new password/);
+  assert.doesNotMatch(h.page.innerHTML,/name="code"|data-resend|data-security-code|inbox|spam/);
+  await h.submit({password:'new password 2026!',repeatPassword:'new password 2026!'});
+  assert.match(h.message.textContent,/Enter your current password/);
+  await h.submit({currentPassword:'old password 2026!',password:'new password 2026!',repeatPassword:'different password'});
   assert.match(h.message.textContent,/passwords do not match/);
   assert.equal(h.calls.filter(c=>c.action==='change-password').length,0);
-  await h.submit({password:'new password 2026!',repeatPassword:'new password 2026!'});
-  assert.equal(h.calls.at(-1).action,'change-password');
-  assert.equal(h.calls.at(-1).body.code,'123456');assert.equal(h.calls.at(-1).body.challengeId,'challenge');
+  await h.submit({currentPassword:'old password 2026!',password:'new password 2026!',repeatPassword:'new password 2026!'});
+  const sent=h.calls.at(-1);assert.equal(sent.action,'change-password');assert.equal(sent.body.currentPassword,'old password 2026!');
+  assert.equal(sent.body.password,'new password 2026!');assert.equal(sent.body.code,undefined);assert.equal(sent.body.challengeId,undefined);
   assert.ok(h.account.player);assert.match(h.page.innerHTML,/Password changed/);
+  h.click({'data-view':'change-password'});assert.doesNotMatch(h.page.innerHTML,/value="(?:old|new) password/);
 });
 
-test('resending a security code clears digits from the previous email',async()=>{
-  const h=harness(true);h.panel.open();h.click({'data-view':'change-password'});await h.submit({});
+test('requesting another code clears previously entered digits and shows the returned code',async()=>{
+  const h=harness();h.panel.open('register');
+  await h.submit({email:'new@example.test',username:'NewPlayer',password:'long password 2026!',repeatPassword:'long password 2026!'});
   h.click({'data-digit':'1'});h.click({'data-resend':''});await flush();
-  assert.match(h.page.innerHTML,/aria-label="Security code" value=""/);
-  assert.equal(h.page.querySelector('[name=code]').value,'');
-  assert.doesNotMatch(h.page.innerHTML,/654321/);
+  assert.equal(h.calls.at(-1).action,'resend');assert.equal(h.page.querySelector('[name=code]').value,'');
+  assert.match(h.page.innerHTML,/data-security-code>654321/);
+});
+
+test('signed-out users have no insecure recovery action',()=>{
+  const h=harness();h.panel.open();assert.doesNotMatch(h.page.innerHTML,/Forgot password|data-view="recover"/);
 });

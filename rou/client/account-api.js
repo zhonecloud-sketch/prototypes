@@ -4,7 +4,7 @@ let credentials;try{credentials=JSON.parse(sessionStorage.getItem(key)||'{}');}c
 credentials.clientId ||= crypto.randomUUID();
 delete credentials.accessToken;
 sessionStorage.setItem(key,JSON.stringify(credentials));
-export const account={player:null,emailMode:'test'};
+export const account={player:null,verificationMode:'screen'};
 const notify=()=>document.dispatchEvent(new CustomEvent('atelier-account',{detail:account}));
 export function storePlayer(player){account.player=player;notify();}
 function persist(){sessionStorage.setItem(key,JSON.stringify(credentials));}
@@ -22,7 +22,7 @@ export async function accountRequest(action,body,extraHeaders={},options={}) {
   if(!response.ok){if(response.status===401&&action!=='login'){account.player=null;delete credentials.sessionToken;persist();notify();}throw Error(data.error||'The server could not complete this request.');}
   if(data.sessionToken){credentials.sessionToken=data.sessionToken;persist();}
   if('player' in data){account.player=data.player;if(data.player&&credentials.email!==data.player.email){credentials.email=data.player.email;persist();}notify();}
-  if(data.emailMode)account.emailMode=data.emailMode;
+  if(data.verificationMode)account.verificationMode=data.verificationMode;
   if(['logout','logout-all','delete-account','reset-password'].includes(action)){delete credentials.sessionToken;persist();account.player=null;notify();}
   return data;
 }
