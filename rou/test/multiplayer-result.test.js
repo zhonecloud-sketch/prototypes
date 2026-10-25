@@ -102,6 +102,50 @@ test('a hidden result does not spend its reading time in a background tab or pan
   h.time(342000);assert.equal(h.installed.wheelRound.id,11);
 });
 
+test('Back to table during a spin does not block the next automatic wheel transition',()=>{
+  const h=harness();h.receive(room(326000));h.engine.visualClock=326000;
+  h.installed.backToTable?.();h.visible(false);
+  h.receive(room(327000,{settled:true}));
+  h.receive(room(331000,{round:11,number:null,settled:true,recordNumber:5}));
+  assert.equal(h.installed.wheelRound.id,11,'an intentionally dismissed wheel must release the next round');
+  h.receive(room(350000,{round:11,number:0,settled:true,recordNumber:5}));
+  assert.equal(h.travel.at(-1).to,'wheel');
+  assert.ok(h.prepares.some(x=>x[0]===11&&x[1]===0));
+});
+
+test('a manual return still waits for settlement and applies only to that wheel',()=>{
+  const h=harness();h.receive(room(326000));
+  h.installed.backToTable?.();h.visible(false);h.engine.visualClock=326000;
+  h.receive(room(331000,{round:11,number:null}));
+  assert.equal(h.installed.wheelRound.id,10);
+  assert.equal(h.installed.pendingSettlement,true);
+  assert.equal(h.installed.canBet(),false);
+  h.receive(room(351000,{round:11,number:0,recordNumber:5,settled:true}));
+  assert.equal(h.installed.wheelRound.id,11);
+  assert.equal(h.installed.pendingSettlement,false);
+  h.engine.visualClock=357000;
+  h.receive(room(357000,{round:11,wagerRound:11,number:0,settled:true,net:-25,returned:0}));
+  h.receive(room(361000,{round:12,wagerRound:11,number:null,recordNumber:0,settled:true,net:-25,returned:0}));
+  assert.equal(h.installed.wheelRound.id,11,'the next result retains its own reading time');
+  h.visible(true);h.time(361000);h.time(364000);
+  assert.equal(h.installed.wheelRound.id,12);
+});
+
+test('Back to table cancels the active slide and notifies multiplayer presentation',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const handler=html.split("$('backToTable').onclick=")[1].split(";$('classicTab')")[0];
+  for(const type of ['multiplayer','guest']){
+    let dismissed=0,scrolled;
+    const tween=vm.runInNewContext(`const handler=${handler};handler();scrollTween`,{
+      scrollTween:{from:0,to:100},state:{user:{type}},gameAccounts:{backToTable(){dismissed++;}},
+      prefs:{reduceMotion:false},viewportScrollTo:(...args)=>scrolled=args
+    });
+    assert.equal(tween,null);
+    assert.equal(dismissed,type==='multiplayer'?1:0);
+    assert.deepEqual(scrolled,[0,'smooth']);
+  }
+});
+
 test('spectators and break-even wagers display meaningful results without inventing profit',()=>{
   const watcher=harness();watcher.receive(room(327000,{number:0,bets:[]}));
   assert.equal(watcher.node('winnerNumber').textContent,'0');

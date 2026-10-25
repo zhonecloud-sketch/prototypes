@@ -6,10 +6,10 @@ const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function resultPresentation(){
   // The shared betting clock may advance before this wheel's settlement arrives.
-  let round=null,latest=null,visibleMs=0,lastVisible=null,landed=false;
+  let round=null,latest=null,visibleMs=0,lastVisible=null,landed=false,dismissed=false;
   const same=(a,b)=>a&&b&&a.id===b.id&&a.roomId===b.roomId;
   const pending=()=>!!round?.bets.length&&!round.settled;
-  function reset(){round=latest=null;visibleMs=0;lastVisible=null;landed=false;}
+  function reset(){round=latest=null;visibleMs=0;lastVisible=null;landed=false;dismissed=false;}
   function receive(next,wager){
     latest=next;
     if(!round)round={...next};
@@ -23,16 +23,17 @@ function resultPresentation(){
   }
   function tick(serverTime,visualTime,visible){
     const local=Date.now();if(round)round.locked=serverTime>=round.start+20000;landed=!!round&&Math.min(serverTime,visualTime)>=round.start+27000;
-    const ready=landed&&round.outcome!==null&&!pending();
+    // A manually dismissed wheel may stop rendering, but settlement must finish.
+    const ready=!!round&&(landed||dismissed&&serverTime>=round.start+27000)&&round.outcome!==null&&!pending();
     // Count reading time only while the completed result is on screen.
     if(ready&&visible){if(lastVisible!==null)visibleMs+=Math.max(0,local-lastVisible);lastVisible=local;}
     else lastVisible=null;
-    if(latest&&!same(round,latest)&&(!round.bets.length&&round.outcome===null||ready&&visibleMs>=3000)){
-      round={...latest};visibleMs=0;lastVisible=null;landed=false;return true;
+    if(latest&&!same(round,latest)&&(!round.bets.length&&round.outcome===null||ready&&(dismissed||visibleMs>=3000))){
+      round={...latest};visibleMs=0;lastVisible=null;landed=false;dismissed=false;return true;
     }
     return false;
   }
-  return {receive,tick,reset,pause(){lastVisible=null;},get round(){return round;},get landed(){return landed;},
+  return {receive,tick,reset,dismiss(){dismissed=true;},pause(){lastVisible=null;},get round(){return round;},get landed(){return landed;},
     get pending(){return pending();},get previousPending(){return pending()&&!same(round,latest);}};
 }
 export function installAccounts(api){
@@ -107,5 +108,5 @@ export function installAccounts(api){
   }
   function canBet(){return multi.active&&multi.fresh&&!multi.busy&&!presentation.previousPending&&snapshot&&snapshot.running!==false&&Date.now()+state.offset<snapshot.round.start+20000;}
   function bet(operation,entries=[]){if(!canBet()){api.toast('Wait for the next open betting window.');return false;}multi.bet(operation,entries,state.round.id,snapshot.roomId).then(()=>api.sound('chip')).catch(e=>api.toast(e.message)).finally(()=>api.paintMoney());api.paintMoney();return true;}
-  launchInfo();return {panel,multi,leave,tick,canBet,bet,launchInfo,toggleWideView,get wheelRound(){return presentation.round;},get pendingSettlement(){return presentation.pending;}};
+  launchInfo();return {panel,multi,leave,tick,canBet,bet,launchInfo,toggleWideView,backToTable(){presentation.dismiss();wantWheel=false;},get wheelRound(){return presentation.round;},get pendingSettlement(){return presentation.pending;}};
 }
