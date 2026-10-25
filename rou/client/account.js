@@ -10,7 +10,7 @@ export function mountAccount(api){
   const page=document.createElement('section');page.id='accountPage';page.inert=true;page.setAttribute('aria-label','Player account');
   document.getElementById('landscapeSurface').append(page);installMobileEntry();installAccountScroll(page);
   const insights=createServerInsights();
-  let view='login',challenge='',testCode='',message='',busy=false,checkout=null,codeValue='',opened=false;
+  let view='login',challenge='',message='',busy=false,checkout=null,codeValue='',opened=false;
   const draft={email:accountEmail()};
   const mode=()=>account.player?view:['verify','recover','reset','register'].includes(view)?view:'login';
   function status(text){message=text;const el=page.querySelector('[data-account-message]');if(el){el.textContent=text;el.hidden=!text;}}
@@ -23,7 +23,8 @@ export function mountAccount(api){
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
   const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" value="${escape(draft[name]||'')}" ${extra} required></label>`;
-  const pass=()=>field('password',view==='reset'?'New password':'Password','password',`autocomplete="${view==='login'?'current-password':'new-password'}" minlength="${view==='login'?1:12}" maxlength="128"`);
+  const pass=()=>field('password',['reset','change-password-code'].includes(view)?'New password':'Password','password',`autocomplete="${view==='login'?'current-password':'new-password'}" minlength="${view==='login'?1:12}" maxlength="128"`);
+  const verification=()=>`<label class="full">Security code<input name="code" class="account-code" readonly inputmode="none" aria-label="Security code" value="${codeValue}" maxlength="6"></label><div class="account-keypad full">${['1','2','3','4','5','6','7','8','9','0','⌫','Clear'].map(k=>`<button type="button" data-digit="${k}">${k}</button>`).join('')}</div>`;
   function authForm(){
     const m=mode();
     const titles={login:'Welcome back.',register:'Create your account.',verify:'Enter your code.',recover:'Recover your account.',reset:'Choose a new password.'};
@@ -31,14 +32,13 @@ export function mountAccount(api){
     if(['login','register','recover'].includes(m))fields=field('email','Email','email','autocomplete="email" maxlength="254"');
     if(m==='register')fields+=field('username','Username','text','autocomplete="nickname" minlength="3" maxlength="24"');
     if(['login','register','reset'].includes(m))fields+=pass();
-    if(m==='register')fields+=field('repeatPassword','Confirm password','password','autocomplete="new-password" minlength="12" maxlength="128"');
-    if(['verify','reset'].includes(m))fields=`<label class="full">Verification code<input name="code" class="account-code" readonly inputmode="none" aria-label="Verification code" value="${codeValue}" maxlength="6"></label><div class="account-keypad full">${['1','2','3','4','5','6','7','8','9','0','⌫','Clear'].map(k=>`<button type="button" data-digit="${k}">${k}</button>`).join('')}</div>`+fields;
+    if(['register','reset'].includes(m))fields+=field('repeatPassword','Confirm password','password','autocomplete="new-password" minlength="12" maxlength="128"');
+    if(['verify','reset'].includes(m))fields=verification()+fields;
     return `<div class="account-layout"><section class="account-welcome"><p class="eyebrow">YOUR ATELIER</p><h1>One account.<br>Your own collection.</h1><p>Play together, collect extraordinary things, and keep your chips safe on the server.</p><img src="assets/collectibles/watch.webp" alt="Luxury watch"></section><section class="account-form">
       <nav aria-label="Account access"><button data-view="login" aria-pressed="${m==='login'}">Sign in</button><button data-view="register" aria-pressed="${m==='register'}">New user</button></nav>
-      <h1>${titles[m]}</h1>${account.emailMode==='test'?'<p class="account-note">TEST MODE · New-account codes appear on screen. No email is sent. Email recovery is not connected yet.</p>':''}
-      ${testCode&&['verify','reset'].includes(m)?`<p class="account-note">TEST INBOX <strong class="account-test-code">${escape(testCode)}</strong></p>`:''}${note()}
+      <h1>${titles[m]}</h1>${['verify','reset'].includes(m)?'<p class="account-note">Check your email for your six-digit security code. It expires in 10 minutes.</p>':''}${note()}
       <form data-auth><div class="account-fields">${fields}</div>${['login','register','reset'].includes(m)?'<label class="account-check"><input type="checkbox" data-show-password>Show password</label>':''}
-      <button class="primary" ${busy?'disabled':''}>${busy?'Please wait…':({login:'Sign in',register:account.emailMode==='test'?'Get test verification code':'Send verification email',verify:'Verify and create account',recover:'Get recovery code',reset:'Update password'})[m]}</button></form>
+      <button class="primary" ${busy?'disabled':''}>${busy?'Please wait…':({login:'Sign in',register:'Send verification email',verify:'Verify and create account',recover:'Email security code',reset:'Update password'})[m]}</button></form>
       <div class="account-actions">${m==='login'?'<button data-view="recover">Forgot password?</button>':''}${['verify','reset'].includes(m)?'<button data-resend>Resend code</button>':''}</div>
       <button type="button" data-open-keyboard>On-screen keyboard</button><small>Virtual chips only · No cash-out or transfers</small></section></div>`;
   }
@@ -46,7 +46,8 @@ export function mountAccount(api){
     const p=account.player,wealth=p.wealth,profile=p.profile;
     const tabs=['account','collection','chips','orders','insights'];
     let content='';
-    if(view==='account')content=`<div class="account-profile-grid"><section class="account-panel"><h2>${escape(p.username)}</h2><p>${escape(p.email)}</p><p>Your wealth includes every collectible copy.</p><button data-view="collection">View my collection →</button></section><section class="account-panel"><h2>Player controls</h2><div class="account-actions"><button data-logout>Sign out</button><button data-logout-all>Sign out all devices</button><button data-view="delete">Delete account…</button></div><p>Use Multiplayer on launch to join the six-seat room. Guest play keeps its own bankroll.</p></section></div>`;
+    if(view==='account')content=`<div class="account-profile-grid"><section class="account-panel"><h2>${escape(p.username)}</h2><p>${escape(p.email)}</p><p>Your wealth includes every collectible copy.</p><button data-view="collection">View my collection →</button></section><section class="account-panel"><h2>Player controls</h2><div class="account-actions"><button data-view="change-password">Change password</button><button data-logout>Sign out</button><button data-logout-all>Sign out all devices</button><button data-view="delete">Delete account…</button></div><p>Use Multiplayer on launch to join the six-seat room. Guest play keeps its own bankroll.</p></section></div>`;
+    if(['change-password','change-password-code'].includes(view))content=`<form data-auth class="account-form"><h2>Change your password.</h2><p>We’ll send a security code to ${escape(p.email)} to check it’s you.</p>${view==='change-password-code'?`<p>Enter the six-digit code from your email. It expires in 10 minutes.</p><div class="account-fields">${verification()+pass()+field('repeatPassword','Confirm new password','password','autocomplete="new-password" minlength="12" maxlength="128"')}</div><label class="account-check"><input type="checkbox" data-show-password>Show password</label>`:''}<button class="primary">${view==='change-password'?'Email security code':'Change password'}</button>${view==='change-password-code'?'<button type="button" data-resend>Resend code</button>':''}<p>Your other devices will be signed out. You’ll stay signed in here.</p></form>`;
     if(view==='collection')content=`<div class="account-collectibles">${COLLECTIBLES.map(item=>{const n=profile.items.filter(i=>i.id===item.id).length;return `<article><img src="${item.image}" alt="${escape(item.name)}"><div><h2>${item.name} <small>×${n}</small></h2><p>${money(item.price)} chips per copy</p><div class="account-actions"><button class="account-primary" data-buy-item="${item.id}">${n?'Buy another':'Add to collection'}</button>${n?`<button data-showcase="${item.id}" ${profile.showcase===item.id?'disabled':''}>${profile.showcase===item.id?'On display ✓':'Display'}</button>`:''}</div></div></article>`;}).join('')}</div>`;
     if(view==='chips')content=`<p class="account-note">Test payment only. No card details or real charges.</p><div class="account-pack-grid">${CHIP_PACKS.map(pack=>`<article class="account-panel"><h2>${money(pack.chips)}</h2><p>play chips</p><p>${usd(pack.cents)}</p><button data-buy-pack="${pack.id}">Get chips</button></article>`).join('')}</div>`;
     if(view==='orders')content=profile.orders.length?profile.orders.slice().reverse().map(o=>`<div class="account-order"><span>${escape(o.productId)}<br><small>${new Date(o.createdAt).toLocaleString()}</small></span><span>${usd(o.cents)} · ${escape(o.status)}</span>${o.status==='pending'?`<button data-resolve="${escape(o.id)}">Resolve test payment</button>`:''}</div>`).join(''):'<p>No orders yet.</p>';
@@ -59,16 +60,19 @@ export function mountAccount(api){
   page.addEventListener('click',e=>{void insights.click(e);});
   page.addEventListener('change',e=>insights.change(e));
   page.addEventListener('input',e=>{if(e.target.name&&e.target.closest('[data-auth]'))draft[e.target.name]=e.target.value;});
-  async function run(fn){if(busy)return;busy=true;status('');page.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){status(e.message);}finally{busy=false;if(opened){const values=Array.from(page.querySelectorAll('input')).map(e=>[e.name,e.value,e.checked]);render();for(const [name,value,checked] of values){const input=page.querySelector(`input[name="${name}"]`);if(input&&name){input.value=value;input.checked=checked;}}}}}
+  async function run(fn){if(busy)return;busy=true;status('');page.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){status(e.message);}finally{busy=false;if(opened){const values=Array.from(page.querySelectorAll('input')).map(e=>[e.name,e.value,e.checked]);render();for(const [name,value,checked] of values){const input=page.querySelector(`input[name="${name}"]`);if(input&&name&&name!=='code'){input.value=value;input.checked=checked;}}}}}
   page.addEventListener('submit',e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.target));
     if(e.target.matches('[data-delete]'))return run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await accountRequest('delete-account',values);close();api.authenticated(null);});
     if(!e.target.matches('[data-auth]'))return;
     const current=mode();run(async()=>{
       Object.assign(draft,values);
-      if(current==='register'&&values.password!==values.repeatPassword)throw Error('The passwords do not match.');
-      const result=await accountRequest(current==='reset'?'reset-password':current,{...values,code:codeValue,challengeId:challenge});
-      if(['register','recover'].includes(current)){challenge=result.challengeId;testCode=result.testCode||'';codeValue='';view=current==='register'?'verify':'reset';message=result.message;}
-      else if(current==='reset'){view='login';testCode='';message='Password updated. Sign in with your new password.';}
+      if(['verify','reset','change-password-code'].includes(current)&&!/^\d{6}$/.test(codeValue))throw Error('Enter the six-digit security code from your email.');
+      if(['register','reset','change-password-code'].includes(current)&&values.password!==values.repeatPassword)throw Error('The passwords do not match.');
+      const action=current==='reset'?'reset-password':current==='change-password'?'recover':current==='change-password-code'?'change-password':current;
+      const result=await accountRequest(action,{...values,...(current==='change-password'?{email:account.player.email}:{}),code:codeValue,challengeId:challenge});
+      if(['register','recover','change-password'].includes(current)){challenge=result.challengeId;codeValue='';draft.password=draft.repeatPassword='';view=current==='register'?'verify':current==='recover'?'reset':'change-password-code';message=result.message;}
+      else if(current==='change-password-code'){view='account';challenge=codeValue='';draft.password=draft.repeatPassword='';message='Password changed. Your other devices have been signed out.';}
+      else if(current==='reset'){view='login';challenge=codeValue='';draft.password=draft.repeatPassword='';message='Password updated. Sign in with your new password.';}
       else{draft.password='';draft.repeatPassword='';close();api.authenticated(account.player);}
     });
   });
@@ -78,9 +82,9 @@ export function mountAccount(api){
     if(b.hasAttribute('data-account-menu')){close();api.openMenu();}
     if(b.hasAttribute('data-account-game')){close();api.returnToGame();}
     if(b.hasAttribute('data-account-wide'))toggleWideView().catch(()=>status('Use the browser fullscreen control on this device.'));
-    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';testCode='';codeValue='';render();resetScroll();}
+    if(b.dataset.view){view=b.dataset.view;checkout=null;message='';challenge=codeValue='';draft.password=draft.repeatPassword='';render();resetScroll();}
     if(b.hasAttribute('data-digit')){codeValue=b.dataset.digit==='Clear'?'':b.dataset.digit==='⌫'?codeValue.slice(0,-1):(codeValue+b.dataset.digit).slice(0,6);page.querySelector('[name=code]').value=codeValue;}
-    if(b.hasAttribute('data-resend'))run(async()=>{const d=await accountRequest('resend',{challengeId:challenge});challenge=d.challengeId;testCode=d.testCode||'';message=d.message;});
+    if(b.hasAttribute('data-resend'))run(async()=>{const d=await accountRequest('resend',{challengeId:challenge});challenge=d.challengeId;codeValue='';message=d.message;});
     if(b.hasAttribute('data-logout')||b.hasAttribute('data-logout-all'))run(async()=>{if(!api.canLeave())throw Error('Wait for your wager to settle first.');await api.leaveRoom();await accountRequest(b.hasAttribute('data-logout-all')?'logout-all':'logout',{});close();api.authenticated(null);});
     if(b.dataset.buyItem){const item=COLLECTIBLES.find(i=>i.id===b.dataset.buyItem);checkout={kind:'item',id:item.id,title:item.name,price:item.price,requestId:crypto.randomUUID()};render();}
     if(b.dataset.buyPack){const pack=CHIP_PACKS.find(i=>i.id===b.dataset.buyPack)||INSIGHTS_PASS;checkout={kind:'payment',id:pack.id,title:pack.chips?`${money(pack.chips)} chips`:'30-day Insights test pass',price:pack.cents,requestId:crypto.randomUUID()};render();}

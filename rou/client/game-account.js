@@ -1,5 +1,5 @@
 import { account } from './account-api.js?v=20261022-perf';
-import { mountAccount } from './account.js?v=20261024-wide-proportions';
+import { mountAccount } from './account.js?v=20261025-email-password';
 import { createMultiplayer } from './multiplayer.js?v=20261024-capacity';
 import { toggleWideView } from './wide-view.js?v=20261024-wide-proportions';
 const $=id=>document.getElementById(id);
