@@ -59,10 +59,11 @@ export function installAccounts(api){
     state.round={id:current.id,roomId:room.roomId,start:current.start,bets:wager?.bets||[],locked:elapsed>=20000,settled:!!wager?.settled,outcome:current.number??null,source:'multiplayer',available:true,late:false,record:wager?.record,returned:wager?.record?.returned||0,net:wager?.record?.net||0};
     presentation.receive(state.round,room.wager);syncWheel();
     if(historyChanged){state.history=room.recent;state.counts=Array(37).fill(0);for(const n of room.recent)state.counts[n]++;state.rounds=room.recent.length;}
-    strip.hidden=false;const nextSeats=JSON.stringify(room.seats)+player.id;if(nextSeats!==seatKey){seatKey=nextSeats;strip.innerHTML=Array.from({length:6},(_,i)=>{const member=room.seats.find(s=>s.seat===i+1),name=member?escape(member.username):'Empty seat';return `<div class="room-seat ${member?.id===player.id?'self':member?'':'empty'}"><div class="room-player"><span class="room-portrait" aria-hidden="true">${member?escape(Array.from(member.username)[0].toUpperCase()):'♙'}</span><b title="${name}">${name}${member?.id===player.id?' · You':''}</b></div><span class="room-bankroll" aria-label="${member?`${name} bankroll ${api.money(member.balance)} chips`:'Waiting for a player'}"><strong>${member?api.money(member.balance):'—'}</strong>${member?'':' <small>OPEN SEAT</small>'}</span></div>`;}).join('');}
+    strip.hidden=false;const nextSeats=JSON.stringify(api.tableResults?room.seats.map(s=>[s.seat,s.id,s.username,s.showcase]):room.seats)+player.id;if(nextSeats!==seatKey){seatKey=nextSeats;strip.innerHTML=Array.from({length:6},(_,i)=>{const member=room.seats.find(s=>s.seat===i+1),name=member?escape(member.username):'Empty seat';return `<div class="room-seat ${member?.id===player.id?'self':member?'':'empty'}"><div class="room-player"><span class="room-portrait" aria-hidden="true">${member?escape(Array.from(member.username)[0].toUpperCase()):'♙'}</span><b title="${name}">${name}${member?.id===player.id?' · You':''}</b></div><span class="room-bankroll" aria-label="${member?`${name} bankroll ${api.money(member.balance)} chips`:'Waiting for a player'}"><strong ${member?`data-room-bankroll="${escape(member.id)}"`:''}>${member?api.money(member.balance):'—'}</strong>${member?'':' <small>OPEN SEAT</small>'}</span></div>`;}).join('');}
+    api.tableResults?.receive(room,player);
     $('headerSource').textContent='ROOM '+room.roomId;$('saveStatus').textContent='Multiplayer account';$('accountDetails').textContent=player.username+' · Multiplayer account · chips and records saved on the server';$('sourceSelect').disabled=true;if(betsBefore!==JSON.stringify(state.round.bets)||prior?.id!==current.id||prior?.roomId!==room.roomId)api.paintBets();api.paintMoney();if(historyChanged)api.paintHistory();launchInfo();tick();
   },updated:()=>{api.updateButtons();tick();},error:api.toast,disconnected(){api.launch();api.toast('Room connection lost. Choose Multiplayer to reconnect.');}});
-  async function leave(){await multi.leave();snapshot=null;presentation.reset();wheelKey=preparedKey='';wantWheel=false;strip.hidden=true;$('sourceSelect').disabled=false;launchInfo();}
+  async function leave(){await multi.leave();api.tableResults?.reset();snapshot=null;presentation.reset();wheelKey=preparedKey='';wantWheel=false;strip.hidden=true;$('sourceSelect').disabled=false;launchInfo();}
   const panel=mountAccount({opened:api.pauseTravel,inGame:()=>state.active,openMenu:api.launch,returnToGame,canLeave:()=>!api.hasWagers(),leaveRoom:leave,changed(player){launchInfo();if(player&&state.user?.type==='multiplayer'&&state.user.sub===player.id){const changed=state.balance!==player.balance;state.balance=player.balance;state.club=player.profile;if(changed)api.paintMoney();}},authenticated(player){if(!player&&state.user?.type==='multiplayer'){state.active=false;state.user=null;state.round=null;strip.hidden=true;}api.launch();launchInfo();api.toast(player?`Welcome, ${player.username}. Choose Multiplayer to join the room.`:'Signed out.');}});
   $('accountSignIn').onclick=()=>panel.open('account');
   $('multiplayerLogin').onclick=async()=>{
@@ -81,14 +82,16 @@ export function installAccounts(api){
   function syncWheel(){
     const r=presentation.round;if(!r)return;const key=`${r.roomId}:${r.id}`,time=Date.now()+state.offset;
     if(key!==wheelKey){wheelKey=key;preparedKey='';wantWheel=false;$('winner').classList.remove('visible');api.engine()?.prime(r.id,r.start+20000,r.roomId);if(time<r.start+20000)api.travel('table');}
-    if(r.outcome!==null&&preparedKey!==key+':'+r.outcome){preparedKey=key+':'+r.outcome;api.engine()?.prepare(r.id,r.outcome,r.start+20000,r.roomId);if(time>=r.start+20000)wantWheel=true;}
+    if(r.outcome!==null&&preparedKey!==key+':'+r.outcome){api.tableResults?.clear();preparedKey=key+':'+r.outcome;api.engine()?.prepare(r.id,r.outcome,r.start+20000,r.roomId);if(time>=r.start+20000)wantWheel=true;}
     showWheel();
   }
   function tick(){
     if(!snapshot||!state.round||!presentation.round)return;showWheel();const elapsed=Math.max(0,(Date.now()+state.offset-state.round.start)/1000),betting=elapsed<20,spinning=elapsed>=20&&elapsed<27,left=Math.max(0,Math.ceil((betting?20:spinning?27:30)-elapsed));
     state.round.locked=!betting;
     const serverTime=Date.now()+state.offset,visible=api.resultVisible?api.resultVisible():!document.hidden;
-    if(presentation.tick(serverTime,api.engine()?.visualClock??serverTime,visible))syncWheel();
+    const shown=presentation.round,visualTime=api.engine()?.visualClock??serverTime;
+    if(shown.outcome!==null&&Math.min(serverTime,visualTime)>=shown.start+27000)api.tableResults?.result(shown);
+    if(presentation.tick(serverTime,visualTime,visible))syncWheel();
     const wheel=presentation.round,wheelElapsed=(serverTime-wheel.start)/1000,landed=presentation.landed,confirmed=landed&&wheel.outcome!==null&&!presentation.pending;
     if(wheelElapsed>=27&&presentation.pending&&multi.active&&multi.fresh&&!multi.busy&&!resultRequest&&Date.now()>=nextResultRefresh){
       nextResultRefresh=Date.now()+1000;resultRequest=Promise.resolve(multi.poll()).finally(()=>{resultRequest=null;nextResultRefresh=Date.now()+1000;});

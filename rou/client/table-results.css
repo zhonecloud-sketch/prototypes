@@ -1,0 +1,3 @@
+.table-dolly{pointer-events:none;filter:drop-shadow(0 2px 2px #0006)}
+.track-cell.hit path{stroke:#fee0a0;stroke-width:3;filter:brightness(1.25)}
+.table-payout-chip{will-change:transform,opacity}

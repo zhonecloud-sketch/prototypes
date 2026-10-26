@@ -12,7 +12,7 @@ test('high-refresh displays respect wheel budgets and covered pages do not rende
     let renders=0,ticks=0;
     const context={state:{active:true,round:{}},document:{hidden:mode==='hidden',documentElement:{classList:{contains:()=>mode==='account'}},querySelector:()=>mode==='dialog'},
       $:()=>({classList:{contains:c=>c==='hide'?mode==='menu':mode==='statistics'}}),wheelVisible:mode==='full',previewVisible:true,
-      engine:{setPresentation(){},update(){renders++;}},lastRender:0,scrollTween:null,rafHandle:0,requestAnimationFrame(){},tick(){ticks++;}};
+      engine:{setPresentation(){},update(){renders++;}},lastRender:0,scrollTween:null,tableResults:null,rafHandle:0,requestAnimationFrame(){},tick(){ticks++;}};
     const run=vm.runInNewContext(presentation+'\n'+frame+';frame',context);
     for(let t=0;t<=5000;t+=1000/240)run(t);
     assert.ok(renders<=limit,`${mode}: ${renders} renders`);

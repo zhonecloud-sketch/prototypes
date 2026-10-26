@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 function harness(){
   let now=326000,callbacks,polls=0,visible=true;
-  const nodes=new Map(),events=new Map(),travel=[],primes=[],prepares=[];
+  const nodes=new Map(),events=new Map(),travel=[],primes=[],prepares=[],effects=[];
   const node=id=>{if(!nodes.has(id)){const classes=new Set();nodes.set(id,{textContent:'',style:{},hidden:false,
     classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x)},
     setAttribute(){},prepend(){},close(){}});}return nodes.get(id);};
@@ -21,13 +21,13 @@ function harness(){
     mountAccount:()=>({open(){},close(){}}),toggleWideView(){},
     createMultiplayer(api){callbacks=api;return multi;}
   });
-  const api={state,engine:()=>engine,resultVisible:()=>visible,text:(id,s)=>node(id).textContent=String(s),
+  const api={state,tableResults:{receive:(room,player)=>effects.push({kind:'receive',room,player}),clear:()=>effects.push({kind:'clear'}),reset:()=>effects.push({kind:'reset'}),result:round=>effects.push({kind:'result',round:{...round}})},engine:()=>engine,resultVisible:()=>visible,text:(id,s)=>node(id).textContent=String(s),
     color:n=>n===0?'green':n===5?'red':'black',money:String,signed:n=>n>0?'+'+n:String(n),
     travel:to=>travel.push({to,at:now}),startSession(user,balance,pending,recent){Object.assign(state,{active:true,user,balance,round:null,history:recent});},
     paintBets(){},paintMoney(){},paintHistory(){},updateButtons(){},toast(){},sound(){},launch(){},
     pauseTravel(){},returnToTable(){travel.push({to:'table',at:now});},leaveSession(){},hasWagers:()=>!!state.round?.bets.length&&!state.round.settled};
   const installed=install(api);
-  return {installed,state,multi,engine,travel,primes,prepares,node,events,
+  return {installed,state,multi,engine,travel,primes,prepares,effects,node,events,
     get polls(){return polls;},time(t){now=t;installed.tick();},visible(value){visible=value;events.get('visibilitychange')?.();},
     receive(room){now=room.serverTime;callbacks.received(room,{...player,balance:room.wager?.settled?10000+room.wager.record.net:9975});}};
 }
@@ -192,8 +192,18 @@ test('the animation frame renders the retained wheel instead of the newer live r
   const shown={id:10},live={id:11};
   const run=vm.runInNewContext(frame+';frame',{
     state:{user:{type:'multiplayer'},round:live},gameAccounts:{wheelRound:shown},
-    rafHandle:0,requestAnimationFrame(){},scrollTween:null,wheelPresentation:()=> 'full',
+    tableResults:null,rafHandle:0,requestAnimationFrame(){},scrollTween:null,wheelPresentation:()=> 'full',
     engine:{setPresentation(){},update(t,r){rendered=r;}},lastRender:0,previewVisible:false
   });
   run(100);assert.equal(rendered,shown);
+});
+
+test('the table result follows the rendered ball and retains a delayed previous-round number',()=>{
+  const h=harness();h.receive(room(326000));h.engine.visualClock=326950;
+  h.receive(room(327000,{settled:true}));assert.equal(h.effects.some(e=>e.kind==='result'),false);
+  h.engine.visualClock=327000;h.time(327100);
+  assert.equal(h.effects.find(e=>e.kind==='result').round.outcome,5);
+  h.receive(room(331000,{round:11,number:null,wagerRound:10,recordNumber:5,settled:true}));
+  assert.ok(h.effects.filter(e=>e.kind==='result').every(e=>e.round.id===10));
+  assert.equal(h.effects.filter(e=>e.kind==='receive').at(-1).player.balance,10025);
 });
