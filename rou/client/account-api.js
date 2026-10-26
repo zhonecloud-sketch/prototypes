@@ -5,10 +5,16 @@ credentials.clientId ||= crypto.randomUUID();
 delete credentials.accessToken;
 sessionStorage.setItem(key,JSON.stringify(credentials));
 export const account={player:null,verificationMode:'screen'};
+let authRevision=0;
 const notify=()=>document.dispatchEvent(new CustomEvent('atelier-account',{detail:account}));
 export function storePlayer(player){account.player=player;notify();}
 function persist(){sessionStorage.setItem(key,JSON.stringify(credentials));}
+function clearSession(){account.player=null;delete credentials.sessionToken;persist();notify();}
 export async function accountRequest(action,body,extraHeaders={},options={}) {
+  if(['login','verify','logout','logout-all','delete-account','reset-password'].includes(action))authRevision++;
+  // A new sign-in must not fall back to an earlier player's identity or token.
+  if(action==='login'||action==='verify')clearSession();
+  const revision=authRevision;
   const headers={'X-Atelier-Request':'1','X-Atelier-Client':credentials.clientId,...extraHeaders};
   if(credentials.sessionToken)headers.Authorization='Bearer '+credentials.sessionToken;
   if(body!==undefined)headers['Content-Type']='application/json';
@@ -19,11 +25,13 @@ export async function accountRequest(action,body,extraHeaders={},options={}) {
   let data;try{data=await response.json();}catch{throw Error('The account server is temporarily unavailable. Please try again.');}
   // A poll cancelled by a wager must never publish an older wallet afterwards.
   if(options.signal?.aborted)throw new DOMException('Request cancelled','AbortError');
-  if(!response.ok){if(response.status===401&&action!=='login'){account.player=null;delete credentials.sessionToken;persist();notify();}throw Error(data.error||'The server could not complete this request.');}
-  if(data.sessionToken){credentials.sessionToken=data.sessionToken;persist();}
+  // Responses started before an account change cannot restore or erase it.
+  if(revision!==authRevision)throw new DOMException('Account changed','AbortError');
+  if(!response.ok){if(response.status===401&&(credentials.sessionToken||account.player||action==='login'||action==='verify')){authRevision++;clearSession();}throw Error(data.error||'The server could not complete this request.');}
+  if(data.sessionToken){authRevision++;credentials.sessionToken=data.sessionToken;persist();}
   if('player' in data){account.player=data.player;if(data.player&&credentials.email!==data.player.email){credentials.email=data.player.email;persist();}notify();}
   if(data.verificationMode)account.verificationMode=data.verificationMode;
-  if(['logout','logout-all','delete-account','reset-password'].includes(action)){delete credentials.sessionToken;persist();account.player=null;notify();}
+  if(['logout','logout-all','delete-account','reset-password'].includes(action)){authRevision++;clearSession();}
   return data;
 }
 export const accountEmail=()=>credentials.email||'';

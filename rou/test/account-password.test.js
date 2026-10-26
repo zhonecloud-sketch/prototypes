@@ -4,8 +4,8 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 
 const flush=()=>new Promise(setImmediate);
-function harness(signedIn=false){
-  const events=new Map(),calls=[],message={textContent:'',hidden:true},code={name:'code',value:''};
+function harness(signedIn=false,request){
+  const events=new Map(),calls=[],authentications=[],message={textContent:'',hidden:true},code={name:'code',value:''};
   const page={innerHTML:'',setAttribute(){},addEventListener(name,fn){const handlers=events.get(name)||[];handlers.push(fn);events.set(name,handlers);},
     querySelector:selector=>selector==='[name=code]'||selector==='input[name="code"]'?code:selector==='[data-account-message]'?message:null,
     querySelectorAll:selector=>selector==='input'&&page.innerHTML.includes('name="code"')?[code]:[]};
@@ -19,15 +19,15 @@ function harness(signedIn=false){
     COLLECTIBLES:[],CHIP_PACKS:[],INSIGHTS_PASS:{},installMobileEntry(){},installAccountScroll(){},refreshWideView(){},toggleWideView(){},
     createServerInsights:()=>({close(){},click(){},change(){}}),
     FormData:class{constructor(form){return new Map(Object.entries(form.values));}},
-    accountRequest:async(action,body)=>{calls.push({action,body});if(['register','resend'].includes(action))return {challengeId:'challenge',testCode:'654321',message:'Enter the code shown below.'};return {player:account.player};}
+    accountRequest:async(action,body)=>{calls.push({action,body});if(request)return request(action,body,account);if(['register','resend'].includes(action))return {challengeId:'challenge',testCode:'654321',message:'Enter the code shown below.'};return {player:account.player};}
   });
-  const panel=mount({inGame:()=>false,opened(){},changed(){},authenticated(){}});
+  const panel=mount({inGame:()=>false,opened(){},changed(){},authenticated:p=>authentications.push(p)});
   function click(attributes){const button={dataset:{},hasAttribute:name=>Object.hasOwn(attributes,name)};
     for(const [name,value]of Object.entries(attributes))if(name.startsWith('data-'))button.dataset[name.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=value;
     const event={target:{closest:()=>button}};for(const handler of events.get('click'))handler(event);}
   async function submit(values){const target={values,matches:selector=>selector==='[data-auth]'};
     for(const handler of events.get('submit'))handler({target,preventDefault(){}});await flush();}
-  return {panel,page,account,calls,message,click,submit};
+  return {panel,page,account,calls,authentications,message,click,submit};
 }
 
 test('registration displays its code without filling the keypad automatically',async()=>{
@@ -66,4 +66,28 @@ test('requesting another code clears previously entered digits and shows the ret
 
 test('signed-out users have no insecure recovery action',()=>{
   const h=harness();h.panel.open();assert.doesNotMatch(h.page.innerHTML,/Forgot password|data-view="recover"/);
+});
+
+test('the explicit sign-in page does not reveal a restored account',()=>{
+  const h=harness(true);h.panel.open('login');
+  assert.match(h.page.innerHTML,/Welcome back/);assert.match(h.page.innerHTML,/name="password"/);
+  assert.doesNotMatch(h.page.innerHTML,/owner@example.test|PLAY CHIPS|TOTAL WEALTH/);
+});
+
+test('failed login keeps the form and error visible even if a previous identity was restored',async()=>{
+  const h=harness(false,async(action,body,account)=>{
+    account.player={id:'previous',email:'private@example.test',username:'PrivateUser',balance:12345,profile:{items:[],orders:[]},wealth:{copies:0,itemValue:0,total:12345}};
+    throw Error('Email or password is incorrect.');
+  });
+  h.panel.open('login');await h.submit({email:'wrong@example.test',password:'wrong'});
+  assert.match(h.page.innerHTML,/Email or password is incorrect/);assert.match(h.page.innerHTML,/Welcome back/);
+  assert.match(h.page.innerHTML,/autocomplete="current-password" minlength="1"/);
+  assert.doesNotMatch(h.page.innerHTML,/private@example.test|PrivateUser|PLAY CHIPS|TOTAL WEALTH/);
+  assert.equal(h.page.inert,false);assert.equal(h.authentications.length,0);
+});
+
+test('successful login closes the sign-in form only after the new account is returned',async()=>{
+  const h=harness(false,async(action,body,account)=>{account.player={id:'new',username:'NewPlayer'};return {player:account.player};});
+  h.panel.open('login');await h.submit({email:'new@example.test',password:'correct password'});
+  assert.equal(h.page.inert,true);assert.equal(h.authentications.length,1);assert.equal(h.authentications[0].id,'new');
 });

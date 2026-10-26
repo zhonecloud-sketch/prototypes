@@ -1,4 +1,4 @@
-import {account,accountRequest} from './account-api.js?v=20261022-perf';
+import {account,accountRequest} from './account-api.js?v=20261026-login-isolation';
 import {MODEL} from './insights-model.js?v=20261023-insights-gaps';
 import {INSIGHTS_PASS} from './catalogue.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

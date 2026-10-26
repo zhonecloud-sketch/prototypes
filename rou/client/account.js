@@ -1,9 +1,9 @@
-import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261022-perf';
+import { account,accountRequest,restoreAccount,accountEmail } from './account-api.js?v=20261026-login-isolation';
 import { COLLECTIBLES,CHIP_PACKS,INSIGHTS_PASS } from './catalogue.js';
 import { toggleWideView,refreshWideView } from './wide-view.js?v=20261024-wide-proportions';
 import { installMobileEntry } from './mobile-entry.js?v=20261020-public2';
 import { installAccountScroll } from './account-scroll.js?v=20261024-touch-scroll';
-import { createServerInsights } from './server-insights.js?v=20261024-insights-scroll';
+import { createServerInsights } from './server-insights.js?v=20261026-login-isolation';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n||0),usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
 export function mountAccount(api){
@@ -23,7 +23,7 @@ export function mountAccount(api){
   }
   const note=()=>`<p class="account-note account-error" data-account-message role="status" ${message?'':'hidden'}>${escape(message)}</p>`;
   const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" value="${escape(draft[name]||'')}" ${extra} required></label>`;
-  const pass=()=>field('password',view==='change-password'?'New password':'Password','password',`autocomplete="${view==='login'?'current-password':'new-password'}" minlength="${view==='login'?1:12}" maxlength="128"`);
+  const pass=()=>field('password',mode()==='change-password'?'New password':'Password','password',`autocomplete="${mode()==='login'?'current-password':'new-password'}" minlength="${mode()==='login'?1:12}" maxlength="128"`);
   const verification=()=>`<label class="full">Security code<input name="code" class="account-code" readonly inputmode="none" aria-label="Security code" value="${codeValue}" maxlength="6"></label><div class="account-keypad full">${['1','2','3','4','5','6','7','8','9','0','⌫','Clear'].map(k=>`<button type="button" data-digit="${k}">${k}</button>`).join('')}</div>`;
   function authForm(){
     const m=mode();
@@ -56,7 +56,7 @@ export function mountAccount(api){
     if(checkout)content=`<section class="account-form"><h2>${escape(checkout.title)}</h2><p>${checkout.kind==='item'?`${money(checkout.price)} chips for one copy.`:`${usd(checkout.price)} · Simulated payment. No money is charged.`}</p><div class="account-actions">${(checkout.kind==='item'?['success']:checkout.kind==='pending'?['success','decline']:['success','decline','pending']).map(result=>`<button data-complete="${result}" class="${result==='success'?'account-primary':''}">${result==='success'?checkout.kind==='item'?'Confirm purchase':'Approve test payment':result==='decline'?'Decline':'Leave pending'}</button>`).join('')}<button data-cancel-checkout>Cancel</button></div></section>`;
     return `<h1>${checkout?'Checkout':view==='account'?`Welcome, ${escape(p.username)}.`:view==='collection'?'Your collection.':view==='chips'?'More room to play.':view==='orders'?'Your orders.':view==='insights'?'Understand your play.':'Your account.'}</h1><nav class="account-tabs">${tabs.map(t=>`<button data-view="${t}" aria-pressed="${view===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>${note()}<div class="account-wealth"><div><small>PLAY CHIPS</small><strong>${money(p.balance)}</strong></div><div><small>COLLECTIBLES · ${wealth.copies} COPIES</small><strong>${money(wealth.itemValue)}</strong></div><div><small>TOTAL WEALTH</small><strong>${money(wealth.total)}</strong></div></div>${content}`;
   }
-  function render(){insights.close();page.innerHTML=`<header><span class="page-tools"><button class="account-back" data-back>← Back</button>${api.inGame() ? '<button data-account-game>Game room →</button>' : ''}</span><span class="wordmark">ATELIER</span><span class="page-tools"><button data-account-wide>Wide view ↗</button><button data-account-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span></header><main>${account.player?playerPage():authForm()}</main>`;refreshWideView();if(opened&&account.player&&view==='insights'&&!checkout)insights.open(page.querySelector('#serverInsights'));}
+  function render(){insights.close();const signedIn=account.player&&!['login','register','verify'].includes(view);page.innerHTML=`<header><span class="page-tools"><button class="account-back" data-back>← Back</button>${api.inGame() ? '<button data-account-game>Game room →</button>' : ''}</span><span class="wordmark">ATELIER</span><span class="page-tools"><button data-account-wide>Wide view ↗</button><button data-account-menu aria-label="Menu — return to launch" title="Menu">⚙</button></span></header><main>${signedIn?playerPage():authForm()}</main>`;refreshWideView();if(opened&&signedIn&&view==='insights'&&!checkout)insights.open(page.querySelector('#serverInsights'));}
   page.addEventListener('click',e=>{void insights.click(e);});
   page.addEventListener('change',e=>insights.change(e));
   page.addEventListener('input',e=>{if(e.target.name&&e.target.closest('[data-auth]'))draft[e.target.name]=e.target.value;});

@@ -1,6 +1,6 @@
-import { account } from './account-api.js?v=20261022-perf';
-import { mountAccount } from './account.js?v=20261026-screen-password';
-import { createMultiplayer } from './multiplayer.js?v=20261024-capacity';
+import { account } from './account-api.js?v=20261026-login-isolation';
+import { mountAccount } from './account.js?v=20261026-login-isolation';
+import { createMultiplayer } from './multiplayer.js?v=20261026-login-isolation';
 import { toggleWideView } from './wide-view.js?v=20261024-wide-proportions';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

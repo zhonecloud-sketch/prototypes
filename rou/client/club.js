@@ -1,5 +1,5 @@
 import { COLLECTIBLES, CHIP_PACKS, INSIGHTS_PASS, collectionWealth } from './catalogue.js';
-import { openMultiplayer } from './multiplayer.js?v=20261022-perf';
+import { openMultiplayer } from './multiplayer.js?v=20261026-login-isolation';
 import { makeRecord, MODEL } from './insights-model.js?v=20261023-insights-gaps';
 import { saveRecord, readRecords } from './insights-records.js';
 
