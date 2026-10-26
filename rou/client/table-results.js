@@ -3,7 +3,7 @@ export function createTableResults({formatMoney=String,visible=()=>true,reduceMo
   const balances=new Map(),seen=new Map(),pending=new Map(),active=new Map(),chips=new Set();
   let roomId=null,playerId='solo',wallet=0,readyKey='',dollyKey='',dollyPending=false;
   const key=p=>`${p.roomId}:${p.roundId}`;
-  const valid=p=>p&&Number.isSafeInteger(p.roundId)&&Number.isInteger(p.number)&&p.number>=0&&p.number<=36&&Number.isSafeInteger(p.returned)&&p.returned>0;
+  const valid=p=>p&&Number.isSafeInteger(p.roundId)&&Number.isInteger(p.number)&&p.number>=0&&p.number<=36&&Number.isSafeInteger(p.returned)&&p.returned>0&&Number.isSafeInteger(p.net)&&p.net>0;
   const wallets=()=>[doc.getElementById('balance'),...doc.querySelectorAll('[data-wallet-balance]')].filter(Boolean);
   const targets=id=>[...doc.querySelectorAll('[data-room-bankroll]')].filter(e=>e.dataset.roomBankroll===id).concat(id===playerId?wallets():[]);
   function amount(id,value){return Math.max(0,active.get(id)?.value??(pending.has(id)?value-pending.get(id).returned:value));}
@@ -65,17 +65,17 @@ export function createTableResults({formatMoney=String,visible=()=>true,reduceMo
   }
   function solo(round,balance){
     if(roomId!==0){reset();roomId=0;playerId='solo';}
-    const p={roomId:0,roundId:round.id,number:round.outcome,returned:round.returned,balance};
+    const p={roomId:0,roundId:round.id,number:round.outcome,returned:round.returned,net:round.net,balance};
     if(round.bets.length&&valid(p)&&seen.get(playerId)!==key(p)){seen.set(playerId,key(p));pending.set(playerId,p);}
     update(playerId,balance);wallet=balance;result({...round,roomId:0});paint(playerId);
   }
-  function fly(to){
+  function fly(to,id){
     const source=[...doc.querySelectorAll('.table-dolly')].find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0;});
     if(!source)return;
     const from=source.getBoundingClientRect(),end=to.getBoundingClientRect();
     if(!end.width||!end.height)return;
     for(let i=0;i<9;i++){
-      const el=doc.createElement('i');el.className='coin-fx table-payout-chip';el.setAttribute('aria-hidden','true');
+      const el=doc.createElement('i');el.className='coin-fx table-payout-chip';el.setAttribute('aria-hidden','true');el.dataset.payoutRecipient=id;
       const x=from.left+from.width/2+(i-4)*3,y=from.top+from.height/2;
       el.style.cssText=`left:${x}px;top:${y}px;--dx:${end.left+end.width/2-x}px;--dy:${end.top+end.height/2-y}px;--delay:${i*.04}s`;
       chips.add(el);doc.body.appendChild(el);later(()=>{el.remove();chips.delete(el);},2200);
@@ -94,9 +94,9 @@ export function createTableResults({formatMoney=String,visible=()=>true,reduceMo
       const list=targets(id);if(!list.length)continue;
       active.set(id,{from:p.balance-p.returned,to:p.balance,value:p.balance-p.returned,start:time});
       for(const target of list){target.classList.remove('win-flash');void target.offsetWidth;target.classList.add('win-flash');}
-      // One stream to the player's seat, plus the current player's main wallet.
-      const seat=list.find(e=>e.dataset.roomBankroll===id);if(seat)fly(seat);
-      if(id===playerId&&wallets()[0])fly(wallets()[0]);
+      // Multiplayer has exactly one shared flow per winning seat for every viewer.
+      const destination=roomId===0?wallets()[0]:list.find(e=>e.dataset.roomBankroll===id);
+      if(destination)fly(destination,id);
     }
     for(const [id,a] of active){
       const t=Math.max(0,Math.min(1,(time-a.start)/1500));a.value=Math.round(a.from+(a.to-a.from)*(1-(1-t)**3));
