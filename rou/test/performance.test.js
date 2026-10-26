@@ -5,6 +5,17 @@ import vm from 'node:vm';
 import {analyse,MODEL} from '../client/insights-model.js';
 
 const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+test('table effects work without an on-screen wheel preview and stop behind other pages',()=>{
+  const source=index.match(/^function tableResultVisible\(\).*$/m)[0];
+  for(const mode of ['table-without-preview','table-with-preview','wheel','account','menu','statistics','dialog','hidden']){
+    const run=vm.runInNewContext(source+';tableResultVisible',{
+      wheelVisible:mode==='wheel',previewVisible:mode==='table-with-preview',state:{active:true},
+      document:{hidden:mode==='hidden',documentElement:{classList:{contains:()=>mode==='account'}},querySelector:()=>mode==='dialog'},
+      $:()=>({classList:{contains:c=>c==='hide'?mode==='menu':mode==='statistics'}})
+    });
+    assert.equal(run(),mode.startsWith('table'),mode);
+  }
+});
 test('high-refresh displays respect wheel budgets and covered pages do not render',()=>{
   const frame=index.match(/^function frame\(t\).*$/m)[0];
   const presentation=index.match(/^function wheelPresentation\(\).*$/m)[0];
