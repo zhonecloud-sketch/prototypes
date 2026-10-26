@@ -36,8 +36,10 @@ test('confirmed returns wait for the table, then animate all recipients and thei
   const h=harness(),snapshot=h.room(true),saved=structuredClone(snapshot);
   h.receive(h.room());h.receive(snapshot);h.result();h.fx.tick(100);
   assert.equal(h.chips,0);assert.equal(h.wallet.textContent,'75');assert.equal(h.seats[1].textContent,'200');
+  assert.equal(h.placements,0,'the dolly drop must not finish off screen');
   assert.match(h.seats[1].parentElement.attrs['aria-label'],/bankroll 250 chips/);
   h.visible(true);h.fx.tick(200);
+  assert.equal(h.placements,2);
   assert.equal(h.chips,27,'streams go to both winning seats and the current player wallet');
   assert.equal(h.wallet.textContent,'75');assert.equal(h.extraWallet.textContent,'75');
   h.fx.tick(950);assert.ok(Number(h.wallet.textContent)>75&&Number(h.wallet.textContent)<125);
@@ -68,7 +70,8 @@ test('a late settlement animates only after its winning number has been presente
 
 test('zero gets a dolly on both layouts, and repeated ticks do not replace it',()=>{
   const h=harness();h.receive(h.room());h.result(0);
-  const markers=h.doc.querySelectorAll('.table-dolly');assert.equal(markers.length,2);assert.equal(h.placements,2);
+  const markers=h.doc.querySelectorAll('.table-dolly');assert.equal(markers.length,2);assert.equal(h.placements,0);
+  h.visible(true);h.fx.tick(0);assert.equal(h.placements,2);
   assert.ok(markers.every(m=>m.attrs['aria-label']==='Winning number 0'));
   h.result(0);assert.equal(h.placements,2);assert.equal(h.doc.querySelectorAll('.table-dolly')[0],markers[0]);
   h.fx.clear();assert.equal(h.doc.querySelectorAll('.table-dolly').length,0);
