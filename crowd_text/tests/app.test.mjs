@@ -105,7 +105,7 @@ test('arm and leg joints bend, retain segment length, and settle exactly', () =>
   const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
   crowd.setCount(1, .46);
   crowd.people[0].phase = .3;
-  crowd.moveTo([{ x: 10, z: 10 }], 5.4);
+  crowd.moveTo([{ x: 10, z: 10 }]);
   crowd.update(1.3);
   for (const arm of crowd.arms) {
     assert.equal(arm.elbow.parent, arm.shoulder);
@@ -122,16 +122,76 @@ test('arm and leg joints bend, retain segment length, and settle exactly', () =>
     assert.equal(leg.knee.parent, leg.hip);
     assert.equal(leg.ankle.parent, leg.knee);
   }
-  crowd.update(10);
+  for (let i = 0; i < 3000 && crowd.moving; i++) crowd.update(1 / 60);
   assert.equal(crowd.moving, false);
   assert.equal(crowd.people[0].x, 10);
   assert.equal(crowd.people[0].z, 10);
   for (const mesh of Object.values(crowd.meshes)) {
     assert.ok(mesh.instanceMatrix.array.every(Number.isFinite));
   }
-  crowd.moveTo([{ x: -5, z: 7 }], 0);
+  crowd.moveTo([{ x: -5, z: 7 }], true);
   assert.equal(crowd.moving, false);
   assert.equal(crowd.people[0].x, -5);
+  crowd.dispose();
+});
+
+test('walking speed stays bounded and short trips arrive before long trips', () => {
+  const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+  crowd.setCount(2, 1);
+  crowd.people.forEach((p, i) => {
+    p.x = 0; p.z = i * 10; p.height = 1; p.walkSpeed = 1.2;
+  });
+  crowd.moveTo([{ x: 2, z: 0 }, { x: 20, z: 10 }]);
+  const arrival = [null, null];
+  for (let tick = 1; tick <= 2400 && crowd.moving; tick++) {
+    const previous = crowd.people.map(p => ({ x: p.x, z: p.z }));
+    crowd.update(1 / 60, 1.8);
+    crowd.people.forEach((p, i) => {
+      const speed = Math.hypot(p.x - previous[i].x, p.z - previous[i].z) * 60;
+      assert.ok(speed <= 1.65001, `Walking speed was ${speed}`);
+      if (p.x === p.toX && p.z === p.toZ && arrival[i] === null) arrival[i] = tick / 60;
+    });
+  }
+  assert.equal(crowd.moving, false);
+  assert.ok(Math.abs(arrival[0] - arrival[1]) > 5);
+  crowd.dispose();
+});
+
+test('walking retains a planted foot and advances its gait with actual travel', () => {
+  const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+  crowd.setCount(1, 1);
+  const person = crowd.people[0];
+  person.x = 0; person.z = 0; person.height = 1; person.phase = .3;
+  crowd.moveTo([{ x: 0, z: 20 }]);
+  for (let i = 0; i < 180; i++) {
+    const z = person.z, phase = person.stridePhase;
+    crowd.update(1 / 60);
+    assert.ok(Math.abs((person.stridePhase - phase)
+      - (person.z - z) / 1.2 * Math.PI * 2) < 1e-8);
+    const soles = crowd.legs.map(leg => new THREE.Vector3(0, -.5, 0)
+      .applyMatrix4(leg.ankle.children[1].matrixWorld).y);
+    assert.ok(Math.min(...soles) >= -.00001, `Foot below the floor: ${soles}`);
+    assert.ok(Math.min(...soles) < .006, `Both feet off the floor: ${soles}`);
+  }
+  crowd.dispose();
+});
+
+test('idle breathing and head movement preserve targets and respect reduced motion', () => {
+  const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+  crowd.setCount(2, 1);
+  crowd.people[0].phase = 0; crowd.people[1].phase = Math.PI / 2;
+  crowd.moveTo([{ x: 0, z: 0 }, { x: 2, z: 0 }], true);
+  const anchors = crowd.people.map(p => ({ x: p.x, z: p.z }));
+  const before = crowd.meshes.sphere.instanceMatrix.array.slice();
+  crowd.update(1);
+  assert.notDeepEqual(crowd.meshes.sphere.instanceMatrix.array, before);
+  for (let i = 0; i < 300; i++) crowd.update(1 / 30);
+  assert.deepEqual(crowd.people.map(p => ({ x: p.x, z: p.z })), anchors);
+  assert.equal(crowd.moving, false);
+  crowd.update(0, 1, false);
+  const still = crowd.meshes.sphere.instanceMatrix.array.slice();
+  crowd.update(1, 1, false);
+  assert.deepEqual(crowd.meshes.sphere.instanceMatrix.array, still);
   crowd.dispose();
 });
 

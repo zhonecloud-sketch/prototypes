@@ -124,24 +124,37 @@ async function boot(search = '', reduced = false, graphicsFailure = false) {
       callbacks.forEach(callback => callback(time));
     }
   }
-  return { get, document, window, media, textDraws, frames, flush, advance,
+  function settle() {
+    for (let i = 0; i < 8000; i++) {
+      advance(1);
+      if (['Every person in place', 'A little room to roam'].includes(get('status').textContent)) {
+        advance(120);
+        return;
+      }
+    }
+    throw new Error('The crowd did not finish walking to its targets');
+  }
+  return { get, document, window, media, textDraws, frames, flush, advance, settle,
     resize: () => observer(), renderer: () => renderer, reloads: () => reloads };
 }
 
-test('URL boot draws exactly the two requested lines and stops when settled', async () => {
+test('URL boot draws the requested lines and continues idle animation once settled', async () => {
   const app = await boot('?Chong%20Boo%20Chean%20and%20Family');
   assert.deepEqual(app.textDraws, ['Chong Boo Chean and Family', 'Happy 2027']);
   assert.equal(app.get('message-description').textContent,
     'Chong Boo Chean and Family\nHappy 2027');
   assert.equal(app.get('error').hidden, true);
-  app.advance();
+  app.settle();
   assert.equal(app.get('status').textContent, 'Every person in place');
-  assert.equal(app.frames.size, 0);
+  assert.equal(app.frames.size, 1);
+  const renders = app.renderer().renders;
+  app.advance(10);
+  assert.ok(app.renderer().renders > renders);
 });
 
 test('editor preserves Chinese composition, reports invalid input, and forms valid text', async () => {
   const app = await boot();
-  app.advance();
+  app.settle();
   app.get('edit-button').emit('click');
   assert.equal(app.get('editor').hidden, false);
   assert.equal(app.get('edit-button').getAttribute('aria-expanded'), 'true');
@@ -165,7 +178,7 @@ test('editor preserves Chinese composition, reports invalid input, and forms val
 
 test('scatter, gather, pause, background, history restoration, and resize remain usable', async () => {
   const app = await boot();
-  app.advance();
+  app.settle();
   app.get('scatter-button').emit('click');
   app.advance(5);
   assert.equal(app.get('scatter-label').textContent, 'Gather');
@@ -180,7 +193,7 @@ test('scatter, gather, pause, background, history restoration, and resize remain
   assert.equal(app.frames.size, 0);
   app.document.hidden = false;
   app.document.emit('visibilitychange');
-  app.advance();
+  app.settle();
   assert.equal(app.get('status').textContent, 'A little room to roam');
   app.get('viewport').clientWidth = 844; app.get('viewport').clientHeight = 220;
   app.resize(); app.advance();
@@ -191,7 +204,7 @@ test('scatter, gather, pause, background, history restoration, and resize remain
   assert.equal(app.renderer().disposed, undefined);
   app.window.emit('pageshow', { persisted: true }); app.advance();
   app.get('scatter-button').emit('click');
-  await app.flush(); app.advance();
+  await app.flush(); app.settle();
   assert.equal(app.get('scatter-label').textContent, 'Scatter');
   assert.equal(app.get('status').textContent, 'Every person in place');
 });
@@ -211,7 +224,7 @@ test('reduced motion settles immediately and graphics failure offers recovery', 
 
 test('an oversized URL stays editable while the default crowd still starts', async () => {
   const app = await boot(`?${'x'.repeat(130)}`);
-  app.advance();
+  app.settle();
   assert.equal(app.get('editor').hidden, false);
   assert.match(app.get('input-error').textContent, /120 characters/);
   assert.equal(app.get('message-description').textContent, 'Happy 2027');
@@ -220,7 +233,7 @@ test('an oversized URL stays editable while the default crowd still starts', asy
 
 test('keyboard-sized visual viewports compact the header and retain form submission', async () => {
   const app = await boot();
-  app.advance();
+  app.settle();
   app.get('edit-button').emit('click');
   app.window.visualViewport.height = 300;
   app.window.visualViewport.emit('resize');
@@ -233,4 +246,75 @@ test('keyboard-sized visual viewports compact the header and retain form submiss
   app.window.visualViewport.height = 700;
   app.window.visualViewport.emit('resize');
   assert.equal(app.document.documentElement.classList.contains('compact-height'), false);
+});
+
+test('camera preserves manual angles and eases through editor, scatter, and view changes', async () => {
+  const app = await boot();
+  app.settle();
+  const viewport = app.get('viewport');
+  viewport.emit('pointerdown', { pointerId: 1, clientX: 150, clientY: 150 });
+  viewport.emit('pointermove', { pointerId: 1, clientX: 210, clientY: 110 });
+  app.advance(1);
+  viewport.emit('pointerup', { pointerId: 1 });
+  viewport.emit('wheel', { deltaY: -650 });
+  app.advance(1);
+  const camera = app.renderer().camera;
+  const angle = camera.quaternion.clone();
+  const width = camera.right;
+  app.get('edit-button').emit('click');
+  viewport.clientHeight = 350;
+  app.resize(); app.advance(1);
+  assert.ok(camera.quaternion.angleTo(angle) < 1e-7);
+  assert.ok(Math.abs(camera.right - width) < .5);
+  const position = camera.position.clone(), startWidth = camera.right;
+  app.get('scatter-button').emit('click');
+  app.advance(1);
+  assert.ok(camera.position.distanceTo(position) < 1e-8,
+    JSON.stringify({ before: position.toArray(), after: camera.position.toArray(),
+      startWidth, width: camera.right }));
+  assert.equal(camera.right, startWidth);
+  app.advance(10);
+  assert.ok(camera.right > startWidth);
+  assert.ok(camera.quaternion.angleTo(angle) < 1e-7);
+  app.settle();
+  const beforeMessage = camera.position.clone(), messageWidth = camera.right;
+  app.get('message').value = '新年快乐\nHappy 2027';
+  app.get('editor').emit('submit');
+  await app.flush(); app.advance(1);
+  assert.ok(camera.position.distanceTo(beforeMessage) < 1e-8);
+  assert.equal(camera.right, messageWidth);
+  app.advance(10);
+  assert.ok(camera.right > messageWidth);
+  assert.ok(camera.quaternion.angleTo(angle) < 1e-7);
+  app.settle();
+  const before = camera.position.clone();
+  app.get('view-button').emit('click');
+  app.advance(1);
+  const firstStep = camera.position.distanceTo(before);
+  assert.ok(firstStep > 0 && firstStep < 80);
+  app.advance(200);
+  assert.ok(camera.position.distanceTo(before) > firstStep * 2);
+  assert.ok(camera.position.y > 600);
+});
+
+test('pause freezes idle poses and changing reduced motion stops and restarts them', async () => {
+  const app = await boot();
+  app.settle();
+  app.get('pause-button').emit('click');
+  app.advance();
+  const renders = app.renderer().renders;
+  app.advance();
+  assert.equal(app.renderer().renders, renders);
+  assert.equal(app.frames.size, 0);
+  app.get('pause-button').emit('click');
+  app.advance(10);
+  assert.ok(app.renderer().renders > renders);
+  app.media.matches = true;
+  app.media.emit('change');
+  app.advance();
+  assert.equal(app.frames.size, 0);
+  app.media.matches = false;
+  app.media.emit('change');
+  app.advance(10);
+  assert.equal(app.frames.size, 1);
 });

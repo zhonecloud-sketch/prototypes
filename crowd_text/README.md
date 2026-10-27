@@ -25,6 +25,13 @@ mouse wheel to zoom, and tap Fit to see everyone. The view button switches
 between angled and overhead views. Pause freezes the movement. See
 `index.html:33` and `app.mjs` for the controls and event handlers.
 
+People walk at individual speeds, so longer trips take more time. Their
+steps follow distance travelled, and settled people continue subtle idle
+movements. Camera framing transitions from the displayed view, preserving
+the manual angle when opening Message or changing the arrangement. Pause
+and reduced-motion preferences suppress idle movement. See `crowd_api.md`,
+`crowd.mjs`, and `app.mjs`.
+
 Run the checks from this directory:
 
 ```powershell

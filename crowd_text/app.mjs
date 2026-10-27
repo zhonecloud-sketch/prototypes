@@ -16,6 +16,7 @@ let mode = 'formed', paused = false, autoFit = true;
 let elevation = Math.PI * .39, azimuth = 0, zoom = 1;
 let frame = 0, lastTime = 0, ready = false;
 let composing = false, preparing = false;
+let cameraView, cameraAnimating = false, manipulating = false, cameraDirect = false;
 
 input.value = initialMessage(location.search);
 updateCount();
@@ -77,32 +78,56 @@ function fitBounds() {
   };
 }
 
-function updateCamera() {
+function updateCamera(delta) {
   if (!ready) return;
   const ratio = aspect();
   const fit = fitView(autoFit ? fitBounds() : manualBounds, ratio, elevation, azimuth);
-  const half = fit.halfHeight / zoom;
-  camera.left = -half * ratio; camera.right = half * ratio;
+  const desired = { x: fit.x, z: fit.z, halfWidth: fit.halfHeight * ratio / zoom,
+    elevation, azimuth };
+  cameraAnimating = false;
+  if (!cameraView || reducedMotion.matches || manipulating || cameraDirect) {
+    cameraView = desired;
+  } else {
+    const blend = 1 - Math.exp(-delta * 3.5);
+    for (const key of ['x', 'z', 'halfWidth', 'elevation', 'azimuth']) {
+      let difference = desired[key] - cameraView[key];
+      if (key === 'azimuth') difference = Math.atan2(Math.sin(difference), Math.cos(difference));
+      const threshold = key === 'azimuth' || key === 'elevation' ? .0001 : .002;
+      if (Math.abs(difference) > threshold) {
+        cameraView[key] += difference * blend;
+        cameraAnimating = true;
+      } else if (delta > 0) cameraView[key] = desired[key];
+    }
+  }
+  cameraDirect = false;
+  const view = cameraView;
+  const half = view.halfWidth / ratio;
+  camera.left = -view.halfWidth; camera.right = view.halfWidth;
   camera.top = half; camera.bottom = -half;
-  camera.position.set(fit.x + Math.sin(azimuth) * Math.cos(elevation) * 600,
-    1.1 + Math.sin(elevation) * 600,
-    fit.z + Math.cos(azimuth) * Math.cos(elevation) * 600);
+  camera.position.set(view.x + Math.sin(view.azimuth) * Math.cos(view.elevation) * 600,
+    1.1 + Math.sin(view.elevation) * 600,
+    view.z + Math.cos(view.azimuth) * Math.cos(view.elevation) * 600);
   camera.up.set(0, 1, 0);
   // A tiny tilt keeps the overhead camera's up vector unambiguous.
-  camera.lookAt(fit.x, 1.1, fit.z);
+  camera.lookAt(view.x, 1.1, view.z);
   camera.updateProjectionMatrix();
 }
 
 function draw(now) {
   frame = 0;
+  const interval = crowd.moving || cameraAnimating ? 1000 / 30 : 1000 / 20;
+  if (lastTime && now - lastTime < interval - 1 && !cameraDirect && !manipulating) {
+    requestDraw();
+    return;
+  }
   const delta = lastTime ? Math.min((now - lastTime) / 1000, .25) : 0;
   lastTime = now;
   const wasMoving = crowd.moving;
-  if (crowd.moving && !paused) crowd.update(delta * Number($('pace').value));
-  updateCamera();
+  if (!paused) crowd.update(delta, Number($('pace').value), !reducedMotion.matches);
+  updateCamera(delta);
   renderer.render(scene, camera);
   if (wasMoving && !crowd.moving) setStatus();
-  if (crowd.moving && !paused && !document.hidden) requestDraw();
+  if ((!paused && !reducedMotion.matches) || cameraAnimating) requestDraw();
 }
 
 function requestDraw() {
@@ -112,8 +137,7 @@ function requestDraw() {
 function resize() {
   if (!renderer) return;
   renderer.setSize(Math.max(1, viewport.clientWidth), Math.max(1, viewport.clientHeight), false);
-  autoFit = true;
-  zoom = 1;
+  cameraAnimating = true;
   requestDraw();
 }
 
@@ -121,7 +145,7 @@ function move(points, nextMode) {
   targetBounds = boundsOf(points);
   crowd.setCount(points.length, aspect());
   mode = nextMode;
-  crowd.moveTo(points, reducedMotion.matches ? 0 : 5.4);
+  crowd.moveTo(points, reducedMotion.matches);
   autoFit = true; zoom = 1; paused = false;
   lastTime = 0;
   $('pause-button').setAttribute('aria-pressed', 'false');
@@ -175,11 +199,25 @@ function showError(message) {
 function setupGestures() {
   const pointers = new Map();
   let pinchDistance = 0;
+  function holdCamera() {
+    manualBounds = fitBounds();
+    if (cameraView) {
+      const dx = cameraView.x - (manualBounds.minX + manualBounds.maxX) / 2;
+      const dz = cameraView.z - (manualBounds.minZ + manualBounds.maxZ) / 2;
+      manualBounds.minX += dx; manualBounds.maxX += dx;
+      manualBounds.minZ += dz; manualBounds.maxZ += dz;
+      elevation = cameraView.elevation; azimuth = cameraView.azimuth;
+      const fit = fitView(manualBounds, aspect(), elevation, azimuth);
+      zoom = fit.halfHeight * aspect() / cameraView.halfWidth;
+    }
+    autoFit = false;
+  }
   viewport.addEventListener('pointerdown', event => {
     if (!ready || event.target.closest('button')) return;
+    if (!pointers.size) holdCamera();
+    manipulating = true;
     viewport.setPointerCapture(event.pointerId);
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    manualBounds = fitBounds(); autoFit = false;
     if (pointers.size === 2) {
       const [a, b] = [...pointers.values()];
       pinchDistance = Math.hypot(a.x - b.x, a.y - b.y);
@@ -202,12 +240,15 @@ function setupGestures() {
     requestDraw();
   });
   for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-    viewport.addEventListener(type, event => { pointers.delete(event.pointerId); pinchDistance = 0; });
+    viewport.addEventListener(type, event => {
+      pointers.delete(event.pointerId); pinchDistance = 0;
+      manipulating = pointers.size > 0;
+    });
   }
   viewport.addEventListener('wheel', event => {
     if (!ready) return;
     event.preventDefault();
-    manualBounds = autoFit ? fitBounds() : manualBounds; autoFit = false;
+    holdCamera(); cameraDirect = true;
     zoom = Math.max(.55, Math.min(10, zoom * Math.exp(-event.deltaY * .001)));
     requestDraw();
   }, { passive: false });
@@ -230,11 +271,14 @@ $('scatter-button').addEventListener('click', () => {
   if (mode === 'scattered') formMessage(false);
   else move(scatterTargets(crowd.people.length, aspect()), 'scattered');
 });
-$('fit-button').addEventListener('click', () => { autoFit = true; zoom = 1; requestDraw(); });
+$('fit-button').addEventListener('click', () => {
+  autoFit = true; zoom = 1; cameraAnimating = true; requestDraw();
+});
 $('view-button').addEventListener('click', () => {
   const overhead = elevation < 1.5;
   elevation = overhead ? Math.PI / 2 - .001 : Math.PI * .39;
   azimuth = 0; autoFit = true; zoom = 1;
+  cameraAnimating = true;
   $('view-label').textContent = overhead ? 'Top' : '3D';
   $('view-button').setAttribute('aria-label', overhead ? 'Switch to angled view' : 'Switch to overhead view');
   requestDraw();
@@ -254,7 +298,9 @@ document.addEventListener('visibilitychange', () => {
   else requestDraw();
 });
 reducedMotion.addEventListener('change', () => {
-  if (reducedMotion.matches && ready && crowd.moving) { crowd.duration = 0; crowd.update(0); setStatus(); requestDraw(); }
+  if (reducedMotion.matches && ready) { crowd.finish(); setStatus(); }
+  lastTime = 0;
+  requestDraw();
 });
 function viewportHeight() {
   const height = window.visualViewport?.height || window.innerHeight;
