@@ -164,7 +164,8 @@
         new URLSearchParams(location.search).get('quality') === 'mobile';
       document.documentElement.dataset.quality = mobile ? 'mobile' : 'desktop';
       let sceneDirty = true, reflectionDirty = true;
-      let renderScale = mobile ? 1 : Math.min(devicePixelRatio, 1.5);
+      let renderScale = Math.min(devicePixelRatio, 1.5);
+      const minimumRenderScale = mobile ? Math.min(devicePixelRatio, 1) : .7;
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(renderScale);
       renderer.setSize(innerWidth, innerHeight);
@@ -432,7 +433,7 @@
       });
 
       function koiTexture(index) {
-        return makeTexture(mobile ? 256 : 512, mobile ? 128 : 256, (ctx, w, h) => {
+        return makeTexture(512, 256, (ctx, w, h) => {
           ctx.scale(w / 1024, h / 512); w = 1024; h = 512;
           const gold = index === 3 || index === 9;
           ctx.fillStyle = gold ? '#e8b54c' : '#eee9d9'; ctx.fillRect(0, 0, w, h);
@@ -468,7 +469,7 @@
       }
 
       function bodyGeometry() {
-        const positions = [], uvs = [], indices = [], rings = mobile ? 20 : 28, sides = mobile ? 12 : 18;
+        const positions = [], uvs = [], indices = [], rings = 28, sides = 18;
         const profile = [.036, .075, .135, .205, .272, .31, .315, .285, .245, .18, .075];
         for (let i = 0; i <= rings; i++) {
           const u = i / rings, section = u * (profile.length - 1), k = Math.min(profile.length - 2, Math.floor(section));
@@ -494,12 +495,13 @@
       const irisMaterial = new THREE.MeshStandardMaterial({ color: '#b0a563', metalness: .35, roughness: .35 });
       const fishDeformation = `
         float tailWeight = pow(clamp((.85 - transformed.x) / 2.3, 0., 1.), 1.65);
-        transformed.z += sin(swimTime * swimSpeed - transformed.x * 3.2 + swimPhase) * tailWeight * .25;
+        transformed.z += sin(swimPhase - transformed.x * 3.2) * tailWeight * swimAmplitude;
+        transformed.z += burstBend * pow(tailWeight, .65);
       `;
       function animateMaterial(material, uniforms) {
         material.onBeforeCompile = shader => {
           Object.assign(shader.uniforms, uniforms);
-          shader.vertexShader = 'uniform float swimTime; uniform float swimSpeed; uniform float swimPhase;\n' + shader.vertexShader;
+          shader.vertexShader = 'uniform float swimPhase; uniform float swimAmplitude; uniform float burstBend;\n' + shader.vertexShader;
           shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n' + fishDeformation);
         };
       }
@@ -507,8 +509,10 @@
         const group = new THREE.Group();
         const details = new THREE.Group(); group.add(details);
         const finVertices = [], finLines = [];
-        const uniforms = { swimTime: causticUniform, swimSpeed: { value: range(2.6, 3.7) }, swimPhase: { value: random() * tau } };
+        const beatRate = range(2.6, 3.7), motionPhase = random() * tau;
+        const uniforms = { swimPhase: { value: motionPhase }, swimAmplitude: { value: .18 }, burstBend: { value: 0 } };
         const texture = koiTexture(i);
+        texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
         const material = new THREE.MeshPhysicalMaterial({ map: texture, roughness: .3, metalness: .05, clearcoat: .85, clearcoatRoughness: .18 });
         animateMaterial(material, uniforms);
         const body = new THREE.Mesh(fishGeometry, material); body.castShadow = false; body.receiveShadow = true; group.add(body);
@@ -568,7 +572,11 @@
         group.position.set(Math.cos(angle) * range(2, 5), range(-.7, -.38), Math.sin(angle) * range(1.3, 3.4));
         const heading = angle + Math.PI / 2;
         scene.add(group);
-        fish.push({ group, details, finRays, heading, speed: range(.38, .64), turn: 0, target: new THREE.Vector2(), nextTarget: 0, uniforms, depth: group.position.y, size });
+        const speed = range(.38, .64);
+        fish.push({ group, details, finRays, heading, speed, currentSpeed: speed,
+          beatRate, motionPhase, burstStart: -10, burstDirection: 1, nextBurst: 0,
+          pursuing: false, hardTurning: false, target: new THREE.Vector2(),
+          nextTarget: 0, uniforms, depth: group.position.y, size });
       }
 
       // Architecture and plant placement are procedural; CC0 foliage is embedded.
@@ -874,7 +882,8 @@
       // depth writes for the opaque leaf interiors to limit overdraw.
       const leafMaterial = new THREE.MeshLambertMaterial({
         map: leafTexture, transparent: true, alphaTest: .12,
-        depthWrite: true, side: THREE.DoubleSide, forceSinglePass: true
+        depthWrite: true, side: THREE.DoubleSide, forceSinglePass: true,
+        alphaToCoverage: mobile
       });
       function foliageCard(column, row) {
         const geometry = new THREE.PlaneGeometry(1, 1);
@@ -992,9 +1001,15 @@
       [bottom, bank, pebbles, ...fish.map(f => f.group)].forEach(underwater);
       stones.layers.enable(1);
       reflectionCamera.layers.set(2);
-      const targetOptions = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, type: THREE.UnsignedByteType };
+      const targetSamples = mobile ? Math.min(2, renderer.capabilities.maxSamples) : 0;
+      const targetOptions = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+        type: THREE.UnsignedByteType, samples: targetSamples };
+      const refractionType = renderer.extensions.has('EXT_color_buffer_float') ? THREE.HalfFloatType : THREE.UnsignedByteType;
+      const gl = renderer.getContext();
+      const refractionSampleLimit = mobile ? Math.max(0, ...gl.getInternalformatParameter(
+        gl.RENDERBUFFER, refractionType === THREE.HalfFloatType ? gl.RGBA16F : gl.RGBA8, gl.SAMPLES)) : 0;
       const refraction = new THREE.WebGLRenderTarget(1, 1, { ...targetOptions,
-        type: renderer.extensions.has('EXT_color_buffer_float') ? THREE.HalfFloatType : THREE.UnsignedByteType
+        type: refractionType, samples: Math.min(targetSamples, refractionSampleLimit)
       });
       const reflection = new THREE.WebGLRenderTarget(1, 1, targetOptions);
       const reflectionMatrix = new THREE.Matrix4();
@@ -1225,7 +1240,9 @@
         renderer.setSize(innerWidth, innerHeight);
         const pixels = new THREE.Vector2(); renderer.getDrawingBufferSize(pixels);
         waterUniforms.resolution.value.copy(pixels);
-        const refractionScale = Math.min(mobile ? .7 : .85, (mobile ? 640 : 1100) / Math.max(pixels.x, pixels.y));
+        // Koi are visible only through this texture: keep it at screen resolution
+        // on phones while the reflection and surrounding garden remain cheaper.
+        const refractionScale = Math.min(mobile ? 1 : .85, (mobile ? 1536 : 1100) / Math.max(pixels.x, pixels.y));
         const reflectionScale = Math.min(.5, (mobile ? 384 : 640) / Math.max(pixels.x, pixels.y));
         refraction.setSize(Math.max(1, Math.round(pixels.x * refractionScale)), Math.max(1, Math.round(pixels.y * refractionScale)));
         reflection.setSize(Math.max(1, Math.round(pixels.x * reflectionScale)), Math.max(1, Math.round(pixels.y * reflectionScale)));
@@ -1259,12 +1276,29 @@
           const edge = Math.hypot(position.x / 6.25, position.z / 3.85);
           if (edge > .85) { dx -= position.x / 6.25 * (edge - .85) * 7; dz -= position.z / 3.85 * (edge - .85) * 7; }
           const desired = Math.atan2(dz, dx), delta = Math.atan2(Math.sin(desired - f.heading), Math.cos(desired - f.heading));
-          f.heading += clamp(delta, -1.1 * dt, 1.1 * dt);
-          const speed = f.speed * (nearest ? 1.55 : 1) * (1 - Math.min(Math.abs(delta), 2) * .18);
-          position.x += Math.cos(f.heading) * speed * dt; position.z += Math.sin(f.heading) * speed * dt;
-          position.y = lerp(position.y, nearest ? -.27 : f.depth + Math.sin(time * .5 + f.uniforms.swimPhase.value) * .07, Math.min(1, dt * 1.6));
-          f.group.rotation.set(Math.sin(time * 1.1 + f.uniforms.swimPhase.value) * .018, -f.heading, Math.sin(time * .7 + f.uniforms.swimPhase.value) * .022);
-          f.uniforms.swimSpeed.value = lerp(f.uniforms.swimSpeed.value, nearest ? 5.2 : 3, dt);
+          const hardTurn = Math.abs(delta) > .95;
+          if ((nearest && !f.pursuing || !nearest && hardTurn && !f.hardTurning) && time >= f.nextBurst) {
+            f.burstStart = time; f.burstDirection = delta < 0 ? -1 : 1;
+            f.nextBurst = time + 2.5;
+          }
+          f.pursuing = Boolean(nearest);
+          f.hardTurning = hardTurn || f.hardTurning && Math.abs(delta) > .5;
+          // One power stroke and one recovery stroke, then glide. Inspired by
+          // fast-start bending: https://pubmed.ncbi.nlm.nih.gov/11733164/
+          const burstProgress = (time - f.burstStart) / .85;
+          const burstEnvelope = burstProgress >= 0 && burstProgress < 1 ? Math.sin(Math.PI * burstProgress) : 0;
+          f.uniforms.burstBend.value = Math.sin(tau * clamp(burstProgress, 0, 1)) * burstEnvelope * .42 * f.burstDirection;
+          f.uniforms.swimAmplitude.value = .18 * (1 - burstEnvelope * .7);
+          // Integrate phase instead of multiplying absolute time by a speed.
+          f.uniforms.swimPhase.value = (f.uniforms.swimPhase.value + f.beatRate * dt) % tau;
+          const turnStep = (1.1 + burstEnvelope * 1.2) * dt;
+          f.heading += clamp(delta, -turnStep, turnStep);
+          const desiredSpeed = f.speed * ((nearest ? 1.25 : 1) + burstEnvelope * .8) * (1 - Math.min(Math.abs(delta), 2) * .18);
+          f.currentSpeed = lerp(f.currentSpeed, desiredSpeed, 1 - Math.exp(-dt * 4));
+          position.x += Math.cos(f.heading) * f.currentSpeed * dt;
+          position.z += Math.sin(f.heading) * f.currentSpeed * dt;
+          position.y = lerp(position.y, nearest ? -.27 : f.depth + Math.sin(time * .5 + f.motionPhase) * .07, Math.min(1, dt * 1.6));
+          f.group.rotation.set(Math.sin(time * 1.1 + f.motionPhase) * .018, -f.heading, Math.sin(time * .7 + f.motionPhase) * .022);
           if (nearest) {
             const headX = position.x + Math.cos(f.heading) * f.size, headZ = position.z + Math.sin(f.heading) * f.size;
             if (Math.hypot(headX - nearest.mesh.position.x, headZ - nearest.mesh.position.z) < .32) {
@@ -1320,8 +1354,8 @@
         camera.position.add(cameraTarget); camera.lookAt(cameraTarget); camera.updateMatrixWorld();
         for (const f of fish) {
           const distance = camera.position.distanceToSquared(f.group.position);
-          f.details.visible = distance < (mobile ? 144 : 361);
-          f.finRays.visible = distance < (mobile ? 144 : 256);
+          f.details.visible = distance < 361;
+          f.finRays.visible = distance < 256;
         }
         water.visible = false;
         // Refresh the static shadow map using outdoor geometry only when needed.
@@ -1352,8 +1386,8 @@
         }
         // Reduce fill rate on a slow GPU without removing the cottage or koi.
         if (!paused && elapsed < .2) frameTimeEMA = lerp(frameTimeEMA, elapsed, .03);
-        if (frame % 120 === 0 && frameTimeEMA > (mobile ? .045 : .027) && renderScale > .72) {
-          renderScale = Math.max(.7, renderScale - .15);
+        if (frame % 120 === 0 && frameTimeEMA > (mobile ? .045 : .027) && renderScale > minimumRenderScale + .02) {
+          renderScale = Math.max(minimumRenderScale, renderScale - .15);
           renderer.setPixelRatio(renderScale); resize();
         }
       }
