@@ -135,7 +135,7 @@ test('arm and leg joints bend, retain segment length, and settle exactly', () =>
   crowd.dispose();
 });
 
-test('walking speed stays bounded and short trips arrive before long trips', () => {
+test('walking at 1x stays bounded and short trips arrive before long trips', () => {
   const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
   crowd.setCount(2, 1);
   crowd.people.forEach((p, i) => {
@@ -145,15 +145,95 @@ test('walking speed stays bounded and short trips arrive before long trips', () 
   const arrival = [null, null];
   for (let tick = 1; tick <= 2400 && crowd.moving; tick++) {
     const previous = crowd.people.map(p => ({ x: p.x, z: p.z }));
-    crowd.update(1 / 60, 1.8);
+    crowd.update(1 / 60, 1);
     crowd.people.forEach((p, i) => {
       const speed = Math.hypot(p.x - previous[i].x, p.z - previous[i].z) * 60;
-      assert.ok(speed <= 1.65001, `Walking speed was ${speed}`);
+      assert.ok(speed <= 1.20001, `Walking speed was ${speed}`);
       if (p.x === p.toX && p.z === p.toZ && arrival[i] === null) arrival[i] = tick / 60;
     });
   }
   assert.equal(crowd.moving, false);
   assert.ok(Math.abs(arrival[0] - arrival[1]) > 5);
+  crowd.dispose();
+});
+
+test('pace directly changes travel time and accelerates or slows a trip already underway', () => {
+  function person() {
+    const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+    crowd.setCount(1, 1);
+    Object.assign(crowd.people[0], { x: 0, z: 0, height: 1, walkSpeed: 1.2, phase: 0 });
+    crowd.moveTo([{ x: 0, z: 30 }]);
+    return crowd;
+  }
+  const times = [];
+  for (const pace of [.5, 1, 3, 4]) {
+    const crowd = person();
+    let ticks = 0;
+    while (crowd.moving && ticks < 4000) { crowd.update(1 / 30, pace); ticks++; }
+    assert.equal(crowd.moving, false);
+    times.push(ticks / 30);
+    crowd.dispose();
+  }
+  assert.ok(times[0] > times[3] * 6);
+  assert.ok(times[2] < times[1] * .4);
+  assert.ok(times[2] < 10, `The default 3x pace took ${times[2]} seconds`);
+  const crowd = person();
+  for (let i = 0; i < 60; i++) crowd.update(1 / 30, 1);
+  const walking = crowd.people[0].speed;
+  for (let i = 0; i < 30; i++) crowd.update(1 / 30, 4);
+  assert.ok(crowd.people[0].speed > walking * 3.5);
+  assert.ok(crowd.root.rotation.x > .1);
+  assert.ok(crowd.arms.every(arm => arm.elbow.rotation.x < -.7));
+  for (let i = 0; i < 30; i++) crowd.update(1 / 30, .5);
+  assert.ok(crowd.people[0].speed <= .61);
+  assert.equal(crowd.root.rotation.x, 0);
+  crowd.dispose();
+});
+
+test('idle arm gestures produce visible movement in a fitted phone view', () => {
+  const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+  crowd.setCount(1, 1);
+  Object.assign(crowd.people[0], { phase: 0, idleGesture: true, height: 1 });
+  crowd.moveTo([{ x: 0, z: 0 }], true);
+  const fit = fitView({ minX: -70, maxX: 70, minZ: -20, maxZ: 20 },
+    390 / 650, Math.PI * .39);
+  const camera = new THREE.OrthographicCamera(-fit.halfHeight * 390 / 650,
+    fit.halfHeight * 390 / 650, fit.halfHeight, -fit.halfHeight, .1, 1600);
+  camera.position.set(0, 1.1 + Math.sin(Math.PI * .39) * 600,
+    Math.cos(Math.PI * .39) * 600);
+  camera.lookAt(0, 1.1, 0); camera.updateMatrixWorld(true);
+  const hand = crowd.arms[0].wrist.children[1];
+  const before = hand.getWorldPosition(new THREE.Vector3()).project(camera);
+  crowd.update(3.5);
+  const after = hand.getWorldPosition(new THREE.Vector3()).project(camera);
+  const pixels = Math.hypot((after.x - before.x) * 390 / 2,
+    (after.y - before.y) * 650 / 2);
+  assert.ok(pixels > 1, `Idle hand movement was only ${pixels} pixels`);
+  assert.equal(crowd.people[0].x, 0);
+  assert.equal(crowd.people[0].z, 0);
+  assert.equal(crowd.moving, false);
+  crowd.dispose();
+});
+
+test('running alternates grounded steps with a flight phase', () => {
+  const crowd = new ArticulatedCrowd(THREE, new THREE.Scene());
+  crowd.setCount(1, 1);
+  Object.assign(crowd.people[0], { x: 0, z: 0, height: 1, phase: 0, walkSpeed: 1.2 });
+  crowd.moveTo([{ x: 0, z: 100 }]);
+  let grounded = 0, airborne = 0;
+  for (let i = 0; i < 180; i++) {
+    crowd.update(1 / 60, 3);
+    if (i < 60) continue;
+    const soles = crowd.legs.map(leg => {
+      const m = leg.ankle.children[1].matrixWorld.elements;
+      return m[13] - (Math.abs(m[1]) + Math.abs(m[5]) + Math.abs(m[9])) / 2;
+    });
+    const lowest = Math.min(...soles);
+    assert.ok(lowest >= -.00001, `Running foot below the floor: ${lowest}`);
+    if (lowest < .01) grounded++;
+    if (lowest > .04) airborne++;
+  }
+  assert.ok(grounded > 20 && airborne > 20, `Grounded: ${grounded}, airborne: ${airborne}`);
   crowd.dispose();
 });
 

@@ -264,7 +264,8 @@ input.addEventListener('keydown', event => {
 });
 $('pace').addEventListener('input', () => {
   const value = Number($('pace').value);
-  $('pace-label').textContent = value < .9 ? 'Gentle' : value > 1.3 ? 'Lively' : 'Easy';
+  $('pace-label').textContent = `${value}×`;
+  requestDraw();
 });
 $('scatter-button').addEventListener('click', () => {
   if (!ready || preparing) return;

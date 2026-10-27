@@ -42,7 +42,8 @@ async function boot(search = '', reduced = false, graphicsFailure = false) {
   const get = id => elements.get(id);
   get('viewport').clientWidth = 390; get('viewport').clientHeight = 650;
   get('editor').hidden = true; get('error').hidden = true;
-  get('input-error').hidden = true; get('detail').value = '1800'; get('pace').value = '1';
+  get('input-error').hidden = true; get('detail').value = '1800';
+  get('pace').value = html.match(/id="pace"[^>]*\bvalue="([^"]+)"/)[1];
   const textDraws = [];
   const document = Object.assign(new Element(), {
     hidden: false, documentElement: new Element(),
@@ -317,4 +318,37 @@ test('pause freezes idle poses and changing reduced motion stops and restarts th
   app.media.emit('change');
   app.advance(10);
   assert.equal(app.frames.size, 1);
+});
+
+test('the live pace control changes actual crowd travel speed without reforming', async () => {
+  const app = await boot('?Chong%20Boo%20Chean%20and%20Family');
+  assert.equal(app.get('pace').value, '3');
+  app.get('pace').value = '1'; app.get('pace').emit('input');
+  app.advance(30);
+  const shadow = app.renderer().scene.children.find(mesh =>
+    mesh.geometry?.type === 'CircleGeometry');
+  function positions() {
+    return Array.from({ length: shadow.count }, (_, i) => {
+      const matrix = new THREE.Matrix4(); shadow.getMatrixAt(i, matrix);
+      return new THREE.Vector3().setFromMatrixPosition(matrix);
+    });
+  }
+  function travel() {
+    const before = positions();
+    app.advance(25);
+    const after = positions();
+    return after.reduce((sum, p, i) => sum + p.distanceTo(before[i]), 0) / after.length;
+  }
+  const walking = travel();
+  app.get('pace').value = '4'; app.get('pace').emit('input');
+  assert.equal(app.get('pace-label').textContent, '4×');
+  app.advance(30);
+  const fast = travel();
+  assert.ok(fast > walking * 3, `Pace change only increased travel by ${fast / walking}x`);
+  app.get('pace').value = '0.5'; app.get('pace').emit('input');
+  app.advance(30);
+  const slow = travel();
+  assert.ok(slow < walking * .65);
+  assert.equal(app.get('message-description').textContent,
+    'Chong Boo Chean and Family\nHappy 2027');
 });

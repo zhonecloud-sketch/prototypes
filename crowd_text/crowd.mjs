@@ -29,9 +29,12 @@ export class ArticulatedCrowd {
     this.slots = [];
     this.meshes = {};
     this.root = new THREE.Object3D();
+    this.root.rotation.order = 'YXZ';
     this.color = new THREE.Color();
     this.shadowMatrix = new THREE.Matrix4();
     this.makeRig();
+    this.rigNodes = [];
+    this.root.traverse(node => this.rigNodes.push(node));
   }
 
   makeRig() {
@@ -103,6 +106,7 @@ export class ArticulatedCrowd {
       height: .86 + Math.random() * .22, width: .88 + Math.random() * .25,
       phase: Math.random() * Math.PI * 2, hairStyle: Math.floor(Math.random() * 4),
       walkSpeed: 1.1 + Math.random() * .25, speed: 0, gait: 0, stridePhase: 0,
+      idleGesture: Math.random() < .3,
       colors: { shirt: choose(SHIRTS), skin: choose(SKIN), hair: choose(HAIR),
         trousers: choose(TROUSERS), shoes: 0x303832, eyes: 0x282723 }
     });
@@ -156,10 +160,11 @@ export class ArticulatedCrowd {
       const dx = p.toX - p.x, dz = p.toZ - p.z;
       const distance = Math.hypot(dx, dz);
       const activeDelta = Math.min(delta, Math.max(0, this.elapsed - p.delay));
-      const maxSpeed = Math.min(1.65 * p.height, p.walkSpeed * (.65 + .35 * pace));
-      const desiredSpeed = Math.min(maxSpeed, Math.sqrt(4 * distance));
+      const maxSpeed = p.walkSpeed * pace;
+      const acceleration = 3 * Math.max(1, pace, p.speed / p.walkSpeed);
+      const desiredSpeed = Math.min(maxSpeed, Math.sqrt(2 * acceleration * distance));
       p.speed += Math.sign(desiredSpeed - p.speed)
-        * Math.min(Math.abs(desiredSpeed - p.speed), 2 * activeDelta);
+        * Math.min(Math.abs(desiredSpeed - p.speed), acceleration * activeDelta);
       const travel = Math.min(distance, p.speed * activeDelta);
       if (distance <= travel || distance < .003) {
         p.x = p.toX; p.z = p.toZ; p.speed = 0;
@@ -168,41 +173,67 @@ export class ArticulatedCrowd {
         p.z += dz / distance * travel;
         moving = true;
       }
-      p.stridePhase += travel / (1.2 * p.height) * Math.PI * 2;
+      const runBlend = Math.max(0, Math.min(1, (p.speed / p.height - 1.6)));
+      const run = runBlend * runBlend * (3 - 2 * runBlend);
+      const strideLength = Math.max((1.2 + run * 1.6) * p.height, p.speed / 2);
+      p.stridePhase += travel / strideLength * Math.PI * 2;
       const gait = Math.min(1, p.speed / .65);
       p.gait += (gait - p.gait) * (1 - Math.exp(-delta * 9));
       const stride = Math.sin(p.stridePhase + p.phase) * p.gait;
       const idleAmount = idle ? 1 - p.gait : 0;
-      const breath = Math.sin(this.time * 1.4 + p.phase) * .009 * idleAmount;
+      const breath = Math.sin(this.time * 1.4 + p.phase) * .02 * idleAmount;
       const sway = Math.sin(this.time * .7 + p.phase) * idleAmount;
+      const gestureTime = (this.time + p.phase * 1.5) % 12;
+      const gesture = p.idleGesture && gestureTime > 2 && gestureTime < 5
+        ? Math.sin((gestureTime - 2) / 3 * Math.PI) ** 2 * idleAmount : 0;
       const targetYaw = distance > .5 ? p.heading : 0;
       const turn = Math.atan2(Math.sin(targetYaw - p.yaw), Math.cos(targetYaw - p.yaw));
       p.yaw += turn * (1 - Math.exp(-delta * 5));
-      // Lower the hips to keep the straight stance leg's foot on the ground.
-      this.root.position.set(p.x, -.6 * (1 - Math.cos(stride * .5)) * p.height, p.z);
-      this.root.rotation.y = p.yaw;
+      // Walking keeps a stance foot planted; running adds a flight phase.
+      const hipSwing = .5 + run * .3;
+      const idleLean = p.speed === 0 ? sway * .055 : 0;
+      this.root.position.set(p.x,
+        (-.6 * (1 - Math.cos(stride * hipSwing))
+          + Math.abs(Math.sin(idleLean)) * .19) * p.height, p.z);
+      this.root.rotation.set(run * .16, p.yaw, idleLean);
       this.root.scale.setScalar(p.height);
       this.torso.scale.x = .44 * p.width;
       this.torso.scale.y = .53 * (1 + breath);
-      this.torso.rotation.z = sway * .012;
-      this.head.rotation.set(sway * .025,
-        Math.sin(this.time * .45 + p.phase) * .09 * idleAmount, 0);
+      this.torso.rotation.z = sway * .025;
+      this.head.rotation.set(sway * .07,
+        Math.sin(this.time * .45 + p.phase) * .25 * idleAmount, 0);
       this.hair.scale.set(.202 * (p.hairStyle === 1 ? 1.15 : 1),
         p.hairStyle === 2 ? .29 : .22, .197);
       this.bun.scale.setScalar(p.hairStyle === 3 ? .095 : .001);
       for (const arm of this.arms) {
-        arm.shoulder.rotation.set(stride * arm.side * .45 + sway * .025,
-          0, arm.side * (.09 + breath));
-        arm.elbow.rotation.x = -.16 - Math.max(0, stride * arm.side) * .55 + sway * .035;
-        arm.wrist.rotation.x = stride * .05 + sway * .025;
+        const wave = arm.side === (p.phase < Math.PI ? -1 : 1) ? gesture : 0;
+        arm.shoulder.rotation.set(stride * arm.side * (.45 + run * .3)
+          + sway * .045 - wave * .25, 0, arm.side * (.09 + breath + wave * 1.4));
+        arm.elbow.rotation.x = -.16 - run * .7
+          - Math.max(0, stride * arm.side) * .55 + sway * .06 - wave * .8;
+        arm.wrist.rotation.x = stride * .05 + sway * .06
+          + wave * Math.sin(this.time * 9 + p.phase) * .35;
       }
       for (const leg of this.legs) {
         const swing = stride * leg.side;
-        leg.hip.rotation.x = -swing * .5;
-        leg.knee.rotation.x = Math.max(0, swing) * 1.2;
+        leg.hip.rotation.x = -swing * hipSwing;
+        leg.knee.rotation.x = Math.max(0, swing) * (1.2 + run * .4) + run * .15;
         leg.ankle.rotation.x = -leg.hip.rotation.x - leg.knee.rotation.x;
       }
       this.root.updateMatrixWorld(true);
+      if (run > 0) {
+        let lowestSole = Infinity;
+        for (const leg of this.legs) {
+          const m = leg.ankle.children[1].matrixWorld.elements;
+          lowestSole = Math.min(lowestSole,
+            m[13] - (Math.abs(m[1]) + Math.abs(m[5]) + Math.abs(m[9])) / 2);
+        }
+        const flight = Math.max(0, Math.sin(p.stridePhase * 2 + p.phase * 2)) ** 2 * .16;
+        const lift = ((.005 + flight) * p.height - lowestSole) * run;
+        this.root.position.y += lift;
+        this.root.updateMatrix();
+        for (const node of this.rigNodes) node.matrixWorld.elements[13] += lift;
+      }
       for (const slot of this.slots) {
         this.meshes[slot.shape].setMatrixAt(i * this.slotCounts[slot.shape] + slot.offset,
           slot.node.matrixWorld);
