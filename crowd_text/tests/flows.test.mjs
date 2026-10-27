@@ -15,6 +15,11 @@ async function boot(search = '', reduced = false, graphicsFailure = false) {
       this.listeners = new Map(); this.attributes = new Map();
       this.hidden = false; this.value = ''; this.textContent = '';
       this.style = { setProperty() {} };
+      this.classes = new Set();
+      this.classList = {
+        toggle: (name, enabled) => enabled ? this.classes.add(name) : this.classes.delete(name),
+        contains: name => this.classes.has(name)
+      };
     }
     addEventListener(type, callback) {
       if (!this.listeners.has(type)) this.listeners.set(type, []);
@@ -211,4 +216,21 @@ test('an oversized URL stays editable while the default crowd still starts', asy
   assert.match(app.get('input-error').textContent, /120 characters/);
   assert.equal(app.get('message-description').textContent, 'Happy 2027');
   assert.equal(app.get('error').hidden, true);
+});
+
+test('keyboard-sized visual viewports compact the header and retain form submission', async () => {
+  const app = await boot();
+  app.advance();
+  app.get('edit-button').emit('click');
+  app.window.visualViewport.height = 300;
+  app.window.visualViewport.emit('resize');
+  assert.equal(app.document.documentElement.classList.contains('compact-height'), true);
+  app.get('message').value = '锺武正和家人\n2027 快乐！';
+  app.get('editor').emit('submit');
+  await app.flush();
+  assert.equal(app.get('message-description').textContent, '锺武正和家人\n2027 快乐！');
+  assert.equal(app.get('editor').hidden, true);
+  app.window.visualViewport.height = 700;
+  app.window.visualViewport.emit('resize');
+  assert.equal(app.document.documentElement.classList.contains('compact-height'), false);
 });

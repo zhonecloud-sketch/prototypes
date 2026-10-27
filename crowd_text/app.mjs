@@ -257,7 +257,9 @@ reducedMotion.addEventListener('change', () => {
   if (reducedMotion.matches && ready && crowd.moving) { crowd.duration = 0; crowd.update(0); setStatus(); requestDraw(); }
 });
 function viewportHeight() {
-  document.documentElement.style.setProperty('--app-height', `${window.visualViewport?.height || window.innerHeight}px`);
+  const height = window.visualViewport?.height || window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${height}px`);
+  document.documentElement.classList.toggle('compact-height', height < 500);
 }
 window.visualViewport?.addEventListener('resize', viewportHeight);
 window.addEventListener('resize', viewportHeight);

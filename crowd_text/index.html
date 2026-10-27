@@ -27,22 +27,28 @@
       <div id="viewport" role="group" aria-label="A diverse, articulated crowd forming Happy 2027. Drag to orbit and pinch to zoom.">
         <div id="loading" class="loading"><span class="loading-dots" aria-hidden="true">● ● ●</span><p>Good company is on its way.</p></div>
         <div id="error" class="error-card" hidden><h2>We couldn’t gather the crowd.</h2><p id="error-message"></p><button id="retry" type="button">Try again</button></div>
-        <div class="scene-note"><span id="people-count">—</span> little individuals <span class="note-divider">/</span> one shared wish</div>
-        <span class="gesture-hint">Drag to explore · Pinch to zoom</span>
+      </div>
+      <div class="scene-meta">
+        <p class="scene-note"><span id="people-count">—</span> people<span class="scene-slogan"> <span class="note-divider">/</span> one shared wish</span></p>
+        <p class="gesture-hint"><span class="gesture-long">Drag to explore</span><span class="gesture-short">Drag</span> · Pinch to zoom</p>
       </div>
       <p id="message-description" class="sr-only">Happy 2027</p>
     </section>
     <footer class="controls-shell">
       <form id="editor" class="editor" hidden>
-        <div class="editor-heading"><label for="message">YOUR MESSAGE</label><span id="text-count">10 / 120</span></div>
-        <textarea id="message" rows="2" maxlength="120" spellcheck="false" aria-describedby="message-help">Happy 2027</textarea>
-        <p id="message-help">English, 中文, or a little of both. Up to three lines.</p>
-        <div class="settings">
-          <label class="setting">Crowd detail<select id="detail"><option value="900">Light · up to 900</option><option value="1800" selected>Balanced · up to 1,800</option><option value="3000">Rich · up to 3,000</option></select></label>
-          <label class="setting pace-setting">Pace <output id="pace-label" for="pace">Easy</output><input id="pace" type="range" min="0.6" max="1.8" step="0.1" value="1"></label>
+        <div class="editor-fields">
+          <div class="editor-heading"><label for="message">YOUR MESSAGE</label><span id="text-count">10 / 120</span></div>
+          <textarea id="message" rows="2" maxlength="120" spellcheck="false" aria-describedby="message-help">Happy 2027</textarea>
+          <p id="message-help">English or 中文 · Up to three lines.</p>
+          <div class="settings">
+            <label class="setting">Crowd detail<select id="detail"><option value="900">Light · 900</option><option value="1800" selected>Balanced · 1,800</option><option value="3000">Rich · 3,000</option></select></label>
+            <label class="setting pace-setting"><span>Pace <output id="pace-label" for="pace">Easy</output></span><input id="pace" type="range" min="0.6" max="1.8" step="0.1" value="1"></label>
+          </div>
+        </div>
+        <div class="editor-actions">
+          <p id="input-error" class="input-error" role="alert" hidden></p>
           <button id="form-button" class="form-button" type="submit">Form message <span aria-hidden="true">↗</span></button>
         </div>
-        <p id="input-error" class="input-error" role="alert" hidden></p>
       </form>
       <nav class="toolbar" aria-label="Crowd controls">
         <button id="edit-button" class="edit-button" type="button" aria-expanded="false" aria-controls="editor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>Message</span></button>
