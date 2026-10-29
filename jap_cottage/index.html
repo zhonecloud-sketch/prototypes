@@ -874,12 +874,17 @@
       bell.position.y = -.56; windChime.add(bell);
       const slip = new THREE.Mesh(new THREE.PlaneGeometry(.075, .3), new THREE.MeshStandardMaterial({ color: '#e6dcc6', side: THREE.DoubleSide, roughness: 1 })); slip.position.y = -.85; windChime.add(slip);
 
-      // A gravel approach follows the bank without crossing the water.
-      const pathCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(-13, -.025, 13), new THREE.Vector3(-11, -.025, 7), new THREE.Vector3(-9.6, -.025, 1), new THREE.Vector3(-9, -.025, -3.6), new THREE.Vector3(-7.15, -.025, -4)]);
+      // The gravel approach wears down to soil, then disappears into the grass.
+      const pathCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(-16.5, -.025, 23), new THREE.Vector3(-14.4, -.025, 17), new THREE.Vector3(-13, -.025, 13), new THREE.Vector3(-11, -.025, 7), new THREE.Vector3(-9.6, -.025, 1), new THREE.Vector3(-9, -.025, -3.6), new THREE.Vector3(-7.15, -.025, -4)]);
+      function pathWidth(t) {
+        return .95 * lerp(.35, 1, THREE.MathUtils.smoothstep(t, 0, .5)) *
+          (1 + .04 * Math.sin(t * 61) + .025 * Math.sin(t * 103));
+      }
       const pathVertices = [], pathUVs = [], pathIndices = [];
       for (let i = 0; i <= 90; i++) {
         const t = i / 90, p = pathCurve.getPoint(t), tangent = pathCurve.getTangent(t);
-        for (const side of [-1, 1]) { pathVertices.push(p.x - tangent.z * .95 * side, p.y, p.z + tangent.x * .95 * side); pathUVs.push(side === -1 ? 0 : 1, t * 14); }
+        const width = pathWidth(t);
+        for (const side of [-1, 1]) { pathVertices.push(p.x - tangent.z * width * side, p.y, p.z + tangent.x * width * side); pathUVs.push(side === -1 ? 0 : 1, t); }
         if (i < 90) { const n = i * 2; pathIndices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
       }
       const pathGeometry = new THREE.BufferGeometry();
@@ -894,14 +899,66 @@
         }
       });
       gravelTexture.wrapS = gravelTexture.wrapT = THREE.RepeatWrapping;
-      const gravel = new THREE.Mesh(pathGeometry, new THREE.MeshStandardMaterial({ map: gravelTexture, bumpMap: gravelTexture, bumpScale: .035, color: '#b8b9a7', roughness: 1, side: THREE.DoubleSide })); gravel.receiveShadow = true; scene.add(gravel);
+      gravelTexture.repeat.set(1, 22);
+      const pathMaterial = new THREE.MeshStandardMaterial({
+        map: gravelTexture, bumpMap: gravelTexture, bumpScale: .025,
+        color: '#b8b9a7', roughness: 1, side: THREE.DoubleSide,
+        transparent: true, depthWrite: false, forceSinglePass: true
+      });
+      pathMaterial.onBeforeCompile = shader => {
+        shader.uniforms.pathSoilColor = { value: new THREE.Color('#7d6a4e') };
+        shader.vertexShader = 'varying vec2 pathUV;\n' + shader.vertexShader;
+        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>',
+          '#include <begin_vertex>\npathUV = uv;');
+        shader.fragmentShader = 'varying vec2 pathUV; uniform vec3 pathSoilColor;\n' + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `
+          #include <map_fragment>
+          float trail = pathUV.y;
+          float scuff = .5 + .3 * sin(pathUV.x * 21. + trail * 96.)
+            + .2 * sin(pathUV.x * 43. - trail * 157.);
+          float gravelCoverage = smoothstep(.20, .54, trail);
+          vec3 soil = pathSoilColor * (.82 + scuff * .30);
+          diffuseColor.rgb = mix(soil, diffuseColor.rgb, gravelCoverage);
+          float edgeNoise = .05 * sin(trail * 167.)
+            + .03 * sin(trail * 49. + pathUV.x * 13.);
+          float edgeFade = 1. - smoothstep(.66 + edgeNoise, .99,
+            abs(pathUV.x - .5) * 2.);
+          float endFade = smoothstep(.015, .23, trail + .015 * (scuff - .5));
+          diffuseColor.a *= edgeFade * endFade;
+        `);
+      };
+      const gravel = new THREE.Mesh(pathGeometry, pathMaterial); gravel.receiveShadow = true; scene.add(gravel);
       for (let i = 0; i < 22; i++) {
-        const p = pathCurve.getPoint(.035 + i / 23 * .93);
+        const p = pathCurve.getPoint(.4 + i / 23 * .55);
         const step = new THREE.Mesh(stoneGeometry, foundationMaterial);
         step.position.set(p.x + Math.sin(i * 2.5) * .15, .025, p.z);
         step.scale.set(range(.55, .7), .085, range(.4, .58)); step.rotation.y = range(-.5, .5);
+        step.scale.multiplyScalar(lerp(.5, 1, THREE.MathUtils.smoothstep(i, 0, 4)));
         step.castShadow = step.receiveShadow = true; scene.add(step);
       }
+      // Reuse the bank's grass mesh; preserve the remaining garden's random seed.
+      const pathGrassSeed = seed;
+      for (let clump = 0; clump < (mobile ? 64 : 96); clump++) {
+        const t = range(0, .48), p = pathCurve.getPoint(t), tangent = pathCurve.getTangent(t);
+        const margin = pathWidth(t) * THREE.MathUtils.smoothstep(t, .02, .36);
+        const across = range(margin, 1.35) * (random() < .5 ? -1 : 1);
+        const bx = p.x - tangent.z * across, bz = p.z + tangent.x * across;
+        for (let blade = 0; blade < 3; blade++) {
+          const angle = random() * tau, height = range(.08, .25), bend = range(.03, .12);
+          const x = bx + range(-.06, .06), z = bz + range(-.06, .06), width = range(.012, .025);
+          const point = (u, side) => [x + Math.sin(angle) * bend * u * u + Math.cos(angle) * width * (1 - u) * side,
+            -.06 + height * u, z + Math.cos(angle) * bend * u * u + Math.sin(angle) * width * (1 - u) * side];
+          color.setHSL(range(.2, .26), range(.3, .45), range(.18, .3));
+          [point(0, -1), point(0, 1), point(.55, -1), point(0, 1), point(.55, 1), point(.55, -1),
+            point(.55, -1), point(.55, 1), point(1, 0)].forEach(vertex => {
+            grassVertices.push(...vertex); grassColors.push(color.r, color.g, color.b);
+          });
+        }
+      }
+      seed = pathGrassSeed;
+      grassGeometry.setAttribute('position', new THREE.Float32BufferAttribute(grassVertices, 3));
+      grassGeometry.setAttribute('color', new THREE.Float32BufferAttribute(grassColors, 3));
+      grassGeometry.deleteAttribute('normal'); grassGeometry.computeVertexNormals();
       function stoneLantern(x, z, scale) {
         const stone = (w, h, d, y) => box(w * scale, h * scale, d * scale, x, y * scale, z, foundationMaterial);
         stone(.85, .18, .85, .09); stone(.62, .18, .62, .26);
