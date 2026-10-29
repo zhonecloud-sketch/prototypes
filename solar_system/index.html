@@ -106,7 +106,7 @@ dialog{background:#111a25;color:var(--ink);border:1px solid #ffffff28;border-rad
   <p>Far beyond this view, the <a href="https://science.nasa.gov/solar-system/oort-cloud/" target="_blank" rel="noopener">hypothesized Oort Cloud</a> may form an immense shell of icy bodies. Its scale does not fit this planetary view. Background stars are decorative.</p>
   <h3>Moons and rings</h3><p id="moon-model-note">This model includes 22 selected planetary moons plus Pluto’s Charon. Moon distances and sizes are exaggerated; orbital phases and most surface appearances are illustrative. See the source notes below.</p><p>All four giant planets have rings. Faint rings around Jupiter, Uranus, and Neptune are brightened for visibility. Saturn uses the radial color and transparency profile from <a href="https://science.nasa.gov/resource/saturn-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Saturn model</a>, with fine ringlets, gaps, gentle density variation, and approximate planet and ring shadows. The rings retain their nearly circular form; particles are too small to resolve at this scale. Ring and moon surfaces other than Earth’s Moon are illustrative.</p>
   <h3>Surfaces, sunlight & solar activity</h3>
-  <p>The Sun is plasma, not molten rock. Its moving granulation, dark magnetic regions, and prominences that rise, twist, rupture, eject plasma, and drain back are illustrative, with enhanced orange colors inspired by solar imaging. The flame-like fringe represents short plasma jets called spicules, following <a href="https://science.nasa.gov/sun/facts/" target="_blank" rel="noopener">NASA’s solar-atmosphere observations</a>. Prominences stay close to the surface in this view, with a maximum modeled height of 10% of the Sun’s radius. The fine jets are slightly enlarged for screen readability; the diffuse corona is kept faint. Solar activity runs on a shortened visual clock, not the simulation date; pause freezes it. References: <a href="https://science.nasa.gov/photojournal/eruptive-prominence/" target="_blank" rel="noopener">NASA/SDO eruptive prominence</a> and <a href="https://www.youtube.com/watch?v=2HoTK_Gqi2Q" target="_blank" rel="noopener">National Geographic: Sun 101</a>.</p>
+  <p>The Sun is plasma, not molten rock. Its moving granulation, dark magnetic regions, and prominences that rise, twist, rupture, eject plasma, and drain back are illustrative, with enhanced orange colors inspired by solar imaging. The flame-like fringe represents short plasma jets called spicules, following <a href="https://science.nasa.gov/sun/facts/" target="_blank" rel="noopener">NASA’s solar-atmosphere observations</a>. A broader, uneven red-orange glow surrounds the limb. Prominences have unequal heights and leaning, twisting strands, with modeled heights limited to about 45% of the Sun’s radius. Their scale, brightness, and timing are illustrative, inspired by solar-imaging views; this is not a measurement of the atmosphere’s visible-light appearance. Solar activity runs on a shortened visual clock, not the simulation date; pause freezes it. References: <a href="https://science.nasa.gov/photojournal/eruptive-prominence/" target="_blank" rel="noopener">NASA/SDO eruptive prominence</a> and <a href="https://www.youtube.com/watch?v=2HoTK_Gqi2Q" target="_blank" rel="noopener">National Geographic: Sun 101</a>.</p>
   <p>Planet atmospheres have different thicknesses and colors, with a sunlight-dependent limb and twilight tint. These are visual approximations to scattering, not a full atmospheric simulation. Planet surfaces and clouds use diffuse lighting without sharp specular highlights. Cloud movement and storms are illustrative. Saturn’s fine cloud ribbons and ring-shadow pattern are enhanced for readability. <a href="https://science.nasa.gov/neptune/neptune-facts/" target="_blank" rel="noopener">Uranus and Neptune are both pale blue-green in natural color</a>. Neither has a solid visible surface. Neptune uses the cylindrical map from <a href="https://science.nasa.gov/resource/neptune-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Neptune model</a>, with enhanced blue contrast and bright methane-cloud streaks inspired by <a href="https://science.nasa.gov/photojournal/neptune-true-color-of-clouds/" target="_blank" rel="noopener">Voyager cloud imagery</a> and <a href="https://www.nationalgeographic.com/science/article/neptune" target="_blank" rel="noopener">National Geographic’s Neptune photographs</a>. This is an image-based weather reconstruction, not a current weather map. Comets show a narrow blue ion tail directed away from the Sun and a broader dust tail curved toward the trailing orbital direction, following <a href="https://spaceplace.nasa.gov/comets/en/" target="_blank" rel="noopener">NASA’s comet guide</a>. Tail shape, activity cutoff, and brightness are illustrative. Use “Visit a close approach” for active tails, or “View nucleus” for surface detail. Mercury and Ceres do not get a thick atmospheric shell.</p>
   <p>Earth’s blue atmospheric edge fades into space, with sunlight-dependent haze and warm twilight. Rayleigh scattering, which scatters blue light more strongly than red light, and aerosol scattering are approximated here. Cloud tops sit close to the surface; atmospheric thickness is slightly enhanced for readability on phones. Visual references: <a href="https://science.nasa.gov/earth/earth-observatory/the-top-of-the-atmosphere-7373/" target="_blank" rel="noopener">NASA’s atmosphere from orbit</a> and <a href="https://www.nationalgeographic.com/science/article/where-is-the-edge-of-space-and-what-is-the-karman-line" target="_blank" rel="noopener">National Geographic’s view of Earth’s atmospheric edge</a>.</p>
   <p>Pluto’s color texture is based on the <a href="https://science.nasa.gov/resource/pluto-global-color-map/" target="_blank" rel="noopener">New Horizons global color mosaic</a> (NASA/JHUAPL/SwRI). AI-assisted reconstruction continues terrain detail through blurry and unmapped regions to avoid abrupt texture boundaries. Reconstructed features are illustrative, not measured geography. The color image is not used as an elevation map. Ceres uses the surface and normal maps from <a href="https://science.nasa.gov/resource/ceres-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Ceres model</a>, reduced to 2K. A normal map changes how terrain catches the light without adding mesh detail; source imagery retains some baked-in lighting. Halley’s elongated shape follows <a href="https://www.esa.int/Science_Exploration/Space_Science/Rosetta/Giotto_s_comet_results" target="_blank" rel="noopener">Giotto observations</a>; fine nucleus relief and Encke’s shape are artistic reconstructions. Brightness-based bump shading adds illustrative relief rather than measured elevations.</p>
@@ -556,8 +556,8 @@ try {
     }
     if(isSun) {
       const corona=new THREE.Sprite(new THREE.SpriteMaterial({map:glowMap,color:0xffca7d,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
-      corona.material.opacity=.08;corona.scale.setScalar(data.radius*3.2);group.add(corona);
-      // Fine chromospheric jets, kept close to the limb in every camera view.
+      corona.material.color.set(0xff3608);corona.material.opacity=.42;corona.scale.setScalar(data.radius*4.2);group.add(corona);
+      // Uneven plasma jets inside a broader, softly fading coronal glow.
       const limb=new THREE.Mesh(new THREE.SphereGeometry(1,96,64),new THREE.ShaderMaterial({
         uniforms:{solarRadius:{value:data.radius},visualTime},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,
         vertexShader:`varying vec3 worldPoint;varying vec3 center;void main(){vec4 p=modelMatrix*vec4(position,1.);worldPoint=p.xyz;center=(modelMatrix*vec4(0.,0.,0.,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*p;}`,
@@ -565,22 +565,25 @@ try {
           ${noiseGLSL}
           void main(){vec3 ray=normalize(worldPoint-cameraPosition),origin=(cameraPosition-center)/solarRadius;
             vec3 closest=origin-ray*dot(origin,ray);float height=length(closest)-1.;
-            if(height<-.003 || height>.032)discard;
+            if(height<-.003 || height>.36)discard;
             vec3 n=normalize(closest);float t=visualTime*.28;
             vec3 bend=vec3(noise3(n*17.+t),noise3(n*17.+12.-t),noise3(n*17.+31.+t))-.5;
-            vec3 field=normalize(n+bend*max(0.,height)*5.);
-            float roots=noise3(field*95.+vec3(t*.16,0.,0.));
-            float pulse=.68+.32*sin(t*1.4+noise3(n*24.)*6.283185);
-            float tip=.0045+roots*roots*.022*pulse;
-            float stream=noise3(field*220.+vec3(0.,-height*500.+t*2.,0.));
+            vec3 field=normalize(n+bend*max(0.,height)*2.2);
+            float roots=noise3(field*52.+vec3(t*.16,0.,0.));
+            float pulse=.70+.30*sin(t*1.1+noise3(n*24.)*6.283185);
+            float tip=.014+pow(roots,3.)*.10*pulse;
+            tip+=.025*pow(smoothstep(.50,.80,fbm(n*13.)),2.);
+            float stream=noise3(field*125.+vec3(0.,-height*160.+t*2.,0.));
             float brightness=pow(clamp(1.-max(0.,height)/tip,0.,1.),.7);
             float edge=smoothstep(-.003,.0005,height)*(1.-smoothstep(tip-.001,tip+.0015,height));
-            float alpha=(.16+.84*pow(smoothstep(.25,.75,stream),1.3))*brightness*edge*.95;
-            vec3 color=mix(vec3(.95,.035,.002),vec3(1.4,.38,.025),brightness);
-            gl_FragColor=vec4(color,alpha);
+            float jets=(.18+.82*pow(smoothstep(.25,.75,stream),1.3))*brightness*edge;
+            float haze=exp(-max(0.,height)*9.)*(.14+.18*fbm(field*18.+vec3(0.,t*.25-height*13.,0.)));
+            haze*=smoothstep(-.003,.003,height)*(1.-smoothstep(.20,.36,height));
+            vec3 color=mix(vec3(.95,.018,.001),vec3(1.4,.32,.012),jets/max(.001,jets+haze));
+            gl_FragColor=vec4(color,min(.95,jets+haze));
             #include <colorspace_fragment>
           }`
-      }));limb.scale.setScalar(data.radius*1.035);group.add(limb);
+      }));limb.scale.setScalar(data.radius*1.37);group.add(limb);
     }
     if(data.el) {
       const material=new THREE.LineBasicMaterial({color:data.peri?0x7caaa8:0x718394,transparent:true,opacity:data.peri?.20:.22});
@@ -595,64 +598,72 @@ try {
   const fp=filamentGeometry.attributes.position;
   for(let k=0;k<fp.count;k++)fp.setXYZ(k,filamentGeometry.attributes.uv.getX(k),fp.getY(k)*2,0);
   const fieldGLSL=`
-    vec3 limitHeight(vec3 p){vec3 radial=p+vec3(0.,1.,0.);return radial*min(1.,1.10/length(radial))-vec3(0.,1.,0.);}
+    uniform vec3 shape;
+    vec3 limitHeight(vec3 p){vec3 radial=p+vec3(0.,1.,0.);return radial*min(1.,1.45/length(radial))-vec3(0.,1.,0.);}
     vec3 fieldLine(float u,float age,float strand){
       float growth=clamp(age/10.,0.,1.),stretch=clamp((age-10.)/8.,0.,1.);
       float collapse=clamp((age-22.)/8.,0.,1.);
-      float arch=sin(u*3.14159),height=.001+.020*growth*growth+.035*stretch*stretch;
-      height*=1.-collapse;float x=(u-.5)*(.14+stretch*.04);
-      float twist=u*15.-age*.42+strand*1.7;
-      float width=arch*(.001+.004*growth);
-      vec3 p=vec3(x+sin(twist)*width,height*arch,cos(twist)*width+strand*.003*arch);
-      p.y+=sqrt(max(.01,1.-p.x*p.x))-1.;
+      float phase=shape.z+strand*.19;
+      float skew=clamp(u+.08*sin(u*3.14159)*sin(phase+age*.08),0.,1.);
+      float arch=pow(max(0.,sin(skew*3.14159)),.78+.16*sin(phase));
+      float height=(.008+shape.x*(.55*growth*growth+.45*stretch*stretch))*(1.-collapse);
+      float x=-.5*cos(skew*3.14159)*(.30+stretch*.20);
+      x+=arch*(shape.y*growth+.025*sin(age*.25+u*4.+phase));
+      float twist=u*(11.+shape.z)-age*.42+strand*1.7;
+      float width=arch*(.003+.014*growth);
+      vec3 p=vec3(x+sin(twist)*width+strand*.012*arch,height*arch*(1.+.20*sin(phase)),cos(twist)*width+strand*.009*arch);
+      p.y+=arch*.022*growth*sin(u*9.+phase-age*.08);
+      p.z+=.055*arch*sin(u*4.+age*.10+phase);
+      p.y+=sqrt(max(.01,1.-p.x*p.x-p.z*p.z))-1.;
       return p;
     }`;
-  for(const [index,normal] of [[0,[.96,.24,.10]],[1,[-.82,.46,.34]],[2,[.05,-.74,.67]]]) {
+  for(const [index,normal,height,lean] of [[0,[.96,.24,.10],.36,.16],[1,[-.82,.46,.34],.24,-.12],[2,[.05,-.74,.67],.29,.20]]) {
     const root=new THREE.Group(),direction=new THREE.Vector3(...normal).normalize();
     root.position.copy(direction);root.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction);sun.mesh.add(root);
-    const age={value:0};
-    for(let strand=0;strand<10;strand++) {
-      const material=new THREE.ShaderMaterial({uniforms:{age,strand:{value:strand-4.5}},transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,toneMapped:false,
-        vertexShader:`uniform float age;uniform float strand;varying vec2 along;
+    const age={value:0},shape={value:new THREE.Vector3(height,lean,index*2.37)};
+    // A soft central plasma veil sits among the finer, brighter strands.
+    for(let strand=-1;strand<10;strand++) {
+      const material=new THREE.ShaderMaterial({uniforms:{age,shape,strand:{value:strand<0?0:strand-4.5},ribbonWidth:{value:strand<0?.05:.0065},alphaScale:{value:strand<0?.24:.75}},transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,toneMapped:false,
+        vertexShader:`uniform float age;uniform float strand;uniform float ribbonWidth;varying vec2 along;
           ${fieldGLSL}
           void main(){float u=position.x;along=uv;vec3 p=fieldLine(u,age,strand);
-            float lift=pow(clamp((age-17.)/8.,0.,1.),1.5);p.y+=pow(sin(u*3.14159),2.)*lift*.015;p=limitHeight(p);
+            float lift=pow(clamp((age-17.)/8.,0.,1.),1.5);p.y+=pow(sin(u*3.14159),2.)*lift*(.05+.025*sin(strand*1.27+shape.z));p=limitHeight(p);
             vec3 tangent=fieldLine(min(1.,u+.002),age,strand)-fieldLine(max(0.,u-.002),age,strand);
             vec4 view=modelViewMatrix*vec4(p,1.);vec3 edge=normalize(cross(mat3(modelViewMatrix)*tangent,normalize(-view.xyz)));
-            float width=.003*(.55+.45*sin(u*3.14159))*(1.-clamp((age-24.)/6.,0.,1.));
+            float width=ribbonWidth*(.55+.45*sin(u*3.14159))*(1.-clamp((age-24.)/6.,0.,1.));
             view.xyz+=edge*position.y*width*length(modelViewMatrix[0].xyz);gl_Position=projectionMatrix*view;}`,
-        fragmentShader:`uniform float age;uniform float strand;varying vec2 along;
+        fragmentShader:`uniform float age;uniform float strand;uniform float alphaScale;varying vec2 along;
           ${noiseGLSL}
-          void main(){float flowing=noise3(vec3(along.x*75.-age*3.,strand*7.,along.y*5.));
-            float broken=clamp((age-17.)/3.,0.,1.);float gaps=exp(-pow((along.x-.23)/.045,2.))+exp(-pow((along.x-.77)/.045,2.));
-            float density=(.28+flowing*.72)*pow(max(0.,1.-abs(along.y*2.-1.)),1.2)*(1.-clamp(gaps*broken,0.,1.));
-            vec3 color=mix(vec3(.72,.018,.001),vec3(1.15,.24,.018),flowing);
-            gl_FragColor=vec4(color,density*.67);
+          void main(){float flowing=fbm(vec3(along.x*22.-age*.8,strand*.73,along.y*3.));
+            float broken=clamp((age-17.)/3.,0.,1.);float gap=.22+.035*sin(strand*.9);float gaps=exp(-pow((along.x-gap)/.045,2.))+exp(-pow((along.x-.79-.025*cos(strand))/.035,2.));
+            float density=(.05+.95*smoothstep(.25,.72,flowing))*pow(max(0.,1.-abs(along.y*2.-1.)),1.2)*(1.-clamp(gaps*broken,0.,1.));
+            vec3 color=mix(vec3(.55,.006,.001),vec3(1.05,.10,.006),flowing);
+            gl_FragColor=vec4(color,density*alphaScale);
             #include <colorspace_fragment>
           }`
       });const filament=new THREE.Mesh(filamentGeometry,material);filament.frustumCulled=false;root.add(filament);
     }
     const seeds=new Float32Array(480*3);for(let k=0;k<seeds.length;k++)seeds[k]=random();
     const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(480*3),3));geo.setAttribute('seed',new THREE.BufferAttribute(seeds,3));
-    const plasma=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:{age,glow:{value:glowMap}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,
+    const plasma=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:{age,shape,glow:{value:glowMap}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,
       vertexShader:`uniform float age;attribute vec3 seed;varying float heat;
         ${fieldGLSL}
         void main(){float u=fract(seed.x+age*.095);vec3 p=fieldLine(u,age,(seed.y-.5)*6.);heat=.5+seed.z*.5;
-          if(age>17. && seed.y>.36){float flight=max(0.,age-17.-seed.z*3.);float t=flight*.05;
+          if(age>17. && seed.y>.36){float flight=max(0.,age-17.-seed.z*3.);float t=flight*.07;
             p=fieldLine(.18+seed.x*.64,17.,(seed.y-.5)*6.);
-            p+=vec3((seed.x-.5)*t*.12,t*(.09+seed.z*.045)-t*t*.16,(seed.y-.5)*t*.10);
+            p+=vec3((seed.x-.5)*t*.28,t*(.25+seed.z*.16)-t*t*.16,(seed.y-.5)*t*.22);
             heat*=max(0.,1.-flight/(8.+seed.z*5.));}
-          p=limitHeight(p);vec4 view=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*view;gl_PointSize=clamp(14./max(.1,-view.z),.6,3.)*sqrt(heat);}`,
+          p=limitHeight(p);vec4 view=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*view;gl_PointSize=clamp(18./max(.1,-view.z),.8,4.)*sqrt(heat);}`,
       fragmentShader:`uniform sampler2D glow;varying float heat;void main(){float alpha=texture2D(glow,gl_PointCoord).a;gl_FragColor=vec4(mix(vec3(.8,.02,.001),vec3(1.1,.24,.025),heat),alpha*heat*.6);
         #include <colorspace_fragment>
       }`
-    }));plasma.frustumCulled=false;root.add(plasma);eruptions.push({root,age,offset:index*26});
+    }));plasma.frustumCulled=false;root.add(plasma);eruptions.push({root,age,offset:index*26,cycle:78+index*11});
   }
   function updateVisuals(dt) {
     if(!state.paused && !reducedMotion)visualTime.value+=dt;
     for(const clouds of cloudLayers)clouds.rotation.y=visualTime.value*.004;
     for(const eruption of eruptions) {
-      const age=mod(visualTime.value+eruption.offset,78);
+      const age=mod(visualTime.value+eruption.offset,eruption.cycle);
       eruption.root.visible=age<34;eruption.age.value=age;
     }
   }
@@ -937,7 +948,7 @@ try {
         if(body.moons.length) html+='<p class="info-note">Selected major moons; not a complete catalog.</p>';
       }
       if(data.peri) html+='<button class="panel-action" id="perihelion">Visit a close approach <span>↗</span></button><button class="panel-action" id="comet-view">'+(cometNucleus?'View comet & tails':'View nucleus')+' <span>↗</span></button><p class="info-note">Tails grow near the Sun. Far away, the cold nucleus has little visible activity. Visit a close approach to see both tails.</p>';
-      const appearance={Sun:'Short plasma jets fringe the limb; small prominence loops rise and fall close to the surface. Press play to animate. Color and timing are illustrative.',Earth:'Thin blue atmospheric scattering, warm twilight, and white cloud tops close to the surface. Thickness is enhanced slightly for phone readability.',Saturn:'Fine cloud ribbons, a detailed NASA ring profile, and approximate ring/planet shadows. Weather and small density variations are illustrative.',Uranus:'Subtle cloud bands and a polar hood beneath methane haze. Weather detail is illustrative.',Neptune:'NASA VTAD cloud map with enhanced Voyager-style blue contrast and bright cloud streaks. Weather is a reconstruction.',Ceres:'NASA VTAD surface and normal maps reveal crater rims and bright deposits; some lighting is baked into the imagery.',Pluto:'New Horizons-based map with AI-assisted terrain reconstruction across blurred and unmapped areas; added fine detail is illustrative.',Halley:'Elongated, dark nucleus inspired by Giotto. Fine surface details are reconstructed.',Encke:'Irregular nucleus and surface relief are artistic reconstructions.'};
+      const appearance={Sun:'Uneven red-orange coronal glow, spiky plasma jets, and larger prominence loops that lean, twist, rupture, and drain. Press play to animate. Color, height, and timing are illustrative.',Earth:'Thin blue atmospheric scattering, warm twilight, and white cloud tops close to the surface. Thickness is enhanced slightly for phone readability.',Saturn:'Fine cloud ribbons, a detailed NASA ring profile, and approximate ring/planet shadows. Weather and small density variations are illustrative.',Uranus:'Subtle cloud bands and a polar hood beneath methane haze. Weather detail is illustrative.',Neptune:'NASA VTAD cloud map with enhanced Voyager-style blue contrast and bright cloud streaks. Weather is a reconstruction.',Ceres:'NASA VTAD surface and normal maps reveal crater rims and bright deposits; some lighting is baked into the imagery.',Pluto:'New Horizons-based map with AI-assisted terrain reconstruction across blurred and unmapped areas; added fine detail is illustrative.',Halley:'Elongated, dark nucleus inspired by Giotto. Fine surface details are reconstructed.',Encke:'Irregular nucleus and surface relief are artistic reconstructions.'};
       if(appearance[data.name])html+=`<p class="info-note">${appearance[data.name]}</p>`;
       html+=`<p class="info-note">${data.peri?'Fixed illustrative orbit.':planetData.includes(data)?'NASA/JPL orbital approximation.':'Illustrative model.'} Bodies enlarged.<br><a href="${data.peri?'https://nssdc.gsfc.nasa.gov/planetary/factsheet/cometfact.html':'https://nssdc.gsfc.nasa.gov/planetary/factsheet/'}" target="_blank" rel="noopener">Explore the source data ↗</a></p>`;
     }
