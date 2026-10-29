@@ -29,14 +29,32 @@ export function createTableResults({formatMoney=String,visible=()=>true,reduceMo
     for(const [id,p] of pending)if(p.roomId===(round.roomId??0)&&p.roundId<(round.id??round.roundId)){pending.delete(id);paint(id);}
     if(dollyKey===readyKey)return;
     clear();dollyKey=readyKey;
-    for(const selector of [`[data-bet="n:${number}"]`,`[data-track-number="${number}"]`]){
+    for(const [layout,selector] of [`[data-bet="n:${number}"]`,`[data-track-number="${number}"]`].entries()){
       const cell=doc.querySelector(selector),text=cell?.querySelector('text'),svg=cell?.ownerSVGElement;
       if(!text||!svg)continue;
       cell.classList.add('hit');
       const marker=doc.createElementNS('http://www.w3.org/2000/svg','g');
       marker.setAttribute('class','table-dolly');marker.setAttribute('role','img');marker.setAttribute('aria-label',`Winning number ${number}`);
-      marker.setAttribute('transform',`translate(${Number(text.getAttribute('x'))},${Number(text.getAttribute('y'))-7})`);
-      marker.innerHTML='<ellipse cx="1" cy="10" rx="14" ry="4" fill="#000" opacity=".35"/><g class="dolly-body"><ellipse cy="8" rx="11" ry="4" fill="#d5b76d" stroke="#fff0b5"/><path d="M-10 7L-7-14Q0-19 7-14L10 7Q0 13-10 7Z" fill="#e9e7d8" fill-opacity=".38" stroke="#fff1bf" stroke-width="1.4"/><ellipse cy="-14" rx="7" ry="3" fill="#e8ce8d" stroke="#fff4cc"/><path d="M-5-12L-7 5M-2-14L-3 5" stroke="#fff" stroke-opacity=".8" stroke-width="1.5"/></g>';
+      marker.setAttribute('transform',`translate(${Number(text.getAttribute('x'))},${Number(text.getAttribute('y'))+6})`);
+      // Acrylic ball-top dolly, based on casino equipment:
+      // https://shopcasinoquest.com/products/roulette-dolly
+      const glass=`dolly-${layout}`;
+      marker.innerHTML=`<defs>
+        <linearGradient id="${glass}-body"><stop stop-color="#e8fbff" stop-opacity=".7"/><stop offset=".12" stop-color="#fff" stop-opacity=".18"/><stop offset=".4" stop-color="#d6f1ee" stop-opacity=".04"/><stop offset=".72" stop-color="#0b2723" stop-opacity=".26"/><stop offset=".9" stop-color="#e8fbff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".75"/></linearGradient>
+        <linearGradient id="${glass}-rim"><stop stop-color="#f4ffff" stop-opacity=".8"/><stop offset=".3" stop-color="#cde9e6" stop-opacity=".2"/><stop offset=".65" stop-color="#193c35" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity=".85"/></linearGradient>
+        <radialGradient id="${glass}-ball" cx="32%" cy="25%" r="76%"><stop stop-color="#fff" stop-opacity=".75"/><stop offset=".3" stop-color="#efffff" stop-opacity=".18"/><stop offset=".65" stop-color="#d8efed" stop-opacity=".05"/><stop offset=".88" stop-color="#12372e" stop-opacity=".42"/><stop offset="1" stop-color="#dff6f6" stop-opacity=".8"/></radialGradient>
+      </defs>
+      <ellipse cx="2" cy="10" rx="12" ry="4" fill="#000" opacity=".25"/>
+      <g class="dolly-body" stroke="#e4f7f6" stroke-opacity=".65" stroke-width=".65">
+        <path d="M-10-10A10 3 0 0 1 10-10V8A10 3 0 0 1-10 8Z" fill="url(#${glass}-body)"/>
+        <ellipse cy="8" rx="10" ry="3" fill="url(#${glass}-rim)"/>
+        <ellipse cy="-10" rx="10" ry="3" fill="url(#${glass}-rim)"/>
+        <path d="M-7-10Q-2-14-4-19H4Q2-14 7-10Q0-6-7-10Z" fill="url(#${glass}-body)"/>
+        <circle cy="-25" r="10.5" fill="url(#${glass}-ball)"/>
+        <path d="M-7-29Q-3-35 4-32M-7-7V4" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M7-6V5M-7 7Q0 10 7 7" fill="none" stroke="#f4ffff" stroke-opacity=".45"/>
+        <ellipse cx="-4.5" cy="-29.5" rx="1.6" ry="1" fill="#fff" fill-opacity=".8" stroke="none"/>
+      </g>`;
       svg.appendChild(marker);
     }
     dollyPending=!reduceMotion();
