@@ -576,10 +576,10 @@ try {
       const vertices=[],uvs=[],indices=[],anchors=new Float32Array(jetCount*3),seeds=new Float32Array(jetCount*3);
       for(let plane=0;plane<2;plane++) {
         const start=vertices.length/3;
-        for(let step=0;step<=6;step++)for(let side=0;side<2;side++) {
-          vertices.push(side-.5,step/6,plane);uvs.push(side,step/6);
+        for(let step=0;step<=6;step++)for(let side=0;side<=3;side++) {
+          vertices.push(side/3-.5,step/6,plane);uvs.push(side/3,step/6);
         }
-        for(let step=0;step<6;step++){const a=start+step*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+        for(let step=0;step<6;step++)for(let side=0;side<3;side++){const a=start+step*4+side;indices.push(a,a+1,a+4,a+1,a+5,a+4);}
       }
       for(let k=0;k<jetCount;k++) {
         const y=1-2*(k+.5)/jetCount,r=Math.sqrt(1-y*y),angle=k*2.39996323;
@@ -601,9 +601,11 @@ try {
             float phase=fract(visualTime/(2.+seed.z*3.)+seed.z),growth=.5-.5*cos(phase*6.283185);
             float height=.20*(.070+seed.x*seed.x*.20)*(.45+.55*growth);
             vec3 curl=tangent*sin(uv.y*4.-visualTime*2.7+seed.z*6.283185)+bitangent*cos(uv.y*3.5-visualTime*2.1+seed.x*6.283185);
-            vec3 p=n*(1.002+uv.y*height)+curl*height*(.28+.22*seed.y)*uv.y*uv.y;
             float belly=(.65+.65*sin(uv.y*3.14159))*(1.-uv.y*uv.y*.65);
-            p+=side*position.x*(.055+.055*seed.y)*belly;
+            float root=1.-smoothstep(0.,.55,uv.y);
+            float width=mix((.055+.055*seed.y)*belly,.30+.04*seed.y,root);
+            vec3 surface=normalize(n+side*position.x*width);
+            vec3 p=surface*(1.002+uv.y*height)+curl*height*(.28+.22*seed.y)*uv.y*uv.y;
             gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
           }`,
         fragmentShader:`uniform float visualTime;varying vec2 jetUV;varying vec3 jetSeed;
@@ -614,8 +616,10 @@ try {
             float center=.18*sin(v*7.-t*3.2+jetSeed.z*6.283185)*v+curl*.24*v;
             float tongue=.88-v*.50+(flow-.5)*.28;
             float edge=1.-smoothstep(tongue-.24,tongue+.14,abs(jetUV.x*2.-1.-center));
+            float root=1.-smoothstep(.08,.45,v);
+            edge=mix(edge,1.-smoothstep(.85,1.,abs(jetUV.x*2.-1.)),root);
             float tip=1.-smoothstep(.75,.99,v+(flow-.5)*.18);
-            float alpha=edge*tip*smoothstep(0.,.12,v)*(.16+.45*flow);if(alpha<.012)discard;
+            float alpha=edge*tip*(.16+.45*flow);if(alpha<.012)discard;
             float heat=clamp((1.-v)*.55+flow*.42,0.,1.);
             vec3 color=mix(vec3(.95,.025,.001),vec3(2.,.34,.012),smoothstep(.20,.68,heat));
             color=mix(color,vec3(1.5,.70,.07),smoothstep(.82,.98,heat));
