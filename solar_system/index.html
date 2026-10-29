@@ -29,6 +29,7 @@ button[aria-pressed=true]{background:#cfeaa81b;border-color:#cfeaa867;color:var(
 .dock{position:absolute;bottom:0;left:0;right:0;padding:0 28px max(18px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#080d14 25%)}.timeline{height:66px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--line)}.play{border-radius:50%;background:var(--accent);color:#152017;border-color:var(--accent);flex-shrink:0}.play:hover{background:#e4f6c8}.date-wrap{display:flex;flex-direction:column;gap:2px}#date{color:#e0e7ed;background:none;border:0;padding:0;width:142px;font-size:12px;min-height:27px;letter-spacing:.5px}#date::-webkit-calendar-picker-indicator{opacity:.6}#speed{background:#151f2a;border:1px solid var(--line);border-radius:8px;min-height:42px;padding:7px 28px 7px 12px;font-size:12px}.time-label{font-size:10px;color:var(--muted)}.time-fill{flex:1}.time-note{font-size:10px;color:var(--muted);text-align:right;line-height:1.6}.now{font-size:11px;min-height:38px;padding:7px 12px}.body-nav{display:flex;overflow-x:auto;gap:4px;scrollbar-width:thin;scrollbar-color:#304050 transparent;padding:11px 0 1px;overscroll-behavior-x:contain}.body-nav button{position:relative;flex:1;min-width:68px;border:1px solid transparent;background:none;padding:5px 9px 7px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;color:#a7b4c1;border-radius:9px}.body-nav button[aria-pressed=true]{color:var(--accent);background:#cfeaa80b;border-color:#cfeaa82c}.thumb{width:28px;height:28px;border-radius:50%;background-size:auto 100%;box-shadow:inset -8px -2px 9px #000a,0 0 12px #ffffff07;display:block;position:relative}.thumb.system{box-shadow:none;border:1px solid #b9c7d745;background:none!important}.thumb.system:before,.thumb.system:after{content:"";position:absolute;inset:5px;border:1px solid #b9c7d765;border-radius:50%}.thumb.system:after{inset:11px;background:var(--accent);border:0}.thumb.ringed:after{content:"";position:absolute;inset:8px -7px;border:3px solid #c2ad7d88;border-radius:50%;transform:rotate(-24deg)}.thumb.comet{border-radius:50% 0 50% 50%;background:linear-gradient(135deg,#fff,#91cfde 40%,transparent 75%);transform:rotate(-30deg);box-shadow:none}
 #toast{position:absolute;bottom:calc(var(--bottom) + 76px);left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:10px;max-width:90%;font-size:12px;text-align:center;pointer-events:none;z-index:8}#loading{position:absolute;inset:0;display:grid;place-items:center;background:#080d14;z-index:20;text-align:center;padding:24px}.loading-content{max-width:430px}.loading-orbit{width:70px;height:70px;margin:0 auto 24px;border:1px solid #cfeaa826;border-top-color:var(--accent);border-radius:50%;animation:orbit 1.6s linear infinite}.loading-content h2{font-weight:400;letter-spacing:2px}.loading-content p{font-size:13px;color:var(--muted);line-height:1.8}.loading-content code{color:var(--accent);font-size:12px}.loading-content button{margin-top:10px}@keyframes orbit{to{transform:rotate(360deg)}}
 dialog{background:#111a25;color:var(--ink);border:1px solid #ffffff28;border-radius:18px;width:min(610px,calc(100% - 28px));max-height:84dvh;padding:0;box-shadow:0 24px 100px #0008}dialog::backdrop{background:#02060bc9;backdrop-filter:blur(5px)}.dialog-head{position:sticky;top:0;background:#111a25;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:18px 22px;z-index:1}.dialog-head h2{margin:0;font-size:19px;font-weight:400}.dialog-body{padding:4px 24px 24px;font-size:13px;color:#b7c3ce;line-height:1.8}.dialog-body h3{color:#e5edf2;font-weight:500;font-size:14px;margin:22px 0 8px}.dialog-body p{margin:8px 0}.dialog-body ul{padding-left:19px}.dialog-body li{margin:7px 0}.key-row{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--line)}.key-row span:last-child{color:var(--ink);text-align:right}.layer-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);gap:20px}.layer-row input{accent-color:var(--accent);width:20px;height:20px}.layer-row small{display:block;color:var(--muted);font-size:11px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#comparison{width:min(760px,calc(100% - 28px));max-height:calc(100dvh - 28px)}.comparison-selectors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}.comparison-selectors label{min-width:0;color:var(--muted);font-size:11px}.comparison-selectors select{display:block;width:100%;margin-top:5px;background:#17202b;border:1px solid var(--line);border-radius:9px;padding:10px;min-height:44px}.comparison-stage{height:clamp(190px,30dvh,300px);display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0 18px;border-bottom:1px solid var(--line)}.comparison-cell{position:relative;display:grid;place-items:center;padding-bottom:54px;min-width:0}.comparison-disk{flex-shrink:0;border-radius:50%;background-position:center;background-size:auto 100%}.comparison-caption{position:absolute;bottom:10px;left:0;right:0;text-align:center;line-height:1.5}.comparison-caption strong{display:block;color:var(--ink);font-weight:500}.comparison-caption span{font-size:11px;color:var(--muted)}#comparison-ratio{font-size:16px;color:var(--accent);line-height:1.6}.comparison-presets{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.comparison-presets button{font-size:11px;padding:8px 10px}.comparison-footnote{font-size:11px;line-height:1.7;color:var(--muted)}#comparison-tiny{color:var(--gold);font-size:12px}
 @media(min-width:1500px){#info{width:310px}.header,.view-bar{left:40px;right:40px}#info,.status{left:40px}.dock{padding-left:40px;padding-right:40px}}
 @media(max-width:760px){:root{--bottom:180px}.header{left:16px;right:16px;top:max(14px,env(safe-area-inset-top))}.brand{gap:9px}.brand-name{font-size:18px}.brand-mark{width:32px;height:32px}.brand-mark svg{width:24px;height:24px}.brand small{font-size:8px;letter-spacing:1.2px;margin-top:4px}.header-actions{gap:6px}.guide-button{width:42px;padding:0;display:grid;place-items:center}.guide-button span{display:none}.header-actions .icon{width:42px}.status{top:77px;left:16px;font-size:9px;letter-spacing:.8px}#info{left:16px;top:105px;width:calc(100% - 80px);max-width:340px;padding:13px 15px;border-radius:12px;max-height:calc(100% - var(--bottom) - 174px)}.info-heading h1{font-size:23px;margin:4px 0 6px}.info-heading .eyebrow{font-size:8px;letter-spacing:1.4px}#info-summary{font-size:11px;line-height:1.6}#info-toggle{display:grid;flex-shrink:0;width:36px;min-height:36px;margin-right:-5px;background:none;border:0}#info:not(.expanded) #info-details{display:none}#info.expanded #info-toggle svg{transform:rotate(180deg)}.stats{margin-top:12px}.stat{padding:10px 0}.stat strong{font-size:14px}.fact{margin:14px 0}.camera-tools{right:14px;top:118px;transform:none;gap:6px}.camera-tools button{width:40px;min-height:40px}.compass{display:none}.view-bar{left:16px;right:16px;bottom:calc(var(--bottom) + 9px);gap:5px}.scale-switch{padding:3px}.scale-switch button{font-size:10px;min-height:34px;padding:6px 9px}.view-hint{display:none}.layer-button{min-height:42px;width:42px;padding:0;display:grid;place-items:center}.layer-button span{display:none}.dock{padding-left:16px;padding-right:16px;padding-bottom:max(10px,env(safe-area-inset-bottom))}.timeline{gap:10px;height:68px}.time-note{display:none}.date-wrap{gap:0}.time-label{font-size:8px;letter-spacing:1px}#date{width:124px;font-size:11px}#speed{font-size:11px;padding:7px 4px;max-width:105px;min-height:42px}.time-fill{display:none}.now{margin-left:auto;min-width:40px;padding:7px 8px;font-size:10px}.body-nav{margin:0 -16px;padding:10px 10px 6px;gap:1px}.body-nav button{min-width:62px;padding:5px 6px;font-size:9px}.thumb{width:27px;height:27px}.dialog-body{padding:3px 20px 20px}.dialog-head{padding:14px 18px}#toast{bottom:calc(var(--bottom) + 65px);width:max-content;max-width:86%}}
 @media(max-width:360px){.brand small{display:none}.timeline{gap:7px}.play{width:39px;min-height:39px}#date{width:116px}#speed{width:89px}.now{padding:5px;min-width:35px}#info{top:101px}.header{left:13px;right:13px}}
@@ -49,6 +50,7 @@ dialog{background:#111a25;color:var(--ink);border:1px solid #ffffff28;border-rad
 <symbol id="i-pan" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3m12-6 3 3-3 3"/></symbol>
 <symbol id="i-top" viewBox="0 0 24 24"><ellipse cx="12" cy="14" rx="9" ry="6"/><path d="M12 2v9m-3-6 3-3 3 3"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+<symbol id="i-compare" viewBox="0 0 24 24"><circle cx="8" cy="12" r="6"/><circle cx="19" cy="15" r="3"/></symbol>
 <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 10 7-10 7z" fill="currentColor" stroke="none"/></symbol>
@@ -59,7 +61,7 @@ dialog{background:#111a25;color:var(--ink);border:1px solid #ffffff28;border-rad
   <div id="labels" aria-hidden="true"></div>
   <header class="header">
     <div class="brand"><div class="brand-mark"><svg><use href="#i-orbit"/></svg></div><div><div class="brand-name">ORBIT</div><small>A SOLAR SYSTEM FIELD GUIDE</small></div></div>
-    <div class="header-actions"><button id="guide-open" class="guide-button" aria-label="Open field guide"><svg><use href="#i-info"/></svg><span>Field guide</span></button><button id="home" class="icon" title="Return to solar system" aria-label="Return to solar system"><svg><use href="#i-home"/></svg></button></div>
+    <div class="header-actions"><button id="comparison-open" class="guide-button" aria-label="Compare body sizes" title="Compare body sizes"><svg><use href="#i-compare"/></svg><span>Compare sizes</span></button><button id="guide-open" class="guide-button" aria-label="Open field guide"><svg><use href="#i-info"/></svg><span>Field guide</span></button><button id="home" class="icon" title="Return to solar system" aria-label="Return to solar system"><svg><use href="#i-home"/></svg></button></div>
   </header>
   <div class="status" id="view-status">Explore our cosmic neighborhood</div>
   <section id="info" aria-label="Selected object information">
@@ -95,18 +97,27 @@ dialog{background:#111a25;color:var(--ink);border:1px solid #ffffff28;border-rad
 <dialog id="guide" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">A little perspective</h2><button class="icon" data-close="guide" aria-label="Close field guide"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body">
   <h3>Start exploring</h3><p>Choose a world along the bottom, or tap one in space. The camera follows your selection. Tap a moon in a planet’s information card to visit it.</p>
   <div class="key-row"><span>One finger / left-drag</span><span>Rotate around your target</span></div><div class="key-row"><span>Pinch / mouse wheel</span><span>Zoom in or out</span></div><div class="key-row"><span>Two-finger drag / right-drag</span><span>Pan the camera</span></div><div class="key-row"><span>Arrow keys / Shift + arrows</span><span>Rotate / pan</span></div><div class="key-row"><span>+ / − · Space · Home</span><span>Zoom · pause · overview</span></div>
-  <h3>Read the scale</h3><p><b>Explorer scale</b> spaces the planetary orbits for readability. Each orbit keeps its elliptical shape, tilt, and Sun at one focus, but distances between different orbits are compressed. <b>True distances</b> uses one linear scale for heliocentric distances. Planet and Sun sizes remain enlarged in both modes; this is not a true-size model. Moon distances and sizes are separately enlarged in both modes. Ring dimensions are proportional to their host planet.</p>
+  <h3>Read the scale</h3><p><b>Explorer scale</b> spaces the planetary orbits for readability. Each orbit keeps its elliptical shape, tilt, and Sun at one focus, but distances between different orbits are compressed. <b>True distances</b> uses one linear scale for heliocentric distances. Planet and Sun sizes remain enlarged in both modes; this is not a true-size model. Literal body sizes would become smaller than a pixel in a phone overview, making them difficult to see or select. Use <b>Compare sizes</b> in the header to compare two body diameters on one linear scale, independently of orbital distances. Moon distances and sizes are separately enlarged in both orbital modes. Ring dimensions are proportional to their host planet.</p>
   <h3>What makes the orbits realistic?</h3><p>Planets use the <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" target="_blank" rel="noopener">NASA/JPL Keplerian model</a>, including the change of orbital elements with time, for 1800–2050. Kepler’s equation makes each planet travel faster near the Sun and slower farther away. Earth uses the Earth–Moon system’s center of mass. UTC approximates the model’s dynamical time. This is an educational approximation, not a tool for predicting observations or spacecraft trajectories.</p>
   <p>Axial tilts and rotation periods use <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" target="_blank" rel="noopener">NASA’s planetary fact sheets</a>. Pole directions and surface rotation phases are illustrative; seasons and eclipses are not predicted. Fast time settings can make a spinning planet or moon appear to move backward, just like a wheel in a film. Use 1 hour/sec to inspect moon motion.</p>
   <h3>Beyond the eight planets</h3><p>The asteroid and Kuiper belts are representative particle populations, not a catalog of individual objects. Ceres and Pluto represent dwarf planets. Halley and Encke demonstrate comet motion and tails. Selecting Halley opens its 9 February 1986 close approach at 1 hour/sec so its tails are visible; the timeline shows the changed date. Use the date control to explore other years. Their fixed elliptical models use <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/cometfact.html" target="_blank" rel="noopener">NASA’s comet fact sheet</a>; orbit orientations are illustrative. Tails grow near the Sun, with the ion tail pointing away from it. Comet dates are approximate.</p>
   <p>Far beyond this view, the <a href="https://science.nasa.gov/solar-system/oort-cloud/" target="_blank" rel="noopener">hypothesized Oort Cloud</a> may form an immense shell of icy bodies. Its scale does not fit this planetary view. Background stars are decorative.</p>
   <h3>Moons and rings</h3><p id="moon-model-note">This model includes 22 selected planetary moons plus Pluto’s Charon. Moon distances and sizes are exaggerated; orbital phases and most surface appearances are illustrative. See the source notes below.</p><p>All four giant planets have rings. Faint rings around Jupiter, Uranus, and Neptune are brightened for visibility. Saturn uses the radial color and transparency profile from <a href="https://science.nasa.gov/resource/saturn-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Saturn model</a>, with fine ringlets, gaps, gentle density variation, and approximate planet and ring shadows. The rings retain their nearly circular form; particles are too small to resolve at this scale. Ring and moon surfaces other than Earth’s Moon are illustrative.</p>
   <h3>Surfaces, sunlight & solar activity</h3>
-  <p>The Sun is plasma, not molten rock. Its moving granulation, dark magnetic regions, and prominences that rise, twist, rupture, eject plasma, and drain back are illustrative, with enhanced orange colors inspired by solar imaging. Eruptions run on a shortened visual clock, not the simulation date; pause freezes them. References: <a href="https://science.nasa.gov/photojournal/eruptive-prominence/" target="_blank" rel="noopener">NASA/SDO eruptive prominence</a> and <a href="https://www.youtube.com/watch?v=2HoTK_Gqi2Q" target="_blank" rel="noopener">National Geographic: Sun 101</a>.</p>
+  <p>The Sun is plasma, not molten rock. Its moving granulation, dark magnetic regions, and prominences that rise, twist, rupture, eject plasma, and drain back are illustrative, with enhanced orange colors inspired by solar imaging. The flame-like fringe represents short plasma jets called spicules, following <a href="https://science.nasa.gov/sun/facts/" target="_blank" rel="noopener">NASA’s solar-atmosphere observations</a>. Prominences stay close to the surface in this view, with a maximum modeled height of 10% of the Sun’s radius. The fine jets are slightly enlarged for screen readability; the diffuse corona is kept faint. Solar activity runs on a shortened visual clock, not the simulation date; pause freezes it. References: <a href="https://science.nasa.gov/photojournal/eruptive-prominence/" target="_blank" rel="noopener">NASA/SDO eruptive prominence</a> and <a href="https://www.youtube.com/watch?v=2HoTK_Gqi2Q" target="_blank" rel="noopener">National Geographic: Sun 101</a>.</p>
   <p>Planet atmospheres have different thicknesses and colors, with a sunlight-dependent limb and twilight tint. These are visual approximations to scattering, not a full atmospheric simulation. Planet surfaces and clouds use diffuse lighting without sharp specular highlights. Cloud movement and storms are illustrative. Saturn’s fine cloud ribbons and ring-shadow pattern are enhanced for readability. <a href="https://science.nasa.gov/neptune/neptune-facts/" target="_blank" rel="noopener">Uranus and Neptune are both pale blue-green in natural color</a>. Neither has a solid visible surface. Neptune uses the cylindrical map from <a href="https://science.nasa.gov/resource/neptune-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Neptune model</a>, with enhanced blue contrast and bright methane-cloud streaks inspired by <a href="https://science.nasa.gov/photojournal/neptune-true-color-of-clouds/" target="_blank" rel="noopener">Voyager cloud imagery</a> and <a href="https://www.nationalgeographic.com/science/article/neptune" target="_blank" rel="noopener">National Geographic’s Neptune photographs</a>. This is an image-based weather reconstruction, not a current weather map. Comets show a narrow blue ion tail directed away from the Sun and a broader dust tail curved toward the trailing orbital direction, following <a href="https://spaceplace.nasa.gov/comets/en/" target="_blank" rel="noopener">NASA’s comet guide</a>. Tail shape, activity cutoff, and brightness are illustrative. Use “Visit a close approach” for active tails, or “View nucleus” for surface detail. Mercury and Ceres do not get a thick atmospheric shell.</p>
   <p>Earth’s blue atmospheric edge fades into space, with sunlight-dependent haze and warm twilight. Rayleigh scattering, which scatters blue light more strongly than red light, and aerosol scattering are approximated here. Cloud tops sit close to the surface; atmospheric thickness is slightly enhanced for readability on phones. Visual references: <a href="https://science.nasa.gov/earth/earth-observatory/the-top-of-the-atmosphere-7373/" target="_blank" rel="noopener">NASA’s atmosphere from orbit</a> and <a href="https://www.nationalgeographic.com/science/article/where-is-the-edge-of-space-and-what-is-the-karman-line" target="_blank" rel="noopener">National Geographic’s view of Earth’s atmospheric edge</a>.</p>
   <p>Pluto uses a <a href="https://science.nasa.gov/resource/pluto-global-color-map/" target="_blank" rel="noopener">New Horizons global color mosaic</a> (NASA/JHUAPL/SwRI), reduced to 2K. Unmapped southern terrain has a softly blended artistic reconstruction; the longitude seam and poles are closed. The color image is not used as an elevation map. Ceres uses the surface and normal maps from <a href="https://science.nasa.gov/resource/ceres-3d-model/" target="_blank" rel="noopener">NASA VTAD’s Ceres model</a>, reduced to 2K. A normal map changes how terrain catches the light without adding mesh detail; source imagery retains some baked-in lighting. Halley’s elongated shape follows <a href="https://www.esa.int/Science_Exploration/Space_Science/Rosetta/Giotto_s_comet_results" target="_blank" rel="noopener">Giotto observations</a>; fine nucleus relief and Encke’s shape are artistic reconstructions. Brightness-based bump shading adds illustrative relief rather than measured elevations.</p>
   <h3>Sources & image credits</h3><p>Planet diameters, year lengths, and tilts: <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" target="_blank" rel="noopener">NASA NSSDCA</a>. Planet positions: <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" target="_blank" rel="noopener">JPL Solar System Dynamics</a>. Moon orbital shapes and periods: <a href="https://ssd.jpl.nasa.gov/sats/elem/" target="_blank" rel="noopener">JPL satellite elements</a>. Dwarf planets and belts: <a href="https://science.nasa.gov/solar-system/" target="_blank" rel="noopener">NASA Science</a>.</p><p>Sun, planet maps other than Neptune, Earth clouds, and Moon source maps: <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener">Solar System Scope / INOVE</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source maps are embedded unchanged; rendering adds weather, color adjustments, relief, lighting, and atmosphere. Maps include enhanced colors and reconstructed unmapped terrain. THREE.js is loaded from <code>../lib</code> under its MIT license.</p>
+</div></dialog>
+<dialog id="comparison" aria-labelledby="comparison-title"><div class="dialog-head"><h2 id="comparison-title">Size comparison</h2><button class="icon" data-close="comparison" aria-label="Close size comparison"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body">
+  <p class="eyebrow">DIAMETERS TO SCALE</p>
+  <div class="comparison-selectors"><label for="compare-a">First body<select id="compare-a"></select></label><label for="compare-b">Second body<select id="compare-b"></select></label></div>
+  <div id="comparison-stage" class="comparison-stage" role="img" aria-label="Two bodies with proportional diameters"><div class="comparison-cell"><div id="compare-disk-a" class="comparison-disk"></div><div class="comparison-caption"><strong id="compare-name-a"></strong><span id="compare-diameter-a"></span></div></div><div class="comparison-cell"><div id="compare-disk-b" class="comparison-disk"></div><div class="comparison-caption"><strong id="compare-name-b"></strong><span id="compare-diameter-b"></span></div></div></div>
+  <p id="comparison-ratio" role="status"></p><p id="comparison-tiny" hidden></p>
+  <div class="comparison-presets" aria-label="Suggested size comparisons"><button data-compare="Sun,Earth">Sun & Earth</button><button data-compare="Jupiter,Earth">Jupiter & Earth</button><button data-compare="Earth,Moon">Earth & Moon</button></div>
+  <p class="comparison-footnote">Circles show listed body diameters at one scale. Spacing is for comparison. Rings, atmospheres, and comet tails are excluded; comet sizes describe their approximate nuclei. Surface images are illustrative.</p>
+  <p class="comparison-footnote">Orbit simulation pauses while this view is open. <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" target="_blank" rel="noopener">NASA diameter data ↗</a></p>
 </div></dialog>
 <dialog id="layers" aria-labelledby="layers-title"><div class="dialog-head"><h2 id="layers-title">Make space your own</h2><button class="icon" data-close="layers" aria-label="Close display layers"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body">
   <label class="layer-row"><span>Orbital paths<small>See the shape and tilt of each orbit</small></span><input id="layer-orbits" type="checkbox" checked></label>
@@ -236,7 +247,7 @@ function toast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, 4300);
 }
-for (const name of ['guide','layers']) {
+for (const name of ['guide','layers','comparison']) {
   $(name+'-open').onclick = () => $(name).showModal();
   document.querySelector(`[data-close="${name}"]`).onclick = () => $(name).close();
   $(name).addEventListener('click', event => {
@@ -543,7 +554,31 @@ try {
     }
     if(isSun) {
       const corona=new THREE.Sprite(new THREE.SpriteMaterial({map:glowMap,color:0xffca7d,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
-      corona.material.opacity=.45;corona.scale.setScalar(data.radius*5.5);group.add(corona);
+      corona.material.opacity=.08;corona.scale.setScalar(data.radius*3.2);group.add(corona);
+      // Fine chromospheric jets, kept close to the limb in every camera view.
+      const limb=new THREE.Mesh(new THREE.SphereGeometry(1,96,64),new THREE.ShaderMaterial({
+        uniforms:{solarRadius:{value:data.radius},visualTime},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,
+        vertexShader:`varying vec3 worldPoint;varying vec3 center;void main(){vec4 p=modelMatrix*vec4(position,1.);worldPoint=p.xyz;center=(modelMatrix*vec4(0.,0.,0.,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*p;}`,
+        fragmentShader:`uniform float solarRadius;uniform float visualTime;varying vec3 worldPoint;varying vec3 center;
+          ${noiseGLSL}
+          void main(){vec3 ray=normalize(worldPoint-cameraPosition),origin=(cameraPosition-center)/solarRadius;
+            vec3 closest=origin-ray*dot(origin,ray);float height=length(closest)-1.;
+            if(height<-.003 || height>.032)discard;
+            vec3 n=normalize(closest);float t=visualTime*.28;
+            vec3 bend=vec3(noise3(n*17.+t),noise3(n*17.+12.-t),noise3(n*17.+31.+t))-.5;
+            vec3 field=normalize(n+bend*max(0.,height)*5.);
+            float roots=noise3(field*95.+vec3(t*.16,0.,0.));
+            float pulse=.68+.32*sin(t*1.4+noise3(n*24.)*6.283185);
+            float tip=.0045+roots*roots*.022*pulse;
+            float stream=noise3(field*220.+vec3(0.,-height*500.+t*2.,0.));
+            float brightness=pow(clamp(1.-max(0.,height)/tip,0.,1.),.7);
+            float edge=smoothstep(-.003,.0005,height)*(1.-smoothstep(tip-.001,tip+.0015,height));
+            float alpha=(.16+.84*pow(smoothstep(.25,.75,stream),1.3))*brightness*edge*.95;
+            vec3 color=mix(vec3(.95,.035,.002),vec3(1.4,.38,.025),brightness);
+            gl_FragColor=vec4(color,alpha);
+            #include <colorspace_fragment>
+          }`
+      }));limb.scale.setScalar(data.radius*1.035);group.add(limb);
     }
     if(data.el) {
       const material=new THREE.LineBasicMaterial({color:data.peri?0x7caaa8:0x718394,transparent:true,opacity:data.peri?.20:.22});
@@ -558,14 +593,15 @@ try {
   const fp=filamentGeometry.attributes.position;
   for(let k=0;k<fp.count;k++)fp.setXYZ(k,filamentGeometry.attributes.uv.getX(k),fp.getY(k)*2,0);
   const fieldGLSL=`
+    vec3 limitHeight(vec3 p){vec3 radial=p+vec3(0.,1.,0.);return radial*min(1.,1.10/length(radial))-vec3(0.,1.,0.);}
     vec3 fieldLine(float u,float age,float strand){
       float growth=clamp(age/10.,0.,1.),stretch=clamp((age-10.)/8.,0.,1.);
       float collapse=clamp((age-22.)/8.,0.,1.);
-      float arch=sin(u*3.14159),height=.008+.14*growth*growth+.24*stretch*stretch;
-      height*=1.-collapse;float x=(u-.5)*(.40+stretch*.12);
+      float arch=sin(u*3.14159),height=.001+.020*growth*growth+.035*stretch*stretch;
+      height*=1.-collapse;float x=(u-.5)*(.14+stretch*.04);
       float twist=u*15.-age*.42+strand*1.7;
-      float width=arch*(.004+.014*growth);
-      vec3 p=vec3(x+sin(twist)*width,height*arch,cos(twist)*width+strand*.009*arch);
+      float width=arch*(.001+.004*growth);
+      vec3 p=vec3(x+sin(twist)*width,height*arch,cos(twist)*width+strand*.003*arch);
       p.y+=sqrt(max(.01,1.-p.x*p.x))-1.;
       return p;
     }`;
@@ -578,10 +614,10 @@ try {
         vertexShader:`uniform float age;uniform float strand;varying vec2 along;
           ${fieldGLSL}
           void main(){float u=position.x;along=uv;vec3 p=fieldLine(u,age,strand);
-            float lift=pow(clamp((age-17.)/8.,0.,1.),1.5);p.y+=pow(sin(u*3.14159),2.)*lift*.34;
+            float lift=pow(clamp((age-17.)/8.,0.,1.),1.5);p.y+=pow(sin(u*3.14159),2.)*lift*.015;p=limitHeight(p);
             vec3 tangent=fieldLine(min(1.,u+.002),age,strand)-fieldLine(max(0.,u-.002),age,strand);
             vec4 view=modelViewMatrix*vec4(p,1.);vec3 edge=normalize(cross(mat3(modelViewMatrix)*tangent,normalize(-view.xyz)));
-            float width=.011*(.55+.45*sin(u*3.14159))*(1.-clamp((age-24.)/6.,0.,1.));
+            float width=.003*(.55+.45*sin(u*3.14159))*(1.-clamp((age-24.)/6.,0.,1.));
             view.xyz+=edge*position.y*width*length(modelViewMatrix[0].xyz);gl_Position=projectionMatrix*view;}`,
         fragmentShader:`uniform float age;uniform float strand;varying vec2 along;
           ${noiseGLSL}
@@ -594,17 +630,17 @@ try {
           }`
       });const filament=new THREE.Mesh(filamentGeometry,material);filament.frustumCulled=false;root.add(filament);
     }
-    const seeds=new Float32Array(1200*3);for(let k=0;k<seeds.length;k++)seeds[k]=random();
-    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(1200*3),3));geo.setAttribute('seed',new THREE.BufferAttribute(seeds,3));
+    const seeds=new Float32Array(480*3);for(let k=0;k<seeds.length;k++)seeds[k]=random();
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(480*3),3));geo.setAttribute('seed',new THREE.BufferAttribute(seeds,3));
     const plasma=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:{age,glow:{value:glowMap}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,
       vertexShader:`uniform float age;attribute vec3 seed;varying float heat;
         ${fieldGLSL}
         void main(){float u=fract(seed.x+age*.095);vec3 p=fieldLine(u,age,(seed.y-.5)*6.);heat=.5+seed.z*.5;
-          if(age>17. && seed.y>.36){float flight=max(0.,age-17.-seed.z*3.);float t=flight*.10;
+          if(age>17. && seed.y>.36){float flight=max(0.,age-17.-seed.z*3.);float t=flight*.05;
             p=fieldLine(.18+seed.x*.64,17.,(seed.y-.5)*6.);
-            p+=vec3((seed.x-.5)*t*.55,t*(.65+seed.z*.3)-t*t*.13,(seed.y-.5)*t*.45);
+            p+=vec3((seed.x-.5)*t*.12,t*(.09+seed.z*.045)-t*t*.16,(seed.y-.5)*t*.10);
             heat*=max(0.,1.-flight/(8.+seed.z*5.));}
-          vec4 view=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*view;gl_PointSize=clamp(28./max(.1,-view.z),1.,8.)*sqrt(heat);}`,
+          p=limitHeight(p);vec4 view=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*view;gl_PointSize=clamp(14./max(.1,-view.z),.6,3.)*sqrt(heat);}`,
       fragmentShader:`uniform sampler2D glow;varying float heat;void main(){float alpha=texture2D(glow,gl_PointCoord).a;gl_FragColor=vec4(mix(vec3(.8,.02,.001),vec3(1.1,.24,.025),heat),alpha*heat*.6);
         #include <colorspace_fragment>
       }`
@@ -726,6 +762,41 @@ try {
     moons.push(moon);parent.moons.push(moon);labels.push(moon);bodyByName.set(data.name,moon);
   }
   $('moon-model-note').innerHTML='This atlas includes <b>22 selected planetary moons</b> plus Pluto’s Charon; it is not a complete moon catalog. Mercury and Venus have no natural moons. Moon periods, eccentricities, and approximate inclinations use NASA/JPL data. Phases, surface appearances (except Earth’s Moon), and most orbital orientations are illustrative. The paths omit precession and gravitational perturbations. Moon distances use a separate compressed scale even in true-distance mode. The Moon and Nereid use an ecliptic reference; other moons use an approximate equatorial reference. Triton’s retrograde motion is preserved.';
+  const comparisonData=[sunData,...planetData,...smallData,...moonData];
+  for(const id of ['compare-a','compare-b']) {
+    for(const [label,rows] of [['Sun & planets',[sunData,...planetData]],['Dwarf planets & comets',smallData],['Major moons',moonData]]) {
+      const group=document.createElement('optgroup');group.label=label;
+      for(const data of rows){const option=document.createElement('option');option.value=data.name;option.textContent=data.name;group.append(option);}
+      $(id).append(group);
+    }
+  }
+  $('compare-a').value='Jupiter';$('compare-b').value='Earth';
+  let comparisonWasPlaying=false;
+  function renderComparison() {
+    if(!$('comparison').open)return;
+    const pair=[$('compare-a').value,$('compare-b').value].map(name=>comparisonData.find(data=>data.name===name));
+    const diameters=pair.map(data=>data.diameter || data.km*2);
+    const stage=$('comparison-stage'),largest=Math.max(...diameters);
+    const maxPixels=Math.min((stage.clientWidth-16)/2-12,stage.clientHeight-64);
+    const tiny=[];
+    pair.forEach((data,index)=>{
+      const suffix=index?'b':'a',pixels=diameters[index]/largest*maxPixels,disk=$('compare-disk-'+suffix);
+      disk.style.width=disk.style.height=pixels+'px';
+      const shade=data.name==='Sun'?'none':'radial-gradient(circle at 30% 30%,transparent 25%,#000b 100%)';
+      disk.style.backgroundImage=assets[data.name.toLowerCase()]?`${shade},url("${assets[data.name.toLowerCase()]}")`:shade;
+      disk.style.backgroundColor=data.color;
+      $('compare-name-'+suffix).textContent=data.name;
+      $('compare-diameter-'+suffix).textContent=diameters[index].toLocaleString()+' km';
+      if(pixels<1)tiny.push(data.name);
+    });
+    const big=diameters[0]>=diameters[1]?0:1,small=1-big,ratio=diameters[big]/diameters[small];
+    const sentence=ratio===1?`${pair[0].name} and ${pair[1].name} have equal listed diameters.`:`${pair[big].name} is ${ratio.toLocaleString(undefined,{maximumFractionDigits:ratio<10?2:1})}× the diameter of ${pair[small].name}.`;
+    $('comparison-ratio').textContent=sentence;
+    stage.setAttribute('aria-label',pair.map((data,index)=>data.name+', diameter '+diameters[index].toLocaleString()+' kilometres').join('; ')+'. '+sentence);
+    $('comparison-tiny').hidden=!tiny.length;
+    $('comparison-tiny').textContent=tiny.join(' and ')+(tiny.length===1?' is':' are')+' smaller than one screen pixel at this scale. The labels remain visible.';
+  }
+  const comparisonObserver=new ResizeObserver(renderComparison);comparisonObserver.observe($('comparison-stage'));
   const target=new THREE.Vector3(),panOffset=new THREE.Vector3();
   const cameraState={theta:.15,phi:.64,distance:175,desiredDistance:175};
   let cometNucleus=false;
@@ -864,7 +935,7 @@ try {
         if(body.moons.length) html+='<p class="info-note">Selected major moons; not a complete catalog.</p>';
       }
       if(data.peri) html+='<button class="panel-action" id="perihelion">Visit a close approach <span>↗</span></button><button class="panel-action" id="comet-view">'+(cometNucleus?'View comet & tails':'View nucleus')+' <span>↗</span></button><p class="info-note">Tails grow near the Sun. Far away, the cold nucleus has little visible activity. Visit a close approach to see both tails.</p>';
-      const appearance={Sun:'Plasma, not magma. Press play to see granulation and occasional eruptions; color and timing are illustrative.',Earth:'Thin blue atmospheric scattering, warm twilight, and white cloud tops close to the surface. Thickness is enhanced slightly for phone readability.',Saturn:'Fine cloud ribbons, a detailed NASA ring profile, and approximate ring/planet shadows. Weather and small density variations are illustrative.',Uranus:'Subtle cloud bands and a polar hood beneath methane haze. Weather detail is illustrative.',Neptune:'NASA VTAD cloud map with enhanced Voyager-style blue contrast and bright cloud streaks. Weather is a reconstruction.',Ceres:'NASA VTAD surface and normal maps reveal crater rims and bright deposits; some lighting is baked into the imagery.',Pluto:'New Horizons color mosaic with blended reconstruction in unmapped southern terrain; those areas are not measured geography.',Halley:'Elongated, dark nucleus inspired by Giotto. Fine surface details are reconstructed.',Encke:'Irregular nucleus and surface relief are artistic reconstructions.'};
+      const appearance={Sun:'Short plasma jets fringe the limb; small prominence loops rise and fall close to the surface. Press play to animate. Color and timing are illustrative.',Earth:'Thin blue atmospheric scattering, warm twilight, and white cloud tops close to the surface. Thickness is enhanced slightly for phone readability.',Saturn:'Fine cloud ribbons, a detailed NASA ring profile, and approximate ring/planet shadows. Weather and small density variations are illustrative.',Uranus:'Subtle cloud bands and a polar hood beneath methane haze. Weather detail is illustrative.',Neptune:'NASA VTAD cloud map with enhanced Voyager-style blue contrast and bright cloud streaks. Weather is a reconstruction.',Ceres:'NASA VTAD surface and normal maps reveal crater rims and bright deposits; some lighting is baked into the imagery.',Pluto:'New Horizons color mosaic with blended reconstruction in unmapped southern terrain; those areas are not measured geography.',Halley:'Elongated, dark nucleus inspired by Giotto. Fine surface details are reconstructed.',Encke:'Irregular nucleus and surface relief are artistic reconstructions.'};
       if(appearance[data.name])html+=`<p class="info-note">${appearance[data.name]}</p>`;
       html+=`<p class="info-note">${data.peri?'Fixed illustrative orbit.':planetData.includes(data)?'NASA/JPL orbital approximation.':'Illustrative model.'} Bodies enlarged.<br><a href="${data.peri?'https://nssdc.gsfc.nasa.gov/planetary/factsheet/cometfact.html':'https://nssdc.gsfc.nasa.gov/planetary/factsheet/'}" target="_blank" rel="noopener">Explore the source data ↗</a></p>`;
     }
@@ -930,6 +1001,10 @@ try {
     updateStatus();toast(trueScale?'True distances between planetary orbits. Body and moon sizes remain enlarged.':'Explorer scale: orbital distances compressed for readability.');
   }
   $('scale-explore').onclick=()=>changeScale(false);$('scale-true').onclick=()=>changeScale(true);
+  $('comparison-open').onclick=()=>{comparisonWasPlaying=!state.paused;state.paused=true;syncPlay();$('comparison').showModal();renderComparison();};
+  $('comparison').addEventListener('close',()=>{if(comparisonWasPlaying){state.paused=false;syncPlay();}comparisonWasPlaying=false;});
+  $('compare-a').onchange=$('compare-b').onchange=renderComparison;
+  document.querySelectorAll('[data-compare]').forEach(button=>{button.onclick=()=>{[$('compare-a').value,$('compare-b').value]=button.dataset.compare.split(',');renderComparison();};});
   $('home').onclick=()=>selectBody(null);$('zoom-in').onclick=()=>zoom(.78);$('zoom-out').onclick=()=>zoom(1.28);
   $('pan').onclick=()=>{state.pan=!state.pan;$('pan').setAttribute('aria-pressed',state.pan);toast(state.pan?'Drag to pan. Tap the arrows again to rotate.':'Drag to rotate around your target.');};
   $('top-view').onclick=()=>{cameraState.phi=.025;cameraState.theta=0;toast('Looking down on the orbital plane.');};
