@@ -874,91 +874,94 @@
       bell.position.y = -.56; windChime.add(bell);
       const slip = new THREE.Mesh(new THREE.PlaneGeometry(.075, .3), new THREE.MeshStandardMaterial({ color: '#e6dcc6', side: THREE.DoubleSide, roughness: 1 })); slip.position.y = -.85; windChime.add(slip);
 
-      // The gravel approach wears down to soil, then disappears into the grass.
-      const pathCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(-16.5, -.025, 23), new THREE.Vector3(-14.4, -.025, 17), new THREE.Vector3(-13, -.025, 13), new THREE.Vector3(-11, -.025, 7), new THREE.Vector3(-9.6, -.025, 1), new THREE.Vector3(-9, -.025, -3.6), new THREE.Vector3(-7.15, -.025, -4)]);
-      function pathWidth(t) {
-        return .95 * lerp(.35, 1, THREE.MathUtils.smoothstep(t, 0, .5)) *
-          (1 + .04 * Math.sin(t * 61) + .025 * Math.sin(t * 103));
-      }
-      const pathVertices = [], pathUVs = [], pathIndices = [];
-      for (let i = 0; i <= 90; i++) {
-        const t = i / 90, p = pathCurve.getPoint(t), tangent = pathCurve.getTangent(t);
-        const width = pathWidth(t);
-        for (const side of [-1, 1]) { pathVertices.push(p.x - tangent.z * width * side, p.y, p.z + tangent.x * width * side); pathUVs.push(side === -1 ? 0 : 1, t); }
-        if (i < 90) { const n = i * 2; pathIndices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
-      }
-      const pathGeometry = new THREE.BufferGeometry();
-      pathGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pathVertices, 3));
-      pathGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(pathUVs, 2)); pathGeometry.setIndex(pathIndices); pathGeometry.computeVertexNormals();
-      const gravelTexture = makeTexture(512, 512, (ctx, w, h) => {
-        ctx.fillStyle = '#77776b'; ctx.fillRect(0, 0, w, h);
+      // Close-set flagstones become scattered stepping stones in the lawn.
+      const pathCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(-13, -.025, 13), new THREE.Vector3(-11, -.025, 7), new THREE.Vector3(-9.6, -.025, 1), new THREE.Vector3(-9, -.025, -3.6), new THREE.Vector3(-7.15, -.025, -4)]);
+      const pavingTexture = makeTexture(512, 512, (ctx, w, h) => {
+        ctx.fillStyle = '#8b8a80'; ctx.fillRect(0, 0, w, h);
         for (let i = 0; i < 14000; i++) {
-          const v = Math.floor(range(70, 160));
-          ctx.fillStyle = `rgb(${v},${v},${v * .9})`;
+          const v = Math.floor(range(100, 185));
+          ctx.fillStyle = `rgb(${v},${v * .99},${v * .94})`;
           ctx.beginPath(); ctx.ellipse(random() * w, random() * h, range(1, 3.6), range(1, 2.8), random() * tau, 0, tau); ctx.fill();
         }
+        // Mineral flecks retain the original garden's random sequence.
+        ctx.fillStyle = '#ddd8c72e';
+        for (let i = 0; i < 22; i++) ctx.fillRect(random() * w, random() * h, range(1, 4), .7);
       });
-      gravelTexture.wrapS = gravelTexture.wrapT = THREE.RepeatWrapping;
-      gravelTexture.repeat.set(1, 22);
-      const pathMaterial = new THREE.MeshStandardMaterial({
-        map: gravelTexture, bumpMap: gravelTexture, bumpScale: .025,
-        color: '#b8b9a7', roughness: 1, side: THREE.DoubleSide,
-        transparent: true, depthWrite: false, forceSinglePass: true
-      });
-      pathMaterial.onBeforeCompile = shader => {
-        shader.uniforms.pathSoilColor = { value: new THREE.Color('#7d6a4e') };
-        shader.vertexShader = 'varying vec2 pathUV;\n' + shader.vertexShader;
-        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>',
-          '#include <begin_vertex>\npathUV = uv;');
-        shader.fragmentShader = 'varying vec2 pathUV; uniform vec3 pathSoilColor;\n' + shader.fragmentShader;
-        shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `
-          #include <map_fragment>
-          float trail = pathUV.y;
-          float scuff = .5 + .3 * sin(pathUV.x * 21. + trail * 96.)
-            + .2 * sin(pathUV.x * 43. - trail * 157.);
-          float gravelCoverage = smoothstep(.20, .54, trail);
-          vec3 soil = pathSoilColor * (.82 + scuff * .30);
-          diffuseColor.rgb = mix(soil, diffuseColor.rgb, gravelCoverage);
-          float edgeNoise = .05 * sin(trail * 167.)
-            + .03 * sin(trail * 49. + pathUV.x * 13.);
-          float edgeFade = 1. - smoothstep(.66 + edgeNoise, .99,
-            abs(pathUV.x - .5) * 2.);
-          float endFade = smoothstep(.015, .23, trail + .015 * (scuff - .5));
-          diffuseColor.a *= edgeFade * endFade;
-        `);
-      };
-      const gravel = new THREE.Mesh(pathGeometry, pathMaterial); gravel.receiveShadow = true; scene.add(gravel);
-      for (let i = 0; i < 22; i++) {
-        const p = pathCurve.getPoint(.4 + i / 23 * .55);
-        const step = new THREE.Mesh(stoneGeometry, foundationMaterial);
-        step.position.set(p.x + Math.sin(i * 2.5) * .15, .025, p.z);
-        step.scale.set(range(.55, .7), .085, range(.4, .58)); step.rotation.y = range(-.5, .5);
-        step.scale.multiplyScalar(lerp(.5, 1, THREE.MathUtils.smoothstep(i, 0, 4)));
-        step.castShadow = step.receiveShadow = true; scene.add(step);
-      }
-      // Reuse the bank's grass mesh; preserve the remaining garden's random seed.
-      const pathGrassSeed = seed;
-      for (let clump = 0; clump < (mobile ? 64 : 96); clump++) {
-        const t = range(0, .48), p = pathCurve.getPoint(t), tangent = pathCurve.getTangent(t);
-        const margin = pathWidth(t) * THREE.MathUtils.smoothstep(t, .02, .36);
-        const across = range(margin, 1.35) * (random() < .5 ? -1 : 1);
-        const bx = p.x - tangent.z * across, bz = p.z + tangent.x * across;
-        for (let blade = 0; blade < 3; blade++) {
-          const angle = random() * tau, height = range(.08, .25), bend = range(.03, .12);
-          const x = bx + range(-.06, .06), z = bz + range(-.06, .06), width = range(.012, .025);
-          const point = (u, side) => [x + Math.sin(angle) * bend * u * u + Math.cos(angle) * width * (1 - u) * side,
-            -.06 + height * u, z + Math.cos(angle) * bend * u * u + Math.sin(angle) * width * (1 - u) * side];
-          color.setHSL(range(.2, .26), range(.3, .45), range(.18, .3));
-          [point(0, -1), point(0, 1), point(.55, -1), point(0, 1), point(.55, 1), point(.55, -1),
-            point(.55, -1), point(.55, 1), point(1, 0)].forEach(vertex => {
-            grassVertices.push(...vertex); grassColors.push(color.r, color.g, color.b);
-          });
+      pavingTexture.wrapS = pavingTexture.wrapT = THREE.RepeatWrapping;
+      let pathSeed = seed;
+      const pathRandom = () => { pathSeed = (Math.imul(pathSeed, 1664525) + 1013904223) >>> 0; return pathSeed / 4294967296; };
+      const pathRange = (a, b) => a + pathRandom() * (b - a);
+      const pathLength = pathCurve.getLength(), pathRows = Math.ceil(pathLength / .38);
+      const pathStones = [];
+      for (let row = 0; row < pathRows; row++) {
+        const t = (row + .5) / pathRows;
+        for (let column = 0; column < 3; column++) {
+          if (t < .04 || column !== 1 && pathRandom() > THREE.MathUtils.smoothstep(t, .24, .48)) continue;
+          if (column === 1 && t < .24 && row % 2 === 0) continue;
+          const p = pathCurve.getPointAt(t), tangent = pathCurve.getTangentAt(t);
+          const across = (column - 1) * 1.9 / 3 + pathRange(-.18, .18), along = pathRange(-.14, .14);
+          const center = new THREE.Vector3(p.x - tangent.z * across + tangent.x * along, 0,
+            p.z + tangent.x * across + tangent.z * along);
+          if (pathStones.some(stone => stone.center.distanceToSquared(center) < .22 * .22)) continue;
+          pathStones.push({ center, tangent, p, t });
         }
       }
-      seed = pathGrassSeed;
-      grassGeometry.setAttribute('position', new THREE.Float32BufferAttribute(grassVertices, 3));
-      grassGeometry.setAttribute('color', new THREE.Float32BufferAttribute(grassColors, 3));
-      grassGeometry.deleteAttribute('normal'); grassGeometry.computeVertexNormals();
+      // Clip neighboring slabs against shared boundaries so they fit the bend.
+      function clipPaving(polygon, nx, nz, limit) {
+        const clipped = [];
+        for (let i = 0; i < polygon.length; i++) {
+          const a = polygon[i], b = polygon[(i + 1) % polygon.length];
+          const da = a.x * nx + a.z * nz - limit, db = b.x * nx + b.z * nz - limit;
+          if (da <= 0) clipped.push(a);
+          if ((da < 0) !== (db < 0)) clipped.push(a.clone().lerp(b, da / (da - db)));
+        }
+        return clipped;
+      }
+      const pavingVertices = [], pavingUVs = [], pavingColors = [];
+      const pavingColor = new THREE.Color();
+      function pavingVertex(point, y) {
+        pavingVertices.push(point.x, y, point.z);
+        pavingUVs.push(point.x * 1.2, point.z * 1.2);
+        pavingColors.push(pavingColor.r, pavingColor.g, pavingColor.b);
+      }
+      for (const stone of pathStones) {
+        const { center, tangent, p, t } = stone;
+        let outline = Array.from({ length: 8 }, (_, i) => {
+          const angle = i / 8 * tau, across = Math.cos(angle) * .48, along = Math.sin(angle) * .34;
+          return new THREE.Vector3(center.x - tangent.z * across + tangent.x * along, 0,
+            center.z + tangent.x * across + tangent.z * along);
+        });
+        for (const neighbor of pathStones) {
+          if (neighbor === stone) continue;
+          const nx = neighbor.center.x - center.x, nz = neighbor.center.z - center.z;
+          const limit = (neighbor.center.lengthSq() - center.lengthSq()) * .5;
+          outline = clipPaving(outline, nx, nz, limit);
+        }
+        const nx = -tangent.z, nz = tangent.x, limit = p.x * nx + p.z * nz;
+        outline = clipPaving(outline, nx, nz, limit + .98);
+        outline = clipPaving(outline, -nx, -nz, -limit + .98);
+        const inset = lerp(.7, .94, THREE.MathUtils.smoothstep(t, .04, .42));
+        outline = outline.map(point => center.clone().lerp(point, inset));
+        const middle = stone.center;
+        const top = pathRange(-.025, -.017);
+        pavingColor.setHSL(pathRange(.1, .15), pathRange(.04, .1), pathRange(.65, .9));
+        for (let edge = 0; edge < outline.length; edge++) {
+          const a = outline[edge], b = outline[(edge + 1) % outline.length];
+          pavingVertex(middle, top); pavingVertex(a, top); pavingVertex(b, top);
+          pavingVertex(a, top); pavingVertex(a, -.08); pavingVertex(b, top);
+          pavingVertex(b, top); pavingVertex(a, -.08); pavingVertex(b, -.08);
+        }
+      }
+      const pavingGeometry = new THREE.BufferGeometry();
+      pavingGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pavingVertices, 3));
+      pavingGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(pavingUVs, 2));
+      pavingGeometry.setAttribute('color', new THREE.Float32BufferAttribute(pavingColors, 3));
+      pavingGeometry.computeVertexNormals();
+      const paving = new THREE.Mesh(pavingGeometry, new THREE.MeshStandardMaterial({
+        map: pavingTexture, bumpMap: rockTexture, bumpScale: .018,
+        color: '#c6c0ae', vertexColors: true, roughness: .95
+      }));
+      paving.castShadow = paving.receiveShadow = true; scene.add(paving);
       function stoneLantern(x, z, scale) {
         const stone = (w, h, d, y) => box(w * scale, h * scale, d * scale, x, y * scale, z, foundationMaterial);
         stone(.85, .18, .85, .09); stone(.62, .18, .62, .26);
