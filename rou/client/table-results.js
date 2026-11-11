@@ -1,5 +1,5 @@
 // Presentation only: every balance and chip return comes from the settled game.
-export function createTableResults({formatMoney=String,visible=()=>true,reduceMotion=()=>false,doc=document,later=setTimeout}={}){
+export function createTableResults({formatMoney=String,visible=()=>true,reduceMotion=()=>false,onResult,doc=document,later=setTimeout}={}){
   const balances=new Map(),seen=new Map(),pending=new Map(),active=new Map(),chips=new Set();
   let roomId=null,playerId='solo',wallet=0,readyKey='',dollyKey='',dollyPending=false;
   const key=p=>`${p.roomId}:${p.roundId}`;
@@ -29,6 +29,7 @@ export function createTableResults({formatMoney=String,visible=()=>true,reduceMo
     for(const [id,p] of pending)if(p.roomId===(round.roomId??0)&&p.roundId<(round.id??round.roundId)){pending.delete(id);paint(id);}
     if(dollyKey===readyKey)return;
     clear();dollyKey=readyKey;
+    onResult?.(round);
     for(const [layout,selector] of [`[data-bet="n:${number}"]`,`[data-track-number="${number}"]`].entries()){
       const cell=doc.querySelector(selector),text=cell?.querySelector('text'),svg=cell?.ownerSVGElement;
       if(!text||!svg)continue;
