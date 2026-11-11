@@ -46,7 +46,7 @@ export function installAccounts(api){
     const name=account.player?.username||state.user?.name||'Guest';
     $('username').textContent=name;$('avatar').textContent=name[0].toUpperCase();
     $('username').title=account.player?.email||'Guest solo play';
-    $('guestLogin').textContent=state.active&&state.user?.type!=='multiplayer'?'Return to table ↗':'Enter as Guest ↗';
+    $('guestLogin').textContent=state.active&&state.user?.type!=='multiplayer'?'Return to table ↗':'Single player ↗';
     $('multiplayerLogin').textContent=multi.active?'Return to Multiplayer ↗':'Multiplayer ↗';
   }
   const multi=createMultiplayer({received(room,player){
