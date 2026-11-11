@@ -74,7 +74,15 @@ export function installAccounts(api){
   };
   const solo=$('guestLogin').onclick;
   $('guestLogin').onclick=async()=>{if(state.user?.type==='multiplayer'){if(api.hasWagers()){api.toast('Wait for the current wager to settle first.');return;}try{await leave();await api.leaveSession();}catch(e){api.toast(e.message);return;}}solo();strip.hidden=true;launchInfo();};
-  for(const id of ['googleLogin','connectGoogle']){const original=$(id).onclick;$(id).onclick=()=>{if(state.user?.type==='multiplayer'){api.toast('Leave the multiplayer table before switching to Google solo play.');return;}original();};}
+  const connectGoogle=$('connectGoogle');
+  const openGoogle=connectGoogle.onclick;
+  connectGoogle.onclick=()=>{
+    if(state.user?.type==='multiplayer'){
+      api.toast('Leave the multiplayer table before switching to Google solo play.');
+      return;
+    }
+    openGoogle();
+  };
   document.addEventListener('click',e=>{const entry=e.target.closest('[data-club-open]');if(account.player&&entry&&['collection','chips','insights'].includes(entry.dataset.clubOpen)){e.preventDefault();e.stopImmediatePropagation();panel.open(entry.dataset.clubOpen);}},true);
   document.addEventListener('visibilitychange',()=>presentation.pause());
   function returnToGame(){api.returnToTable();const r=presentation.round;if(state.user?.type==='multiplayer'&&r&&Date.now()+state.offset>=r.start+20000){wantWheel=true;showWheel();}}
