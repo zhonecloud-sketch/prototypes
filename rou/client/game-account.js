@@ -1,5 +1,5 @@
 import { account } from './account-api.js?v=20261026-login-isolation';
-import { mountAccount } from './account.js?v=20261026-login-isolation';
+import { mountAccount } from './account.js?v=20261112-nickname';
 import { createMultiplayer } from './multiplayer.js?v=20261026-login-isolation';
 import { toggleWideView } from './wide-view.js?v=20261024-wide-proportions';
 const $=id=>document.getElementById(id);
