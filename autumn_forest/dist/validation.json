@@ -1,220 +1,137 @@
 {
   "browser": "157.0.8103.78",
-  "environment": "Windows desktop Chrome, headless, mobile viewport emulation; not a physical phone",
+  "environment": "Desktop Chrome with mobile viewport emulation; not a physical phone",
   "viewports": [
     {
       "width": 320,
       "height": 568,
-      "mode": "realistic",
-      "fps": 179,
+      "fps": 175,
       "render": [
         512,
         909
       ],
-      "quality": 1
-    },
-    {
-      "width": 320,
-      "height": 568,
-      "mode": "watercolour",
-      "fps": 179,
-      "render": [
-        512,
-        909
-      ],
-      "quality": 1
+      "drawerHeight": 295
     },
     {
       "width": 360,
-      "height": 800,
-      "mode": "realistic",
-      "fps": 240,
+      "height": 640,
+      "fps": 233,
       "render": [
         576,
-        1280
+        1024
       ],
-      "quality": 1
-    },
-    {
-      "width": 360,
-      "height": 800,
-      "mode": "watercolour",
-      "fps": 240,
-      "render": [
-        576,
-        1280
-      ],
-      "quality": 1
+      "drawerHeight": 333
     },
     {
       "width": 390,
       "height": 844,
-      "mode": "realistic",
       "fps": 239,
       "render": [
         624,
         1350
       ],
-      "quality": 1
-    },
-    {
-      "width": 390,
-      "height": 844,
-      "mode": "watercolour",
-      "fps": 239,
-      "render": [
-        624,
-        1350
-      ],
-      "quality": 1
+      "drawerHeight": 439
     },
     {
       "width": 412,
       "height": 915,
-      "mode": "realistic",
       "fps": 240,
       "render": [
         659,
         1464
       ],
-      "quality": 1
-    },
-    {
-      "width": 412,
-      "height": 915,
-      "mode": "watercolour",
-      "fps": 240,
-      "render": [
-        659,
-        1464
-      ],
-      "quality": 1
+      "drawerHeight": 476
     },
     {
       "width": 430,
       "height": 932,
-      "mode": "realistic",
-      "fps": 239,
+      "fps": 238,
       "render": [
         688,
         1491
       ],
-      "quality": 1
+      "drawerHeight": 485
     },
     {
-      "width": 430,
-      "height": 932,
-      "mode": "watercolour",
+      "width": 768,
+      "height": 1024,
       "fps": 239,
       "render": [
-        688,
-        1491
-      ],
-      "quality": 1
-    },
-    {
-      "width": 768,
-      "height": 1024,
-      "mode": "realistic",
-      "fps": 240,
-      "render": [
         1061,
         1414
       ],
-      "quality": 1
-    },
-    {
-      "width": 768,
-      "height": 1024,
-      "mode": "watercolour",
-      "fps": 240,
-      "render": [
-        1061,
-        1414
-      ],
-      "quality": 1
+      "drawerHeight": 570
     },
     {
       "width": 844,
       "height": 390,
-      "mode": "realistic",
-      "fps": 238,
+      "fps": 239,
       "render": [
         1350,
         624
       ],
-      "quality": 1
+      "drawerHeight": 366
     },
     {
-      "width": 844,
-      "height": 390,
-      "mode": "watercolour",
+      "width": 1440,
+      "height": 900,
       "fps": 238,
       "render": [
-        1350,
-        624
-      ],
-      "quality": 1
-    },
-    {
-      "width": 1440,
-      "height": 900,
-      "mode": "realistic",
-      "fps": 240,
-      "render": [
         1549,
         968
       ],
-      "quality": 1
-    },
-    {
-      "width": 1440,
-      "height": 900,
-      "mode": "watercolour",
-      "fps": 240,
-      "render": [
-        1549,
-        968
-      ],
-      "quality": 1
+      "drawerHeight": 570
     }
   ],
   "checks": [
-    "Pause freezes simulation time",
-    "Resume advances simulation time",
-    "Breeze control accepts changes",
-    "Keyboard and pointer look interactions run without errors",
-    "Notes dialog opens and closes with Escape",
-    "Reduced motion starts paused",
-    "WebGL context loss restores by reinitializing the scene"
+    "Automatic stroll starts at 0.85 m/s; all audio is off with no audio requests",
+    "Mixed tree heights and trunk exclusion verified; branch vertices clear the 3.4 m headroom",
+    "Pause stroll, free look, recenter, five sliders, leaf toggle and animation toggle pass",
+    "Ambient audio plays; all three music tracks rotate on real ended events; next and volume work",
+    "Reset returns to trailhead, restores defaults and stops audio",
+    "Reduced motion pauses both walking and foliage",
+    "Accelerated full trail traversal reaches the end, turns gently and walks back"
   ],
+  "geometry": {
+    "treeCount": 180,
+    "minHeight": 4.990831032395363,
+    "maxHeight": 23.94561504898593,
+    "minBranchClearance": 6.953489223677853,
+    "rejectedBranches": 0
+  },
   "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-  "cpuThrottle6x": {
-    "fps": 231.37274499025634,
+  "finalStats": {
+    "fps": 133.8661338661341,
     "width": 624,
     "height": 1350,
     "quality": 1,
-    "leaves": 122388,
-    "triangles": 1185516,
-    "mode": "watercolour",
+    "leaves": 103371,
+    "triangles": 817818,
+    "mode": "realistic",
     "paused": false,
-    "time": 31.861166666666822,
-    "drawCalls": 5
+    "time": 25.421466666667065,
+    "drawCalls": 5,
+    "walking": true,
+    "pace": 0.85,
+    "walkZ": 9.164836181365919,
+    "direction": -1,
+    "turnRemaining": 0,
+    "distance": 0.8365699999999973,
+    "eye": [
+      0.617210220876237,
+      1.7812796132199111,
+      9.164836181365919
+    ],
+    "breeze": 0.45,
+    "sunlight": 1,
+    "haze": 1,
+    "blurStrength": 1,
+    "fallingOn": true,
+    "treeCount": 180,
+    "treeHeightRange": [
+      4.990831032395363,
+      23.94561504898593
+    ]
   },
-  "errors": [],
-  "adaptiveQuality": {
-    "method": "Artificial 45 ms animation-callback delay; validates adaptation, not device speed",
-    "stats": {
-      "fps": 21.02483864663309,
-      "width": 195,
-      "height": 422,
-      "quality": 0.5,
-      "leaves": 55074,
-      "triangles": 583464,
-      "mode": "realistic",
-      "paused": false,
-      "time": 12.956266666668157,
-      "drawCalls": 5
-    }
-  }
+  "errors": []
 }

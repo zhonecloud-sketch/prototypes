@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#24251b">
-  <meta name="description" content="Step into a living autumn forest. A maple and birch woodland in WebGL, painted by light or watercolour.">
+  <meta name="description" content="Take a slow stroll through a living maple and birch forest, with autumn light and optional woodland sounds.">
   <title>Autumn, alive — a woodland study</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23242c20'/%3E%3Cpath d='M32 8 39 24 52 20 47 34 55 39 35 47 33 58 29 58 29 47 10 39 18 33 13 20 25 24Z' fill='%23d6a554'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
@@ -21,29 +21,46 @@
   <div id="status" role="status">Growing a forest…</div>
   <aside class="field-note" aria-hidden="true"><span>ACER & BETULA</span><i></i><span>THE GOLDEN SEASON</span></aside>
   <footer>
-    <div class="look-hint"><span>↔</span> DRAG TO WANDER</div>
+    <div class="look-hint"><span>↔</span> STROLL SLOWLY · DRAG TO LOOK</div>
     <div class="controls">
-      <div class="modes" role="group" aria-label="Rendering style">
-        <button id="realistic" class="mode active" aria-pressed="true"><span>◉</span> Realistic</button>
-        <button id="watercolour" class="mode" aria-pressed="false"><span>✧</span> Watercolour</button>
-      </div>
-      <div class="divider"></div>
-      <label class="wind" for="wind"><span aria-hidden="true">≋</span><span class="wind-word">Breeze</span><input id="wind" type="range" min="0" max="1" step="0.01" value="0.45" aria-label="Breeze strength"></label>
-      <button id="pause" class="round" aria-label="Pause animation" aria-pressed="false">Ⅱ</button>
+      <button id="walk" class="primary" aria-pressed="true">Ⅱ Pause stroll</button>
+      <button id="recenter" class="round" aria-label="Look along the trail">↟</button>
+      <button id="settings" class="secondary" aria-controls="scene-controls" aria-expanded="false">☷ <span>Scene</span></button>
     </div>
     <div class="caption"><span><i></i> MAPLE & BIRCH</span><span>Made to slow you down.</span><span>BY ZHONE</span></div>
   </footer>
+  <section id="scene-controls" class="drawer" aria-label="Scene settings" hidden>
+    <div class="drawer-head"><div><div class="eyebrow">MAKE YOURSELF AT HOME</div><h2>Your forest</h2></div><button id="settings-close" class="round" aria-label="Close scene settings">×</button></div>
+    <div class="drawer-scroll">
+      <label class="slider" for="pace"><span>Walking pace <output id="pace-value">0.85 m/s</output></span><input id="pace" type="range" min="0.4" max="1.4" step="0.05" value="0.85"></label>
+      <label class="slider" for="wind"><span>Breeze <output id="wind-value">45%</output></span><input id="wind" type="range" min="0" max="1" step="0.01" value="0.45"></label>
+      <label class="slider" for="sunlight"><span>Sunlight <output id="sunlight-value">100%</output></span><input id="sunlight" type="range" min="0.65" max="1.4" step="0.01" value="1"></label>
+      <label class="slider" for="haze"><span>Woodland mist <output id="haze-value">100%</output></span><input id="haze" type="range" min="0.25" max="1.8" step="0.05" value="1"></label>
+      <label class="slider" for="blur"><span>Distance softness <output id="blur-value">100%</output></span><input id="blur" type="range" min="0" max="2" step="0.05" value="1"></label>
+      <label class="check"><span>Drifting leaves</span><input id="leaves" type="checkbox" checked></label>
+      <label class="check"><span>Animate the forest</span><input id="motion" type="checkbox" checked></label>
+      <div class="sound-heading"><h3>Sounds of autumn</h3><span>Off until you choose</span></div>
+      <button id="ambience" class="sound-toggle" aria-pressed="false"><span>Wind, leaves & distant birds</span><b>Off</b></button>
+      <label class="slider" for="ambient-volume"><span>Nature volume <output id="ambient-volume-value">45%</output></span><input id="ambient-volume" type="range" min="0" max="1" step="0.01" value="0.45"></label>
+      <button id="music" class="sound-toggle" aria-pressed="false"><span>Quiet instrumental music</span><b>Off</b></button>
+      <div class="track-row"><span id="track-name">Amber light · 1 / 3</span><button id="next-track" class="secondary" aria-label="Next music track">Next ↠</button></div>
+      <label class="slider" for="music-volume"><span>Music volume <output id="music-volume-value">30%</output></span><input id="music-volume" type="range" min="0" max="0.8" step="0.01" value="0.3"></label>
+      <p id="audio-status" class="credit" role="status">Three original pieces rotate automatically.</p>
+      <button id="reset" class="secondary reset">Reset scene & return to trailhead</button>
+    </div>
+  </section>
   <dialog id="notes">
     <button id="close" class="round" aria-label="Close notes">×</button>
     <div class="eyebrow">A WOODLAND STUDY / 01</div>
     <h2>Stay a little.</h2>
     <p>A sunlit stand of maple and silver birch, at the brief moment when autumn is everywhere.</p>
-    <p>Drag to look around. Adjust the breeze, pause a moment, or see the same forest as a watercolour.</p>
+    <p>The stroll follows a clear trail at an easy pace, turns gently at its ends, and continues back through the woodland. Drag to look around; pause whenever you like.</p>
     <h3>Made from mathematics</h3>
-    <p>Original procedural geometry, bark, leaves, light and paper grain. No downloaded assets, textures, fonts or 3D libraries.</p>
+    <p>Original procedural trees, bark, leaves and light. Open Scene to adjust the atmosphere or enable woodland ambience and three rotating instrumental pieces. Sound starts off.</p>
     <p class="credit">Creative direction: zhone. Generated implementation: Codex. The complete brief and generation prompts are in <a href="ASSETS.md" target="_blank" rel="noopener">the asset notes</a>.</p>
     <p id="metrics" class="credit"></p>
   </dialog>
+  <script src="audio.js"></script>
   <script src="forest.js"></script>
 </body>
 </html>

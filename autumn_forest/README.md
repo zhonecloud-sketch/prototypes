@@ -6,71 +6,88 @@ From this directory, run:
 python -m http.server 8765 --directory dist
 ```
 
-Open <http://localhost:8765>. Expect a full-screen autumn forest with
-Realistic and Watercolour buttons. Drag the scene or focus the canvas and
-use the arrow keys to look around. The Breeze slider changes wind strength;
-the pause button freezes the simulation. [1][2]
+Open <http://localhost:8765>. Expect an automatic stroll through a realistic
+maple and birch woodland. Drag or use arrow keys to look around. Pause stroll
+stops travel while the forest keeps moving. The upward arrow looks along
+the trail again. Open Scene for the additional controls. [1][2]
 
-The exported copy in `C:\automation\prototypes\autumn_forest` also provides
-`index.html` directly in that folder. It can be opened without a server.
-Its `dist` directory preserves the exact static output used by Sites. [3]
+The exported `index.html` in this folder also opens directly without a
+server. `dist` preserves the exact static output deployed by Sites. [3]
 
-## How it works
+## Scene and navigation
 
-The renderer uses WebGL 2 directly, with no three.js or runtime dependencies.
-Trunks and branches share a geometry buffer. Leaves use instancing, which
-draws many copies of a shape using one graphics command. Distant leaves use
-two triangles instead of fourteen. The whole frame uses five draw calls:
-sky, solid geometry, near leaves, distant leaves and post-processing. [1]
+Trees mix young, middle-height and tall specimens, with irregular spacing,
+lean, crown width and branch placement. The seeded generator records its
+actual height range in `window.forestStats`. [1]
 
-The final pass uses a depth texture to blur distant scenery. The same pass
-creates the watercolour mode with softened edges, colour quantization and
-procedural paper grain. Wind and falling leaves run in the vertex shader.
-Reduced-motion preferences start the scene paused; hidden tabs stop their
-animation loop. Lost WebGL contexts trigger scene reinitialization. [1]
+The default pace is 0.85 metres per second. The camera follows the winding
+trail at 1.72 metres above the ground, pauses to turn at each end, and walks
+back. A 3.6-metre-wide corridor excludes branches below 3.4 metres and keeps
+trunks and saplings outside the walking route. [1]
+
+Scene controls adjust walking pace, breeze, sunlight, mist, distant blur,
+falling leaves and foliage animation. The drawer starts closed, scrolls
+internally and occupies at most 52% of a portrait phone's height. Escape,
+the close button or the Scene button closes it. [1][2][4]
+
+Reduced-motion preferences start both walking and foliage paused. Hidden
+tabs stop rendering. Context restoration rebuilds the renderer. [1]
+
+## Audio
+
+Enable nature ambience or music separately under Scene. Both start off;
+no audio files are requested until enabled. Volume controls are independent.
+Three original 64-second instrumental pieces rotate automatically. Next
+advances the music; the 46-second woodland ambience loops. Hidden tabs pause
+sound, then resume enabled layers on return. Reset stops sound. [5][6]
+
+Audio masters are synthesized by `dist/tools/generate_audio.py`, using NumPy,
+SciPy and FFmpeg. The running website needs none of these dependencies.
+Signature Studio verified `zhone` in each published MP3's creator tag. [7]
+
+## Rendering and performance
+
+The application uses WebGL 2 directly, without three.js or a runtime package.
+It draws sky, solid geometry, detailed nearby leaves, simple distant leaves
+and depth-aware post-processing in five draw calls. The leaf detail groups
+move with the walker. The watercolour mode has been removed entirely. [1]
 
 Rendering is capped at 1.6 device pixels per CSS pixel and approximately
-1.5 million total pixels. If the measured frame rate drops below 34 fps,
-resolution and foliage density decrease. Above 56 fps, resolution gradually
-recovers. These are targets and adaptation rules, not a device guarantee. [1]
+1.5 million pixels. Measured rates below 34 fps reduce resolution and leaf
+count; rates above 56 fps gradually restore quality. [1]
 
-## Validation
+## Verification
 
 ```powershell
 node --check forest.js
+node --check audio.js
 Get-Content validation.json
+Get-Content audio-validation.json
 ```
 
-The syntax check should return exit code 0 without output. The JSON records
-the browser, graphics hardware, tested screen sizes, frame rates and
-interaction checks. In the Sites source checkout these files are in `dist`.
-The recorded browser run had no JavaScript or WebGL errors. [4]
+Syntax checks should exit successfully without output. The JSON reports
+record viewport, route, interaction and audio checks, plus decoding and
+creator metadata for the audio. The reports identify the actual test
+hardware. [6][7]
 
-Both modes were checked at 320x568, 360x800, 390x844, 412x915, 430x932,
-768x1024, 844x390 and 1440x900. Controls remained visible without horizontal
-overflow or overlap. Pause/resume, the wind slider, keyboard/pointer input,
-the notes dialog, reduced motion and context recovery passed. [4]
+Browser tests use desktop Chrome and an NVIDIA RTX 3060 with mobile viewport
+emulation. They do not establish performance on a mobile GPU or account for
+thermal throttling. **30 fps on a physical medium-tier phone remains
+unverified.** [6]
 
-Testing used desktop Chrome with an NVIDIA RTX 3060 and mobile viewport
-emulation. Measured frame rates were 179-240 fps; a six-times CPU slowdown
-measured approximately 231 fps. CPU throttling does not simulate a mobile
-GPU, memory bandwidth or thermal throttling. **30 fps on a physical
-medium-tier phone has not been verified.** [4]
+For that remaining check, run the published Site on the target phone for
+several minutes, enable both audio layers, open and close settings, rotate
+the phone and inspect the information panel's live frame rate. Confirm at
+least 30 fps throughout travel, including after the phone warms up.
 
-For the remaining device check, open the published Site on the target phone,
-run each mode for at least one minute, rotate the phone and inspect the live
-frame-rate reading in the information panel. Confirm at least 30 fps during
-camera movement and sustained animation, including after the phone warms.
-
-## Provenance
-
-All geometry and visual effects are original procedural code. No external
-assets are downloaded. Prompts and creator credit are in [ASSETS.md][5].
-The application is a stylized real-time naturalistic rendering; no
-photographic textures are used. [1][5]
+All visual and audio generation prompts are in [ASSETS.md][8]. Keep these
+notes with the exported ingredients when reusing the project.
 
 [1]: dist/forest.js
 [2]: dist/index.html
 [3]: .openai/hosting.json
-[4]: dist/validation.json
-[5]: dist/ASSETS.md
+[4]: dist/style.css
+[5]: dist/audio.js
+[6]: dist/validation.json
+[7]: dist/audio-validation.json
+[8]: dist/ASSETS.md

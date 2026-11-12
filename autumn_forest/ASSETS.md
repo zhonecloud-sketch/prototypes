@@ -1,53 +1,61 @@
 # Asset notes
 
-Open `index.html`, then select the information button to reach these notes.
-The forest should appear without downloading any external assets. [1]
+Open `index.html` and select the information button to find these notes.
+Expect a realistic forest with optional sound. Sound starts off. [1][2]
 
-All visual assets are generated procedurally by original code. No stock
-images, downloaded models, third-party textures, external fonts, audio,
-or image-generation services are used. [1][2][3]
+All visual and audio ingredients are original procedural work generated for
+this project. There are no stock recordings, downloaded models, photographs,
+external fonts or third-party textures. Sources below are the generating
+code and the validation record. [1][3][4]
 
-Generation specifications for each original ingredient:
+Generation specifications:
 
-- Trees and branches: "Create tapered, branching 3D maple and birch trees,
-  with varied heights, white birch bark and darker maple bark." [1]
-- Canopy and leaf litter: "Build orange, russet and gold maple leaves, oval
-  yellow birch leaves, and a leaf-strewn woodland floor. Use instanced
-  geometry and simpler distant foliage." [1]
-- Terrain and vegetation: "Make an uneven woodland floor with a winding
-  open trail, dappled light, grasses and small saplings." [1]
-- Animation: "Give the forest life with coherent canopy wind, leaf flutter,
-  tumbling leaves and subtle camera drift. Include pause and breeze
-  controls." [1]
-- Light and distance blur: "Use warm atmospheric perspective, depth-aware
-  far blur, translucent-looking leaves and gentle light shafts through the
-  canopy." [1]
-- Watercolour: "Transform the same 3D forest into a warm watercolour using
-  pigment steps, softened edges, slight colour bleed and paper grain." [1]
-- Leaf favicon: "Make a simple ochre maple leaf on a dark woodland square."
-  The favicon is an original inline SVG. [2]
-- Interface: "Frame the woodland with quiet editorial typography, cream
-  text and compact dark glass controls that fit mobile screens." [2][3]
+- Trees: "Create mixed-age maple and silver birch trees at peak autumn.
+  Vary heights from young trees to tall canopy trees, and vary lean, crown
+  width, branching height, asymmetry and spacing. Avoid rows and repeated
+  crown patterns." [1]
+- Trail: "Keep the stroll clear of low branches, twigs and saplings. Reserve
+  a broad corridor with overhead clearance and make travel follow the
+  ground at an easy walking pace, with gentle turns at the trail ends." [1]
+- Leaves: "Build lobed orange, russet and gold maple leaves and oval yellow
+  birch leaves. Add fallen leaves, fluttering foliage and drifting leaves.
+  Use simpler distant geometry and update detail as the viewer walks." [1]
+- Terrain and light: "Make uneven ground, a winding trail, dappled light,
+  small plants, atmospheric perspective and distance-dependent blur. Keep
+  the display realistic, with adjustable breeze, light, mist and blur." [1]
+- Interface: "Use quiet editorial typography and dark glass controls. Keep
+  pause and look controls compact; put scene and sound adjustments in a
+  collapsible, scrollable drawer that fits narrow phones." [2][3]
+- Favicon: "Make an ochre maple leaf on a dark woodland square." This is
+  an original inline SVG. [2]
 
-These prompts document the creative specifications used while generating
-the code; they are not claims of separate image-model calls. Geometry uses
-a fixed pseudorandom seed so the forest is reproducible. [1]
+Original audio composition prompts, implemented with deterministic
+synthesis rather than an audio-generation service: [4]
 
-The user's original creative brief was:
+- `audio/amber-light.mp3`: "A quiet, warm major-key instrumental for a
+  breezy autumn walk: softly struck piano-like notes, gentle plucked
+  arpeggios, slow chords and spacious echoes; no drums or vocals."
+- `audio/birch-whispers.mp3`: "A reflective minor-key woodland miniature,
+  sparse bell-piano melody over soft sustained chords, unhurried and
+  restful, with no percussion or voices."
+- `audio/last-gold.mp3`: "A tender, hopeful major-key autumn piece, light
+  arpeggios and a descending melody, rounded timbres and long quiet tails;
+  complement the forest without dominating it."
+- `audio/woodland.mp3`: "A seamless woodland bed of gentle gusting wind,
+  dry leaves rustling in the canopy and occasional distant small birds.
+  Keep the sound spacious, soft and calm, without footsteps or voices."
 
-> make a realistic 3D maple and birch forest at peak autumn, with trees and
-> some nice animation, goal is to build a forest that has life to it. apply
-> blur to faraway objects. Add a switch to toggle between realistic and
-> watercolour views.
+The three scores are 64 seconds each; the ambience loop is 46 seconds.
+Published MP3 files have the embedded creator `zhone`, verified by Signature
+Studio and checked again after decoding. [5]
 
-Additional constraints: raw WebGL without three.js; HTML5 output; Sites
-workflow; export to `C:\automation\prototypes\autumn_forest`; Git push;
-mobile dimensions; target at least 30 fps on medium-tier mobile phones.
-Source: the user request in this chat.
-
+These prompts document the specifications used to generate the code and
+synthesis recipes. No third-party music or field recording is included.
 Creative direction and creator credit: **zhone**. Implementation: **Codex**.
-The next step for reuse is to keep these notes alongside the HTML files.
+Retain these notes alongside the files when reusing the ingredients.
 
 [1]: forest.js
 [2]: index.html
 [3]: style.css
+[4]: tools/generate_audio.py
+[5]: audio-validation.json
