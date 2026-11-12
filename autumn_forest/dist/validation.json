@@ -1,0 +1,220 @@
+{
+  "browser": "157.0.8103.78",
+  "environment": "Windows desktop Chrome, headless, mobile viewport emulation; not a physical phone",
+  "viewports": [
+    {
+      "width": 320,
+      "height": 568,
+      "mode": "realistic",
+      "fps": 179,
+      "render": [
+        512,
+        909
+      ],
+      "quality": 1
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "mode": "watercolour",
+      "fps": 179,
+      "render": [
+        512,
+        909
+      ],
+      "quality": 1
+    },
+    {
+      "width": 360,
+      "height": 800,
+      "mode": "realistic",
+      "fps": 240,
+      "render": [
+        576,
+        1280
+      ],
+      "quality": 1
+    },
+    {
+      "width": 360,
+      "height": 800,
+      "mode": "watercolour",
+      "fps": 240,
+      "render": [
+        576,
+        1280
+      ],
+      "quality": 1
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "mode": "realistic",
+      "fps": 239,
+      "render": [
+        624,
+        1350
+      ],
+      "quality": 1
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "mode": "watercolour",
+      "fps": 239,
+      "render": [
+        624,
+        1350
+      ],
+      "quality": 1
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "mode": "realistic",
+      "fps": 240,
+      "render": [
+        659,
+        1464
+      ],
+      "quality": 1
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "mode": "watercolour",
+      "fps": 240,
+      "render": [
+        659,
+        1464
+      ],
+      "quality": 1
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "mode": "realistic",
+      "fps": 239,
+      "render": [
+        688,
+        1491
+      ],
+      "quality": 1
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "mode": "watercolour",
+      "fps": 239,
+      "render": [
+        688,
+        1491
+      ],
+      "quality": 1
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "mode": "realistic",
+      "fps": 240,
+      "render": [
+        1061,
+        1414
+      ],
+      "quality": 1
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "mode": "watercolour",
+      "fps": 240,
+      "render": [
+        1061,
+        1414
+      ],
+      "quality": 1
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "mode": "realistic",
+      "fps": 238,
+      "render": [
+        1350,
+        624
+      ],
+      "quality": 1
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "mode": "watercolour",
+      "fps": 238,
+      "render": [
+        1350,
+        624
+      ],
+      "quality": 1
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "mode": "realistic",
+      "fps": 240,
+      "render": [
+        1549,
+        968
+      ],
+      "quality": 1
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "mode": "watercolour",
+      "fps": 240,
+      "render": [
+        1549,
+        968
+      ],
+      "quality": 1
+    }
+  ],
+  "checks": [
+    "Pause freezes simulation time",
+    "Resume advances simulation time",
+    "Breeze control accepts changes",
+    "Keyboard and pointer look interactions run without errors",
+    "Notes dialog opens and closes with Escape",
+    "Reduced motion starts paused",
+    "WebGL context loss restores by reinitializing the scene"
+  ],
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "cpuThrottle6x": {
+    "fps": 231.37274499025634,
+    "width": 624,
+    "height": 1350,
+    "quality": 1,
+    "leaves": 122388,
+    "triangles": 1185516,
+    "mode": "watercolour",
+    "paused": false,
+    "time": 31.861166666666822,
+    "drawCalls": 5
+  },
+  "errors": [],
+  "adaptiveQuality": {
+    "method": "Artificial 45 ms animation-callback delay; validates adaptation, not device speed",
+    "stats": {
+      "fps": 21.02483864663309,
+      "width": 195,
+      "height": 422,
+      "quality": 0.5,
+      "leaves": 55074,
+      "triangles": 583464,
+      "mode": "realistic",
+      "paused": false,
+      "time": 12.956266666668157,
+      "drawCalls": 5
+    }
+  }
+}
