@@ -65,24 +65,42 @@ def composition(root, progression, melody, step):
 
 
 def woodland():
-    length = 48
-    out = np.zeros((RATE*length, 2), np.float64)
-    t = np.arange(len(out))/RATE
+    length = 64
+    samples = RATE*length
+    out = np.zeros((samples, 2), np.float64)
+    t = np.arange(samples)/RATE
+    # Let the browser shape gusts. This bed supplies unsteady foliage texture
+    # at much shorter timescales than the gusts and lulls.
+    common = rng.normal(0, 1, samples)
     for channel in range(2):
-        white = rng.normal(0,1,len(out))
-        wind = sosfilt(butter(2, [100,750], 'bandpass', fs=RATE,
-                              output='sos'), white)
-        rustle = sosfilt(butter(2,[1400,6000],'bandpass',fs=RATE,
-                                output='sos'),white)
-        gust = .55+.2*np.sin(2*np.pi*t/12+channel*.5)
-        gust += .12*np.sin(2*np.pi*t/8)
-        out[:,channel] = wind*gust*.43+rustle*gust**3*.12
-    for start in [4,13,26,37]:
-        for j in range(3):
-            tt=np.arange(int(.17*RATE))/RATE
-            chirp=np.sin(2*np.pi*(2300*tt-1700*tt**2))
-            chirp*=np.sin(np.pi*tt/.17)**2
-            place(out,chirp,start+j*.25,.014,.3 if start<25 else .7)
+        noise = .68*common + .73*rng.normal(0, 1, samples)
+        intervals = np.cumsum(rng.uniform(.035, .29, 600))
+        detail = np.interp(t, intervals, rng.uniform(.5, 1.35, len(intervals)))
+        for low, high, gain in [(130,390,.13),(390,1280,.29),(1500,4700,.23)]:
+            band = sosfilt(butter(2, [low, high], 'bandpass', fs=RATE,
+                                  output='sos'), noise)
+            out[:,channel] += band*gain*detail
+    # Short, softly panned contacts give nearby dry leaves a papery sound.
+    start = .1
+    while start < length:
+        duration = rng.uniform(.045, .32)
+        count = int(RATE*duration)
+        lower = rng.uniform(690, 1950)
+        signal = sosfilt(butter(2, [lower, lower+2300], 'bandpass', fs=RATE,
+                                output='sos'), rng.normal(0, 1, count))
+        position = np.linspace(0, 1, count)
+        envelope = (1-np.exp(-position*30))*np.exp(-position*4)*(1-position)
+        place(out, signal*envelope, start, rng.uniform(.03,.16),
+              rng.uniform(.13,.87))
+        start += rng.uniform(.018,.24)
+    for start in [6.2,21.4,38.8,55.1]:
+        for offset in [0,.21,.48]:
+            duration = rng.uniform(.11,.19)
+            tt = np.arange(int(duration*RATE))/RATE
+            freq = rng.uniform(2050,2750)
+            chirp = np.sin(2*np.pi*(freq*tt-1500*tt**2))
+            place(out, chirp*np.sin(np.pi*tt/duration)**2, start+offset,
+                  .021,.3 if start<30 else .7)
     # Blend the tail into the head, making the noise bed periodic.
     n=RATE*2
     blend=np.linspace(0,1,n)[:,None]
@@ -94,6 +112,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',required=True,type=pathlib.Path)
     parser.add_argument('--ffmpeg',required=True)
+    parser.add_argument('--woodland-only',action='store_true')
     args=parser.parse_args()
     args.output.mkdir(parents=True,exist_ok=True)
     scores=[
@@ -104,8 +123,9 @@ def main():
         ('last-gold',65,[[0,4,9],[7,11,14],[5,9,12],[0,4,7]],
          [4,7,9,7,2,4,0,2],1.75),
     ]
-    audio=[(name,composition(root,chords,melody,step))
-           for name,root,chords,melody,step in scores]
+    audio=[] if args.woodland_only else [
+        (name,composition(root,chords,melody,step))
+        for name,root,chords,melody,step in scores]
     audio.append(('woodland',woodland()))
     for name,data in audio:
         peak=np.max(np.abs(data))

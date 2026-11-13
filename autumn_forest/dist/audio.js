@@ -5,7 +5,9 @@
   const ambience=new Audio(),music=new Audio();
   ambience.preload=music.preload='none';ambience.loop=true;
   ambience.volume=0;music.volume=.3;
-  let ambientLevel=.45, windVolume=0, audioContext, windGain;
+  let ambientLevel=.45, windVolume=0, audioContext, windGain, windTone;
+  let gustStart=0,gustPeak=0,gustEnd=0,gustStrength=0,nextGust=1.2;
+  const range=(min,max)=>min+(max-min)*Math.random();
   let ambientOn=false,musicOn=false,track=0,ambientRequest=0,musicRequest=0;
   const status=document.getElementById('audio-status');
   function update(){
@@ -25,7 +27,9 @@
           audioContext=new AudioContext();
           windGain=audioContext.createGain();
           windGain.gain.value=windVolume;
-          audioContext.createMediaElementSource(ambience).connect(windGain).connect(audioContext.destination);
+          windTone=audioContext.createBiquadFilter();
+          windTone.type='lowshelf';windTone.frequency.value=620;
+          audioContext.createMediaElementSource(ambience).connect(windTone).connect(windGain).connect(audioContext.destination);
           ambience.volume=1;
         }
         if(audioContext.state!=='running')audioContext.resume().catch(()=>{});
@@ -69,22 +73,31 @@
   window.addEventListener('pagehide',()=>{ambience.pause();music.pause();});
   window.forestAudio={
     wind(breeze,sceneTime){
-      // These are the same 12 s and 8 s gust cycles used in woodland.mp3.
-      // Match the two-second loop splice before applying the breeze slider.
-      const phase=ambientOn&&!ambience.paused?ambience.currentTime:sceneTime%46;
-      const envelope=t=>.55+.2*Math.sin(t*Math.PI/6+.25)+.12*Math.sin(t*Math.PI/4);
-      const gust=phase<2?envelope(phase)*(phase/2)+envelope(phase+46)*(1-phase/2):envelope(phase);
-      const strength=breeze*(.43+.57*Math.max(0,Math.min(1,(gust-.23)/.64)));
-      const volume=ambientLevel*breeze;
+      if(sceneTime>=nextGust){
+        gustStart=sceneTime;
+        gustPeak=gustStart+range(.16,1.25);
+        gustEnd=gustPeak+range(.45,3.2)+breeze*range(.3,2.8);
+        gustStrength=range(.34,1);
+        nextGust=gustEnd+range(.65,8.2)/(1+breeze*.75);
+      }
+      const progress=sceneTime<gustPeak?(sceneTime-gustStart)/(gustPeak-gustStart):
+        (gustEnd-sceneTime)/Math.max(.01,gustEnd-gustPeak);
+      const pulse=Math.max(0,Math.min(1,progress));
+      const gust=gustStrength*pulse*pulse*(3-2*pulse);
+      const strength=breeze*(.52+.48*gust);
+      const volume=ambientLevel*strength;
       if(Math.abs(windVolume-volume)>.0005||volume===0&&windVolume!==0){
         windVolume=volume;
-        if(windGain)windGain.gain.setTargetAtTime(volume,audioContext.currentTime,.08);
-        else ambience.volume=volume;
+        if(windGain){
+          windGain.gain.setTargetAtTime(volume,audioContext.currentTime,.1);
+          windTone.gain.setTargetAtTime(-14+16*strength,audioContext.currentTime,.14);
+        }else ambience.volume=volume;
       }
       return strength;
     },
     reset(){ambientOn=musicOn=false;ambientRequest++;musicRequest++;ambience.pause();music.pause();track=0;
       music.removeAttribute('src');ambience.currentTime=0;
+      gustStart=gustPeak=gustEnd=gustStrength=0;nextGust=range(.7,3.2);
       for(const id of ['ambient-volume','music-volume']){const input=document.getElementById(id);input.value=input.defaultValue;input.dispatchEvent(new Event('input'));}
       status.textContent='Three original pieces rotate automatically.';update();},
     get state(){return {ambientOn,musicOn,track,ambientPlaying:!ambience.paused,musicPlaying:!music.paused,

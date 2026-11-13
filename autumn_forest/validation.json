@@ -5,22 +5,22 @@
     {
       "width": 320,
       "height": 568,
-      "fps": 177
+      "fps": 176
     },
     {
       "width": 360,
       "height": 640,
-      "fps": 233
+      "fps": 235
     },
     {
       "width": 390,
       "height": 844,
-      "fps": 239
+      "fps": 235
     },
     {
       "width": 412,
       "height": 915,
-      "fps": 239
+      "fps": 235
     },
     {
       "width": 430,
@@ -45,26 +45,26 @@
   ],
   "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
   "wind": {
-    "weakGain": 0.0675,
-    "strongGain": 0.45,
-    "weak": 0.11911268520407382,
-    "strong": 0.9689129667616422,
-    "airborneAtStrongWind": 31
+    "weakGain": 0.0351,
+    "strongGain": 0.3556009294903692,
+    "weak": 0.08065962643969284,
+    "strong": 0.7521343306425261,
+    "airborneAtStrongWind": 16
   },
   "route": {
-    "metres": 359.84738436623644,
+    "metres": 359.9766968069205,
     "stripTransitions": 14,
     "maxLoadedStrips": 6,
     "headingRangeDegrees": [
-      -25.129838902281822,
-      15.480462443741262
+      -16.610834543051237,
+      28.685084236943258
     ],
-    "minimumOverheadClearance": 5.094496459423899,
+    "minimumOverheadClearance": 5.133763670800582,
     "dimFogRange": [
-      0.08005915757188405,
-      2.1469113857803834
+      0.11121177479270218,
+      2.0061328870620168
     ],
-    "brightFog": 0.004695657525055174
+    "brightFog": 0.0049248038074534385
   },
   "checks": [
     "No audio requests until enabled",
@@ -73,7 +73,24 @@
     "Pause controls and reset remain usable",
     "Track selection and both audio layers play",
     "Forward-only route streams and retires geometry",
-    "Dim light varies fog and strong light clears it"
+    "Dim light varies fog and strong light clears it",
+    "Random gust intervals, strengths and durations drive the same wind gain as the scene"
   ],
-  "errors": []
+  "errors": [],
+  "gustSchedule": {
+    "seconds": 120,
+    "events": 19,
+    "durationSeconds": [
+      1.4,
+      5.65
+    ],
+    "lullSeconds": [
+      0.8,
+      5.25
+    ],
+    "strength": [
+      0.58,
+      0.84
+    ]
+  }
 }

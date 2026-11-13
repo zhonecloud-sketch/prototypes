@@ -69,12 +69,21 @@
       vec3 mist=mix(c,vec3(.80,.77,.59),fog);
       return mix(mist,vec3(.70,.68,.48),smoothstep(69.,89.,d));}
   `;
+  const canopyMotion=`
+    uniform float time;uniform float breeze;
+    vec3 sway(vec3 p){
+      float flexible=smoothstep(2.,9.,p.y);
+      float drag=breeze*breeze*flexible;
+      float flutter=sin(time*.85+p.z*.32+p.x*.23);
+      return vec3(drag*(.30+.17*flutter),0.,drag*(-.19+.1*cos(time*.7+p.x*.24)));
+    }`;
   const solidVS=`#version 300 es
     precision highp float;
     layout(location=0)in vec3 pos;layout(location=1)in vec3 norm;
     layout(location=2)in vec3 tint;layout(location=3)in float type;
     uniform mat4 vp;out vec3 world;out vec3 normal;out vec3 color;out float kind;
-    void main(){world=pos;normal=norm;color=tint;kind=type;gl_Position=vp*vec4(pos,1.);}`;
+    ${canopyMotion}
+    void main(){world=pos+sway(pos)*step(.5,type);normal=norm;color=tint;kind=type;gl_Position=vp*vec4(world,1.);}`;
   const solidFS=`#version 300 es
     precision highp float;
     ${common}
@@ -104,12 +113,13 @@
     layout(location=1)in vec4 centerSize;
     layout(location=2)in vec4 tintType;
     layout(location=3)in vec4 rotation;
-    uniform mat4 vp;uniform float time;uniform float breeze;uniform float density;
+    uniform mat4 vp;uniform float density;
+    ${canopyMotion}
     out vec3 world;out vec3 normal;out vec3 color;out float kind;out vec2 leafUV;
     void main(){vec3 center=centerSize.xyz;float falling=step(2.5,tintType.w);
       float movement=step(.5,tintType.w)*(1.-falling);
-      center.x+=sin(time*.85+center.z*.32+center.x*.23)*breeze*.22*movement;
-      center.z+=cos(time*.7+center.x*.24)*breeze*.12*movement;
+      center+=sway(center)*movement;
+      center.x+=sin(time*3.9+rotation.w)*breeze*.045*movement;
       float a=rotation.x+sin(time*1.5+rotation.w)*breeze*.3*movement+falling*time*rotation.z;
       float b=rotation.y+sin(time*1.2+rotation.w)*breeze*.24*movement+falling*time*.8;
       vec3 u=vec3(cos(a),0,sin(a));vec3 v=vec3(-sin(a)*sin(b),cos(b),cos(a)*sin(b));
@@ -197,6 +207,46 @@
       instances.push(x,y,z,size,...c.map(v=>v*variation),ground?0:birch?2:1,
         rand(0,6.28),ground?Math.PI/2:rand(-1.3,1.3),0,rand(0,20));
     }
+    function trunk(points,radius,color,kind){
+      const [x,base,z]=points[0];
+      const rootCount=Math.floor(rand(3,6));
+      const roots=Array.from({length:rootCount},(_,i)=>({
+        angle:(i+rand(-.29,.29))*2*Math.PI/rootCount,
+        reach:radius*rand(.38,2.5),width:rand(.24,.48),twist:rand(-.28,.28)
+      }));
+      const levels=[[-.26,1.07,1],[.035,1.07,.64],[radius*.45,1.04,.29],
+        [radius*1.25,1.01,.06],[radius*2,1,0]];
+      const rings=levels.map(([rise,scale,spread])=>({center:[x,base+rise,z],scale,spread,rise}));
+      for(let i=1;i<points.length;i++)rings.push({center:points[i],scale:1-i*.18,spread:0});
+      const sides=20;
+      const mesh=rings.map(({center,scale,spread,rise},row)=>{
+        const tint=color.map(value=>value*(row===0?.51:row===1?.66:row===2?.83:1));
+        return Array.from({length:sides},(_,i)=>{
+          const angle=i*2*Math.PI/sides, dx=Math.cos(angle),dz=Math.sin(angle);
+          let extension=0;
+          for(const root of roots){
+            const offset=angle-root.angle-root.twist*spread;
+            const angularDistance=Math.atan2(Math.sin(offset),Math.cos(offset));
+            extension+=root.reach*Math.exp(-.5*(angularDistance/root.width)**2);
+          }
+          const maxRadius=(Math.abs(x-trail(z))-2.05)/1.29;
+          const r=Math.min(maxRadius,radius*scale+spread*extension);
+          const px=center[0]+dx*r,pz=center[2]+dz*r;
+          const py=row<3?height(px,pz)+rise:center[1];
+          return {point:[px,py,pz],tint};
+        });
+      });
+      for(let row=0;row<mesh.length;row++)for(let i=0;i<sides;i++){
+        const across=mesh[row][(i+1)%sides].point.map((v,k)=>v-mesh[row][(i+sides-1)%sides].point[k]);
+        const up=mesh[Math.min(row+1,mesh.length-1)][i].point.map((v,k)=>v-mesh[Math.max(0,row-1)][i].point[k]);
+        mesh[row][i].normal=normalize(cross(up,across));
+      }
+      for(let row=1;row<mesh.length;row++)for(let i=0;i<sides;i++){
+        const next=(i+1)%sides;
+        const a=mesh[row-1][i],b=mesh[row-1][next],c=mesh[row][i],d=mesh[row][next];
+        for(const p of [a,c,b,b,c,d])vertex(p.point,p.normal,p.tint,kind);
+      }
+    }
     // Tapered branch hierarchies place leaf sprays at branch tips.
     function tree(x,z,h,birch){
       trees.push({x,z,height:h,birch});
@@ -206,7 +256,7 @@
       const crown=rand(.7,1.4),crownStart=Math.max(3.8/h,rand(.34,.64));
       const points=[];
       for(let j=0;j<=5;j++)points.push([x+lean*(j/5)**1.6,base+h*j/5,z+bend*(j/5)**2]);
-      for(let j=0;j<5;j++)cylinder(points[j],points[j+1],radius*(1-j*.18),radius*(1-(j+1)*.18),c,birch?2:1,8);
+      trunk(points,radius,c,birch?2:1);
       const branches=Math.round(clamp(h*.9,7,birch?15:20));
       for(let j=0;j<branches;j++){
         const f=rand(Math.min(crownStart,.78),.96),angle=rand(0,Math.PI*2);
@@ -224,10 +274,6 @@
               birch?rand(.14,.23):rand(.18,.30),birch);
           }
         }
-      }
-      for(let j=0;j<4;j++){
-        const a=j*1.57;const end=[x+Math.cos(a)*radius*3,base+.015,z+Math.sin(a)*radius*3];
-        cylinder([x,base+.3,z],end,radius*.45,.025,c,birch?2:1);
       }
     }
     function leafShape(outline) {
@@ -506,7 +552,7 @@
         routeYaw=Math.atan(slope);
       }
       prepareForest(walkZ);
-      const gust=window.forestAudio.wind(breeze,time);
+      const gust=window.forestAudio.wind(breeze,weatherTime);
       wind+=(gust-wind)*Math.min(1,dt*4);
       if(!paused&&fallingOn)updateAirborne(dt,wind,walkZ,time);
       const weatherStep=weatherTime/17+distance/30;
@@ -526,6 +572,7 @@
       gl.useProgram(sky);gl.uniform1f(ku.aspect,aspect);gl.bindVertexArray(null);gl.drawArrays(gl.TRIANGLES,0,3);
       gl.enable(gl.DEPTH_TEST);gl.useProgram(solid);gl.uniformMatrix4fv(su.vp,false,vp);gl.uniform3fv(su.eye,eye);
       gl.uniform1f(su.haze,fog);
+      gl.uniform1f(su.time,time);gl.uniform1f(su.breeze,wind);
       let drawCalls=2, solidCount=0, leafCount=0, triangles=0;
       for(const strip of strips.values()){
         if(strip.start>walkZ+12||strip.end<walkZ-91)continue;

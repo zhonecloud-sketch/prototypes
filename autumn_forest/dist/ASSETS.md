@@ -12,8 +12,8 @@ Generation specifications:
 
 - Trees: "Create mixed-age maple and silver birch trees at peak autumn.
   Vary heights from young trees to tall canopy trees, and vary lean, crown
-  width, branching height, asymmetry and spacing. Avoid rows and repeated
-  crown patterns." [1]
+  width, branching height, asymmetry and spacing. Shape irregular root
+  flares that continue below the terrain and darken at the soil line." [1][6]
 - Trail: "Keep the stroll clear of low branches, twigs and saplings. Reserve
   a broad corridor with overhead clearance and make travel follow the
   ground at an easy walking pace. Generate gentle random bends and forest
@@ -44,11 +44,14 @@ synthesis rather than an audio-generation service: [4]
 - `audio/last-gold.mp3`: "A tender, hopeful major-key autumn piece, light
   arpeggios and a descending melody, rounded timbres and long quiet tails;
   complement the forest without dominating it."
-- `audio/woodland.mp3`: "A seamless woodland bed of gentle gusting wind,
-  dry leaves rustling in the canopy and occasional distant small birds.
-  Keep the sound spacious, soft and calm, without footsteps or voices."
+- `audio/woodland.mp3`: "A seamless autumn canopy texture with dry,
+  papery leaf contacts, a soft air bed, and occasional distant birds.
+  Give individual rustles uneven timing and stereo placement. Shape
+  larger gusts at runtime with irregular onsets, strengths and lengths.
+  At mild settings emphasize leaves. At strong settings add fuller air
+  noise and stronger canopy motion." [7][8][9][10]
 
-The three scores are 64 seconds each; the ambience loop is 46 seconds.
+The three scores are 64 seconds each. The woodland bed is 62 seconds.
 Published MP3 files have the embedded creator `zhone`, verified by Signature
 Studio and checked again after decoding. [5]
 
@@ -62,3 +65,8 @@ Retain these notes alongside the files when reusing the ingredients.
 [3]: style.css
 [4]: tools/generate_audio.py
 [5]: audio-validation.json
+[6]: https://www.fs.usda.gov/nrs/pubs/na/NA-TP-03-03.pdf
+[7]: https://www.weather.gov/pqr/wind
+[8]: https://www.weather.gov/media/epz/mesonet/CWOP-WMO8.pdf
+[9]: https://www.jstage.jst.go.jp/article/souonseigyo1977/24/4/24_4_268/_article/-char/en
+[10]: https://www.nps.gov/isro/learn/weather-soundscape.htm

@@ -17,7 +17,8 @@ server. `dist` preserves the exact static output deployed by Sites. [3]
 ## Scene and navigation
 
 Trees mix young, middle-height and tall specimens, with irregular spacing,
-lean, crown width and branch placement. [1]
+lean, crown width and branch placement. Each trunk widens into an uneven
+root flare that follows the terrain and tapers below the soil. [1][8]
 
 The default pace is 0.85 metres per second. The camera follows a randomly
 seeded forward trail at 1.72 metres above the ground. Smoothed bends keep
@@ -39,11 +40,12 @@ tabs stop rendering. Context restoration rebuilds the renderer. [1]
 Enable nature ambience or music separately under Scene. Both start off, and
 no audio files are requested until enabled. Volume controls are independent.
 Three original 64-second instrumental pieces rotate automatically. Next
-advances the music. The 46-second woodland ambience loops at a volume scaled
-by Breeze. The recording's gust timing drives canopy motion and leaf release
-when ambience plays. Gravity settles leaves in calm air, while drag and lift
-carry them sideways or upward in stronger gusts. Hidden tabs pause sound and
-resume enabled layers on return. Reset stops sound. [1][5][6]
+advances the music. The 62-second woodland bed supplies leaf rustle and air
+noise. Runtime gusts vary in strength, duration and spacing. Their shared
+envelope controls the sound, canopy motion and leaf release. Stronger wind
+adds more low-mid sound through Web Audio where available. Gravity settles
+leaves in calm air, while drag and lift carry them sideways or upward in
+stronger gusts. Hidden tabs pause sound and reset stops it. [1][5][6][8]
 
 Audio masters are synthesized by `dist/tools/generate_audio.py`, using NumPy,
 SciPy and FFmpeg. The running website needs none of these dependencies.

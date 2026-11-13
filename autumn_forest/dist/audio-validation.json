@@ -25,10 +25,10 @@
   },
   {
     "file": "woodland.mp3",
-    "seconds": 46.0,
+    "seconds": 62.0,
     "verifiedCreator": "zhone",
-    "peak": 0.4178,
-    "rmsDb": -26.04,
+    "peak": 0.6167,
+    "rmsDb": -20.3,
     "decodedWithoutErrors": true
   }
 ]
