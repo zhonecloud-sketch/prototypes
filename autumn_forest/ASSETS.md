@@ -16,13 +16,16 @@ Generation specifications:
   crown patterns." [1]
 - Trail: "Keep the stroll clear of low branches, twigs and saplings. Reserve
   a broad corridor with overhead clearance and make travel follow the
-  ground at an easy walking pace, with gentle turns at the trail ends." [1]
+  ground at an easy walking pace. Generate gentle random bends and forest
+  sections ahead of a continuous forward walk." [1]
 - Leaves: "Build lobed orange, russet and gold maple leaves and oval yellow
   birch leaves. Add fallen leaves, fluttering foliage and drifting leaves.
-  Use simpler distant geometry and update detail as the viewer walks." [1]
+  Time releases to the audible gusts. Use gravity, drag and lift so stronger
+  gusts carry leaves across the trail. Update detail as the viewer walks." [1]
 - Terrain and light: "Make uneven ground, a winding trail, dappled light,
   small plants, atmospheric perspective and distance-dependent blur. Keep
-  the display realistic, with adjustable breeze, light, mist and blur." [1]
+  the display realistic, with occasional fog under dim sunlight and clear
+  air under strong sunlight." [1]
 - Interface: "Use quiet editorial typography and dark glass controls. Keep
   pause and look controls compact; put scene and sound adjustments in a
   collapsible, scrollable drawer that fits narrow phones." [2][3]

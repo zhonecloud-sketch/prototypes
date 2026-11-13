@@ -1,137 +1,79 @@
 {
   "browser": "157.0.8103.78",
-  "environment": "Desktop Chrome with mobile viewport emulation; not a physical phone",
+  "environment": "Desktop Chrome with mobile viewport emulation",
   "viewports": [
     {
       "width": 320,
       "height": 568,
-      "fps": 175,
-      "render": [
-        512,
-        909
-      ],
-      "drawerHeight": 295
+      "fps": 177
     },
     {
       "width": 360,
       "height": 640,
-      "fps": 233,
-      "render": [
-        576,
-        1024
-      ],
-      "drawerHeight": 333
+      "fps": 233
     },
     {
       "width": 390,
       "height": 844,
-      "fps": 239,
-      "render": [
-        624,
-        1350
-      ],
-      "drawerHeight": 439
+      "fps": 239
     },
     {
       "width": 412,
       "height": 915,
-      "fps": 240,
-      "render": [
-        659,
-        1464
-      ],
-      "drawerHeight": 476
+      "fps": 239
     },
     {
       "width": 430,
       "height": 932,
-      "fps": 238,
-      "render": [
-        688,
-        1491
-      ],
-      "drawerHeight": 485
+      "fps": 239
     },
     {
       "width": 768,
       "height": 1024,
-      "fps": 239,
-      "render": [
-        1061,
-        1414
-      ],
-      "drawerHeight": 570
+      "fps": 239
     },
     {
       "width": 844,
       "height": 390,
-      "fps": 239,
-      "render": [
-        1350,
-        624
-      ],
-      "drawerHeight": 366
+      "fps": 239
     },
     {
       "width": 1440,
       "height": 900,
-      "fps": 238,
-      "render": [
-        1549,
-        968
-      ],
-      "drawerHeight": 570
+      "fps": 239
     }
   ],
-  "checks": [
-    "Automatic stroll starts at 0.85 m/s; all audio is off with no audio requests",
-    "Mixed tree heights and trunk exclusion verified; branch vertices clear the 3.4 m headroom",
-    "Pause stroll, free look, recenter, five sliders, leaf toggle and animation toggle pass",
-    "Ambient audio plays; all three music tracks rotate on real ended events; next and volume work",
-    "Reset returns to trailhead, restores defaults and stops audio",
-    "Reduced motion pauses both walking and foliage",
-    "Accelerated full trail traversal reaches the end, turns gently and walks back"
-  ],
-  "geometry": {
-    "treeCount": 180,
-    "minHeight": 4.990831032395363,
-    "maxHeight": 23.94561504898593,
-    "minBranchClearance": 6.953489223677853,
-    "rejectedBranches": 0
-  },
   "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-  "finalStats": {
-    "fps": 133.8661338661341,
-    "width": 624,
-    "height": 1350,
-    "quality": 1,
-    "leaves": 103371,
-    "triangles": 817818,
-    "mode": "realistic",
-    "paused": false,
-    "time": 25.421466666667065,
-    "drawCalls": 5,
-    "walking": true,
-    "pace": 0.85,
-    "walkZ": 9.164836181365919,
-    "direction": -1,
-    "turnRemaining": 0,
-    "distance": 0.8365699999999973,
-    "eye": [
-      0.617210220876237,
-      1.7812796132199111,
-      9.164836181365919
-    ],
-    "breeze": 0.45,
-    "sunlight": 1,
-    "haze": 1,
-    "blurStrength": 1,
-    "fallingOn": true,
-    "treeCount": 180,
-    "treeHeightRange": [
-      4.990831032395363,
-      23.94561504898593
-    ]
+  "wind": {
+    "weakGain": 0.0675,
+    "strongGain": 0.45,
+    "weak": 0.11911268520407382,
+    "strong": 0.9689129667616422,
+    "airborneAtStrongWind": 31
   },
+  "route": {
+    "metres": 359.84738436623644,
+    "stripTransitions": 14,
+    "maxLoadedStrips": 6,
+    "headingRangeDegrees": [
+      -25.129838902281822,
+      15.480462443741262
+    ],
+    "minimumOverheadClearance": 5.094496459423899,
+    "dimFogRange": [
+      0.08005915757188405,
+      2.1469113857803834
+    ],
+    "brightFog": 0.004695657525055174
+  },
+  "checks": [
+    "No audio requests until enabled",
+    "Wind gain follows breeze strength, including silence at zero",
+    "Strong-wind leaves travel predominantly sideways",
+    "Pause controls and reset remain usable",
+    "Track selection and both audio layers play",
+    "Forward-only route streams and retires geometry",
+    "Dim light varies fog and strong light clears it"
+  ],
   "errors": []
 }

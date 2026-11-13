@@ -17,16 +17,17 @@ server. `dist` preserves the exact static output deployed by Sites. [3]
 ## Scene and navigation
 
 Trees mix young, middle-height and tall specimens, with irregular spacing,
-lean, crown width and branch placement. The seeded generator records its
-actual height range in `window.forestStats`. [1]
+lean, crown width and branch placement. [1]
 
-The default pace is 0.85 metres per second. The camera follows the winding
-trail at 1.72 metres above the ground, pauses to turn at each end, and walks
-back. A 3.6-metre-wide corridor excludes branches below 3.4 metres and keeps
-trunks and saplings outside the walking route. [1]
+The default pace is 0.85 metres per second. The camera follows a randomly
+seeded forward trail at 1.72 metres above the ground. Smoothed bends keep
+the route heading within a span of 80 degrees. A 3.6-metre-wide corridor
+excludes low branches and keeps trunks and saplings outside the route. [1]
 
-Scene controls adjust walking pace, breeze, sunlight, mist, distant blur,
-falling leaves and foliage animation. The drawer starts closed, scrolls
+Scene controls adjust walking pace, breeze, sunlight, fog in dim light,
+distant blur, drifting leaves and foliage animation. Fog varies with time
+and distance under dim light and clears as sunlight strengthens. The
+drawer starts closed, scrolls
 internally and occupies at most 52% of a portrait phone's height. Escape,
 the close button or the Scene button closes it. [1][2][4]
 
@@ -35,11 +36,14 @@ tabs stop rendering. Context restoration rebuilds the renderer. [1]
 
 ## Audio
 
-Enable nature ambience or music separately under Scene. Both start off;
+Enable nature ambience or music separately under Scene. Both start off, and
 no audio files are requested until enabled. Volume controls are independent.
 Three original 64-second instrumental pieces rotate automatically. Next
-advances the music; the 46-second woodland ambience loops. Hidden tabs pause
-sound, then resume enabled layers on return. Reset stops sound. [5][6]
+advances the music. The 46-second woodland ambience loops at a volume scaled
+by Breeze. The recording's gust timing drives canopy motion and leaf release
+when ambience plays. Gravity settles leaves in calm air, while drag and lift
+carry them sideways or upward in stronger gusts. Hidden tabs pause sound and
+resume enabled layers on return. Reset stops sound. [1][5][6]
 
 Audio masters are synthesized by `dist/tools/generate_audio.py`, using NumPy,
 SciPy and FFmpeg. The running website needs none of these dependencies.
@@ -48,9 +52,10 @@ Signature Studio verified `zhone` in each published MP3's creator tag. [7]
 ## Rendering and performance
 
 The application uses WebGL 2 directly, without three.js or a runtime package.
-It draws sky, solid geometry, detailed nearby leaves, simple distant leaves
-and depth-aware post-processing in five draw calls. The leaf detail groups
-move with the walker. The watercolour mode has been removed entirely. [1]
+It draws sky, solid geometry, nearby and distant leaves, and a depth-aware
+blur. The renderer holds six 24-metre forest sections. It prepares four
+ahead of the current one and releases the buffers for sections that fall
+more than one section behind. Leaf detail follows the walker. [1]
 
 Rendering is capped at 1.6 device pixels per CSS pixel and approximately
 1.5 million pixels. Measured rates below 34 fps reduce resolution and leaf

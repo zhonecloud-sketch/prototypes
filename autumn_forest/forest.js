@@ -16,8 +16,23 @@
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   const normalize = a => {const l = Math.hypot(...a)||1;return a.map(v=>v/l);};
   const cross = (a,b) => [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
-  const height = (x,z) => .16*Math.sin(x*.29+z*.13)+.1*Math.cos(z*.31)+Math.max(0,Math.abs(x)-5)*.035;
-  const trail = z => 1.1*Math.sin(z*.065);
+  const routeSeed = Math.floor(Math.random()*0x7fffffff);
+  const trailhead = 10;
+  const stripLength = 24;
+  const bendLength = 52;
+  function routeNoise(index) {
+    let bits = Math.imul(index,0x9e3779b1)^routeSeed;
+    bits = Math.imul(bits^(bits>>>16),0x21f0aaad);
+    return ((bits^(bits>>>15))>>>0)/4294967296;
+  }
+  function trail(z) {
+    const along = (trailhead-z)/bendLength;
+    const bend = Math.floor(along), t = along-bend;
+    const a = bend===0?0:28*routeNoise(bend)-14;
+    const b = bend===-1?0:28*routeNoise(bend+1)-14;
+    return a+(b-a)*t*t*(3-2*t);
+  }
+  const height = (x,z) => .16*Math.sin(x*.29+z*.13)+.1*Math.cos(z*.31)+Math.max(0,Math.abs(x-trail(z))-5)*.025;
   function program(vs,fs) {
     function shader(type,source) {
       const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);
@@ -50,7 +65,9 @@
     float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
       return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
     vec3 atmosphere(vec3 c){float d=length(world-eye);
-      float fog=1.-exp(-d*.016*haze);return mix(c,vec3(.80,.77,.59),fog);}
+      float fog=1.-exp(-d*.016*haze);
+      vec3 mist=mix(c,vec3(.80,.77,.59),fog);
+      return mix(mist,vec3(.70,.68,.48),smoothstep(69.,89.,d));}
   `;
   const solidVS=`#version 300 es
     precision highp float;
@@ -72,7 +89,7 @@
         c*=.55+bark*.65;
       }else{
         float soil=noise(world.xz*24.)*.45+noise(world.xz*5.)*.55;c*=.75+.5*soil;
-        float path=1.-smoothstep(1.1,2.6,abs(world.x-1.1*sin(world.z*.065)));
+        float path=clamp(-kind,0.,1.);
         c=mix(c,vec3(.29,.235,.145)*(.8+soil*.4),path*.8);
         float dapple=smoothstep(.3,.72,noise(world.xz*.85));
         c*=.57+dapple*.85;
@@ -87,18 +104,14 @@
     layout(location=1)in vec4 centerSize;
     layout(location=2)in vec4 tintType;
     layout(location=3)in vec4 rotation;
-    uniform mat4 vp;uniform float time;uniform float breeze;uniform float density;uniform float fallingOn;
+    uniform mat4 vp;uniform float time;uniform float breeze;uniform float density;
     out vec3 world;out vec3 normal;out vec3 color;out float kind;out vec2 leafUV;
     void main(){vec3 center=centerSize.xyz;float falling=step(2.5,tintType.w);
-      float t=time*(.22+breeze*.4);
-      if(falling>.5&&fallingOn<.5){gl_Position=vec4(2,2,2,1);return;}
-      if(falling>.5){center.y=mod(center.y-t*(.8+rotation.w*.08),13.)+.2;
-        center.x+=sin(t*.7+rotation.w)*1.8;center.z+=cos(t*.4+rotation.w)*1.2;}
-      float movement=step(.5,tintType.w);
+      float movement=step(.5,tintType.w)*(1.-falling);
       center.x+=sin(time*.85+center.z*.32+center.x*.23)*breeze*.22*movement;
       center.z+=cos(time*.7+center.x*.24)*breeze*.12*movement;
-      float a=rotation.x+sin(time*1.5+rotation.w)*breeze*.3*movement+falling*t;
-      float b=rotation.y+sin(time*1.2+rotation.w)*breeze*.24*movement;
+      float a=rotation.x+sin(time*1.5+rotation.w)*breeze*.3*movement+falling*time*rotation.z;
+      float b=rotation.y+sin(time*1.2+rotation.w)*breeze*.24*movement+falling*time*.8;
       vec3 u=vec3(cos(a),0,sin(a));vec3 v=vec3(-sin(a)*sin(b),cos(b),cos(a)*sin(b));
       vec2 s=shape;
       if(tintType.w>1.5&&tintType.w<2.5&&length(s)>.01){s=normalize(s)*vec2(.48,.82);}
@@ -153,16 +166,16 @@
     const leaf=program(leafVS,leafFS),post=program(fullVS,postFS);
     const loc=(p,n)=>gl.getUniformLocation(p,n);
     const uniforms=p=>Object.fromEntries(['vp','eye','time','breeze','aspect',
-      'scene','depths','pixel','blurStrength','sunlight','sunUV','density','haze','fallingOn'].map(n=>[n,loc(p,n)]));
+      'scene','depths','pixel','blurStrength','sunlight','sunUV','density','haze'].map(n=>[n,loc(p,n)]));
     const su=uniforms(solid),lu=uniforms(leaf),pu=uniforms(post),ku=uniforms(sky);
-    const vertices=[],instances=[],distantInstances=[];
-    const trees=[];let rejectedBranches=0;
+    let vertices,instances,trees;
+    const strips = new Map();
     function vertex(p,n,c,k){vertices.push(...p,...n,...c,k);}
     function cylinder(a,b,r1,r2,c,k,sides=6){
       // Reserve a 3.6 m wide, 3.4 m tall strolling corridor.
       if(k>0){for(let t=0;t<=1;t+=.125){
         const p=a.map((v,i)=>v+(b[i]-v)*t);
-        if(Math.abs(p[0]-trail(p[2]))<1.8+Math.max(r1,r2)&&p[1]<height(p[0],p[2])+3.4){rejectedBranches++;return;}
+        if(Math.abs(p[0]-trail(p[2]))<1.8+Math.max(r1,r2)&&p[1]<height(p[0],p[2])+3.4)return;
       }}
       const axis=normalize(b.map((v,i)=>v-a[i]));
       const u=normalize(cross(axis,Math.abs(axis[1])>.95?[1,0,0]:[0,1,0]));
@@ -177,12 +190,11 @@
     }
     const mapleColors=[[.83,.31,.055],[.95,.46,.055],[.69,.19,.035],[.96,.61,.09],[.78,.39,.045]];
     const birchColors=[[.83,.68,.13],[.95,.75,.18],[.71,.58,.1],[.91,.62,.1]];
-    function addLeaf(x,y,z,size,birch,fallen=false,ground=false){
-      if(!ground&&!fallen&&Math.abs(x-trail(z))<2.2+size&&y<height(x,z)+3.8)return;
+    function addLeaf(x,y,z,size,birch,ground=false){
+      if(!ground&&Math.abs(x-trail(z))<2.2+size&&y<height(x,z)+3.8)return;
       const palette=birch?birchColors:mapleColors;
       const c=palette[Math.floor(random()*palette.length)];const variation=rand(.82,1.13);
-      const target=z<-24?distantInstances:instances;
-      target.push(x,y,z,size,...c.map(v=>v*variation),ground?0:fallen?3:birch?2:1,
+      instances.push(x,y,z,size,...c.map(v=>v*variation),ground?0:birch?2:1,
         rand(0,6.28),ground?Math.PI/2:rand(-1.3,1.3),0,rand(0,20));
     }
     // Tapered branch hierarchies place leaf sprays at branch tips.
@@ -218,83 +230,187 @@
         cylinder([x,base+.3,z],end,radius*.45,.025,c,birch?2:1);
       }
     }
-    for(let z=-130;z<65;z+=2){for(let x=-60;x<60;x+=2){
-      const a=[x,height(x,z),z],b=[x+2,height(x+2,z),z],c=[x,height(x,z+2),z+2],d=[x+2,height(x+2,z+2),z+2];
-      for(const p of [a,c,b,b,c,d])vertex(p,[0,1,0],[.30,.28,.12],0);
-    }}
-    // Uneven age groups, irregular spacing and asymmetric crowns.
-    for(let i=0;i<8;i++){
-      const z=5-Math.floor(i/2)*19,x=trail(z)+(i%2?1:-1)*rand(4.6,6.2);
-      tree(x,z,[21,8,12,23,7,17,20,10][i],i%3===1);
+    function leafShape(outline) {
+      const shape = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,shape);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(outline),gl.STATIC_DRAW);
+      return shape;
     }
-    for(let tries=0;trees.length<180&&tries<3000;tries++){
-      const x=rand(-30,30),z=rand(-105,40);
-      if(Math.abs(x-trail(z))<4.1||trees.some(t=>Math.hypot(x-t.x,z-t.z)<rand(2.1,3.4)))continue;
-      const age=random(),h=age<.2?rand(4.8,8):age<.73?rand(9,15):rand(17,24);
-      tree(x,z,h,random()<.45);
-    }
-    // The foreground is scattered with individually shaped fallen leaves.
-    for(let i=0;i<8500;i++){
-      const x=rand(-25,25),z=rand(-110,40);
-      if(Math.abs(x-Math.sin(z*.065))<1.6&&random()<.78)continue;
-      addLeaf(x,height(x,z)+rand(.025,.065),z,rand(.07,.17),random()<.35,false,true);
-    }
-    // Low grasses and small saplings break up the floor beside the trail.
-    for(let i=0;i<620;i++){
-      const x=rand(-22,22),z=rand(-100,35);
-      if(Math.abs(x-trail(z))<3.1)continue;
-      const y=height(x,z),c=[rand(.19,.31),rand(.23,.34),.09];
-      for(let j=0;j<5;j++){
-        const a=rand(0,6.28),h=rand(.12,.5),w=rand(.015,.04);
-        const n=[Math.cos(a),.25,Math.sin(a)];
-        vertex([x-w,y,z],n,c,0);vertex([x+w,y,z],n,c,0);
-        vertex([x+Math.cos(a)*h*.4,y+h,z+Math.sin(a)*h*.4],n,c,0);
-      }
-      if(i%14===0){
-        cylinder([x,y,z],[x+.12,y+.75,z],.019,.004,[.27,.24,.12],1,4);
-        for(let j=0;j<12;j++)addLeaf(x+rand(-.35,.35),y+rand(.25,.85),z+rand(-.3,.3),rand(.09,.16),false);
-      }
-    }
-    for(let i=0;i<170;i++)addLeaf(rand(-16,16),rand(1,14),rand(-90,30),rand(.07,.16),false,true);
-    // Shuffle once so adaptive thinning remains distributed across the forest.
-    for(const data of [instances,distantInstances])for(let i=data.length/12-1;i>0;i--){
-      const j=Math.floor(random()*(i+1));
-      for(let k=0;k<12;k++){const temp=data[i*12+k];data[i*12+k]=data[j*12+k];data[j*12+k]=temp;}
-    }
-    const solidVAO=gl.createVertexArray();gl.bindVertexArray(solidVAO);
-    const vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.STATIC_DRAW);
-    [3,3,3,1].forEach((size,i)=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,size,gl.FLOAT,false,40,[0,12,24,36][i]);});
-    const leafVAO=gl.createVertexArray();gl.bindVertexArray(leafVAO);
     const outline=[[0,-.7],[-.24,-.25],[-.65,-.32],[-.48,.02],[-.86,.28],[-.35,.3],[-.28,.65],[0,1.],[.28,.65],[.35,.3],[.86,.28],[.48,.02],[.65,-.32],[.24,-.25]];
-    const shape=[];for(let i=0;i<outline.length;i++)shape.push(0,0,...outline[i],...outline[(i+1)%outline.length]);
-    const sb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,sb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(shape),gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
-    const ib=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,ib);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(instances),gl.STATIC_DRAW);
-    for(let i=1;i<=3;i++){gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,4,gl.FLOAT,false,48,(i-1)*16);gl.vertexAttribDivisor(i,1);}
-    const farVAO=gl.createVertexArray();gl.bindVertexArray(farVAO);
-    const farShape=[0,-.7,-.6,.15,0,1.,0,-.7,0,1.,.6,.15];
-    const fb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,fb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(farShape),gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
-    const fi=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,fi);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(distantInstances),gl.STATIC_DRAW);
-    for(let i=1;i<=3;i++){gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,4,gl.FLOAT,false,48,(i-1)*16);gl.vertexAttribDivisor(i,1);}
-    gl.bindVertexArray(null);
-    const allLeaves=new Float32Array(instances.concat(distantInstances));
-    const nearData=new Float32Array(allLeaves.length),farData=new Float32Array(allLeaves.length);
-    let nearTotal=instances.length/12,farTotal=distantInstances.length/12,lastLOD=Infinity;
-    function updateFoliage(z){
-      if(Math.abs(z-lastLOD)<8)return;
-      let n=0,f=0;
-      for(let i=0;i<allLeaves.length;i+=12){
-        const near=Math.abs(allLeaves[i+2]-z)<34&&Math.abs(allLeaves[i])<24;
-        const target=near?nearData:farData,offset=near?n:f;
-        for(let k=0;k<12;k++)target[offset+k]=allLeaves[i+k];
-        if(near)n+=12;else f+=12;
+    const shape=[];
+    for(let i=0;i<outline.length;i++)shape.push(0,0,...outline[i],...outline[(i+1)%outline.length]);
+    const nearShape=leafShape(shape);
+    const farShape=leafShape([0,-.7,-.6,.15,0,1.,0,-.7,0,1.,.6,.15]);
+
+    function leafVAO(shapeBuffer,instanceBuffer) {
+      const vao=gl.createVertexArray();
+      gl.bindVertexArray(vao);
+      gl.bindBuffer(gl.ARRAY_BUFFER,shapeBuffer);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+      gl.bindBuffer(gl.ARRAY_BUFFER,instanceBuffer);
+      for(let i=1;i<=3;i++){
+        gl.enableVertexAttribArray(i);
+        gl.vertexAttribPointer(i,4,gl.FLOAT,false,48,(i-1)*16);
+        gl.vertexAttribDivisor(i,1);
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER,ib);gl.bufferData(gl.ARRAY_BUFFER,nearData.subarray(0,n),gl.DYNAMIC_DRAW);
-      gl.bindBuffer(gl.ARRAY_BUFFER,fi);gl.bufferData(gl.ARRAY_BUFFER,farData.subarray(0,f),gl.DYNAMIC_DRAW);
-      nearTotal=n/12;farTotal=f/12;lastLOD=z;
+      return vao;
     }
+
+    function buildStrip(index) {
+      seed = Math.imul(index+1,0x45d9f3b)^routeSeed;
+      vertices=[];instances=[];trees=[];
+      const end=trailhead-index*stripLength, start=end-stripLength;
+      const point=(offset,z)=>[trail(z)+offset,height(trail(z)+offset,z),z];
+      for(let z=start;z<end;z+=2){
+        for(let offset=-45;offset<45;offset+=1.5){
+          const a=point(offset,z), b=point(offset+1.5,z);
+          const c=point(offset,z+2), d=point(offset+1.5,z+2);
+          for(const p of [a,c,b,b,c,d]){
+            const path=clamp((2.65-Math.abs(p[0]-trail(p[2])))/1.5,0,1);
+            vertex(p,[0,1,0],[.30,.28,.12],-path);
+          }
+        }
+      }
+      // A few trees frame the path in each strip. Wider spacing varies off trail.
+      for(let i=0;i<4;i++){
+        const z=start+3+i*5.5;
+        tree(trail(z)+(i%2?1:-1)*rand(4.6,8),z,rand(9,23),random()<.5);
+      }
+      for(let tries=0;trees.length<29&&tries<160;tries++){
+        const z=rand(start+.9,end-.9),x=trail(z)+rand(-39,39);
+        if(Math.abs(x-trail(z))<4.1||trees.some(t=>Math.hypot(x-t.x,z-t.z)<2.8))continue;
+        const age=random(),h=age<.2?rand(4.8,8):age<.73?rand(9,15):rand(17,24);
+        tree(x,z,h,random()<.45);
+      }
+      for(let i=0;i<1450;i++){
+        const z=rand(start,end),offset=rand(-30,30),x=trail(z)+offset;
+        if(Math.abs(offset)<1.6&&random()<.78)continue;
+        addLeaf(x,height(x,z)+rand(.025,.065),z,rand(.07,.17),random()<.35,true);
+      }
+      for(let i=0;i<120;i++){
+        const z=rand(start,end),offset=rand(-28,28),x=trail(z)+offset;
+        if(Math.abs(offset)<3.1)continue;
+        const y=height(x,z),c=[rand(.19,.31),rand(.23,.34),.09];
+        for(let j=0;j<5;j++){
+          const a=rand(0,6.28),h=rand(.12,.5),w=rand(.015,.04);
+          const n=[Math.cos(a),.25,Math.sin(a)];
+          vertex([x-w,y,z],n,c,0);vertex([x+w,y,z],n,c,0);
+          vertex([x+Math.cos(a)*h*.4,y+h,z+Math.sin(a)*h*.4],n,c,0);
+        }
+        if(i%14===0){
+          cylinder([x,y,z],[x+.12,y+.75,z],.019,.004,[.27,.24,.12],1,4);
+          for(let j=0;j<12;j++)addLeaf(x+rand(-.35,.35),y+rand(.25,.85),z+rand(-.3,.3),rand(.09,.16),false);
+        }
+      }
+      for(let i=instances.length/12-1;i>0;i--){
+        const j=Math.floor(random()*(i+1));
+        for(let k=0;k<12;k++){
+          const value=instances[i*12+k];
+          instances[i*12+k]=instances[j*12+k];instances[j*12+k]=value;
+        }
+      }
+      const solid=gl.createVertexArray(),solidBuffer=gl.createBuffer();
+      gl.bindVertexArray(solid);
+      gl.bindBuffer(gl.ARRAY_BUFFER,solidBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.STATIC_DRAW);
+      [3,3,3,1].forEach((size,i)=>{
+        gl.enableVertexAttribArray(i);
+        gl.vertexAttribPointer(i,size,gl.FLOAT,false,40,[0,12,24,36][i]);
+      });
+      const leafBuffer=gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,leafBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(instances),gl.STATIC_DRAW);
+      let clearance=Infinity;
+      for(let i=0;i<vertices.length;i+=10){
+        if(vertices[i+9]>.5&&Math.abs(vertices[i]-trail(vertices[i+2]))<1.8){
+          clearance=Math.min(clearance,vertices[i+1]-height(vertices[i],vertices[i+2]));
+        }
+      }
+      const strip={start,end,trees,clearance,solid,solidBuffer,leafBuffer,
+        near:leafVAO(nearShape,leafBuffer),far:leafVAO(farShape,leafBuffer),
+        solids:vertices.length/10,leaves:instances.length/12};
+      vertices=instances=trees=null;
+      gl.bindVertexArray(null);
+      return strip;
+    }
+
+    let currentStrip=Infinity;
+    let canopySources=[];
+    function prepareForest(z) {
+      const index=Math.floor((trailhead-z)/stripLength);
+      if(index===currentStrip)return;
+      for(const [id,strip] of strips){
+        if(id>=index-1&&id<=index+4)continue;
+        gl.deleteVertexArray(strip.solid);
+        gl.deleteVertexArray(strip.near);
+        gl.deleteVertexArray(strip.far);
+        gl.deleteBuffer(strip.solidBuffer);
+        gl.deleteBuffer(strip.leafBuffer);
+        strips.delete(id);
+      }
+      for(let id=index-1;id<=index+4;id++){
+        if(!strips.has(id))strips.set(id,buildStrip(id));
+      }
+      currentStrip=index;
+      canopySources=[...strips.values()].flatMap(strip=>strip.trees)
+        .filter(t=>Math.abs(t.x-trail(t.z))<17);
+    }
+
+    const leafLimit=110;
+    const airborne=[];
+    const airborneData=new Float32Array(leafLimit*12);
+    const airborneBuffer=gl.createBuffer(),airborneVAO=leafVAO(nearShape,airborneBuffer);
+    let releaseBudget=0;
+    function updateAirborne(dt,wind,z,time) {
+      // Gravity acts against drag. Strong gusts can carry a leaf sideways
+      // or lift it briefly, and every leaf can settle when the air calms.
+      releaseBudget+=dt*Math.max(0,wind-.07)*11*(.45+.55*wind);
+      while(releaseBudget>=1){
+        releaseBudget--;
+        if(airborne.length>=leafLimit)break;
+        const candidates=canopySources.filter(t=>t.z<z-3&&t.z>z-29);
+        if(!candidates.length)break;
+        const tree=candidates[Math.floor(Math.random()*candidates.length)];
+        const x=tree.x+(Math.random()-.5)*3;
+        airborne.push({x,y:height(tree.x,tree.z)+tree.height*(.57+Math.random()*.3),
+          z:tree.z, vx:0,vy:0,vz:0,phase:Math.random()*Math.PI*2,
+          size:.09+Math.random()*.08,color:tree.birch?birchColors[0]:mapleColors[1],
+          settled:0});
+      }
+      for(let i=airborne.length-1;i>=0;i--){
+        const p=airborne[i];
+        if(p.settled>0)p.settled+=dt;
+        else{
+          const flutter=Math.sin(time*3+p.phase);
+          const airSpeed=7.2*wind**1.35;
+          const lift=wind**2.5*(1.75+flutter*.95);
+          const drag=1-Math.exp(-7*dt);
+          p.vx+=(airSpeed*.78+flutter*.32-p.vx)*drag;
+          p.vz+=(-airSpeed*.63-p.vz)*drag;
+          p.vy+=(lift-9.81/7-p.vy)*drag;
+          p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;
+          const floor=height(p.x,p.z)+.075;
+          if(p.y<=floor){p.y=floor;p.settled=dt;}
+        }
+        if(p.settled>1.8||p.z>z+14||p.z<z-86)airborne.splice(i,1);
+      }
+    }
+
+    function drawAirborne() {
+      for(let i=0;i<airborne.length;i++){
+        const p=airborne[i];
+        const size=p.size*(1-clamp((p.settled-.9)/.9,0,1));
+        // Settled leaves lie flat and stop tumbling.
+        airborneData.set([p.x,p.y,p.z,size,...p.color,p.settled?0:3,
+          p.phase,p.settled?Math.PI/2:p.phase,1.25,p.phase],i*12);
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER,airborneBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER,airborneData.subarray(0,airborne.length*12),gl.STREAM_DRAW);
+      gl.bindVertexArray(airborneVAO);
+      gl.drawArraysInstanced(gl.TRIANGLES,0,shape.length/2,airborne.length);
+    }
+
     const frame=gl.createFramebuffer(),scene=gl.createTexture(),depth=gl.createTexture();
     let width=0,heightPx=0,quality=1,resizeNeeded=true;
     function texture(t,internal,format,type){gl.bindTexture(gl.TEXTURE_2D,t);
@@ -330,14 +446,15 @@
     let yaw=0,pitch=.08,targetYaw=0,targetPitch=.08,paused=reducedMotion,walking=!reducedMotion;
     let time=0,last=0,breeze=.45,frames=0,sample=0,fps=60,raf=0;
     let pace=.85,sunlight=1,haze=1,blurStrength=1,fallingOn=true;
-    let walkZ=10,direction=-1,turnRemaining=0,routeYaw=-.06,distance=0;
+    let walkZ=trailhead,routeYaw=0,distance=0;
+    let weatherTime=0,fog=0,wind=0;
     let pointer=null,contextLost=false;
     const walk=document.getElementById('walk'),motion=document.getElementById('motion');
     function walkUI(){walk.textContent=walking?'Ⅱ Pause stroll':'▷ Resume stroll';walk.setAttribute('aria-pressed',String(walking));}
     walkUI();motion.checked=!paused;
     walk.onclick=()=>{walking=!walking;walkUI();};
     motion.onchange=()=>{paused=!motion.checked;};
-    document.getElementById('leaves').onchange=e=>{fallingOn=e.target.checked;};
+    document.getElementById('leaves').onchange=e=>{fallingOn=e.target.checked;if(!fallingOn){airborne.length=0;releaseBudget=0;}};
     const settings={pace:v=>pace=v,wind:v=>breeze=v,sunlight:v=>sunlight=v,haze:v=>haze=v,blur:v=>blurStrength=v};
     for(const [id,assign]of Object.entries(settings))document.getElementById(id).oninput=e=>{
       const v=Number(e.target.value);assign(v);
@@ -352,19 +469,20 @@
     document.getElementById('recenter').onclick=()=>{targetYaw=0;targetPitch=.08;};
     document.getElementById('reset').onclick=()=>{
       for(const id of Object.keys(settings)){const input=document.getElementById(id);input.value=input.defaultValue;input.dispatchEvent(new Event('input'));}
-      walkZ=10;direction=-1;turnRemaining=0;routeYaw=-.06;distance=0;targetYaw=yaw=0;targetPitch=pitch=.08;
+      walkZ=trailhead;routeYaw=0;distance=0;targetYaw=yaw=0;targetPitch=pitch=.08;
+      time=weatherTime=fog=wind=releaseBudget=0;airborne.length=0;
       walking=!reducedMotion;paused=reducedMotion;motion.checked=!paused;fallingOn=true;
       document.getElementById('leaves').checked=true;walkUI();window.forestAudio.reset();
     };
     canvas.onpointerdown=e=>{pointer=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId);};
     canvas.onpointermove=e=>{if(!pointer)return;
-      targetYaw=clamp(targetYaw-(e.clientX-pointer[0])*.003,-Math.PI,Math.PI);
+      targetYaw=clamp(targetYaw-(e.clientX-pointer[0])*.003,-Math.PI/3,Math.PI/3);
       targetPitch=clamp(targetPitch+(e.clientY-pointer[1])*.002,-.3,.6);pointer=[e.clientX,e.clientY];};
     canvas.onpointerup=canvas.onpointercancel=()=>{pointer=null;};
     canvas.onkeydown=e=>{if(!e.key.startsWith('Arrow'))return;e.preventDefault();
       if(e.key==='ArrowLeft')targetYaw-=.07;if(e.key==='ArrowRight')targetYaw+=.07;
       if(e.key==='ArrowUp')targetPitch+=.04;if(e.key==='ArrowDown')targetPitch-=.04;
-      targetYaw=clamp(targetYaw,-Math.PI,Math.PI);targetPitch=clamp(targetPitch,-.3,.6);};
+      targetYaw=clamp(targetYaw,-Math.PI/3,Math.PI/3);targetPitch=clamp(targetPitch,-.3,.6);};
     const notes=document.getElementById('notes');
     document.getElementById('about').onclick=()=>{document.getElementById('metrics').textContent=
       `${Math.round(fps)} fps on this device · ${width} × ${heightPx} render resolution · adaptive quality`;notes.showModal();};
@@ -380,18 +498,25 @@
       yaw+=(targetYaw-yaw)*Math.min(1,dt*6);pitch+=(targetPitch-pitch)*Math.min(1,dt*6);
       if(resizeNeeded)resize();
       const aspect=width/heightPx;
+      weatherTime+=dt;
       if(walking&&!notes.open){
-        if(turnRemaining>0)turnRemaining=Math.max(0,turnRemaining-dt);
-        else{
-          const step=pace*dt/Math.sqrt(1+(.0715*Math.cos(walkZ*.065))**2);
-          walkZ+=direction*step;distance+=pace*dt;
-          if(walkZ<=-62||walkZ>=10){walkZ=clamp(walkZ,-62,10);direction*=-1;turnRemaining=6;}
-        }
-        const desired=Math.atan2((trail(walkZ+direction*.5)-trail(walkZ)),direction*-.5);
-        const delta=Math.atan2(Math.sin(desired-routeYaw),Math.cos(desired-routeYaw));
-        routeYaw+=delta*Math.min(1,dt*(turnRemaining>0?.9:2));
+        const slope=(trail(walkZ-.25)-trail(walkZ+.25))/.5;
+        walkZ-=pace*dt/Math.hypot(1,slope);
+        distance+=pace*dt;
+        routeYaw=Math.atan(slope);
       }
-      updateFoliage(walkZ);
+      prepareForest(walkZ);
+      const gust=window.forestAudio.wind(breeze,time);
+      wind+=(gust-wind)*Math.min(1,dt*4);
+      if(!paused&&fallingOn)updateAirborne(dt,wind,walkZ,time);
+      const weatherStep=weatherTime/17+distance/30;
+      const weatherIndex=Math.floor(weatherStep), weatherBlend=weatherStep-weatherIndex;
+      const mistPatch=i=>Math.max(0,(routeNoise(i+2142)-.26)/.74);
+      const patch=mistPatch(weatherIndex)+(mistPatch(weatherIndex+1)-mistPatch(weatherIndex))*
+        weatherBlend*weatherBlend*(3-2*weatherBlend);
+      const dimness=clamp((1.17-sunlight)/.52,0,1);
+      const fogTarget=haze*(.08*dimness+2.15*dimness**1.7*patch);
+      fog+=(fogTarget-fog)*Math.min(1,dt*.75);
       const x=trail(walkZ),heading=routeYaw+yaw;
       const eye=[x,height(x,walkZ)+1.72,walkZ];
       const target=[eye[0]+Math.sin(heading)*30,eye[1]+Math.sin(pitch)*30,eye[2]-Math.cos(heading)*30];
@@ -400,15 +525,32 @@
       gl.disable(gl.DEPTH_TEST);gl.depthMask(true);gl.clear(gl.DEPTH_BUFFER_BIT);
       gl.useProgram(sky);gl.uniform1f(ku.aspect,aspect);gl.bindVertexArray(null);gl.drawArrays(gl.TRIANGLES,0,3);
       gl.enable(gl.DEPTH_TEST);gl.useProgram(solid);gl.uniformMatrix4fv(su.vp,false,vp);gl.uniform3fv(su.eye,eye);
-      gl.uniform1f(su.haze,haze);
-      gl.bindVertexArray(solidVAO);gl.drawArrays(gl.TRIANGLES,0,vertices.length/10);
+      gl.uniform1f(su.haze,fog);
+      let drawCalls=2, solidCount=0, leafCount=0, triangles=0;
+      for(const strip of strips.values()){
+        if(strip.start>walkZ+12||strip.end<walkZ-91)continue;
+        gl.bindVertexArray(strip.solid);
+        gl.drawArrays(gl.TRIANGLES,0,strip.solids);
+        drawCalls++;solidCount+=strip.solids/3;
+      }
       gl.useProgram(leaf);gl.uniformMatrix4fv(lu.vp,false,vp);gl.uniform3fv(lu.eye,eye);
-      gl.uniform1f(lu.haze,haze);gl.uniform1f(lu.fallingOn,fallingOn?1:0);
+      gl.uniform1f(lu.haze,fog);
       const density=quality>.8?1:quality>.6?.72:.45;
-      const nearCount=Math.floor(nearTotal*density),farCount=Math.floor(farTotal*density);
-      gl.uniform1f(lu.time,time);gl.uniform1f(lu.breeze,breeze);gl.uniform1f(lu.density,density);gl.bindVertexArray(leafVAO);
-      gl.drawArraysInstanced(gl.TRIANGLES,0,shape.length/2,nearCount);
-      gl.bindVertexArray(farVAO);gl.drawArraysInstanced(gl.TRIANGLES,0,6,farCount);
+      gl.uniform1f(lu.time,time);gl.uniform1f(lu.breeze,wind);gl.uniform1f(lu.density,density);
+      for(const strip of strips.values()){
+        if(strip.start>walkZ+12||strip.end<walkZ-91)continue;
+        const near=strip.end>walkZ-30;
+        const count=Math.floor(strip.leaves*density);
+        const corners=near?shape.length/2:6;
+        gl.bindVertexArray(near?strip.near:strip.far);
+        gl.drawArraysInstanced(gl.TRIANGLES,0,corners,count);
+        drawCalls++;leafCount+=count;triangles+=corners*count/3;
+      }
+      if(airborne.length){
+        gl.uniform1f(lu.density,1);
+        drawAirborne();
+        drawCalls++;triangles+=shape.length/6*airborne.length;
+      }
       gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.disable(gl.DEPTH_TEST);gl.useProgram(post);gl.bindVertexArray(null);
       gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,scene);gl.uniform1i(pu.scene,0);
       gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,depth);gl.uniform1i(pu.depths,1);
@@ -421,19 +563,19 @@
         else if(fps>56&&quality<1){quality=Math.min(1,quality+.025);resizeNeeded=true;}
         frames=0;sample=0;
       }
-      window.forestStats={fps,width,height:heightPx,quality,leaves:nearCount+farCount,
-        triangles:vertices.length/30+shape.length/6*nearCount+farCount*2,
-        mode:'realistic',paused,time,drawCalls:5,walking,pace,walkZ,direction,turnRemaining,distance,eye,
-        breeze,sunlight,haze,blurStrength,fallingOn,treeCount:trees.length,
-        treeHeightRange:[Math.min(...trees.map(t=>t.height)),Math.max(...trees.map(t=>t.height))]};
+      window.forestStats={fps,width,height:heightPx,quality,leaves:leafCount+airborne.length,
+        triangles:solidCount+triangles,mode:'realistic',paused,time,drawCalls,walking,pace,
+        walkZ,routeYaw,distance,eye,breeze,wind,sunlight,haze,fog,blurStrength,fallingOn,
+        currentStrip,loadedStrips:[...strips.keys()],airborne:airborne.length};
       raf=requestAnimationFrame(render);
     }
-    let minBranchClearance=Infinity;
-    for(let i=0;i<vertices.length;i+=10){
-      if(vertices[i+9]>.5&&Math.abs(vertices[i]-trail(vertices[i+2]))<1.8)
-        minBranchClearance=Math.min(minBranchClearance,vertices[i+1]-height(vertices[i],vertices[i+2]));
-    }
-    window.forestGeometry={trees,rejectedBranches,corridorWidth:3.6,corridorHeight:3.4,minBranchClearance};
+    prepareForest(walkZ);
+    Object.defineProperty(window,'forestGeometry',{get(){
+      return {trees:[...strips.values()].flatMap(strip=>strip.trees),
+        corridorWidth:3.6,corridorHeight:3.4,
+        minBranchClearance:Math.min(...[...strips.values()].map(strip=>strip.clearance)),
+        airborne:airborne.map(({vx,vy,vz})=>({vx,vy,vz}))};
+    }});
     status.hidden=true;raf=requestAnimationFrame(render);
   } catch(error) {
     console.error(error);status.textContent='The forest could not start: '+error.message;
