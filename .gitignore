@@ -93,8 +93,9 @@ swapfile.sys
 *~
 AGENTS.md
 
-# Shared runtime already tracked here; RTK2 imports must leave it unchanged.
-/lib/
+# Ignore local runtime files while allowing the shared Three.js add-ons.
+/lib/*
+!/lib/three/
 
 # Keep RTK2's user-authored project instructions in version control.
 !/rtk2/AGENTS.md
