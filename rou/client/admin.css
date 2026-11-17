@@ -6,6 +6,10 @@ input,select,button{font:inherit;color:inherit;background:#0f2117;border:1px sol
 nav [aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 .analytics-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .analytics-heading h2,.analytics-heading h3{margin:0}
+.analytics-range,.analytics-presets{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.analytics-range{margin-top:16px}
+.analytics-range label{margin:0}
+.analytics-presets [aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 .analytics-metrics,.analytics-locations{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));margin:20px 0}
 .analytics-metrics div{padding:14px 16px;border:1px solid #a3915c55;border-radius:8px;background:#0f2117}
 .analytics-metrics dt,.analytics-metrics small{color:#adc0b1;font-size:13px}

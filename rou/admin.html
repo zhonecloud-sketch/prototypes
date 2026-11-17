@@ -11,7 +11,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261029" sizes="any">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=20261029" sizes="180x180">
 <link rel="manifest" href="site.webmanifest?v=20261029">
-<link rel="stylesheet" href="client/admin.css?v=20261117-country-alignment">
+<link rel="stylesheet" href="client/admin.css?v=20261117-analytics-range">
 </head>
 <body>
 <header><a href="index.html">← Game</a><span class="wordmark">ATELIER</span><button data-wide-view>Wide view ↗</button></header>
@@ -62,21 +62,30 @@
 </section>
 <section id="analytics" class="panel" hidden>
 <div class="analytics-heading"><h2>Analytics</h2><button id="refreshAnalytics">Refresh analytics</button></div>
+<form id="analyticsRange" class="analytics-range" aria-label="Analytics date range">
+<div class="analytics-presets" role="group" aria-label="Date presets">
+<button type="button" data-analytics-range="last30" aria-pressed="true">Last 30 days</button>
+<button type="button" data-analytics-range="today" aria-pressed="false">Today</button>
+</div>
+<label>From (GMT+8)<input id="analyticsFrom" type="date" min="1970-01-01" required></label>
+<label>Through (GMT+8)<input id="analyticsThrough" type="date" min="1970-01-01" required></label>
+<button type="submit">Apply dates</button>
+</form>
 <div id="analyticsReport" hidden>
 <dl class="analytics-metrics">
-<div><dt>Registered accounts</dt><dd id="analyticsAccounts"></dd></div>
-<div><dt>Signed-out browser sessions · 30 days</dt><dd id="analyticsGuests"></dd></div>
-<div><dt>Wagered rounds on record</dt><dd id="analyticsPlays"></dd><small id="analyticsPlayModes"></small></div>
+<div><dt>Registered accounts</dt><dd id="analyticsAccounts"></dd><small>All dates</small></div>
+<div><dt>Signed-out browser sessions</dt><dd id="analyticsGuests"></dd></div>
+<div><dt>Wagered rounds</dt><dd id="analyticsPlays"></dd><small id="analyticsPlayModes"></small></div>
 </dl>
 <div class="analytics-locations">
 <div>
 <h3>Registered players by country</h3>
-<p class="small">Last country estimated from the player’s IP when they opened the game or operator analytics. Unknown accounts can update on their next visit.</p>
+<p class="small">All registered accounts by their latest IP-estimated country. Unknown accounts can update on their next visit.</p>
 <div class="table-scroll"><table aria-label="Registered players by country"><thead><tr><th scope="col">Country</th><th scope="col">Accounts</th></tr></thead><tbody id="analyticsRegisteredCountries"></tbody></table></div>
 </div>
 <div>
 <h3>Signed-out visitors by country</h3>
-<p class="small">Browser sessions last seen signed out within 30 days. One person can have several sessions.</p>
+<p class="small">Browser sessions last seen signed out during the selected dates. Visitor history covers the latest 30 days.</p>
 <div class="table-scroll"><table aria-label="Signed-out visitors by country"><thead><tr><th scope="col">Country</th><th scope="col">Sessions</th></tr></thead><tbody id="analyticsGuestCountries"></tbody></table></div>
 </div>
 </div>
@@ -88,13 +97,13 @@
 <div class="analytics-legend"><span>Actual net <b id="analyticsActual"></b></span><span>Expected net <b id="analyticsExpected"></b></span></div>
 <canvas id="analyticsChart" role="img" aria-label="Cumulative actual and expected net return in chips" aria-describedby="analyticsChartNote"></canvas>
 <p id="analyticsChartNote" class="small">Cumulative chips after stakes. The expected line uses the 37-pocket wheel’s average net return of −1/37 of each wager.</p>
-<details><summary>Daily chart values</summary><div class="table-scroll"><table><thead><tr><th scope="col">Date</th><th scope="col">Plays</th><th scope="col">Actual net to date</th><th scope="col">Expected net to date</th></tr></thead><tbody id="analyticsDays"></tbody></table></div></details>
+<details><summary>Chart values</summary><div class="table-scroll"><table><thead><tr><th id="analyticsBucketLabel" scope="col">Date</th><th scope="col">Plays</th><th scope="col">Cumulative actual net</th><th scope="col">Cumulative expected net</th></tr></thead><tbody id="analyticsDays"></tbody></table></div></details>
 </div>
 </div>
 <div class="analytics-section">
 <h3>Plays by registered player</h3>
-<p class="small">Counts cover all retained settled rounds with a wager. Signed-in solo reporting began on 17 November 2026.</p>
-<div class="table-scroll"><table><thead><tr><th scope="col">Player</th><th scope="col">Country</th><th scope="col">Multiplayer</th><th scope="col">Solo</th><th scope="col">Total</th><th scope="col">Net return</th></tr></thead><tbody id="analyticsPlayers"></tbody></table></div>
+<p class="small">Wager counts follow the selected dates. Registration dates use GMT+8. Signed-in solo reporting began on 17 November 2026.</p>
+<div class="table-scroll"><table><thead><tr><th scope="col">Player</th><th scope="col">Country</th><th scope="col">Registered on</th><th scope="col">Multiplayer</th><th scope="col">Solo</th><th scope="col">Total</th><th scope="col">Net return</th></tr></thead><tbody id="analyticsPlayers"></tbody></table></div>
 <div class="actions"><button id="analyticsPrevious" hidden>← Previous</button><button id="analyticsNext" hidden>Next →</button></div>
 </div>
 </div>
@@ -117,7 +126,7 @@ if(location.protocol==='file:'){
   document.getElementById('notice').textContent='';
   document.querySelector('[data-wide-view]').hidden=true;
 }else{
-  import('./client/admin.js?v=20261117-country-coverage').catch(()=>{
+  import('./client/admin.js?v=20261117-analytics-range').catch(()=>{
     document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
   });
 }

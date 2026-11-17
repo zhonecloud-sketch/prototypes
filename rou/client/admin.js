@@ -1,7 +1,7 @@
 import {account,accountRequest,restoreAccount} from './account-api.js?v=20261026-login-isolation';
 import {toggleWideView} from './wide-view.js';
 import {parseRngFile} from './rng-import.js';
-import {mountAnalytics} from './admin-analytics.js?v=20261117-country-coverage';
+import {mountAnalytics} from './admin-analytics.js?v=20261117-analytics-range';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n);
 let key='',busy=false,offset=0,search='',users=[],status=null;
