@@ -14,6 +14,7 @@ function draw(canvas,points){
   canvas.width=Math.round(width*ratio);
   canvas.height=Math.round(height*ratio);
   const ctx=canvas.getContext('2d');
+  if(!ctx)return;
   ctx.scale(ratio,ratio);
   ctx.font='11px Arial';
   const values=points.flatMap(p=>[p.actual,p.expected]);
@@ -65,7 +66,8 @@ export function mountAnalytics({request,run,esc,money}){
   function renderChart({player,start,periodDays,days}){
     $('analyticsAllPlayers').hidden=!player;
     $('analyticsChartTitle').textContent='Net return · '+(player?.username||'All players');
-    $('analyticsPeriod').textContent=`${dates.formatRange(start,start+(periodDays-1)*DAY)} · GMT+8`;
+    const plays=days.reduce((total,day)=>total+day.count,0);
+    $('analyticsPeriod').textContent=`${dates.formatRange(start,start+(periodDays-1)*DAY)} · GMT+8 · ${money(plays)} wagered ${plays===1?'round':'rounds'}`;
     $('analyticsChartContent').hidden=!days.length;
     $('analyticsChartEmpty').hidden=!!days.length;
     const byDay=new Map(days.map(row=>[row.day,row]));

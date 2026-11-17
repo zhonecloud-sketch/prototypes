@@ -71,12 +71,12 @@
 <div class="analytics-locations">
 <div>
 <h3>Registered players by country</h3>
-<p class="small">Last known country from each player’s IP address.</p>
+<p class="small">Last country estimated from the player’s IP when they opened the game or operator analytics. Unknown accounts can update on their next visit.</p>
 <div class="table-scroll"><table aria-label="Registered players by country"><thead><tr><th scope="col">Country</th><th scope="col">Accounts</th></tr></thead><tbody id="analyticsRegisteredCountries"></tbody></table></div>
 </div>
 <div>
 <h3>Signed-out visitors by country</h3>
-<p class="small">Browser sessions last seen signed out within 30 days.</p>
+<p class="small">Browser sessions last seen signed out within 30 days. One person can have several sessions.</p>
 <div class="table-scroll"><table aria-label="Signed-out visitors by country"><thead><tr><th scope="col">Country</th><th scope="col">Sessions</th></tr></thead><tbody id="analyticsGuestCountries"></tbody></table></div>
 </div>
 </div>
@@ -93,7 +93,7 @@
 </div>
 <div class="analytics-section">
 <h3>Plays by registered player</h3>
-<p class="small">One play per settled round with a wager. Solo results are reported by the browser while the player is signed in.</p>
+<p class="small">Counts cover all retained settled rounds with a wager. Signed-in solo reporting began on 17 November 2026.</p>
 <div class="table-scroll"><table><thead><tr><th scope="col">Player</th><th scope="col">Country</th><th scope="col">Multiplayer</th><th scope="col">Solo</th><th scope="col">Total</th><th scope="col">Net return</th></tr></thead><tbody id="analyticsPlayers"></tbody></table></div>
 <div class="actions"><button id="analyticsPrevious" hidden>← Previous</button><button id="analyticsNext" hidden>Next →</button></div>
 </div>
@@ -117,7 +117,7 @@ if(location.protocol==='file:'){
   document.getElementById('notice').textContent='';
   document.querySelector('[data-wide-view]').hidden=true;
 }else{
-  import('./client/admin.js?v=20261117-analytics').catch(()=>{
+  import('./client/admin.js?v=20261117-country-coverage').catch(()=>{
     document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
   });
 }
