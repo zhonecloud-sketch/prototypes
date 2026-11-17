@@ -10,6 +10,8 @@ nav [aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 .analytics-metrics div{padding:14px 16px;border:1px solid #a3915c55;border-radius:8px;background:#0f2117}
 .analytics-metrics dt,.analytics-metrics small{color:#adc0b1;font-size:13px}
 .analytics-metrics dd{margin:8px 0 4px;font:30px Georgia,serif}
+.analytics-locations{row-gap:0}
+.analytics-locations > div{display:grid;grid-template-rows:subgrid;grid-row:span 3}
 .analytics-locations h3{margin:12px 0 4px}
 .analytics-locations .small{margin:0 0 8px}
 .analytics-section{margin-top:24px;padding-top:20px;border-top:1px solid #a3915c55}
