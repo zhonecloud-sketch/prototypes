@@ -97,5 +97,5 @@ export function mountAccount(api){
   });
   document.addEventListener('atelier-open-account',e=>open(e.detail||'account'));
   document.addEventListener('atelier-account',()=>api.changed(account.player));
-  restoreAccount();return {open,close};
+  Promise.resolve(restoreAccount()).then(()=>api.restored?.());return {open,close};
 }

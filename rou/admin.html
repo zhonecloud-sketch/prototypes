@@ -11,7 +11,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261029" sizes="any">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=20261029" sizes="180x180">
 <link rel="manifest" href="site.webmanifest?v=20261029">
-<link rel="stylesheet" href="client/admin.css">
+<link rel="stylesheet" href="client/admin.css?v=20261117-analytics">
 </head>
 <body>
 <header><a href="index.html">← Game</a><span class="wordmark">ATELIER</span><button data-wide-view>Wide view ↗</button></header>
@@ -40,7 +40,7 @@
 </section>
 <p id="notice" role="status" aria-live="polite">Preparing developer sign-in…</p>
 <div id="console" hidden>
-<nav><button data-tab="server">Server</button><button data-tab="users">Users</button><button data-tab="rng">RNG databases</button><button id="lock">Lock controls</button></nav>
+<nav aria-label="Developer controls"><button data-tab="server" aria-pressed="true">Server</button><button data-tab="users" aria-pressed="false">Users</button><button data-tab="analytics" aria-pressed="false">Analytics</button><button data-tab="rng" aria-pressed="false">RNG databases</button><button id="lock">Lock controls</button></nav>
 <section id="server" class="panel">
 <h2>Multiplayer service</h2>
 <div id="serverStatus"></div>
@@ -60,6 +60,45 @@
 <details><summary>Add a test player</summary><form id="addUser"><div class="fields"><label>Email<input name="email" type="email" required></label><label>Username<input name="username" minlength="3" maxlength="24" required></label></div><p>Creates a test account with 10,000 chips and a generated password. No verification email is sent.</p><button>Add test player</button></form></details>
 <div id="userEditor"></div>
 </section>
+<section id="analytics" class="panel" hidden>
+<div class="analytics-heading"><h2>Analytics</h2><button id="refreshAnalytics">Refresh analytics</button></div>
+<div id="analyticsReport" hidden>
+<dl class="analytics-metrics">
+<div><dt>Registered accounts</dt><dd id="analyticsAccounts"></dd></div>
+<div><dt>Signed-out browser sessions · 30 days</dt><dd id="analyticsGuests"></dd></div>
+<div><dt>Wagered rounds on record</dt><dd id="analyticsPlays"></dd><small id="analyticsPlayModes"></small></div>
+</dl>
+<div class="analytics-locations">
+<div>
+<h3>Registered players by country</h3>
+<p class="small">Last known country from each player’s IP address.</p>
+<div class="table-scroll"><table aria-label="Registered players by country"><thead><tr><th scope="col">Country</th><th scope="col">Accounts</th></tr></thead><tbody id="analyticsRegisteredCountries"></tbody></table></div>
+</div>
+<div>
+<h3>Signed-out visitors by country</h3>
+<p class="small">Browser sessions last seen signed out within 30 days.</p>
+<div class="table-scroll"><table aria-label="Signed-out visitors by country"><thead><tr><th scope="col">Country</th><th scope="col">Sessions</th></tr></thead><tbody id="analyticsGuestCountries"></tbody></table></div>
+</div>
+</div>
+<div class="analytics-section">
+<div class="analytics-heading"><h3 id="analyticsChartTitle" tabindex="-1">Net return</h3><button id="analyticsAllPlayers" hidden>Show all players</button></div>
+<p id="analyticsPeriod" class="small"></p>
+<p id="analyticsChartEmpty" hidden>No wagered rounds in this period.</p>
+<div id="analyticsChartContent" hidden>
+<div class="analytics-legend"><span>Actual net <b id="analyticsActual"></b></span><span>Expected net <b id="analyticsExpected"></b></span></div>
+<canvas id="analyticsChart" role="img" aria-label="Cumulative actual and expected net return in chips" aria-describedby="analyticsChartNote"></canvas>
+<p id="analyticsChartNote" class="small">Cumulative chips after stakes. The expected line uses the 37-pocket wheel’s average net return of −1/37 of each wager.</p>
+<details><summary>Daily chart values</summary><div class="table-scroll"><table><thead><tr><th scope="col">Date</th><th scope="col">Plays</th><th scope="col">Actual net to date</th><th scope="col">Expected net to date</th></tr></thead><tbody id="analyticsDays"></tbody></table></div></details>
+</div>
+</div>
+<div class="analytics-section">
+<h3>Plays by registered player</h3>
+<p class="small">One play per settled round with a wager. Solo results are reported by the browser while the player is signed in.</p>
+<div class="table-scroll"><table><thead><tr><th scope="col">Player</th><th scope="col">Country</th><th scope="col">Multiplayer</th><th scope="col">Solo</th><th scope="col">Total</th><th scope="col">Net return</th></tr></thead><tbody id="analyticsPlayers"></tbody></table></div>
+<div class="actions"><button id="analyticsPrevious" hidden>← Previous</button><button id="analyticsNext" hidden>Next →</button></div>
+</div>
+</div>
+</section>
 <section id="rng" class="panel" hidden>
 <h2>Real-life RNG databases</h2>
 <p>Multiplayer always follows the weekly calendar of 2m-rng.txt, shared with real.html. It continues across weeks and loops at the end, labelled as repeated data. Imported databases below are for inspection and editing; they cannot replace or rewind the multiplayer stream.</p>
@@ -78,7 +117,7 @@ if(location.protocol==='file:'){
   document.getElementById('notice').textContent='';
   document.querySelector('[data-wide-view]').hidden=true;
 }else{
-  import('./client/admin.js?v=20261026-login-isolation').catch(()=>{
+  import('./client/admin.js?v=20261117-analytics').catch(()=>{
     document.getElementById('notice').textContent='Developer controls could not start. Reload the online page and check your connection.';
   });
 }

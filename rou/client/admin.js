@@ -1,6 +1,7 @@
 import {account,accountRequest,restoreAccount} from './account-api.js?v=20261026-login-isolation';
 import {toggleWideView} from './wide-view.js';
 import {parseRngFile} from './rng-import.js';
+import {mountAnalytics} from './admin-analytics.js?v=20261117';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('en-US').format(n);
 let key='',busy=false,offset=0,search='',users=[],status=null;
@@ -29,7 +30,20 @@ async function loadUsers(){
   $('userRows').innerHTML=users.map(p=>`<tr><td><b>${esc(p.username)}</b><small>${esc(p.email)}</small></td><td>${money(p.balance)}</td><td>${money(p.wealth.total)}<small>${p.wealth.copies} collectibles</small></td><td>${[['edit','Edit'],['reset-records','Reset records…'],['reset-player','Reset player…'],['delete','Delete…']].map(([a,label])=>`<button data-user="${a}" data-id="${p.id}">${label}</button>`).join('')}</td></tr>`).join('');
   $('previousUsers').hidden=!offset;$('nextUsers').hidden=!data.hasMore;
 }
-function tab(name){for(const id of ['server','users','rng'])$(id).hidden=id!==name;return name==='users'?loadUsers():refresh();}
+const analytics=mountAnalytics({request,run,esc,money});
+function showTab(name){
+  for(const button of document.querySelectorAll('[data-tab]')){
+    const active=button.dataset.tab===name;
+    button.setAttribute('aria-pressed',active);
+    $(button.dataset.tab).hidden=!active;
+  }
+}
+function tab(name){
+  showTab(name);
+  if(name==='users')return loadUsers();
+  if(name==='analytics')return analytics.load();
+  return refresh();
+}
 function showIdentity(){
   const player=account.player;$('loginFields').hidden=!!player;$('switchOperator').hidden=!player;
   for(const input of $('loginFields').querySelectorAll('input')){input.required=!player;input.disabled=!!player;}
@@ -43,7 +57,7 @@ $('operatorLogin').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries
 },account.player?'Checking operator account and key…':'Signing in to your game account…');};
 $('switchOperator').onclick=()=>run(async()=>{key='';await accountRequest('logout',{});$('operatorLogin').reset();showIdentity();notice('Enter the game account you want to use.');});
 $('roomCapacity').onsubmit=e=>{e.preventDefault();run(async()=>{await request('capacity',{maxRooms:Number(e.target.elements.maxRooms.value)});await refresh();notice('Room limit saved. New rooms open automatically within this limit.');});};
-$('lock').onclick=()=>{key='';$('console').hidden=true;$('access').hidden=false;showIdentity();$('privateResult').hidden=true;$('credentialResult').textContent='';notice('Controls locked.');};
+$('lock').onclick=()=>{key='';analytics.reset();if(!$('analytics').hidden)showTab('server');$('console').hidden=true;$('access').hidden=false;showIdentity();$('privateResult').hidden=true;$('credentialResult').textContent='';notice('Controls locked.');};
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>run(()=>tab(b.dataset.tab)));
 document.querySelector('[data-wide-view]').onclick=()=>toggleWideView().catch(()=>notice('Fullscreen is unavailable in this browser.'));
 document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>run(async()=>{await request('server',{command:b.dataset.command});await refresh();notice(b.dataset.command==='start'?'Multiplayer started. It remains available until Stop.':'Multiplayer stopped. Existing accepted wagers will settle.');}));

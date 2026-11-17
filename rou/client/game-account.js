@@ -1,5 +1,5 @@
-import { account } from './account-api.js?v=20261026-login-isolation';
-import { mountAccount } from './account.js?v=20261112-nickname';
+import { account,accountRequest } from './account-api.js?v=20261026-login-isolation';
+import { mountAccount } from './account.js?v=20261117-analytics';
 import { createMultiplayer } from './multiplayer.js?v=20261026-login-isolation';
 import { toggleWideView } from './wide-view.js?v=20261024-wide-proportions';
 const $=id=>document.getElementById(id);
@@ -38,6 +38,18 @@ function resultPresentation(){
 }
 export function installAccounts(api){
   const state=api.state,presentation=resultPresentation();let snapshot=null,resultRequest=null,nextResultRefresh=0,seatKey='',wheelKey='',preparedKey='',wantWheel=false;
+  const recordVisit=()=>accountRequest('analytics-visit',{}).catch(()=>{});
+  function recordSolo(round){
+    const playerId=account.player?.id;
+    if(!playerId||round.outcome===null||!round.bets.length)return;
+    const stakes=new Map();
+    for(const {id,amount} of round.bets)stakes.set(id,(stakes.get(id)||0)+amount);
+    // The first surviving bet group is persisted with pending solo wagers.
+    const roundRef=round.bets[0].group||'round-'+round.id;
+    const body={playerId,roundRef,number:round.outcome,bets:Array.from(stakes,([id,amount])=>({id,amount}))};
+    const send=()=>accountRequest('analytics-solo',body);
+    send().catch(()=>setTimeout(()=>{if(account.player?.id===playerId)send().catch(()=>{});},1500));
+  }
   const strip=document.createElement('div');strip.id='roomPlayers';strip.className='account-room-strip';strip.hidden=true;$('bettingView').prepend(strip);
   function launchInfo(){
     $('accountSignIn').textContent=account.player?`♙ ${account.player.username}`:'♙ Sign in';
@@ -64,7 +76,7 @@ export function installAccounts(api){
     $('headerSource').textContent='ROOM '+room.roomId;$('saveStatus').textContent='Multiplayer account';$('accountDetails').textContent=player.username+' · Multiplayer account · chips and records saved on the server';$('sourceSelect').disabled=true;if(betsBefore!==JSON.stringify(state.round.bets)||prior?.id!==current.id||prior?.roomId!==room.roomId)api.paintBets();api.paintMoney();if(historyChanged)api.paintHistory();launchInfo();tick();
   },updated:()=>{api.updateButtons();tick();},error:api.toast,disconnected(){api.launch();api.toast('Room connection lost. Choose Multiplayer to reconnect.');}});
   async function leave(){await multi.leave();api.tableResults?.reset();snapshot=null;presentation.reset();wheelKey=preparedKey='';wantWheel=false;strip.hidden=true;$('sourceSelect').disabled=false;launchInfo();}
-  const panel=mountAccount({opened:api.pauseTravel,inGame:()=>state.active,openMenu:api.launch,returnToGame,canLeave:()=>!api.hasWagers(),leaveRoom:leave,changed(player){launchInfo();if(player&&state.user?.type==='multiplayer'&&state.user.sub===player.id){const changed=state.balance!==player.balance;state.balance=player.balance;state.club=player.profile;if(changed)api.paintMoney();}},authenticated(player){if(!player&&state.user?.type==='multiplayer'){state.active=false;state.user=null;state.round=null;strip.hidden=true;}api.launch();launchInfo();api.toast(player?`Welcome, ${player.username}. Choose Multiplayer to join the room.`:'Signed out.');}});
+  const panel=mountAccount({opened:api.pauseTravel,inGame:()=>state.active,openMenu:api.launch,returnToGame,canLeave:()=>!api.hasWagers(),leaveRoom:leave,restored:recordVisit,changed(player){launchInfo();if(player&&state.user?.type==='multiplayer'&&state.user.sub===player.id){const changed=state.balance!==player.balance;state.balance=player.balance;state.club=player.profile;if(changed)api.paintMoney();}},authenticated(player){void recordVisit();if(!player&&state.user?.type==='multiplayer'){state.active=false;state.user=null;state.round=null;strip.hidden=true;}api.launch();launchInfo();api.toast(player?`Welcome, ${player.username}. Choose Multiplayer to join the room.`:'Signed out.');}});
   $('accountSignIn').onclick=()=>panel.open('account');
   $('multiplayerLogin').onclick=async()=>{
     if(!account.player){panel.open('login');return;}
@@ -119,5 +131,5 @@ export function installAccounts(api){
   }
   function canBet(){return multi.active&&multi.fresh&&!multi.busy&&!presentation.previousPending&&snapshot&&snapshot.running!==false&&Date.now()+state.offset<snapshot.round.start+20000;}
   function bet(operation,entries=[]){if(!canBet()){api.toast('Wait for the next open betting window.');return false;}multi.bet(operation,entries,state.round.id,snapshot.roomId).then(()=>api.sound('chip')).catch(e=>api.toast(e.message)).finally(()=>api.paintMoney());api.paintMoney();return true;}
-  launchInfo();return {panel,multi,leave,tick,canBet,bet,launchInfo,toggleWideView,backToTable(){presentation.dismiss();wantWheel=false;},get wheelRound(){return presentation.round;},get pendingSettlement(){return presentation.pending;}};
+  launchInfo();return {panel,multi,leave,tick,canBet,bet,recordSolo,launchInfo,toggleWideView,backToTable(){presentation.dismiss();wantWheel=false;},get wheelRound(){return presentation.round;},get pendingSettlement(){return presentation.pending;}};
 }
