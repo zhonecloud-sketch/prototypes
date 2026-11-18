@@ -7,9 +7,26 @@ const money=n=>new Intl.NumberFormat('en-US').format(n);
 let key='',busy=false,offset=0,search='',users=[],status=null;
 const request=(action,body={})=>accountRequest('admin-'+action,body,{'X-Atelier-Admin':key});
 const notice=text=>$('notice').textContent=text;
-async function run(work,message='Working…'){
-  if(busy)return;busy=true;const buttons=Array.from(document.querySelectorAll('button')).filter(b=>!b.disabled);buttons.forEach(b=>b.disabled=true);notice(message);$('operatorLogin').setAttribute('aria-busy','true');
-  try{await work();if($('notice').textContent===message)notice('Ready.');}catch(e){notice(e.message);$('notice').scrollIntoView({block:'nearest'});}finally{busy=false;buttons.filter(b=>b.isConnected).forEach(b=>b.disabled=false);$('operatorLogin').setAttribute('aria-busy','false');showIdentity();}
+async function run(work,message='Working…',feedback=$('notice')){
+  if(busy)return;
+  busy=true;
+  const buttons=Array.from(document.querySelectorAll('button')).filter(b=>!b.disabled);
+  buttons.forEach(b=>b.disabled=true);
+  feedback.textContent=message;
+  $('operatorLogin').setAttribute('aria-busy','true');
+  try{
+    await work();
+    if(feedback.isConnected&&feedback.textContent===message)feedback.textContent='Ready.';
+  }catch(e){
+    const target=feedback.isConnected?feedback:$('notice');
+    target.textContent=e.message;
+    target.scrollIntoView({block:'nearest'});
+  }finally{
+    busy=false;
+    buttons.filter(b=>b.isConnected).forEach(b=>b.disabled=false);
+    $('operatorLogin').setAttribute('aria-busy','false');
+    showIdentity();
+  }
 }
 function showCredentials(result){
   if(!result.credentials)return;
@@ -69,10 +86,28 @@ $('addUser').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new F
 $('dismissCredentials').onclick=()=>{$('privateResult').hidden=true;$('credentialResult').textContent='';};
 $('userRows').onclick=e=>{
   const b=e.target.closest('[data-user]');if(!b||busy)return;const p=users.find(p=>p.id===b.dataset.id),op=b.dataset.user;
-  const help={edit:'Update the username or whole-chip balance. The email remains the account login address.',delete:'Permanently deletes this account, wallet, collection, orders and raw records.', 'reset-records':'Restarts profit and analysis records. Chips and collectibles are preserved; historical raw records remain in their earlier record epoch.','reset-player':'Resets this player to 10,000 chips with an empty collection, no orders or Insights pass, and a new analysis record. The login account is preserved.'};
-  $('userEditor').innerHTML=`<form class="confirmation"><h3>${esc(p.username)}</h3><p>${help[op]}</p>${op==='edit'?`<div class="fields"><label>Username<input name="username" value="${esc(p.username)}" minlength="3" maxlength="24" required></label><label>Chip balance<input name="balance" type="number" min="0" step="1" value="${p.balance}" required></label></div>`:`<label>Type ${esc(p.username)} to confirm<input name="confirmation" autocomplete="off" required></label>`}<div class="actions"><button>Confirm ${esc(op)}</button><button type="button" data-cancel>Cancel</button></div></form>`;
-  $('userEditor').querySelector('[data-cancel]').onclick=()=>{$('userEditor').innerHTML='';};
-  $('userEditor').querySelector('form').onsubmit=e=>{e.preventDefault();const fields=Object.fromEntries(new FormData(e.target));run(async()=>{const r=await request('user',{operation:op,id:p.id,revision:p.revision,...fields,...(op==='edit'?{balance:Number(fields.balance)}:{})});$('userEditor').innerHTML='';notice(r.message);showCredentials(r);await loadUsers();});};
+  const help={edit:'Update the username or whole-chip balance. The email remains the account login address.',delete:'Permanently deletes this account, wallet, collection, orders and raw records. Stop multiplayer on the Server tab before deleting.', 'reset-records':'Restarts profit and analysis records. Chips and collectibles are preserved; historical raw records remain in their earlier record epoch.','reset-player':'Resets this player to 10,000 chips with an empty collection, no orders or Insights pass, and a new analysis record. The login account is preserved.'};
+  $('userEditor').innerHTML=`<form class="confirmation"><h3>${esc(p.username)}</h3><p>${help[op]}</p>${op==='edit'?`<div class="fields"><label>Username<input name="username" value="${esc(p.username)}" minlength="3" maxlength="24" required></label><label>Chip balance<input name="balance" type="number" min="0" step="1" value="${p.balance}" required></label></div>`:`<label>Type ${esc(p.username)} to confirm<input name="confirmation" autocomplete="off" required></label>`}<div class="actions"><button type="submit">Confirm ${esc(op)}</button><button type="button" data-cancel>Cancel</button>${op==='delete'?'<button type="button" data-user-server>Open Server controls</button>':''}</div><div class="confirmation-status" role="status" aria-live="polite"></div></form>`;
+  const form=$('userEditor').querySelector('form');
+  const feedback=form.querySelector('[role="status"]');
+  form.querySelector('[data-cancel]').onclick=()=>{$('userEditor').innerHTML='';};
+  const serverButton=form.querySelector('[data-user-server]');
+  if(serverButton)serverButton.onclick=()=>run(()=>tab('server'));
+  form.onsubmit=e=>{
+    e.preventDefault();
+    const fields=Object.fromEntries(new FormData(form));
+    run(async()=>{
+      const result=await request('user',{operation:op,id:p.id,revision:p.revision,...fields,...(op==='edit'?{balance:Number(fields.balance)}:{})});
+      $('userEditor').innerHTML='';
+      if(op==='delete'){
+        users=users.filter(player=>player.id!==p.id);
+        $('userRows').querySelector(`[data-id="${CSS.escape(p.id)}"]`)?.closest('tr')?.remove();
+      }
+      notice(result.message);
+      showCredentials(result);
+      await loadUsers();
+    },op==='delete'?'Deleting player…':'Saving changes…',feedback);
+  };
 };
 $('uploadRng').onsubmit=e=>{e.preventDefault();const fields=new FormData(e.target);run(async()=>{
   const file=fields.get('file');if(file.size>32*1024*1024)throw Error('The file exceeds 32 MB.');
