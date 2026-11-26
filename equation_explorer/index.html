@@ -1,0 +1,1654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Equation Explorer</title>
+<style>
+  :root {
+    --bg: #f2f5f8;
+    --paper: #fff;
+    --ink: #16283c;
+    --sub: #51647b;
+    --stroke: #d8e1ea;
+    --brand: #245d60;
+    --brand-dark: #18474a;
+    --brand-light: #e5f2ef;
+    --nav: #142a3a;
+    --formula: #19364a;
+    --error: #9e2e34;
+    --radius: 13px;
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; color: var(--ink); background: var(--bg); font-size: 1rem; line-height: 1.43; }
+  button, input, textarea { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; }
+  :focus-visible { outline: 3px solid #227e86; outline-offset: 3px; }
+  h1, h2, p { margin: 0; }
+  h2 { font-size: 1.0625rem; font-weight: 700; letter-spacing: -.015em; }
+  .shell { width: min(100%, 1260px); margin-inline: auto; padding-inline: 26px; }
+  .masthead { background: var(--nav); color: #fff; }
+  .masthead .shell { display: flex; align-items: center; gap: 13px; min-height: 78px; }
+  .mark {
+    display: grid; place-items: center; width: 42px; height: 42px; flex: none;
+    border-radius: 11px; background: #b6e6d5; color: #173b3d;
+    font: italic 700 1.35rem Georgia, serif;
+  }
+  h1 { font-size: clamp(1.2rem, 2.2vw, 1.625rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
+  .masthead p { color: #bcd0de; font-size: .875rem; margin-top: 1px; }
+  .tab-bar { background: var(--paper); box-shadow: 0 1px 0 var(--stroke); }
+  .tabs { display: flex; gap: 22px; }
+  .tab {
+    min-height: 50px; padding: 0 10px; color: var(--sub); background: transparent;
+    border: solid transparent; border-width: 0 0 3px; font-weight: 650; font-size: .938rem;
+  }
+  .tab[aria-selected="true"] { color: var(--brand-dark); border-bottom-color: #2b7272; }
+  main { padding-block: 24px 35px; }
+  .stack { display: grid; gap: 16px; min-width: 0; }
+  .card { min-width: 0; background: var(--paper); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 18px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .identity { min-width: 0; }
+  .identity strong { display: block; margin-top: 2px; overflow-wrap: anywhere; }
+  .overline { font-size: .75rem; font-weight: 700; color: var(--sub); letter-spacing: .078em; text-transform: uppercase; }
+  .secondary { color: var(--sub); font-size: .875rem; }
+  .button-row { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+  .button {
+    display: inline-flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 42px; padding: 8px 13px; border: 1px solid #cbd9e4; border-radius: 8px;
+    color: var(--ink); background: var(--paper); font-weight: 650; font-size: .9rem;
+  }
+  .button:hover:not(:disabled) { background: #f0f5f8; }
+  .button:disabled { color: #687a8d; background: #edf2f6; border-color: #dce4ec; }
+  .button.primary { color: #fff; background: var(--brand); border-color: var(--brand); }
+  .button.primary:hover:not(:disabled) { background: var(--brand-dark); }
+  .button.primary:disabled { color: #6a7d89; background: #e5ecee; border-color: #dbe5e7; }
+  .button.quiet { border-color: transparent; color: var(--brand-dark); }
+  .toolbar-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .playback { padding-left: 13px; border-left: 1px solid var(--stroke); }
+  .result { background: var(--formula); border-color: var(--formula); color: #fff; }
+  .result .overline { color: #bdd2dc; }
+  .result .bar { align-items: flex-start; }
+  .result .button { min-height: 36px; border-color: #637e8c; background: transparent; color: #f5f9fb; }
+  .result .button:hover:not(:disabled) { background: #314e60; }
+  .result .button:disabled { color: #b0c1ca; border-color: #4c6878; }
+  .equation {
+    display: block; margin-top: 7px; font: 600 clamp(1.05rem,2.3vw,1.55rem)/1.45 Consolas,"SFMono-Regular",monospace;
+    overflow-wrap: anywhere; white-space: pre-wrap;
+  }
+  .equation.placeholder { color: #d3e1e8; font: 400 1.06rem/1.5 "Segoe UI",system-ui,sans-serif; }
+  .result-metrics { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 7px; color: #cfdee7; font-size: .85rem; }
+  .result-metrics:empty { display: none; }
+  .search-grid { display: grid; grid-template-columns: minmax(0,.96fr) minmax(0,1.04fr); grid-template-areas: "chart history"; gap: 16px; }
+  .search-chart { grid-area: chart; }
+  .history { grid-area: history; }
+  .section-head { display: flex; gap: 7px 12px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; margin-bottom: 11px; }
+  .chart-frame { width: 100%; height: 298px; }
+  .chart-frame canvas { display: block; width: 100%; height: 100%; }
+  .legend { display: flex; gap: 7px 15px; flex-wrap: wrap; margin-top: 6px; font-size: .8125rem; color: var(--sub); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .dot, .held { width: 9px; height: 9px; border-radius: 50%; background: #54758e; display: inline-block; }
+  .held { border-radius: 1px; background: #fff; border: 2px solid #ae6741; }
+  .fit-line { display: inline-block; width: 16px; height: 0; border-top: 2px solid #138479; }
+  .table-wrap { min-width: 0; overflow: auto; border: 1px solid var(--stroke); border-radius: 8px; max-height: 259px; }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .875rem; text-align: left; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 8px; border-bottom: 1px solid #edf1f5; vertical-align: middle; }
+  th { position: sticky; top: 0; z-index: 1; background: #edf3f7; color: #34495c; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .training-table td:first-child, .training-table th:first-child { text-align: center; }
+  .numeric, .preview-table th, .preview-table td { text-align: right; white-space: nowrap; }
+  .training-table td:nth-child(2) { color: var(--sub); }
+  .row-action {
+    color: var(--ink); background: transparent; border: 0; text-align: left; padding: 1px 0;
+    width: 100%; font: inherit; font-weight: 550; line-height: 1.3;
+  }
+  .training-table tr:has(.row-action:hover) { background: #f1f7f7; }
+  .training-table tr.selected { background: var(--brand-light); }
+  .training-table tr.selected .row-action { color: #164c50; font-weight: 700; }
+  .empty { padding: 17px 12px; color: var(--sub); }
+  .detail { padding: 10px 12px; background: #eef5f5; border-radius: 8px; color: #28494d; margin-top: 10px; font-size: .875rem; overflow-wrap: anywhere; }
+  .status { color: var(--sub); font-size: .875rem; }
+  .status.error, .error { color: var(--error); }
+  .generator-grid { display: grid; grid-template-columns: minmax(300px,.75fr) minmax(0,1.25fr); gap: 16px; align-items: start; }
+  .generator-form { display: grid; gap: 13px; }
+  .field { display: grid; gap: 5px; min-width: 0; }
+  .field label, legend { font-weight: 650; font-size: .9rem; }
+  .field input, textarea {
+    width: 100%; padding: 8px 10px; min-height: 44px; border-radius: 7px;
+    color: var(--ink); border: 1px solid #bfcfdd; background: #fcfdfe;
+  }
+  textarea { font-family: Consolas,"SFMono-Regular",monospace; min-height: 68px; resize: vertical; }
+  fieldset { margin: 0; padding: 0; min-inline-size: 0; border: 0; }
+  .range-list { display: grid; gap: 6px; margin-top: 5px; }
+  .range-row { display: grid; grid-template-columns: minmax(48px,.6fr) minmax(0,1fr) minmax(0,1fr); gap: 6px 8px; align-items: end; }
+  .range-name { min-height: 44px; display: flex; align-items: center; font-family: Consolas, monospace; overflow-wrap: anywhere; }
+  .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 11px; }
+  .helper { color: var(--sub); font-size: .8125rem; }
+  .sampling { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 5px; }
+  .sampling label {
+    min-height: 42px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px;
+    border: 1px solid var(--stroke); border-radius: 7px; cursor: pointer;
+  }
+  .sampling label:has(input:checked) { border-color: #7ea7a3; background: var(--brand-light); }
+  input[type="radio"] { accent-color: var(--brand); }
+  .generator-preview { display: grid; gap: 12px; }
+  .generator-preview .chart-frame { height: 260px; }
+  .generator-preview .table-wrap { max-height: 260px; }
+  .preview-table th, .preview-table td { padding: 8px 10px; min-width: 82px; }
+  .preview-short { display: none; }
+  .preview-table tr:nth-child(even) { background: #f7f9fb; }
+  .generator-preview .bar { align-items: center; }
+  .skip-link { position: absolute; z-index: 3; top: 8px; left: 8px; transform: translateY(-160%); }
+  .skip-link:focus { transform: none; }
+  @media (max-width: 970px) {
+    .search-grid { grid-template-columns: minmax(0,1fr); grid-template-areas: "history" "chart"; }
+    .chart-frame { height: 268px; }
+  }
+  @media (max-width: 700px) {
+    .shell { padding-inline: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+    .masthead .shell { min-height: 68px; }
+    .tabs { gap: 8px; }
+    .tab { flex: 1 1 0; padding-inline: 4px; }
+    main { padding-block: 13px 25px; }
+    .stack, .search-grid, .generator-grid { gap: 11px; }
+    .card { padding: 13px; }
+    .toolbar-actions { display: grid; gap: 8px; width: 100%; }
+    .toolbar-actions .button-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .button { min-height: 44px; padding-inline: 8px; }
+    .result .button { min-height: 44px; }
+    .playback { border-left: 0; padding-left: 0; }
+    .generator-grid { grid-template-columns: minmax(0,1fr); }
+    .chart-frame, .generator-preview .chart-frame { height: 225px; }
+    .training-table td { padding-block: 0; }
+    .row-action { min-height: 44px; }
+    .section-head { margin-bottom: 8px; }
+    .sampling label { min-height: 44px; }
+    .generator-preview .button-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
+    .generator-preview .bar:last-child > .primary { width: 100%; }
+  }
+  @media (max-width: 490px) {
+    .shell { padding-inline: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); }
+    .masthead p { font-size: .8125rem; }
+    .mark { width: 35px; height: 35px; border-radius: 8px; }
+    .training-table th:nth-child(5), .training-table td:nth-child(5),
+    .training-table th:nth-child(6), .training-table td:nth-child(6) { display: none; }
+    .training-table th, .training-table td { padding-inline: 5px; }
+    .training-table td:nth-child(2) { line-height: 1.2; font-size: .8125rem; }
+    .preview-table th:first-child, .preview-table td:first-child { display: none; }
+    .preview-table td.empty:first-child { display: table-cell; }
+    .preview-table th, .preview-table td { min-width: 68px; padding-inline: 5px; font-size: .8125rem; }
+    .preview-short { display: inline; }
+    .preview-long { display: none; }
+    .range-row { grid-template-columns: minmax(35px,.45fr) minmax(0,1fr) minmax(0,1fr); }
+  }
+</style>
+</head>
+<body>
+<a class="button skip-link" href="#main">Skip to workspace</a>
+<header class="masthead">
+  <div class="shell">
+    <span class="mark" aria-hidden="true">ƒx</span>
+    <div><h1>Equation Explorer</h1><p>Find a formula from your data.</p></div>
+  </div>
+</header>
+<div class="tab-bar">
+  <nav class="shell tabs" aria-label="Workspace" role="tablist">
+    <button class="tab" id="tab-search" role="tab" aria-controls="search-panel" aria-selected="true">Equation search</button>
+    <button class="tab" id="tab-generator" role="tab" aria-controls="generator-panel" aria-selected="false" tabindex="-1">Dataset generator</button>
+  </nav>
+</div>
+<main class="shell" id="main">
+  <section class="stack" id="search-panel" role="tabpanel" aria-labelledby="tab-search">
+    <section class="card bar">
+      <div class="identity">
+        <p class="overline">Input dataset</p>
+        <strong id="data-name">Inverse-square example</strong>
+        <p class="secondary" id="data-meta">CSV, TSV or JSON with the result last</p>
+      </div>
+      <div class="toolbar-actions">
+        <div class="button-row">
+          <button class="button" id="open-file">Open file</button>
+          <button class="button quiet" id="example">Load example</button>
+          <input type="file" id="upload" accept=".csv,.tsv,.txt,.json" hidden>
+        </div>
+        <div class="button-row playback">
+          <button class="button" id="next">Next step</button>
+          <button class="button primary" id="run">Run search</button>
+        </div>
+      </div>
+      <p class="error" role="alert" id="search-error" hidden></p>
+    </section>
+    <section class="card result">
+      <div class="bar">
+        <div>
+          <p class="overline" id="result-kind">Fitted equation</p>
+          <h2 id="result-family" hidden></h2>
+        </div>
+        <button class="button" id="copy" disabled>Copy equation</button>
+      </div>
+      <code class="equation placeholder" id="equation">The equation appears as you step through the search.</code>
+      <div class="result-metrics" id="metrics"></div>
+      <p class="result-metrics" id="copy-status" role="status"></p>
+    </section>
+    <div class="search-grid">
+      <section class="card search-chart">
+        <div class="section-head">
+          <h2 id="chart-title">Data and fit</h2>
+          <p class="secondary" id="chart-caption"></p>
+        </div>
+        <div class="chart-frame"><canvas id="search-chart" role="img" aria-label="Observed data plot"></canvas></div>
+        <div class="legend" aria-label="Plot legend">
+          <span><i class="dot"></i> Observed</span>
+          <span id="validation-legend" hidden><i class="held"></i> Held out</span>
+          <span id="model-legend" hidden><i class="fit-line"></i> <span id="model-legend-text">Fitted curve</span></span>
+        </div>
+      </section>
+      <section class="card history">
+        <div class="section-head">
+          <h2>Training steps</h2>
+          <p class="status" id="search-status" role="status">Ready to search</p>
+        </div>
+        <div class="table-wrap" id="training-scroll" tabindex="0" aria-label="Training step history">
+          <table class="training-table" aria-label="Training steps">
+            <thead><tr><th scope="col">#</th><th scope="col">Phase</th><th scope="col">Candidate</th>
+              <th scope="col" class="numeric">Fit RMSE</th><th scope="col" class="numeric">Val. RMSE</th>
+              <th scope="col" class="numeric">Score</th></tr></thead>
+            <tbody id="training-rows"></tbody>
+          </table>
+        </div>
+        <p class="detail" id="step-detail" role="status">Run the search or advance one step at a time.</p>
+      </section>
+    </div>
+  </section>
+  <section id="generator-panel" class="generator-grid" role="tabpanel" aria-labelledby="tab-generator" hidden>
+    <form class="card generator-form" id="generator-form" novalidate>
+      <h2>Generation settings</h2>
+      <div class="field">
+        <label for="generator-equation">Equation</label>
+        <textarea id="generator-equation" rows="2" spellcheck="false" autocapitalize="off" autocorrect="off"
+                  autocomplete="off" aria-describedby="equation-help input-summary">1/x^2</textarea>
+        <p class="helper" id="equation-help">Use <code>^</code> for powers and <code>*</code> for multiplication. Example <code>z = 1/x^2 + 2*y^3</code></p>
+        <p class="secondary" id="input-summary"></p>
+      </div>
+      <fieldset><legend>Input ranges</legend><div class="range-list" id="ranges"></div></fieldset>
+      <div class="field-grid">
+        <div class="field"><label for="row-count">Rows</label><input id="row-count" type="number" inputmode="numeric" min="2" max="20000" value="100"></div>
+        <div class="field"><label for="seed">Seed (optional)</label><input id="seed" type="number" inputmode="numeric" min="0"></div>
+        <div class="field"><label for="noise">Noise standard deviation</label><input id="noise" type="number" inputmode="decimal" min="0" step="any" value="0"></div>
+      </div>
+      <fieldset>
+        <legend>Sampling</legend>
+        <div class="sampling">
+          <label><input type="radio" name="sampling" value="random" checked> Random</label>
+          <label><input type="radio" name="sampling" value="sequential"> Sequential</label>
+        </div>
+        <p class="helper">Random samples each range independently. Sequential spaces each input evenly.</p>
+      </fieldset>
+      <p class="error" role="alert" id="generator-error" hidden></p>
+      <button class="button primary" type="submit">Generate dataset</button>
+    </form>
+    <section class="card generator-preview">
+      <div class="bar">
+        <h2>Dataset preview</h2>
+        <p class="status" id="preview-status" role="status">Generate data to see a preview.</p>
+      </div>
+      <div class="chart-frame"><canvas id="generator-chart" role="img" aria-label="Generated observations"></canvas></div>
+      <div class="table-wrap" tabindex="0" aria-label="Generated data rows">
+        <table class="preview-table" aria-label="Dataset preview">
+          <thead><tr id="preview-head"></tr></thead>
+          <tbody id="preview-rows"></tbody>
+        </table>
+      </div>
+      <div class="bar">
+        <div class="button-row">
+          <button class="button" id="save-csv" disabled>Save CSV</button>
+          <button class="button" id="save-json" disabled>Save JSON</button>
+        </div>
+        <button class="button primary" id="send" disabled>Use in search</button>
+      </div>
+    </section>
+  </section>
+</main>
+<script id="equation-engine">
+/* Offline parsing, dataset generation and equation search. */
+(() => {
+  "use strict";
+  const MAX_ROWS = 20_000;
+  const MAX_INPUTS = 12;
+  const PENALTY = 0.001;
+  const PRECISION_START = 1e-8;
+  const EPS = Number.EPSILON;
+  const PRECISION_ERROR = 8 * EPS;
+  const fn = {
+    abs:Math.abs, sqrt:Math.sqrt, cbrt:Math.cbrt, exp:Math.exp, log:Math.log,
+    ln:Math.log, log10:Math.log10, log2:Math.log2, sin:Math.sin, cos:Math.cos,
+    tan:Math.tan, asin:Math.asin, acos:Math.acos, atan:Math.atan, sinh:Math.sinh,
+    cosh:Math.cosh, tanh:Math.tanh, floor:Math.floor, ceil:Math.ceil,
+    square:x=>x*x, min:Math.min, max:Math.max, pow:Math.pow,
+  };
+  const constants = {pi:Math.PI, e:Math.E};
+  const reserved = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+  const identifier = name => /^[A-Za-z_][A-Za-z_0-9]*$/.test(name) && !reserved.has(name) && !has(constants, name);
+  const short = value => String(Number(value.toPrecision(12)));
+  function linspace(low, high, count) {
+    return Array.from({length:count}, (_, i) => low * (1 - i / (count - 1)) + high * (i / (count - 1)));
+  }
+
+  function parseEquation(expression) {
+    let source = expression.trim().replaceAll("−", "-").replaceAll("\\*", "*").replaceAll("**", "^");
+    const assignment = /^([A-Za-z_][A-Za-z_0-9]*)\s*=\s*/.exec(source);
+    if (assignment) source = source.slice(assignment[0].length);
+    if (!source || source.length > 1200) throw new Error("Enter an equation of up to 1,200 characters.");
+    const tokens = [];
+    const scan = /\s+|(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?|[A-Za-z_][A-Za-z_0-9]*|[()+\-*/%,^]/y;
+    let offset = 0;
+    while (offset < source.length) {
+      scan.lastIndex = offset;
+      const token = scan.exec(source);
+      if (!token) throw new Error("Check the equation near “" + source.slice(offset, offset + 12) + "”.");
+      if (token[0].trim()) tokens.push(token[0]);
+      offset = scan.lastIndex;
+    }
+    let position = 0;
+    const inputs = new Set();
+    const take = token => tokens[position] === token && Boolean(++position);
+    const need = token => {
+      if (!take(token)) throw new Error("Expected “" + token + "” in the equation.");
+    };
+    const syntax = () => { throw new Error("Check the equation syntax. Use * for multiplication."); };
+    function atom() {
+      if (take("(")) {
+        const value = sum();
+        need(")");
+        return value;
+      }
+      const token = tokens[position++];
+      if (!token) return syntax();
+      if (/^[0-9.]/.test(token)) return () => Number(token);
+      if (has(constants, token)) return () => constants[token];
+      if (!identifier(token)) return syntax();
+      if (take("(")) {
+        if (!has(fn, token)) throw new Error(token + " is not a supported math function.");
+        const first = sum();
+        const binary = token === "min" || token === "max" || token === "pow";
+        let second;
+        if (binary) {
+          need(",");
+          second = sum();
+        }
+        need(")");
+        const call = fn[token];
+        return binary ? row => call(first(row), second(row)) : row => call(first(row));
+      }
+      inputs.add(token);
+      return row => row[token];
+    }
+    function unary() {
+      if (take("+")) return unary();
+      if (take("-")) {
+        const value = unary();
+        return row => -value(row);
+      }
+      const base = atom();
+      if (!take("^")) return base;
+      const exponent = unary();
+      return row => Math.pow(base(row), exponent(row));
+    }
+    function product() {
+      let value = unary();
+      while (["*", "/", "%"].includes(tokens[position])) {
+        const op = tokens[position++];
+        const left = value;
+        const right = unary();
+        if (op === "*") value = row => left(row) * right(row);
+        else if (op === "/") value = row => left(row) / right(row);
+        else value = row => {
+          const a = left(row), b = right(row);
+          return a - Math.floor(a / b) * b;
+        };
+      }
+      return value;
+    }
+    function sum() {
+      let value = product();
+      while (tokens[position] === "+" || tokens[position] === "-") {
+        const plus = tokens[position++] === "+";
+        const left = value;
+        const right = product();
+        value = plus ? row => left(row) + right(row) : row => left(row) - right(row);
+      }
+      return value;
+    }
+    const compute = sum();
+    if (position !== tokens.length) return syntax();
+    if (inputs.size > MAX_INPUTS) throw new Error("Use up to " + MAX_INPUTS + " inputs.");
+    if (!inputs.size) inputs.add(assignment?.[1] === "x" ? "x1" : "x");
+    const alternatives = ["y", "z", "result", ...Array.from({length:MAX_INPUTS}, (_, i) => "result" + (i+2))];
+    const result = assignment?.[1] ?? alternatives.find(name => !inputs.has(name));
+    if (!identifier(result)) throw new Error("Choose a result name such as z or result.");
+    if (inputs.has(result)) throw new Error(result + " is already an input. Choose a different result name.");
+    return {inputs:[...inputs], result, compute};
+  }
+
+  function randomSource(seed) {
+    let state = seed == null ? Math.floor(Math.random() * 4294967296) : seed >>> 0;
+    return () => {
+      let value = state = (state + 0x6D2B79F5) | 0;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function makeDataset(labels, rows, name) {
+    const width = labels.length;
+    if (width < 2 || width > MAX_INPUTS + 1) throw new Error("Supply 1–12 input columns and one result column.");
+    if (rows.length < 2 || rows.length > MAX_ROWS) throw new Error("Supply between 2 and 20,000 rows.");
+    if (new Set(labels).size !== width) throw new Error("Column names must be distinct.");
+    if (!labels.every(identifier)) labels = defaultLabels(width);
+    if (rows.some(row => !Array.isArray(row) || row.length !== width || !row.every(Number.isFinite))) {
+      throw new Error("Every row needs a finite numeric value in each column.");
+    }
+    if (!rows.some(row => row.slice(0, -1).some((value, i) => value !== rows[0][i]))) {
+      throw new Error("Supply at least two distinct input combinations.");
+    }
+    return {inputs:labels.slice(0,-1), result:labels.at(-1), rows, name};
+  }
+
+  function generate(equation, ranges, count, mode, seed, noise, name = "Generated data") {
+    if (!Number.isInteger(count) || count < 2 || count > MAX_ROWS) throw new Error("Enter 2 to 20,000 rows.");
+    if (seed != null && (!Number.isSafeInteger(seed) || seed < 0)) {
+      throw new Error("Enter a non-negative whole number for the seed, or leave it blank.");
+    }
+    if (!Number.isFinite(noise) || noise < 0) throw new Error("Enter a finite, non-negative noise level.");
+    const random = randomSource(seed);
+    const sequence = randomSource(0);
+    const columns = equation.inputs.map((input, i) => {
+      const [low, high] = ranges.get(input) ?? [];
+      if (!Number.isFinite(low) || !Number.isFinite(high) || low >= high || !Number.isFinite(high-low)) {
+        throw new Error("Enter a finite minimum and maximum for " + input + ", with minimum smaller than maximum.");
+      }
+      if (mode === "random") return Array.from({length:count}, () => low + (high - low) * random());
+      const values = linspace(low, high, count);
+      if (i) {
+        for (let j=values.length-1; j>0; j--) {
+          const k = Math.floor(sequence() * (j+1));
+          [values[j], values[k]] = [values[k], values[j]];
+        }
+      }
+      return values;
+    });
+    const variables = Object.create(null);
+    const rows = Array.from({length:count}, (_, i) => {
+      const values = columns.map((column, j) => variables[equation.inputs[j]] = column[i]);
+      let result = equation.compute(variables);
+      if (noise) result += noise * Math.sqrt(-2 * Math.log(1 - random())) * Math.cos(2 * Math.PI * random());
+      if (!Number.isFinite(result)) {
+        const point = equation.inputs.map((input, j) => input + " = " + short(values[j])).join(", ");
+        throw new Error("The equation is undefined or too large at " + point + ". Adjust the input ranges.");
+      }
+      return [...values, result];
+    });
+    return makeDataset([...equation.inputs, equation.result], rows, name);
+  }
+
+  function defaultLabels(width) {
+    return ["x", ...Array.from({length:Math.max(0, width-2)}, (_, i) => "x" + (i+2)), "y"];
+  }
+  const numeric = value => typeof value === "string" && value.trim() !== "" ? Number(value)
+    : typeof value === "number" ? value : NaN;
+
+  function delimitedRows(text, delimiter) {
+    const rows = [];
+    let row = [], field = "", quoted = false, closed = false;
+    for (let i=0; i<text.length; i++) {
+      const char = text[i];
+      if (quoted) {
+        if (char === '"' && text[i+1] === '"') {field += '"'; i++;}
+        else if (char === '"') {quoted = false; closed = true;}
+        else field += char;
+      } else if (char === '"' && !field && !closed) quoted = true;
+      else if (char === delimiter) {row.push(field); field = ""; closed = false;}
+      else if (char === '\n' || char === '\r') {
+        if (char === '\r' && text[i+1] === '\n') i++;
+        row.push(field);
+        if (row.some(value => value.trim())) rows.push(row);
+        row = []; field = ""; closed = false;
+      } else if (closed) throw new Error("Check the quoted CSV fields.");
+      else field += char;
+    }
+    if (quoted) throw new Error("A CSV field is missing a closing quote.");
+    row.push(field);
+    if (row.some(value => value.trim())) rows.push(row);
+    return rows;
+  }
+
+  function parseDelimited(text, name) {
+    const firstLine = text.split(/\r?\n|\r/).find(line => line.trim()) ?? "";
+    const choices = name.toLowerCase().endsWith(".tsv") ? ["\t", ",", ";"] : [",", "\t", ";"];
+    const countFields = delimiter => {
+      try {return delimitedRows(firstLine, delimiter)[0]?.length ?? 0;}
+      catch {return 0;}
+    };
+    const delimiter = choices.reduce((best, next) => countFields(next) > countFields(best) ? next : best);
+    const rows = delimitedRows(text, delimiter);
+    if (!rows.length) throw new Error("The dataset is empty.");
+    let labels = rows[0].map(value => value.trim());
+    const numericCount = labels.filter(value => Number.isFinite(numeric(value))).length;
+    if (numericCount === labels.length) labels = defaultLabels(labels.length);
+    else if (numericCount || labels.some(label => !label)) throw new Error("Check the first row for missing or mixed values.");
+    else rows.shift();
+    const lower = labels.map(label => label.toLowerCase());
+    const x = lower.indexOf("x"), y = lower.indexOf("y");
+    const explicit = labels.at(-1)?.startsWith("result:");
+    if (explicit) labels[labels.length-1] = labels.at(-1).slice(7);
+    const legacyPair = () => makeDataset([labels[x], labels[y]], rows.map(row => [numeric(row[x]), numeric(row[y])]), name);
+    if (labels.length === 2 && x >= 0 && y >= 0) return legacyPair();
+    const values = rows.map(row => row.map(numeric));
+    if (!explicit && x >= 0 && y >= 0 && !["z","result","output","target"].includes(lower.at(-1))
+        && values.some(row => row.some(value => !Number.isFinite(value)))) {
+      const extras = labels.map((_, i) => i).filter(i => i !== x && i !== y);
+      if (extras.every(i => values.every(row => !Number.isFinite(row[i])))) return legacyPair();
+    }
+    return makeDataset(labels, values, name);
+  }
+
+  function parseJson(value, name) {
+    const object = item => item && typeof item === "object" && !Array.isArray(item);
+    const fromColumns = (labels, columns) => {
+      if (!columns.every(Array.isArray) || !columns.every(col => col.length === columns[0]?.length)) {
+        throw new Error("JSON columns must contain the same number of values.");
+      }
+      return makeDataset(labels, (columns[0] ?? []).map((_, i) => columns.map(col => numeric(col[i]))), name);
+    };
+    if (object(value)) {
+      if (object(value.inputs) && object(value.result) && Object.keys(value.result).length === 1) {
+        return fromColumns([...Object.keys(value.inputs), ...Object.keys(value.result)],
+                           [...Object.values(value.inputs), ...Object.values(value.result)]);
+      }
+      const columns = Object.keys(value).filter(key => Array.isArray(value[key]));
+      const labels = columns.length === 2 && columns.includes("x") && columns.includes("y") ? ["x","y"] : columns;
+      if (labels.length >= 2) return fromColumns(labels, labels.map(key => value[key]));
+    }
+    if (Array.isArray(value) && value.length) {
+      if (value.every(Array.isArray)) return makeDataset(defaultLabels(value[0].length), value.map(row => row.map(numeric)), name);
+      if (value.every(object)) {
+        let labels = Object.keys(value[0]);
+        if (labels.length === 2 && labels.includes("x") && labels.includes("y")) labels = ["x","y"];
+        return makeDataset(labels, value.map(row => labels.map(key => numeric(row[key]))), name);
+      }
+    }
+    throw new Error("Use JSON rows, named arrays, or an inputs and result object.");
+  }
+
+  function read(text, name) {
+    const content = text.replace(/^\uFEFF/, "");
+    if (name.toLowerCase().endsWith(".json")) {
+      let contents;
+      try {contents = JSON.parse(content);} catch {throw new Error("The file does not contain valid JSON.");}
+      return parseJson(contents, name);
+    }
+    return parseDelimited(content, name);
+  }
+
+  function write(data, format) {
+    const labels = [...data.inputs, data.result];
+    if (format === "csv") {
+      if (labels.length === 2 && labels[0].toLowerCase() === "y" && labels[1].toLowerCase() === "x") {
+        labels[1] = "result:" + labels[1];
+      }
+      return labels.join(",") + "\r\n" + data.rows.map(row => row.join(",")).join("\r\n") + "\r\n";
+    }
+    const entries = labels.map((label, i) => [label, data.rows.map(row => row[i])]);
+    const value = labels.join(",") === "x,y" ? Object.fromEntries(entries)
+      : {inputs:Object.fromEntries(entries.slice(0,-1)), result:Object.fromEntries(entries.slice(-1))};
+    return JSON.stringify(value) + "\n";
+  }
+
+  // A column-oriented Householder factorization keeps small effects visible
+  // without squaring the condition number as normal equations would.
+  function leastSquares(columns, targetSize) {
+    const a = columns.map(col => Float64Array.from(col));
+    const diagonal = new Float64Array(columns.length);
+    const factors = new Float64Array(columns.length);
+    const tolerance = Math.sqrt(targetSize) * Math.max(targetSize, columns.length) * EPS;
+    for (let k=0; k<a.length; k++) {
+      const v = a[k];
+      let norm2 = 0;
+      for (let i=k; i<targetSize; i++) norm2 += v[i] * v[i];
+      const norm = Math.sqrt(norm2);
+      if (!Number.isFinite(norm) || norm <= tolerance) return null;
+      diagonal[k] = v[k] >= 0 ? -norm : norm;
+      v[k] -= diagonal[k];
+      factors[k] = 1 / (norm * (norm + Math.abs(v[k] + diagonal[k])));
+      for (let j=k+1; j<a.length; j++) reflect(a[j], v, k, factors[k]);
+    }
+    function reflect(column, vector, start, factor) {
+      let dot = 0;
+      for (let i=start; i<targetSize; i++) dot += vector[i] * column[i];
+      dot *= factor;
+      for (let i=start; i<targetSize; i++) column[i] -= dot * vector[i];
+    }
+    return target => {
+      const b = Float64Array.from(target);
+      for (let k=0; k<a.length; k++) reflect(b, a[k], k, factors[k]);
+      const weights = new Float64Array(a.length);
+      for (let k=a.length-1; k>=0; k--) {
+        let value = b[k];
+        for (let j=k+1; j<a.length; j++) value -= a[j][k] * weights[j];
+        weights[k] = value / diagonal[k];
+      }
+      return weights;
+    };
+  }
+
+  function rmse(values) {
+    let peak = 0;
+    for (const value of values) peak = Math.max(peak, Math.abs(value));
+    if (peak === 0) return 0;
+    let squares = 0;
+    for (const value of values) squares += (value / peak) ** 2;
+    return peak * Math.sqrt(squares / values.length);
+  }
+  const resolution = value => Math.max(Math.abs(value), 1e-8);
+  function extrema(values) {
+    let low = Infinity, high = -Infinity;
+    for (const value of values) {low = Math.min(low, value); high = Math.max(high, value);}
+    return [low,high];
+  }
+  const peakOf = values => Math.max(...extrema(values).map(Math.abs));
+  function axisFor(rows, index, name) {
+    const [low, high] = extrema(rows.map(row => row[index]));
+    const center = low * 0.5 + high * 0.5;
+    const span = high * 0.5 - low * 0.5 || high-low || 1;
+    const top = center ? "(" + name + (center < 0 ? " + " : " - ") + Math.abs(center) + ")" : name;
+    return {low, high, center, span, name, index, normal:row => (row[index]-center)/span,
+            label:span === 1 ? top : "(" + top + " / " + span + ")"};
+  }
+  const term = (label, calc) => ({label, calc});
+  const family = (name, terms, options={}) => ({name, terms, shape:[], ...options});
+  const scan = (name, low, high, count) => ({name, low, high, count});
+  const blank = term("", () => 1);
+  const testValue = (row, basis, weights, scales) => {
+    let total = 0;
+    for (let i=0; i<basis.length; i++) total += basis[i].calc(row) / scales[i] * weights[i];
+    return total;
+  };
+
+  function formula(basis, coefficients, output, contributions) {
+    const pieces = [];
+    for (let i=0; i<basis.length; i++) {
+      const weight = coefficients[i];
+      const label = basis[i].label;
+      if (!weight) continue;
+      const absolute = Math.abs(weight);
+      let magnitude = short(absolute);
+      if (contributions && Math.abs(Number(magnitude)/absolute-1)*contributions[i] > PRECISION_ERROR) {
+        magnitude = String(absolute);
+      }
+      const part = !label ? magnitude : magnitude === "1" ? label
+        : label.startsWith("1 /") ? magnitude + label.slice(1) : magnitude + " * " + label;
+      pieces.push(pieces.length ? (weight < 0 ? " - " : " + ") + part : (weight < 0 ? "-" : "") + part);
+    }
+    return output + " = " + (pieces.join("") || "0");
+  }
+
+  function splitDataset(data) {
+    const order = data.rows.map((_, i) => i);
+    const compare = (i,j) => {
+      for (let k=0; k<data.inputs.length; k++) {
+        const difference = data.rows[i][k] - data.rows[j][k];
+        if (difference) return difference;
+      }
+      return 0;
+    };
+    order.sort(compare);
+    const groups = [];
+    for (const i of order) {
+      if (groups.length && compare(groups.at(-1)[0],i) === 0) groups.at(-1).push(i);
+      else groups.push([i]);
+    }
+    const indices = new Set();
+    let heldOutGroups = 0;
+    if (groups.length >= 5) {
+      for (let i=2; i<groups.length-1; i+=5) {
+        heldOutGroups++;
+        for (const index of groups[i]) indices.add(index);
+      }
+    }
+    return {indices, training:data.rows.filter((_, i) => !indices.has(i)),
+            validation:data.rows.filter((_, i) => indices.has(i)),
+            distinct:groups.length, distinctTrain:groups.length-heldOutGroups};
+  }
+
+  function* search(data) {
+    const s = splitDataset(data);
+    const multi = data.inputs.length > 1;
+    const targetAt = data.inputs.length;
+    const axes = data.inputs.map((name, i) => axisFor(data.rows, i, name));
+    const targetPeak = peakOf(s.training.map(row => row[targetAt])) || 1;
+    const yTrain = s.training.map(row => row[targetAt] / targetPeak);
+    const yAll = data.rows.map(row => row[targetAt] / targetPeak);
+    const yValidation = s.validation.map(row => row[targetAt] / targetPeak);
+    const mean = yTrain.reduce((a,b) => a+b,0)/yTrain.length;
+    const spread = rmse(yTrain.map(y => y-mean)) || 1;
+    const rankings = [];
+
+    function fit(candidate, shape=[], settings={}) {
+      const {final=false, evaluate=true, precision=false} = settings;
+      const rows = final ? data.rows : s.training;
+      const target = final ? yAll : yTrain;
+      const basis = [...candidate.terms(shape), blank];
+      const parameters = basis.length + shape.length;
+      if (parameters > (final ? s.distinct : s.distinctTrain)) return null;
+      const columns = basis.map(feature => Float64Array.from(rows, feature.calc));
+      const scales = columns.map(peakOf);
+      if (scales.some(scale => !Number.isFinite(scale) || scale <= 0)) return null;
+      for (let j=0; j<basis.length; j++) {
+        const column = columns[j], scale = scales[j];
+        for (let i=0; i<rows.length; i++) column[i] /= scale;
+      }
+      const rowScale = precision ? target.map(resolution) : null;
+      const weighted = precision ? columns.map(col => col.map((value,i) => value/rowScale[i])) : columns;
+      const weightScales = precision ? weighted.map(peakOf) : null;
+      if (precision) {
+        for (let j=0; j<weighted.length; j++) {
+          for (let i=0; i<rows.length; i++) weighted[j][i] /= weightScales[j];
+        }
+      }
+      const solve = leastSquares(weighted,rows.length);
+      if (!solve) return null;
+      const weights = precision ? solve(target.map((value,i) => value/rowScale[i])).map((value,i) => value/weightScales[i])
+        : solve(target);
+      const errorsFor = () => target.map((value,i) => {
+        let prediction = 0;
+        for (let j=0; j<weights.length; j++) prediction += columns[j][i]*weights[j];
+        return prediction-value;
+      });
+      if (precision) {
+        for (let iteration=0; iteration<2; iteration++) {
+          const error = errorsFor();
+          const correction = solve(error.map((value,i) => -value/rowScale[i]));
+          for (let j=0; j<weights.length; j++) weights[j] += correction[j]/weightScales[j];
+        }
+      }
+      if (!weights.every(Number.isFinite)) return null;
+      const error = errorsFor();
+      const train = rmse(error);
+      const objective = precision ? rmse(error.map((value,i) => value/rowScale[i])) : train;
+      if (!Number.isFinite(objective)) return null;
+      const normalized = row => testValue(row, basis, weights, scales);
+      const model = {candidate, shape, parameters, precision, objective, train:train*targetPeak, normalized,
+        validate:null, validationPrecision:null, trainingPrecision:null, score:train/spread + PENALTY*parameters, equation:""};
+      if (!evaluate) return model;
+      if (!final && s.validation.length) {
+        const validationErrors = s.validation.map((row,i) => normalized(row) - yValidation[i]);
+        const validation = rmse(validationErrors);
+        if (!Number.isFinite(validation)) return null;
+        model.validate = validation*targetPeak;
+        model.score = validation/spread + PENALTY*parameters;
+        if (multi) {
+          model.trainingPrecision = precision ? objective : rmse(error.map((err,i) => err/resolution(target[i])));
+          model.validationPrecision = rmse(validationErrors.map((err,i) => err/resolution(yValidation[i])));
+        }
+      }
+      let labels = basis;
+      let coefficients = weights.map((weight,i) => weight*targetPeak/scales[i]);
+      let contributions = null;
+      if (precision) {
+        contributions = columns.map((column,j) => rmse(column.map((value,i) => value*weights[j]/rowScale[i])));
+        coefficients = coefficients.map((value,i) => contributions[i] < EPS ? 0 : value);
+      } else {
+        const threshold = 5e-13 * Math.max(1,peakOf(weights));
+        coefficients = coefficients.map((value,i) => Math.abs(weights[i]) < threshold ? 0 : value);
+        if (candidate.degree && Math.abs(axes[0].center/axes[0].span) <= 4) {
+          const expanded = expandPolynomial(axes[0], coefficients);
+          if (expanded && rows.every((row,i) => {
+            const raw = expanded.reduce((value,next) => value*row[0]+next,0) / targetPeak;
+            return Math.abs(raw-normalized(row)) <= 1e-9*Math.abs(target[i]) + 1e-11;
+          })) {
+            const degree = candidate.degree;
+            labels = expanded.map((_, i) => ({label:i === degree ? "" : i === degree-1 ? axes[0].name
+                                               : axes[0].name + "^" + (degree-i)}));
+            const rawPeak = Math.max(1, Math.abs(axes[0].low), Math.abs(axes[0].high));
+            coefficients = expanded.map((value,i) => Math.abs(value)*rawPeak**(degree-i) < 5e-13*targetPeak ? 0 : value);
+          }
+        }
+      }
+      if (!coefficients.every(Number.isFinite)) return null;
+      model.equation = formula(labels,coefficients,data.result,contributions);
+      return model;
+    }
+
+    function chart(model) {
+      if (!model) return null;
+      if (multi) {
+        const stride = Math.max(1, Math.ceil(data.rows.length / 750));
+        return {kind:"agreement", points:data.rows.flatMap((row,i) => i%stride ? []
+          : [[row[targetAt], model.normalized(row)*targetPeak, s.indices.has(i)]])};
+      }
+      const axis = axes[0];
+      const x = linspace(axis.low,axis.high,220);
+      if (model.candidate.pole && axis.low<0 && axis.high>0) x.push(0);
+      return {kind:"curve", points:x.sort((a,b) => a-b).map(value => [value, model.normalized([value])*targetPeak])};
+    }
+
+    function step(phase,name,detail,model=null,ranked=false,final=false) {
+      return {phase,name,detail,ranked,final,model:model && {equation:model.equation, train:model.train,
+        validate:model.validate, score:ranked ? model.score : null, chart:chart(model)}};
+    }
+    function fixed(phase,candidate) {
+      const model = fit(candidate);
+      if (!model) return step(phase,candidate.name,"Skipped because these coefficients could not be identified from the training rows.");
+      rankings.push(model);
+      return step(phase,candidate.name,"Solved " + model.parameters + " coefficients by least squares.",model,true);
+    }
+    const rule = multi ? " Small effects are checked against the size of each observed result."
+      : " Fits that match the held-out rows to numerical precision rank first.";
+    const split = s.validation.length ? "Fitting on " + s.training.length + " rows and ranking on " + s.validation.length + " held-out rows."
+      : "Fewer than five distinct input combinations. Ranking uses training error.";
+    yield {...step("Prepare","Split data",split+rule+" The score also includes a penalty for each fitted parameter."),
+           heldOut:[...s.indices]};
+
+    if (multi) {
+      const {linear,squares,cubes,transforms,interactions} = multiTerms(data.rows,axes);
+      const combined = (name,basis) => family(name, () => basis);
+      yield fixed("Basics", combined("Constant",[]));
+      yield fixed("Basics", combined("Linear model",linear));
+      yield fixed("Basics", combined("Quadratic model",[...linear,...squares,...interactions]));
+      yield fixed("Basics", combined("Additive cubic",[...linear,...squares,...cubes]));
+      const available = [...linear,...squares,...cubes,...transforms,...interactions];
+      const chosen = [];
+      let error = Infinity, precision = false;
+      const limit = Math.min(8, available.length, s.distinctTrain-1);
+      for (let count=1; count<=limit; count++) {
+        const name = "Feature mix (" + count + ")";
+        let best = null, bestIndex = 0;
+        for (let i=0; i<available.length; i++) {
+          const trial = fit(combined(name, [...chosen, available[i]]),[],{evaluate:false,precision});
+          if (trial && (!best || trial.objective < best.objective)) {best=trial; bestIndex=i;}
+        }
+        if (!best || best.objective >= error) break;
+        const adding = available.splice(bestIndex,1)[0];
+        chosen.push(adding);
+        const entering = !precision && best.objective <= PRECISION_START;
+        const model = fit(best.candidate,[],{precision:precision || entering})
+          ?? (entering ? fit(best.candidate) : null);
+        if (!model) break;
+        error = model.objective;
+        precision = model.precision;
+        rankings.push(model);
+        yield step("Mixed terms",name,"Compared " + (available.length+1) + " possible additions. Adding " + adding.label
+          + " gave the best training fit." + (precision ? rule : ""),model,true);
+        if (precision && error <= 2*EPS) break;
+      }
+    } else {
+      for (const [phase,candidate] of singleFamilies(data,axes[0],s.distinctTrain,s.training)) {
+        if (candidate.issue) {
+          yield step(phase,candidate.name,candidate.issue);
+          continue;
+        }
+        if (!candidate.shape.length) {
+          yield fixed(phase,candidate);
+          continue;
+        }
+        const scans = candidate.shape;
+        const midpoint = scans.map(spec => (spec.low+spec.high)/2);
+        if (candidate.terms(midpoint).length+scans.length+1 > s.distinctTrain) {
+          yield step(phase,candidate.name,"Skipped because there are too few distinct training inputs.");
+          continue;
+        }
+        let grids = scans.map(spec => linspace(spec.low,spec.high,spec.count));
+        let spacing = grids.map(grid => grid[1]-grid[0]);
+        const iterations = scans.length > 1 ? 11 : 8;
+        let best = null;
+        for (let iteration=0; iteration<=iterations; iteration++) {
+          let tried = 0;
+          for (const first of grids[0]) for (const second of grids[1] ?? [null]) {
+            const shape = second === null ? [first] : [first,second];
+            tried++;
+            const model = fit(candidate,shape,{evaluate:false});
+            if (model && (!best || model.objective<best.objective)) best=model;
+          }
+          if (!best) {
+            yield step(phase,candidate.name,"Skipped because no trial shape could be fitted.");
+            break;
+          }
+          const model = fit(candidate,best.shape);
+          const ranked = Boolean(model && iteration===iterations);
+          if (ranked) rankings.push(model);
+          const values = best.shape.map((value,i) => scans[i].name + " = " + short(value)).join(", ");
+          const detail = (iteration ? "Refinement " + iteration : "Coarse scan") + " tried " + tried
+            + " shapes. Best training fit uses " + values + ".";
+          yield step(phase,candidate.name,detail,model,ranked);
+          grids = scans.map((spec,i) => {
+            const radius = spacing[i]*(iteration ? 2 : 1);
+            return linspace(Math.max(spec.low,best.shape[i]-radius), Math.min(spec.high,best.shape[i]+radius),
+                            scans.length > 1 ? 9 : 17);
+          });
+          spacing = grids.map(grid => grid[1]-grid[0]);
+        }
+      }
+    }
+    const precise = rankings.filter(model => model.validationPrecision != null
+      && model.trainingPrecision<=PRECISION_START && model.validationPrecision<=PRECISION_START);
+    let finalists = rankings, reason = "had the lowest score";
+    if (precise.length) {
+      const closest = Math.min(...precise.map(model => model.validationPrecision));
+      const cutoff = Math.max(PRECISION_ERROR,closest*1.1);
+      finalists = precise.filter(model => model.validationPrecision<=cutoff);
+      reason = closest<=PRECISION_ERROR ? "matched the held-out rows to numerical precision"
+        : "best explained small effects in the held-out rows";
+    } else if (!multi && s.validation.length) {
+      const exact = rankings.filter(model => model.objective/spread<=1e-9 && model.score-PENALTY*model.parameters<=1e-9);
+      if (exact.length) {finalists=exact; reason="matched the held-out rows to numerical precision";}
+    }
+    if (!finalists.length) throw new Error("No supported equation could be fitted to this dataset.");
+    const rank = model => Math.round(model.score * 1e12) / 1e12;
+    const winner = finalists.slice().sort((a,b) => rank(a)-rank(b) || a.parameters-b.parameters)[0];
+    const final = fit(winner.candidate,winner.shape,{final:true,precision:winner.precision});
+    const detail = winner.candidate.name + " " + reason + " (score " + short(winner.score) + ") among "
+      + rankings.length + " ranked models. " + (final ? "Refitted the coefficients on all " + data.rows.length + " rows."
+      : "Showing the training fit because the full-data refit was unstable.")
+      + (winner.validate == null ? "" : " Held-out RMSE before refitting was " + short(winner.validate) + ".");
+    yield step("Select",winner.candidate.name,detail,final ?? winner,false,true);
+  }
+
+  function expandPolynomial(axis,coefficients) {
+    const base = [-axis.center/axis.span,1/axis.span];
+    let ascending = [coefficients[0]];
+    for (const coefficient of coefficients.slice(1)) {
+      const next = new Array(ascending.length+1).fill(0);
+      for (let i=0; i<ascending.length; i++) {
+        next[i] += ascending[i]*base[0];
+        next[i+1] += ascending[i]*base[1];
+      }
+      next[0] += coefficient;
+      ascending = next;
+    }
+    return ascending.every(Number.isFinite) ? ascending.reverse() : null;
+  }
+
+  function multiTerms(rows, axes) {
+    const groups = [[],[],[]], transforms = [], interactions = [];
+    const from = (axis,label,call) => term(label,row => call(row[axis.index]));
+    for (const axis of axes) {
+      if (axis.low === axis.high) continue;
+      const normalized = Math.abs(axis.center/axis.span)>4;
+      const variable = normalized ? axis.label : axis.name;
+      groups.forEach((group,i) => {
+        const label = i ? variable + "^" + (i+1) : variable;
+        group.push(term(label,row => (normalized ? axis.normal(row) : row[axis.index])**(i+1)));
+      });
+      if (!rows.some(row => row[axis.index]===0)) {
+        transforms.push(from(axis,"1 / "+axis.name,v=>1/v),from(axis,"1 / "+axis.name+"^2",v=>v**-2));
+      }
+      if (axis.low>0) transforms.push(from(axis,"log("+axis.name+")",Math.log));
+      if (axis.low>=0) transforms.push(from(axis,"sqrt("+axis.name+")",Math.sqrt));
+      for (const name of ["abs","cbrt","sin","cos"]) transforms.push(from(axis,name+"("+axis.name+")",fn[name]));
+    }
+    const [linear,squares,cubes] = groups;
+    for (let i=0; i<linear.length; i++) for (let j=i+1; j<linear.length; j++) {
+      const a=linear[i], b=linear[j];
+      interactions.push(term(a.label+" * "+b.label,row=>a.calc(row)*b.calc(row)));
+    }
+    return {linear,squares,cubes,transforms,interactions};
+  }
+
+  function* singleFamilies(data, axis, distinct, training) {
+    const name=axis.name, t=axis.normal, raw=row=>row[0];
+    const domain = (valid,message) => valid ? "" : "Skipped. " + message;
+    const zero = domain(!data.rows.some(row=>row[0]===0),"This family is undefined at an observed input of zero.");
+    const positive = domain(axis.low>0,"This family requires positive inputs.");
+    const nonnegative = domain(axis.low>=0,"This family requires non-negative inputs.");
+    const fixed = (label,expression,call,options) => family(label,()=>[term(expression,row=>call(raw(row)))],options);
+    const names = ["Constant","Straight line","Quadratic","Cubic","Degree 4 polynomial","Degree 5 polynomial"];
+    for (const [degree,label] of names.entries()) {
+      yield ["Basics",family(label,()=>Array.from({length:degree},(_,i)=>{
+        const power=degree-i;
+        return term(power===1 ? axis.label : axis.label+"^"+power,row=>t(row)**power);
+      }),{degree})];
+    }
+    const reciprocal=fixed("Reciprocal","1 / "+name,x=>1/x,{issue:zero,pole:true});
+    const square=fixed("Inverse square","1 / "+name+"^2",x=>x**-2,{issue:zero,pole:true});
+    const log=fixed("Logarithm","log("+name+")",Math.log,{issue:positive});
+    for (const candidate of [reciprocal,square,log,fixed("Square root","sqrt("+name+")",Math.sqrt,{issue:nonnegative}),
+                             fixed("Cube root","cbrt("+name+")",Math.cbrt),fixed("Absolute value","abs("+name+")",Math.abs)]) {
+      yield ["Transforms",candidate];
+    }
+    const cycles = Math.max(0.3, Math.min(24,(distinct-1)/2));
+    const harmonic=family("Sinusoid",([count])=>{
+      const omega=Math.PI*count/axis.span;
+      const useRaw=Math.abs(axis.center/axis.span)<=4 && Number.isFinite(omega);
+      const argument=useRaw ? short(omega)+" * "+name : short(Math.PI*count)+" * "+axis.label;
+      const value=useRaw ? row=>omega*raw(row) : row=>Math.PI*count*t(row);
+      return [term("sin("+argument+")",row=>Math.sin(value(row))),term("cos("+argument+")",row=>Math.cos(value(row)))];
+    },{shape:[scan("cycles",0.15,cycles,Math.floor(cycles*14)+9)]});
+    const exponential=family("Exponential",([rate])=>{
+      const rawRate=rate/axis.span;
+      const useRaw=Math.abs(axis.center/axis.span*rate)<=12 && Number.isFinite(rawRate);
+      return [useRaw ? term("exp("+short(rawRate)+" * "+name+")",row=>Math.exp(rawRate*raw(row)))
+                     : term("exp("+short(rate)+" * "+axis.label+")",row=>Math.exp(rate*t(row)))];
+    },{shape:[scan("rate across half range",-24,24,65)]});
+    const shapeFamily=(label, logistic) => family(label,([center,logWidth])=>{
+      const width=Math.exp(logWidth);
+      const expression="(("+axis.label+" - ("+short(center)+")) / "+short(width)+")";
+      return logistic ? [term("(1 / (1 + exp(-"+expression+")))",row=>1/(1+Math.exp(-(t(row)-center)/width)))]
+        : [term("exp(-0.5 * "+expression+"^2)",row=>Math.exp(-0.5*((t(row)-center)/width)**2))];
+    },{shape:[scan("center",-1.25,1.25,13),scan("log width",logistic?-4:-3.5,1,logistic?11:10)]});
+    const power=family("Power law",([exponent])=>[term(name+"^("+short(exponent)+")",row=>raw(row)**exponent)],
+                       {shape:[scan("exponent",-8,8,65)],issue:positive});
+    for (const candidate of [power,exponential,harmonic,shapeFamily("Gaussian peak",false),shapeFamily("Logistic curve",true)]) {
+      yield ["Tune shape",candidate];
+    }
+    const useRaw = Math.abs(axis.center/axis.span)<=4;
+    const variable = useRaw ? name : axis.label;
+    const x = useRaw ? raw : t;
+    for (const candidate of [reciprocal,square,log,harmonic]) {
+      yield ["Mixed terms",{...candidate,name:candidate.name+" + line",terms:shape=>[...candidate.terms(shape),term(variable,x)]}];
+    }
+    const xs=[...new Set(training.map(raw))].sort((a,b)=>a-b);
+    for (const count of [1,3,7]) {
+      const knots=Array.from({length:count},(_,i)=>{
+        const index=(i+1)*(xs.length-1)/(count+1);
+        const fraction=index-Math.floor(index);
+        return x([xs[Math.floor(index)]*(1-fraction)+xs[Math.ceil(index)]*fraction]);
+      });
+      const label="Linear spline ("+count+(count===1?" knot)":" knots)");
+      yield ["Flexible",family(label,()=>[term(variable,x),...knots.map(knot=>
+        term("max(0, "+variable+" - ("+knot+"))",row=>Math.max(0,x(row)-knot)))])];
+    }
+  }
+
+  globalThis.EquationEngine = Object.freeze({parseEquation, generate, read, write, search});
+})();
+
+</script>
+<script>
+(() => {
+  "use strict";
+  const E = globalThis.EquationEngine;
+  const $ = id => document.getElementById(id);
+  const fmt = (value, digits=6) => value == null || !Number.isFinite(value) ? "—" : String(Number(value.toPrecision(digits)));
+  const count = value => value.toLocaleString();
+  const COLORS = {muted:"#51647b", ink:"#243d53", grid:"#e4edf3", line:"#138479", observed:"#54758e", held:"#ae6741"};
+  const tabs = [$("tab-search"),$("tab-generator")];
+
+  function showTab(button, focus=false) {
+    for (const tab of tabs) {
+      const active = tab === button;
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+      $(tab.getAttribute("aria-controls")).hidden = !active;
+    }
+    if (focus) button.focus();
+  }
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => showTab(tab));
+    tab.addEventListener("keydown", event => {
+      if (["ArrowRight","ArrowLeft","Home","End"].includes(event.key)) {
+        event.preventDefault();
+        const target = event.key === "Home" ? tabs[0] : event.key === "End" ? tabs[1] : tabs.find(other => other !== tab);
+        showTab(target, true);
+      }
+    });
+  }
+
+  function alertAt(id, message="") {
+    const element = $(id);
+    element.textContent = message;
+    element.hidden = !message;
+  }
+
+  class Chart {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.data = null;
+      this.model = null;
+      this.held = new Set();
+      new ResizeObserver(() => this.draw()).observe(canvas);
+    }
+    show(data,model=null,held=new Set()) {
+      this.data = data;
+      this.model = model;
+      this.held = held;
+      this.draw();
+    }
+    draw() {
+      const {canvas,data,model,held} = this;
+      const {width,height} = canvas.getBoundingClientRect();
+      if (width < 120 || height < 110) return;
+      const scale = Math.min(3,devicePixelRatio || 1);
+      canvas.width = Math.ceil(width*scale);
+      canvas.height = Math.ceil(height*scale);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale,scale);
+      ctx.font = '12px "Segoe UI", system-ui, sans-serif';
+      ctx.fillStyle = COLORS.muted;
+      if (!data) {
+        ctx.textAlign = "center";
+        ctx.fillText("Generated observations appear here", width/2, height/2, width-12);
+        canvas.setAttribute("aria-label","No dataset to plot.");
+        return;
+      }
+      const output = data.inputs.length;
+      const agreement = model?.kind === "agreement";
+      let first = 0;
+      if (!agreement) first = data.inputs.findIndex((_,i) => data.rows.some(row => row[i] !== data.rows[0][i]));
+      const xLabel = agreement ? "Observed " + data.result : data.inputs[first];
+      const yLabel = agreement ? "Predicted " + data.result : data.result;
+      const stride = Math.max(1,Math.ceil(data.rows.length/850));
+      const observed = agreement ? model.points : data.rows.flatMap((row,i) => i % stride ? [] : [[row[first],row[output],held.has(i)]]);
+      const points = observed.filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+      canvas.setAttribute("aria-label", agreement ? "Observed versus predicted "+data.result+". The diagonal marks perfect agreement."
+        : "Scatter plot of "+data.result+" against "+xLabel+(model ? " with the fitted curve." : "."));
+      if (!points.length) return;
+      let xmin=Infinity,xmax=-Infinity,ymin=Infinity,ymax=-Infinity;
+      if (agreement) {
+        for (const [x,y] of points) {
+          xmin=Math.min(xmin,x,y); xmax=Math.max(xmax,x,y);
+        }
+        ymin=xmin; ymax=xmax;
+      } else {
+        for (const row of data.rows) {
+          xmin=Math.min(xmin,row[first]); xmax=Math.max(xmax,row[first]);
+          ymin=Math.min(ymin,row[output]); ymax=Math.max(ymax,row[output]);
+        }
+      }
+      let xPeak=Math.max(Math.abs(xmin),Math.abs(xmax)) || 1;
+      let yPeak=Math.max(Math.abs(ymin),Math.abs(ymax)) || 1;
+      if (agreement) yPeak=xPeak=Math.max(xPeak,yPeak);
+      xmin/=xPeak; xmax/=xPeak; ymin/=yPeak; ymax/=yPeak;
+      const ypad=(ymax-ymin)*.068 || .1;
+      ymin-=ypad; ymax+=ypad;
+      if (agreement) {xmin=ymin;xmax=ymax;}
+      else if (xmax===xmin) {xmin-=.05;xmax+=.05;}
+      const left = width < 290 ? 57 : 67;
+      const right = width - (width < 290 ? 24 : 28);
+      const top=13, bottom=height-41;
+      const px = value => left + (value-xmin)/(xmax-xmin)*(right-left);
+      const py = value => bottom - (value-ymin)/(ymax-ymin)*(bottom-top);
+      const line = (x1,y1,x2,y2) => {ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();};
+      const graphTicks = (low,high,peak,desired) => {
+        const spacing=high/desired-low/desired;
+        const target=spacing*peak;
+        if (target>0 && Number.isFinite(target)) {
+          const magnitude=10**Math.floor(Math.log10(target));
+          const unit=[1,2,2.5,5,10].find(v=>v*magnitude>=target)*magnitude/peak;
+          if (unit>0 && Number.isFinite(unit)) {
+            const start=Math.ceil(low/unit-1e-10), end=Math.floor(high/unit+1e-10);
+            if (end-start>=2 && end-start<=6) return Array.from({length:end-start+1},(_,i)=>(start+i)*unit);
+          }
+        }
+        return Array.from({length:desired+1},(_,i)=>low+(high-low)*i/desired);
+      };
+      ctx.strokeStyle=COLORS.grid;
+      ctx.fillStyle=COLORS.muted;
+      ctx.textAlign="right"; ctx.textBaseline="middle";
+      for (const y of graphTicks(ymin,ymax,yPeak,4)) {
+        const spot = py(y);
+        line(left,spot,right,spot);
+        ctx.fillText(fmt(y*yPeak,4),left-7,spot,left-19);
+      }
+      ctx.textAlign="center"; ctx.textBaseline="top";
+      const xDesired = right-left<215 ? 2 : right-left<300 ? 3 : 4;
+      for (const x of graphTicks(xmin,xmax,xPeak,xDesired)) {
+        const spot = px(x);
+        line(spot,top,spot,bottom);
+        ctx.fillText(fmt(x*xPeak,4),spot,bottom+6);
+      }
+      ctx.strokeStyle="#b8cbd9";
+      line(left,top,left,bottom); line(left,bottom,right,bottom);
+      ctx.fillStyle=COLORS.ink;
+      ctx.fillText(xLabel,(left+right)/2,height-15,right-left);
+      ctx.save();ctx.translate(10,(top+bottom)/2);ctx.rotate(-Math.PI/2);
+      ctx.textBaseline="middle";ctx.fillText(yLabel,0,0,bottom-top);ctx.restore();
+      ctx.save();
+      ctx.beginPath();ctx.rect(left-3,top-3,right-left+6,bottom-top+6);ctx.clip();
+      ctx.strokeStyle=COLORS.line;
+      ctx.lineWidth=2;
+      if (agreement) {
+        ctx.setLineDash([5,4]);line(left,bottom,right,top);ctx.setLineDash([]);
+      } else if (model) {
+        ctx.beginPath();
+        let contiguous=false;
+        for (const [x,y] of model.points) {
+          const scaled=y/yPeak;
+          if (!Number.isFinite(scaled) || scaled < ymin-2*(ymax-ymin) || scaled > ymax+2*(ymax-ymin)) {
+            contiguous=false;continue;
+          }
+          if (contiguous) ctx.lineTo(px(x/xPeak),py(scaled));
+          else ctx.moveTo(px(x/xPeak),py(scaled));
+          contiguous=true;
+        }
+        ctx.stroke();
+      }
+      const radius = points.length > 220 ? 2.1 : 2.8;
+      ctx.lineWidth=1.35;
+      for (const [x,y,isHeld] of points) {
+        const a=px(x/xPeak), b=py(y/yPeak);
+        if (isHeld) {
+          ctx.fillStyle="#fff";ctx.strokeStyle=COLORS.held;
+          ctx.fillRect(a-radius,b-radius,2*radius,2*radius);
+          ctx.strokeRect(a-radius,b-radius,2*radius,2*radius);
+        } else {
+          ctx.fillStyle=COLORS.observed;ctx.beginPath();ctx.arc(a,b,radius,0,Math.PI*2);ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+  }
+
+  const searchChart = new Chart($("search-chart"));
+  const generatorChart = new Chart($("generator-chart"));
+  let data, generated, held = new Set();
+  let worker, workUrl, localSearch, epoch = 0, pending = false, timer, playing = false, complete = false;
+  let history = [], selected = -1, loadRequest=0;
+
+  function example() {
+    const equation = E.parseEquation("1/x^2");
+    return E.generate(equation,new Map([["x",[1,10]]]),100,"random",42,0,"Inverse-square example");
+  }
+
+  function closeWorker() {
+    worker?.terminate();
+    worker = null;
+    if (workUrl) URL.revokeObjectURL(workUrl);
+    workUrl = null;
+  }
+
+  function stopSearch() {
+    epoch++;
+    clearTimeout(timer);
+    closeWorker();
+    localSearch=null;
+    pending=false;
+    playing=false;
+  }
+
+  function loadData(values) {
+    loadRequest++;
+    data=values;
+    resetSearch();
+    const label=data.inputs.length === 1 ? "1 input" : count(data.inputs.length)+" inputs";
+    $("data-name").textContent=data.name;
+    $("data-meta").textContent=count(data.rows.length)+" rows · "+label+" · result "+data.result;
+    showTab(tabs[0]);
+  }
+
+  function resetSearch() {
+    stopSearch();
+    held=new Set();
+    history=[];
+    selected=-1;
+    complete=false;
+    alertAt("search-error");
+    renderHistory();
+    renderSelected(-1);
+    $("search-status").textContent="Ready to search";
+    syncButtons();
+  }
+
+  function syncButtons() {
+    $("next").disabled=!data || pending || playing || complete;
+    $("run").disabled=!data;
+    $("run").textContent=playing ? "Pause" : complete ? "Run again" : history.length ? "Resume" : "Run search";
+  }
+
+  function reportSearchError(message) {
+    stopSearch();
+    complete=true;
+    syncButtons();
+    $("search-status").textContent="Search stopped";
+    alertAt("search-error",message);
+  }
+
+  function workerLoop() {
+    let rounds;
+    self.onmessage = ({data}) => {
+      try {
+        if (data.type === "start") rounds = self.EquationEngine.search(data.dataset);
+        else if (data.type === "next") self.postMessage(rounds.next());
+      } catch (error) { self.postMessage({error: error.message}); }
+    };
+  }
+
+  function makeWorker(token) {
+    if (!globalThis.Worker) return false;
+    const workerBody = "(" + workerLoop.toString() + ")();";
+    try {
+      workUrl=URL.createObjectURL(new Blob([$("equation-engine").textContent,"\n",workerBody],{type:"text/javascript"}));
+      worker=new Worker(workUrl);
+      worker.onmessage = ({data:message}) => {
+        if (token !== epoch) return;
+        if (message.error) reportSearchError(message.error);
+        else receiveStep(message);
+      };
+      worker.onerror = event => {
+        event.preventDefault();
+        if (token !== epoch) return;
+        if (!history.length) {
+          closeWorker();
+          localSearch=E.search(data);
+          runLocal(token);
+        } else reportSearchError("The fitting process stopped. Run the search again to retry.");
+      };
+      worker.postMessage({type:"start",dataset:data});
+      return true;
+    } catch {
+      closeWorker();
+      return false;
+    }
+  }
+
+  function requestStep() {
+    if (!data || complete || pending) return;
+    pending=true;
+    syncButtons();
+    const token=epoch;
+    if (!worker && !localSearch && !makeWorker(token)) localSearch=E.search(data);
+    if (worker) worker.postMessage({type:"next"});
+    else runLocal(token);
+  }
+
+  function runLocal(token) {
+    setTimeout(() => {
+      if (token !== epoch) return;
+      try {receiveStep(localSearch.next());}
+      catch (error) {reportSearchError(error.message);}
+    },0);
+  }
+
+  function receiveStep({value,done}) {
+    pending=false;
+    if (done || !value) {
+      reportSearchError("The search ended without a final equation.");
+      return;
+    }
+    if (value.heldOut) held=new Set(value.heldOut);
+    history.push(value);
+    appendStep(value,history.length-1);
+    renderSelected(history.length-1);
+    const scroller=$("training-scroll");
+    scroller.scrollTop=scroller.scrollHeight;
+    complete=value.final;
+    const ranked=history.filter(step => step.ranked).length;
+    if (complete) {
+      playing=false;
+      closeWorker();
+      $("search-status").textContent="Complete · "+count(ranked)+" ranked · "+count(history.length)+" steps";
+    } else {
+      $("search-status").textContent="Step "+count(history.length)+" · "+value.phase;
+      if (playing) timer=setTimeout(requestStep,45);
+    }
+    syncButtons();
+  }
+
+  function toggleRun() {
+    if (playing) {
+      playing=false;
+      clearTimeout(timer);
+      $("search-status").textContent="Paused at step "+history.length;
+      syncButtons();
+      return;
+    }
+    if (complete) resetSearch();
+    playing=true;
+    syncButtons();
+    requestStep();
+  }
+
+  function tableCell(row,text,css) {
+    const cell=row.insertCell();
+    cell.textContent=text;
+    if (css) cell.className=css;
+    return cell;
+  }
+  function renderHistory() {
+    const body=$("training-rows");
+    body.replaceChildren();
+    const cell=tableCell(body.insertRow(),"Search steps will appear here.","empty");
+    cell.colSpan=6;
+  }
+  function appendStep(step,index) {
+    const body=$("training-rows");
+    if (index===0) body.replaceChildren();
+    const row=body.insertRow();
+    tableCell(row,index+1);
+    tableCell(row,step.phase);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="row-action";
+    button.textContent=step.name;
+    button.addEventListener("click",()=>renderSelected(index));
+    row.insertCell().append(button);
+    tableCell(row,fmt(step.model?.train),"numeric");
+    tableCell(row,fmt(step.model?.validate),"numeric");
+    tableCell(row,fmt(step.model?.score),"numeric");
+  }
+
+  function renderSelected(index) {
+    const body=$("training-rows");
+    if (selected>=0) {
+      body.rows[selected]?.classList.remove("selected");
+      body.rows[selected]?.querySelector("button")?.removeAttribute("aria-current");
+    }
+    selected=index;
+    const step=history[index];
+    const model=step?.model;
+    if (step) {
+      body.rows[index].classList.add("selected");
+      body.rows[index].querySelector("button").setAttribute("aria-current","step");
+    }
+    $("result-kind").textContent=model ? step.final ? "Fitted equation" : "Trial equation" : "Fitted equation";
+    $("result-family").hidden=!model;
+    $("result-family").textContent=model ? step.name : "";
+    $("equation").textContent=model?.equation ?? "The equation appears as you step through the search.";
+    $("equation").classList.toggle("placeholder",!model);
+    $("copy").disabled=!model;
+    $("copy-status").textContent="";
+    $("metrics").replaceChildren();
+    if (model) {
+      const labels = [[step.final && model.validate==null ? "All-data RMSE" : "Fit RMSE", model.train],
+                      ["Held-out RMSE",model.validate],["Score",model.score]];
+      for (const [label,value] of labels) if (value!=null) {
+        const item=document.createElement("span");
+        item.textContent=label+" "+fmt(value);
+        $("metrics").append(item);
+      }
+    }
+    $("step-detail").textContent=step?.detail ?? "Run the search or advance one step at a time.";
+    $("validation-legend").hidden=!held.size;
+    $("model-legend").hidden=!model;
+    const agreement=model?.chart?.kind==="agreement";
+    $("chart-title").textContent=agreement ? "Observed vs. predicted" : "Data and fit";
+    $("chart-caption").textContent=agreement ? data.result : "";
+    $("model-legend-text").textContent=agreement ? "Perfect agreement" : "Fitted curve";
+    searchChart.show(data,model?.chart,held);
+  }
+
+  $("next").addEventListener("click",requestStep);
+  $("run").addEventListener("click",toggleRun);
+  $("example").addEventListener("click",()=>loadData(example()));
+  $("open-file").addEventListener("click",()=>$("upload").click());
+  $("upload").addEventListener("change",async event=>{
+    const file=event.target.files[0];
+    event.target.value="";
+    if (!file) return;
+    const request=++loadRequest;
+    alertAt("search-error");
+    try {
+      if (file.size>32*1024*1024) throw new Error("Choose a file under 32 MB and up to 20,000 data rows.");
+      const values=E.read(await file.text(),file.name);
+      if (request===loadRequest) loadData(values);
+    } catch (error) {
+      if (request===loadRequest) alertAt("search-error",error.message);
+    }
+  });
+  $("copy").addEventListener("click",async ()=>{
+    const code=$("equation");
+    try {
+      if (!navigator.clipboard) throw new Error();
+      await navigator.clipboard.writeText(code.textContent);
+      $("copy-status").textContent="Equation copied.";
+    } catch {
+      const selection=window.getSelection();
+      const range=document.createRange();
+      range.selectNodeContents(code);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      try {
+        if (!document.execCommand("copy")) throw new Error();
+        $("copy-status").textContent="Equation copied.";
+      } catch {$("copy-status").textContent="Equation selected. Use your browser’s Copy command.";}
+    }
+  });
+
+  const rangeSettings=new Map();
+  let equation, previewLabels=[];
+  function rangeEditor(input,index,values) {
+    const row=document.createElement("div");
+    row.className="range-row";
+    const name=document.createElement("span");
+    name.className="range-name";
+    name.textContent=input;
+    row.append(name);
+    for (const [column,label] of ["Minimum","Maximum"].entries()) {
+      const field=document.createElement("div");
+      field.className="field";
+      const id="range-"+index+"-"+column;
+      const caption=document.createElement("label");
+      caption.htmlFor=id;
+      caption.textContent=label;
+      const control=document.createElement("input");
+      control.type="number";control.step="any";control.inputMode="decimal";control.id=id;
+      control.setAttribute("aria-label",label+" "+input);
+      control.value=values[column];
+      control.addEventListener("input",()=>{values[column]=control.value;invalidatePreview();});
+      field.append(caption,control);
+      row.append(field);
+    }
+    return row;
+  }
+
+  function updateInputs() {
+    const previous=equation?.inputs.join(",");
+    try {
+      equation=E.parseEquation($("generator-equation").value);
+      const {inputs,result}=equation;
+      const simple=inputs.join(", ");
+      $("input-summary").textContent=(simple.length<=42 ? "Inputs "+simple : inputs.length+" inputs")+" · Result "+result;
+      if (inputs.join(",")!==previous) {
+        $("ranges").replaceChildren(...inputs.map((input,index)=>{
+          if (!rangeSettings.has(input)) rangeSettings.set(input,["1","10"]);
+          return rangeEditor(input,index,rangeSettings.get(input));
+        }));
+      }
+      setPreviewHeaders([...inputs,result]);
+      alertAt("generator-error");
+    } catch (error) {
+      equation=null;
+      $("input-summary").textContent=error.message;
+    }
+  }
+
+  function setPreviewHeaders(labels) {
+    if (labels.join(",")===previewLabels.join(",")) return;
+    previewLabels=labels;
+    $("preview-head").replaceChildren(...["Row",...labels].map(label=>{
+      const th=document.createElement("th");
+      th.scope="col";th.textContent=label;
+      return th;
+    }));
+  }
+  function invalidatePreview() {
+    alertAt("generator-error");
+    if (generated) {
+      generated=null;
+      preview("Settings changed. Generate a new dataset.");
+    }
+  }
+
+  function preview(message) {
+    $("preview-status").textContent=message;
+    $("preview-rows").replaceChildren();
+    generatorChart.show(generated);
+    for (const id of ["save-csv","save-json","send"]) $(id).disabled=!generated;
+    if (!generated) {
+      const cell=tableCell($("preview-rows").insertRow(),"No generated rows yet.","empty");
+      cell.colSpan=previewLabels.length+1;
+      return;
+    }
+    setPreviewHeaders([...generated.inputs,generated.result]);
+    for (const [index,values] of generated.rows.slice(0,200).entries()) {
+      const row=$("preview-rows").insertRow();
+      tableCell(row,index+1);
+      for (const value of values) {
+        const cell=row.insertCell();
+        cell.title=String(value);
+        const full=document.createElement("span");
+        full.className="preview-long";
+        full.textContent=fmt(value,10);
+        const compact=document.createElement("span");
+        compact.className="preview-short";
+        const magnitude=Math.abs(value);
+        compact.textContent=magnitude>=1e6 || (magnitude>0 && magnitude<1e-4)
+          ? value.toExponential(3) : fmt(value,6);
+        cell.append(full,compact);
+      }
+    }
+  }
+
+  $("generator-equation").addEventListener("input",()=>{invalidatePreview();updateInputs();});
+  for (const input of $("generator-form").querySelectorAll("input:not([type='file'])")) {
+    if (!input.closest("#ranges")) input.addEventListener("input",invalidatePreview);
+  }
+  $("generator-form").addEventListener("submit",event=>{
+    event.preventDefault();
+    alertAt("generator-error");
+    try {
+      equation=E.parseEquation($("generator-equation").value);
+      const ranges=new Map(equation.inputs.map(name=>{
+        const values=rangeSettings.get(name) ?? ["1","10"];
+        return [name,values.map(value=>value.trim()==="" ? NaN : Number(value))];
+      }));
+      const seed=$("seed").value.trim();
+      const mode=new FormData(event.currentTarget).get("sampling");
+      generated=E.generate(equation,ranges,Number($("row-count").value),mode,seed===""?null:Number(seed),Number($("noise").value));
+      const size=generated.rows.length;
+      preview(count(size)+" rows generated"+(size>200?" · first 200 shown":""));
+    } catch (error) {
+      alertAt("generator-error",error.message);
+    }
+  });
+  function save(format) {
+    if (!generated) return;
+    const file=new Blob([E.write(generated,format)],{type:format==="csv"?"text/csv":"application/json"});
+    const url=URL.createObjectURL(file);
+    const action=document.createElement("a");
+    action.href=url;action.download="dataset."+format;
+    document.body.append(action);action.click();action.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    $("preview-status").textContent=count(generated.rows.length)+" rows exported as "+format.toUpperCase();
+  }
+  $("save-csv").addEventListener("click",()=>save("csv"));
+  $("save-json").addEventListener("click",()=>save("json"));
+  $("send").addEventListener("click",()=>{
+    if (!generated) return;
+    loadData(generated);
+    $("tab-search").focus({preventScroll:true});
+    window.scrollTo(0,0);
+  });
+
+  updateInputs();
+  preview("Generate data to see a preview.");
+  loadData(example());
+})();
+
+</script>
+</body>
+</html>
