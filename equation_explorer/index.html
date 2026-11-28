@@ -120,6 +120,8 @@
     width: 100%; padding: 8px 10px; min-height: 44px; border-radius: 7px;
     color: var(--ink); border: 1px solid #bfcfdd; background: #fcfdfe;
   }
+  .row-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; min-height: 36px; }
+  .field .row-toggle input { inline-size: 1.1rem; block-size: 1.1rem; min-height: 0; margin: 0; padding: 0; accent-color: var(--brand); }
   textarea { font-family: Consolas,"SFMono-Regular",monospace; min-height: 68px; resize: vertical; }
   fieldset { margin: 0; padding: 0; min-inline-size: 0; border: 0; }
   .range-list { display: grid; gap: 6px; margin-top: 5px; }
@@ -217,6 +219,7 @@
         <div class="button-row playback">
           <button class="button" id="next">Next step</button>
           <button class="button primary" id="run">Run search</button>
+          <button class="button" type="button" id="pysr" hidden>Run with PySR</button>
         </div>
       </div>
       <p class="error" role="alert" id="search-error" hidden></p>
@@ -242,7 +245,7 @@
         <div class="chart-frame"><canvas id="search-chart" role="img" aria-label="Observed data plot"></canvas></div>
         <div class="legend" aria-label="Plot legend">
           <span><i class="dot"></i> Observed</span>
-          <span id="validation-legend" hidden><i class="held"></i> Held out</span>
+          <span id="validation-legend" hidden><i class="held"></i> <span id="validation-legend-text">Held out</span></span>
           <span id="model-legend" hidden><i class="fit-line"></i> <span id="model-legend-text">Fitted curve</span></span>
         </div>
       </section>
@@ -272,20 +275,28 @@
                   autocomplete="off" aria-describedby="equation-help input-summary">1/x^2</textarea>
         <p class="helper" id="equation-help">Use <code>^</code> for powers and <code>*</code> for multiplication. Example <code>z = 1/x^2 + 2*y^3</code></p>
         <p class="secondary" id="input-summary"></p>
+        <details class="helper"><summary>Supported functions and domains</summary>
+          <p id="function-list"></p><p>Angles use radians. sinc(x) is sin(x)/x with sinc(0) = 1. lgamma(x) is log(|gamma(x)|). Use [−1, 1] for asin and acos, and an interval inside (−1, 1) for atanh.</p>
+        </details>
       </div>
       <fieldset><legend>Input ranges</legend><div class="range-list" id="ranges"></div></fieldset>
       <div class="field-grid">
-        <div class="field"><label for="row-count">Rows</label><input id="row-count" type="number" inputmode="numeric" min="2" max="20000" value="100"></div>
+        <div class="field"><label for="row-count">Rows</label><input id="row-count" type="number" inputmode="numeric" min="2" max="20000" value="30" aria-describedby="row-advice"></div>
         <div class="field"><label for="seed">Seed (optional)</label><input id="seed" type="number" inputmode="numeric" min="0"></div>
         <div class="field"><label for="noise">Noise standard deviation</label><input id="noise" type="number" inputmode="decimal" min="0" step="any" value="0"></div>
+      </div>
+      <div class="field">
+        <label class="row-toggle"><input id="auto-rows" type="checkbox" checked> Adjust rows to the equation</label>
+        <p class="helper" id="row-advice" role="status"></p>
       </div>
       <fieldset>
         <legend>Sampling</legend>
         <div class="sampling">
-          <label><input type="radio" name="sampling" value="random" checked> Random</label>
+          <label><input type="radio" name="sampling" value="coverage" checked> Coverage</label>
+          <label><input type="radio" name="sampling" value="random"> Random</label>
           <label><input type="radio" name="sampling" value="sequential"> Sequential</label>
         </div>
-        <p class="helper">Random samples each range independently. Sequential spaces each input evenly.</p>
+        <p class="helper">Coverage includes in-range boundary points with finite results and spreads the remaining samples across each input range. Random draws independently. Sequential spaces each input evenly.</p>
       </fieldset>
       <p class="error" role="alert" id="generator-error" hidden></p>
       <button class="button primary" type="submit">Generate dataset</button>
@@ -318,31 +329,187 @@
   "use strict";
   const MAX_ROWS = 20_000;
   const MAX_INPUTS = 12;
+  const MAX_EXPRESSION = 16_384;
   const PENALTY = 0.001;
   const PRECISION_START = 1e-8;
   const EPS = Number.EPSILON;
   const PRECISION_ERROR = 8 * EPS;
+  const SEARCH_SLICE = Symbol("search slice");
+  const SLICE_MS = 8;
+
+  // Cody rational approximation for erf / erfc (double precision ~1e-16).
+  function erfCore(x, complementary) {
+    if (Number.isNaN(x)) return NaN;
+    if (x === 0) return complementary ? 1 : 0;
+    const z = Math.abs(x);
+    if (z <= 0.46875) {
+      const a = [3.1611237438705656, 113.86415415105016, 377.48523768530202, 3209.3775891384695, 0.18577770618460315];
+      const b = [23.60129095234412, 244.02463793444417, 1282.6165260773723, 2844.2368334391706];
+      const ysq = z * z;
+      let xnum = a[4] * ysq, xden = ysq;
+      for (let i = 0; i < 3; i++) {
+        xnum = (xnum + a[i]) * ysq;
+        xden = (xden + b[i]) * ysq;
+      }
+      const res = x * (xnum + a[3]) / (xden + b[3]);
+      return complementary ? 1 - res : res;
+    }
+    let erfcPos;
+    if (z <= 4) {
+      const c = [0.5641884969886701, 8.883149794388376, 66.11919063714163, 298.63513819740013,
+                 881.9522212417691, 1712.0476126340706, 2051.0783778260715, 1230.3393547979973, 2.1531153547440385e-8];
+      const d = [15.744926110709835, 117.6939508913125, 537.1811018620099, 1621.3895745666902,
+                 3290.7992357334596, 4362.619090143247, 3439.3676741437216, 1230.3393548037494];
+      let xnum = c[8] * z, xden = z;
+      for (let i = 0; i < 7; i++) {
+        xnum = (xnum + c[i]) * z;
+        xden = (xden + d[i]) * z;
+      }
+      const ysq = Math.trunc(z * 16) / 16;
+      const delta = (z - ysq) * (z + ysq);
+      erfcPos = Math.exp(-ysq * ysq) * Math.exp(-delta) * (xnum + c[7]) / (xden + d[7]);
+    } else if (z > 27.3) {
+      erfcPos = 0;
+    } else {
+      const p = [0.30532663496123234, 0.36034489994980444, 0.12578172611122925,
+                 0.016083785148742277, 6.587491615298378e-4, 0.016315387137302098];
+      const q = [2.5685201922898224, 1.8729528499234605, 0.5279051029514284,
+                 0.06051834131244132, 0.002335204976268692];
+      const ysq = 1 / (z * z);
+      let xnum = p[5] * ysq, xden = ysq;
+      for (let i = 0; i < 4; i++) {
+        xnum = (xnum + p[i]) * ysq;
+        xden = (xden + q[i]) * ysq;
+      }
+      const res = (1 / Math.sqrt(Math.PI) - ysq * (xnum + p[4]) / (xden + q[4])) / z;
+      const zq = Math.trunc(z * 16) / 16;
+      const delta = (z - zq) * (z + zq);
+      erfcPos = Math.exp(-zq * zq) * Math.exp(-delta) * res;
+    }
+    if (complementary) return x < 0 ? 2 - erfcPos : erfcPos;
+    return x < 0 ? -(1 - erfcPos) : 1 - erfcPos;
+  }
+  const erf = x => erfCore(x, false);
+  const erfc = x => erfCore(x, true);
+
+  // Evaluate the Lanczos formula in log space so its factors cannot overflow separately.
+  const lanczos = [0.99999999999980993,676.5203681218851,-1259.1392167224028,
+    771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,
+    9.9843695780195716e-6,1.5056327351493116e-7];
+  function sinPi(x) {
+    const nearest = Math.round(x);
+    return (nearest % 2 ? -1 : 1) * Math.sin(Math.PI * (x-nearest));
+  }
+  function logAbsGamma(x) {
+    if (!Number.isFinite(x) || (x <= 0 && Number.isInteger(x))) return NaN;
+    if (x < 0.5) return Math.log(Math.PI) - Math.log(Math.abs(sinPi(x))) - logAbsGamma(1-x);
+    const z = x-1, t = z+7.5;
+    let sum = lanczos[0];
+    for (let i=1; i<lanczos.length; i++) sum += lanczos[i]/(z+i);
+    return Math.log(2*Math.PI)/2 + (z+0.5)*Math.log(t) - t + Math.log(sum);
+  }
+  function gamma(x) {
+    if (x > 0 && x <= 171 && Number.isInteger(x)) {
+      let product = 1;
+      for (let i=2; i<x; i++) product *= i;
+      return product;
+    }
+    return (x < 0 ? Math.sign(sinPi(x)) : 1) * Math.exp(logAbsGamma(x));
+  }
+  function atTrigPole(x, half, denominator) {
+    if (Math.abs(denominator)>2e-15) return false;
+    const k=Math.round(x/Math.PI-half);
+    return Number.isSafeInteger(k) && x === (k+half)*Math.PI;
+  }
+  function trigQuotient(x, name) {
+    const sine=Math.sin(x), cosine=Math.cos(x);
+    const byCosine=name==="tan" || name==="sec";
+    if (atTrigPole(x,byCosine ? 0.5 : 0,byCosine ? cosine : sine)) return NaN;
+    if (name==="tan") return Math.tan(x);
+    if (name==="cot") return cosine/sine;
+    return 1/(byCosine ? cosine : sine);
+  }
+  function modulo(a,b) {
+    const r=a%b;
+    return r && (r<0)!==(b<0) ? r+b : r;
+  }
   const fn = {
-    abs:Math.abs, sqrt:Math.sqrt, cbrt:Math.cbrt, exp:Math.exp, log:Math.log,
-    ln:Math.log, log10:Math.log10, log2:Math.log2, sin:Math.sin, cos:Math.cos,
-    tan:Math.tan, asin:Math.asin, acos:Math.acos, atan:Math.atan, sinh:Math.sinh,
-    cosh:Math.cosh, tanh:Math.tanh, floor:Math.floor, ceil:Math.ceil,
-    square:x=>x*x, min:Math.min, max:Math.max, pow:Math.pow,
+    abs:Math.abs, sqrt:Math.sqrt, cbrt:Math.cbrt, exp:Math.exp, expm1:Math.expm1,
+    log:Math.log, ln:Math.log, log10:Math.log10, log2:Math.log2, log1p:Math.log1p,
+    sin:Math.sin, cos:Math.cos, tan:x=>trigQuotient(x,"tan"), sec:x=>trigQuotient(x,"sec"),
+    csc:x=>trigQuotient(x,"csc"), cot:x=>trigQuotient(x,"cot"),
+    asin:Math.asin, acos:Math.acos, atan:Math.atan, atan2:Math.atan2,
+    sinh:Math.sinh, cosh:Math.cosh, tanh:Math.tanh,
+    asinh:Math.asinh, acosh:Math.acosh, atanh:Math.atanh,
+    floor:Math.floor, ceil:Math.ceil, round:Math.round, trunc:Math.trunc,
+    sign:Math.sign, sgn:Math.sign, step:x=>x>=0?1:0,
+    erf, erfc, gamma, lgamma:logAbsGamma,
+    sinc:x=>x===0 ? 1 : Math.sin(x)/x, relu:x=>Math.max(0,x),
+    sigmoid:x=>x>=0 ? 1/(1+Math.exp(-x)) : Math.exp(x)/(1+Math.exp(x)),
+    softplus:x=>Math.max(x,0)+Math.log1p(Math.exp(-Math.abs(x))),
+    square:x=>x*x, min:Math.min, max:Math.max, pow:Math.pow, hypot:Math.hypot,
+    clamp:(x,lo,hi)=>Math.min(hi,Math.max(lo,x)),
   };
-  const constants = {pi:Math.PI, e:Math.E};
+  const binaryNames = new Set(["min","max","pow","hypot","atan2","+","-","*","/","%","^"]);
+  const arity = op => op==="clamp" ? 3 : binaryNames.has(op) ? 2 : 1;
+  const operations = {...fn, "+":(a,b)=>a+b, "-":(a,b)=>a-b, "*":(a,b)=>a*b,
+    "/":(a,b)=>a/b, "%":modulo, "^":Math.pow, neg:a=>-a};
+  const leaf = (op,value) => ({op,value,args:[]});
+  const branch = (op,...args) => ({op,args});
+  function evaluator(node, variable = name => row => row[name]) {
+    if (node.op==="var") return variable(node.value);
+    if (node.op==="num") return () => node.value;
+    const [a,b,c]=node.args.map(child=>evaluator(child,variable));
+    const call=operations[node.op];
+    if (c) return row=>call(a(row),b(row),c(row));
+    if (b) return row=>call(a(row),b(row));
+    return row=>call(a(row));
+  }
+  const constants = {pi:Math.PI, e:Math.E, tau:2*Math.PI, phi:(1+Math.sqrt(5))/2};
   const reserved = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
   const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
   const identifier = name => /^[A-Za-z_][A-Za-z_0-9]*$/.test(name) && !reserved.has(name) && !has(constants, name);
-  const short = value => String(Number(value.toPrecision(12)));
+  const short = value => {
+    const rounded = Number(value.toPrecision(12));
+    return String(Number.isFinite(rounded) ? rounded : value);
+  };
+  function safeTan(angle) {
+    const c = Math.cos(angle);
+    if (!Number.isFinite(c) || Math.abs(c) < 1e-10) return NaN;
+    const v = Math.tan(angle);
+    return Math.abs(v) > 1e10 ? NaN : v;
+  }
+  function safeInv(value) {
+    if (!Number.isFinite(value) || Math.abs(value) < 1e-10) return NaN;
+    const v = 1 / value;
+    return Math.abs(v) > 1e10 ? NaN : v;
+  }
+  const safeLog = value => value > 1e-15 ? Math.log(value) : NaN;
+  const safeSqrt = value => value >= 0 ? Math.sqrt(value) : NaN;
+  const safeExp = value => value > 230 ? NaN : Math.exp(value);
+  const safeSinh = value => Math.abs(value) > 230 ? NaN : Math.sinh(value);
+  const safeCosh = value => Math.abs(value) > 230 ? NaN : Math.cosh(value);
+  function wrapHalfPi(angle) {
+    const wrapped = ((angle + Math.PI / 2) % Math.PI + Math.PI) % Math.PI - Math.PI / 2;
+    return Math.abs(wrapped) < 1e-10 ? 0 : wrapped;
+  }
   function linspace(low, high, count) {
     return Array.from({length:count}, (_, i) => low * (1 - i / (count - 1)) + high * (i / (count - 1)));
   }
 
   function parseEquation(expression) {
+    try { return compileEquation(expression, MAX_EXPRESSION); }
+    catch (error) {
+      if (error instanceof RangeError) throw new Error("Use fewer nested operations in the equation.");
+      throw error;
+    }
+  }
+
+  function compileEquation(expression, limit) {
     let source = expression.trim().replaceAll("−", "-").replaceAll("\\*", "*").replaceAll("**", "^");
     const assignment = /^([A-Za-z_][A-Za-z_0-9]*)\s*=\s*/.exec(source);
     if (assignment) source = source.slice(assignment[0].length);
-    if (!source || source.length > 1200) throw new Error("Enter an equation of up to 1,200 characters.");
+    if (!source || source.length > limit) throw new Error("Enter an equation of up to 16,384 characters.");
     const tokens = [];
     const scan = /\s+|(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?|[A-Za-z_][A-Za-z_0-9]*|[()+\-*/%,^]/y;
     let offset = 0;
@@ -368,62 +535,43 @@
       }
       const token = tokens[position++];
       if (!token) return syntax();
-      if (/^[0-9.]/.test(token)) return () => Number(token);
-      if (has(constants, token)) return () => constants[token];
+      if (/^[0-9.]/.test(token)) {
+        const value = Number(token);
+        if (!Number.isFinite(value)) throw new Error("Use a finite numeric constant in the equation.");
+        return leaf("num",value);
+      }
+      if (has(constants, token)) return leaf("num",constants[token]);
       if (!identifier(token)) return syntax();
       if (take("(")) {
         if (!has(fn, token)) throw new Error(token + " is not a supported math function.");
-        const first = sum();
-        const binary = token === "min" || token === "max" || token === "pow";
-        let second;
-        if (binary) {
+        const args=[sum()];
+        while (args.length<arity(token)) {
           need(",");
-          second = sum();
+          args.push(sum());
         }
         need(")");
-        const call = fn[token];
-        return binary ? row => call(first(row), second(row)) : row => call(first(row));
+        return branch(token,...args);
       }
       inputs.add(token);
-      return row => row[token];
+      return leaf("var",token);
     }
     function unary() {
       if (take("+")) return unary();
-      if (take("-")) {
-        const value = unary();
-        return row => -value(row);
-      }
-      const base = atom();
-      if (!take("^")) return base;
-      const exponent = unary();
-      return row => Math.pow(base(row), exponent(row));
+      if (take("-")) return branch("neg",unary());
+      const base=atom();
+      return take("^") ? branch("^",base,unary()) : base;
     }
     function product() {
-      let value = unary();
-      while (["*", "/", "%"].includes(tokens[position])) {
-        const op = tokens[position++];
-        const left = value;
-        const right = unary();
-        if (op === "*") value = row => left(row) * right(row);
-        else if (op === "/") value = row => left(row) / right(row);
-        else value = row => {
-          const a = left(row), b = right(row);
-          return a - Math.floor(a / b) * b;
-        };
-      }
+      let value=unary();
+      while (["*","/","%"].includes(tokens[position])) value=branch(tokens[position++],value,unary());
       return value;
     }
     function sum() {
-      let value = product();
-      while (tokens[position] === "+" || tokens[position] === "-") {
-        const plus = tokens[position++] === "+";
-        const left = value;
-        const right = product();
-        value = plus ? row => left(row) + right(row) : row => left(row) - right(row);
-      }
+      let value=product();
+      while (["+","-"].includes(tokens[position])) value=branch(tokens[position++],value,product());
       return value;
     }
-    const compute = sum();
+    const tree=sum();
     if (position !== tokens.length) return syntax();
     if (inputs.size > MAX_INPUTS) throw new Error("Use up to " + MAX_INPUTS + " inputs.");
     if (!inputs.size) inputs.add(assignment?.[1] === "x" ? "x1" : "x");
@@ -431,7 +579,7 @@
     const result = assignment?.[1] ?? alternatives.find(name => !inputs.has(name));
     if (!identifier(result)) throw new Error("Choose a result name such as z or result.");
     if (inputs.has(result)) throw new Error(result + " is already an input. Choose a different result name.");
-    return {inputs:[...inputs], result, compute};
+    return {inputs:[...inputs], result, tree, compute:evaluator(tree)};
   }
 
   function randomSource(seed) {
@@ -459,6 +607,157 @@
     return {inputs:labels.slice(0,-1), result:labels.at(-1), rows, name};
   }
 
+  // This is a sampling recommendation for an entered formula. Search receives only numeric rows.
+  function samplingPlan(equation, ranges, noise=0) {
+    const names=equation.inputs, d=names.length;
+    const bounds=names.map(name=>(ranges.get(name) ?? [1,10]).map(Number));
+    const mid=bounds.map(([lo,hi])=>lo*0.5+hi*0.5);
+    const events=[], seen=new Set();
+    let cycles=0, crossings=0, widths=0, nonlinear=0, numeric=0, additions=0;
+    const flat = value => ({offset:value, slopes:new Array(d).fill(0)});
+    const combine = (a,b,k) => a && b && ({
+      offset:a.offset+k*b.offset, slopes:a.slopes.map((v,i)=>v+k*b.slopes[i])
+    });
+    const scale = (a,k) => a && ({offset:a.offset*k,slopes:a.slopes.map(v=>v*k)});
+    const interval = a => {
+      if (!a) return null;
+      let lo=a.offset, hi=a.offset;
+      for (let i=0; i<d; i++) {
+        const [a0,a1]=bounds[i].map(x=>x*a.slopes[i]);
+        lo+=Math.min(a0,a1); hi+=Math.max(a0,a1);
+      }
+      return [lo,hi];
+    };
+    function include(row) {
+      if (row.some((v,i)=>!Number.isFinite(v) || v<bounds[i][0] || v>bounds[i][1])) return;
+      const key=row.join(",");
+      if (!seen.has(key)) { seen.add(key); events.push(row); }
+    }
+    function probe(line, level) {
+      if (!line || events.length>=180) return;
+      const spans=line.slopes.map((v,i)=>Math.abs(v)*(bounds[i][1]-bounds[i][0]));
+      const axis=spans.indexOf(Math.max(...spans));
+      if (!line.slopes[axis]) return;
+      let rest=line.offset;
+      for (let i=0; i<d; i++) if (i!==axis) rest+=line.slopes[i]*mid[i];
+      const x=(level-rest)/line.slopes[axis], [lo,hi]=bounds[axis];
+      if (x<lo || x>hi || !Number.isFinite(x)) return;
+      const delta=Math.max((hi-lo)*1e-6,Math.abs(x)*Number.EPSILON*4,Number.MIN_VALUE);
+      for (const value of [x,x-delta,x+delta]) {
+        const row=mid.slice(); row[axis]=value; include(row);
+      }
+    }
+    function visit(node) {
+      if (node.op==="num") { numeric++; return {line:flat(node.value),degree:0,span:[node.value,node.value]}; }
+      if (node.op==="var") {
+        const line=flat(0); line.slopes[names.indexOf(node.value)]=1;
+        return {line,degree:1,span:bounds[names.indexOf(node.value)]};
+      }
+      const parts=node.args.map(visit);
+      const [a,b,c]=parts, L=a.line, R=b?.line;
+      const op=node.op;
+      let line=null, degree=Infinity;
+      if (op==="+" || op==="-") {
+        additions++; line=combine(L,R,op==="+"?1:-1); degree=Math.max(a.degree,b.degree);
+      } else if (op==="neg") { line=scale(L,-1); degree=a.degree; }
+      else if (op==="*") {
+        degree=a.degree+b.degree;
+        if (a.degree===0 && L) line=scale(R,L.offset);
+        else if (b.degree===0 && R) line=scale(L,R.offset);
+      } else if (op==="/") {
+        if (b.degree===0 && R && R.offset!==0) {line=scale(L,1/R.offset);degree=a.degree;}
+        else probe(R,0);
+      } else if (op==="square") degree=2*a.degree;
+      else if ((op==="^" || op==="pow") && b.degree===0 && R && Number.isInteger(R.offset) && R.offset>=0) {
+        degree=a.degree*R.offset;
+      } else nonlinear++;
+      if (degree===0 && !line) line=flat(evaluator(node)({}));
+
+      const span=a.span;
+      let output=interval(line);
+      if (!output && span && b?.span) {
+        const [lo,hi]=span,[blo,bhi]=b.span;
+        if (op==="+") output=[lo+blo,hi+bhi];
+        if (op==="-") output=[lo-bhi,hi-blo];
+        if (op==="*") output=extrema([lo*blo,lo*bhi,hi*blo,hi*bhi]);
+        if (op==="/" && (blo>0 || bhi<0)) output=extrema([lo/blo,lo/bhi,hi/blo,hi/bhi]);
+      }
+      if (!output && span && (op==="square" || (op==="^" && b?.line?.offset===2 && b.degree===0)))
+        output=[span[0]*span[1]<=0 ? 0 : Math.min(span[0]**2,span[1]**2),Math.max(span[0]**2,span[1]**2)];
+      if (!output && span && op==="neg") output=[-span[1],-span[0]];
+      if (["sin","cos","tanh","erf"].includes(op)) output=[-1,1];
+      if (span && span[0]<=0 && span[1]>=0 && ["tanh","sigmoid","erf","atan"].includes(op))
+        widths=Math.max(widths,span[1]-span[0]);
+      if (span && (op==="square" || op==="^" && b?.line?.offset===2 && b.degree===0) && L) {
+        // A scaled and shifted argument can be the interior of a narrow peak.
+        if (node.args[0].op==="/" && span[0]<=0 && span[1]>=0) widths=Math.max(widths,span[1]-span[0]);
+      }
+      if (span && ["sin","cos","tan","cot","sec","csc","sinc"].includes(op)) {
+        const period=["tan","cot"].includes(op)?Math.PI:2*Math.PI;
+        cycles=Math.max(cycles,(span[1]-span[0])/period);
+      }
+      if (span && ["floor","ceil","trunc","round"].includes(op)) {
+        const shift=op==="round"?0.5:0;
+        const first=Math.ceil(span[0]-shift), last=Math.floor(span[1]-shift);
+        const count=Math.max(0,last-first+1);
+        crossings+=count;
+        const n=Math.min(15,count);
+        for (let i=0;i<n;i++) probe(L,shift+first+(n===1 ? 0 : Math.round(i*(count-1)/(n-1))));
+      }
+      if (["sign","sgn","step","abs","relu","sqrt","log","ln","log2","log10"].includes(op)) probe(L,0);
+      if (["asin","acos","atanh"].includes(op)) {probe(L,-1);probe(L,1);}
+      if (op==="acosh") probe(L,1);
+      if (op==="log1p") probe(L,-1);
+      if (op==="min" || op==="max" || op==="clamp") {
+        probe(combine(L,R,-1),0);
+        if (c) probe(combine(L,c.line,-1),0);
+      }
+      return {line,degree,span:output};
+    }
+    const {degree}=visit(equation.tree);
+    let parameters=Math.max(d+1,1+additions+numeric+nonlinear);
+    let basis="estimated coefficients and shape parameters";
+    if (Number.isInteger(degree) && degree>=0 && degree<=6) {
+      parameters=1;
+      for (let i=1;i<=degree;i++) parameters=parameters*(d+i)/i;
+      parameters=Math.round(parameters);
+      basis="coefficients in a general degree-"+degree+" polynomial";
+    }
+    // About four training observations per estimated parameter, eight with noise.
+    const parameterRows=Math.ceil(parameters*(noise>0?8:4)/0.8);
+    const requested=Math.max(noise>0 ? 60 : 30, parameterRows, Math.ceil(16*cycles),
+      Math.ceil(5*crossings), Math.ceil(5*widths), events.length*2);
+    for (let i=0;i<d;i++) {
+      for (const value of bounds[i]) {
+        const row=mid.slice();row[i]=value;include(row);
+      }
+    }
+    const rows=Math.min(MAX_ROWS,Math.ceil(requested/5)*5);
+    return {rows, parameters, basis, cycles, widths, crossings, probes:events, capped:requested>MAX_ROWS};
+  }
+
+  function coverageRows(equation, ranges, count, random) {
+    const {probes}=samplingPlan(equation,ranges);
+    const values=Object.create(null);
+    const anchors=[];
+    for (const row of probes) {
+      if (anchors.length>=Math.floor(count/2)) break;
+      equation.inputs.forEach((name,i)=>{values[name]=row[i];});
+      if (Number.isFinite(equation.compute(values))) anchors.push(row);
+    }
+    const n=count-anchors.length;
+    const columns=equation.inputs.map(name=>{
+      const [lo,hi]=ranges.get(name);
+      const column=Array.from({length:n},(_,i)=>lo+(hi-lo)*((i+random())/n));
+      for (let j=n-1;j>0;j--) {
+        const k=Math.floor(random()*(j+1));
+        [column[j],column[k]]=[column[k],column[j]];
+      }
+      return column;
+    });
+    return anchors.concat(Array.from({length:n},(_,i)=>columns.map(column=>column[i])));
+  }
+
   function generate(equation, ranges, count, mode, seed, noise, name = "Generated data") {
     if (!Number.isInteger(count) || count < 2 || count > MAX_ROWS) throw new Error("Enter 2 to 20,000 rows.");
     if (seed != null && (!Number.isSafeInteger(seed) || seed < 0)) {
@@ -467,11 +766,15 @@
     if (!Number.isFinite(noise) || noise < 0) throw new Error("Enter a finite, non-negative noise level.");
     const random = randomSource(seed);
     const sequence = randomSource(0);
-    const columns = equation.inputs.map((input, i) => {
-      const [low, high] = ranges.get(input) ?? [];
-      if (!Number.isFinite(low) || !Number.isFinite(high) || low >= high || !Number.isFinite(high-low)) {
+    if (!["coverage","random","sequential"].includes(mode)) throw new Error("Choose a sampling mode.");
+    for (const input of equation.inputs) {
+      const [low,high]=ranges.get(input) ?? [];
+      if (!Number.isFinite(low) || !Number.isFinite(high) || low>=high || !Number.isFinite(high-low))
         throw new Error("Enter a finite minimum and maximum for " + input + ", with minimum smaller than maximum.");
-      }
+    }
+    const covered=mode==="coverage" ? coverageRows(equation,ranges,count,random) : null;
+    const columns = covered ? null : equation.inputs.map((input, i) => {
+      const [low,high]=ranges.get(input);
       if (mode === "random") return Array.from({length:count}, () => low + (high - low) * random());
       const values = linspace(low, high, count);
       if (i) {
@@ -484,7 +787,8 @@
     });
     const variables = Object.create(null);
     const rows = Array.from({length:count}, (_, i) => {
-      const values = columns.map((column, j) => variables[equation.inputs[j]] = column[i]);
+      const values = covered ? covered[i] : columns.map(column=>column[i]);
+      equation.inputs.forEach((name,j)=>{variables[name]=values[j];});
       let result = equation.compute(variables);
       if (noise) result += noise * Math.sqrt(-2 * Math.log(1 - random())) * Math.cos(2 * Math.PI * random());
       if (!Number.isFinite(result)) {
@@ -542,6 +846,11 @@
     if (numericCount === labels.length) labels = defaultLabels(labels.length);
     else if (numericCount || labels.some(label => !label)) throw new Error("Check the first row for missing or mixed values.");
     else rows.shift();
+    const wrongWidth = rows.findIndex(row => row.length !== labels.length);
+    if (wrongWidth !== -1) {
+      throw new Error("Data row " + (wrongWidth + 1) + " has " + rows[wrongWidth].length
+        + " fields. Expected " + labels.length + ".");
+    }
     const lower = labels.map(label => label.toLowerCase());
     const x = lower.indexOf("x"), y = lower.indexOf("y");
     const explicit = labels.at(-1)?.startsWith("result:");
@@ -609,8 +918,8 @@
     return JSON.stringify(value) + "\n";
   }
 
-  // A column-oriented Householder factorization keeps small effects visible
-  // without squaring the condition number as normal equations would.
+  // A column-oriented Householder factorization avoids squaring the
+  // condition number, which would make small effects harder to recover.
   function leastSquares(columns, targetSize) {
     const a = columns.map(col => Float64Array.from(col));
     const diagonal = new Float64Array(columns.length);
@@ -650,6 +959,7 @@
     let peak = 0;
     for (const value of values) peak = Math.max(peak, Math.abs(value));
     if (peak === 0) return 0;
+    if (!Number.isFinite(peak)) return Infinity;
     let squares = 0;
     for (const value of values) squares += (value / peak) ** 2;
     return peak * Math.sqrt(squares / values.length);
@@ -669,32 +979,56 @@
     return {low, high, center, span, name, index, normal:row => (row[index]-center)/span,
             label:span === 1 ? top : "(" + top + " / " + span + ")"};
   }
-  const term = (label, calc) => ({label, calc});
+  const term = (label, calc, exactLabel=label) => ({label, calc, exactLabel});
   const family = (name, terms, options={}) => ({name, terms, shape:[], ...options});
   const scan = (name, low, high, count) => ({name, low, high, count});
   const blank = term("", () => 1);
+  const shiftInner = (expr, c) => c === 0 ? expr : expr + (c < 0 ? " + " : " - ") + Math.abs(c);
+  const shiftExpr = (expr, c) => c === 0 ? expr : "(" + shiftInner(expr, c) + ")";
   const testValue = (row, basis, weights, scales) => {
     let total = 0;
     for (let i=0; i<basis.length; i++) total += basis[i].calc(row) / scales[i] * weights[i];
     return total;
   };
 
-  function formula(basis, coefficients, output, contributions) {
+  function signedSum(coefficients, formatTerm) {
     const pieces = [];
-    for (let i=0; i<basis.length; i++) {
+    for (let i=0; i<coefficients.length; i++) {
       const weight = coefficients[i];
-      const label = basis[i].label;
       if (!weight) continue;
-      const absolute = Math.abs(weight);
-      let magnitude = short(absolute);
-      if (contributions && Math.abs(Number(magnitude)/absolute-1)*contributions[i] > PRECISION_ERROR) {
-        magnitude = String(absolute);
-      }
-      const part = !label ? magnitude : magnitude === "1" ? label
-        : label.startsWith("1 /") ? magnitude + label.slice(1) : magnitude + " * " + label;
-      pieces.push(pieces.length ? (weight < 0 ? " - " : " + ") + part : (weight < 0 ? "-" : "") + part);
+      const sign = pieces.length ? (weight < 0 ? " - " : " + ") : (weight < 0 ? "-" : "");
+      pieces.push(sign + formatTerm(Math.abs(weight), i));
     }
-    return output + " = " + (pieces.join("") || "0");
+    return pieces.join("") || "0";
+  }
+
+  function formula(basis, coefficients, output, formatNumber) {
+    return output + " = " + signedSum(coefficients, (absolute, i) => {
+      const label = basis[i].label;
+      const magnitude = formatNumber(absolute);
+      if (!label) return magnitude;
+      if (magnitude === "1") return label;
+      return label.startsWith("1 /") ? magnitude + label.slice(1) : magnitude + " * " + label;
+    });
+  }
+
+  function scaledFormula(basis, weights, scales, output, targetPeak) {
+    const expression = signedSum(weights, (absolute, i) => {
+      const label = basis[i].exactLabel;
+      if (!label) return String(absolute);
+      const feature = scales[i] === 1 ? "(" + label + ")" : "((" + label + ") / " + scales[i] + ")";
+      return absolute === 1 ? feature : feature + " * " + absolute;
+    });
+    return output + " = " + (targetPeak === 1 ? expression : "(" + expression + ") * " + targetPeak);
+  }
+
+  function equationPredictor(equation, inputs) {
+    const {compute} = compileEquation(equation, Infinity);
+    const values = Object.create(null);
+    return row => {
+      for (let i=0; i<inputs.length; i++) values[inputs[i]] = row[i];
+      return compute(values);
+    };
   }
 
   function splitDataset(data) {
@@ -725,25 +1059,360 @@
             distinct:groups.length, distinctTrain:groups.length-heldOutGroups};
   }
 
-  function* search(data) {
+  function chartSample(size, held, limit) {
+    if (size <= limit) return Array.from({length:size}, (_, i) => i);
+    const observed = [], validation = [];
+    for (let i=0; i<size; i++) (held.has(i) ? validation : observed).push(i);
+    const validationBudget = validation.length
+      ? Math.min(validation.length, observed.length ? limit-1 : limit, Math.max(1, Math.round(limit*validation.length/size)))
+      : 0;
+    const observedBudget = Math.min(observed.length, limit-validationBudget);
+    const pick = (indices, count) => Array.from({length:count},
+      (_, i) => indices[Math.floor((i+0.5)*indices.length/count)]);
+    return [...pick(observed, observedBudget), ...pick(validation, validationBudget)];
+  }
+
+  // General expression search. Only training observations enter proposal generation.
+  // Shallow enumeration gives elementary functions a fair trial. Deeper trees compete
+  // in three migrating populations with subtree crossover, mutation and constant fitting.
+  function* expressionSearch(training, names, checkpoint, cooperative) {
+    const rng=randomSource(73519);
+    const choose=list=>list[Math.floor(rng()*list.length)];
+    const ids=training.map((_,i)=>i);
+    for (let i=0;i<Math.min(80,ids.length);i++) {
+      const j=i+Math.floor(rng()*(ids.length-i));
+      [ids[i],ids[j]]=[ids[j],ids[i]];
+    }
+    const sample=ids.slice(0,80).map(i=>training[i]);
+    const n=sample.length,d=names.length;
+    const outputs=sample.map(r=>r[d]);
+    const targetScale=peakOf(outputs)||1;
+    const y=outputs.map(v=>v/targetScale);
+    const meanY=y.reduce((a,b)=>a+b,0)/n;
+    const spread=rmse(y.map(v=>v-meanY))||1;
+    const cache=new Map(),rawLeaders=[],shapeLeaders=[],accurate=[],front=new Map();
+    const unary=Object.keys(fn).filter(op=>arity(op)===1 && op!=="ln" && op!=="sgn");
+    const binary=["+","-","*","/","^","%","min","max","atan2","hypot"];
+    const commutative=new Set(["+","*","min","max","hypot"]);
+    const maxSize=23, maxDepth=7;
+    const chooseOp=k=>k===3 ? "clamp" : choose(k===2 ? binary : unary);
+    const ordered=(metric)=>(a,b)=>a[metric]-b[metric] || a.size-b.size || a.text.localeCompare(b.text);
+
+    function retain(list, node, metric, limit) {
+      if (list.length>=limit && node[metric]>list.at(-1)[metric]) return;
+      if (list.includes(node)) return;
+      list.push(node);
+      list.sort(ordered(metric));
+      if (list.length>limit) list.pop();
+    }
+    function measure(node) {
+      const values=node.values;
+      let peak=0, diff2=0;
+      for (let i=0;i<n;i++) {
+        if (!Number.isFinite(values[i])) return null;
+        peak=Math.max(peak,Math.abs(values[i]));
+        const diff=values[i]/targetScale-y[i];
+        diff2+=diff*diff;
+      }
+      node.rawLoss=Math.sqrt(diff2/n)/spread;
+      node.shapeLoss=Infinity;
+      if (peak>0 && node.op!=="num") {
+        let mean=0,ss=0,sy=0;
+        for (let i=0;i<n;i++) mean+=values[i]/peak;
+        mean/=n;
+        for (let i=0;i<n;i++) {
+          const x=values[i]/peak-mean;
+          ss+=x*x;sy+=x*(y[i]-meanY);
+        }
+        if (ss>0 && Number.isFinite(sy/ss)) {
+          const slope=sy/ss;
+          let loss=0;
+          for (let i=0;i<n;i++) loss+=(slope*(values[i]/peak-mean)+meanY-y[i])**2;
+          node.shapeLoss=Math.sqrt(loss/n)/spread;
+        }
+      }
+      node.rawRank=node.rawLoss+2e-5*node.size;
+      node.shapeRank=node.shapeLoss+2e-5*node.size;
+      node.rank=Math.min(node.rawRank,node.shapeRank+6e-5);
+      if (Number.isFinite(node.rawRank)) {retain(rawLeaders,node,"rawRank",14);retain(accurate,node,"rawLoss",4);}
+      if (Number.isFinite(node.shapeLoss)) retain(shapeLeaders,node,"shapeRank",18);
+      const old=front.get(node.size);
+      if (!old || old.rank>node.rank) front.set(node.size,node);
+      return node;
+    }
+    function terminal(op,value,learned=false) {
+      const text=op==="var" ? names[value] : value<0 ? "("+value+")" : String(value);
+      if (cache.has(text)) return cache.get(text);
+      const values=op==="var" ? Float64Array.from(sample,row=>row[value]) : new Float64Array(n).fill(value);
+      const node=measure({op,value,args:[],text,size:1,depth:1,learned:+learned,values});
+      cache.set(text,node);
+      return node;
+    }
+    function make(op,...args) {
+      if (args.some(a=>!a) || args.every(a=>a.op==="num")) return null;
+      let [a,b,c]=args;
+      if (b && commutative.has(op) && a.text>b.text) {args=[b,a];[a,b]=args;}
+      if (b && a===b && ["-","/","%","min","max"].includes(op)) return null;
+      if ((op==="+" || op==="-") && b.op==="num" && b.value===0) return a;
+      if (["*","/","^"].includes(op) && b.op==="num" && b.value===1) return a;
+      if (op==="*" && a.op==="num" && a.value===1) return b;
+      const size=1+args.reduce((sum,v)=>sum+v.size,0);
+      const depth=1+Math.max(...args.map(v=>v.depth));
+      if (size>maxSize || depth>maxDepth) return null;
+      const text=["+","-","*","/","%","^"].includes(op) ? "("+a.text+" "+op+" "+b.text+")"
+        : op+"("+args.map(v=>v.text).join(", ")+")";
+      if (cache.has(text)) return cache.get(text);
+      const values=new Float64Array(n), f=operations[op];
+      for (let i=0;i<n;i++) {
+        const value=c ? f(a.values[i],b.values[i],c.values[i]) : b ? f(a.values[i],b.values[i]) : f(a.values[i]);
+        if (!Number.isFinite(value)) {
+          if (cache.size<18000) cache.set(text,null);
+          return null;
+        }
+        values[i]=value;
+      }
+      const node=measure({op,args,text,size,depth,learned:args.reduce((sum,v)=>sum+v.learned,0),values});
+      // Limit retained vectors independently of row count and search duration.
+      if (cache.size<18000) cache.set(text,node);
+      return node;
+    }
+    const vars=names.map((_,i)=>terminal("var",i));
+    const nums=[0,1,-1,2,-2,0.5,-0.5,3,Math.PI].map(x=>terminal("num",x));
+    const extremes=extrema(training.map(row=>row[d]));
+    const clipped=extremes.map(value=>terminal("num",value,true));
+    const structural=[];
+    const published=new Set();
+    function shortlist(stage,description) {
+      const specs=[];
+      function select(node,affine) {
+        const key=(affine?"fit:":"raw:")+node.text;
+        if (published.has(key) || (affine && !Number.isFinite(node.shapeRank))) return;
+        published.add(key);
+        specs.push({expr:node.text,nodes:node.size,learned:node.learned,affine,stage});
+      }
+      accurate.forEach(n=>select(n,false));
+      rawLeaders.slice(0,6).forEach(n=>select(n,false));
+      shapeLeaders.slice(0,6).forEach(n=>select(n,true));
+      for (const v of [...front.values()].sort(ordered("rank")).slice(0,4)) select(v,v.shapeRank<v.rawRank);
+      return {stage,description,specs};
+    }
+    for (const v of vars) {
+      for (const op of unary) make(op,v);
+      for (const k of [-3,-2,2,3,4,5,6,7,8,9]) make("^",v,terminal("num",k));
+      for (const op of ["+","-","*","/","%","min","max"]) {
+        for (const c of nums) {make(op,v,c);if(op==="/") make(op,c,v);}
+      }
+      make("clamp",v,...clipped);
+    }
+    for (const a of vars) {
+      if (cooperative) yield* checkpoint();
+      for (const b of vars) {
+        if (a!==b) for (const op of binary) {
+          const v=make(op,a,b);
+          if (v && ["*","+","-","/"].includes(op)) structural.push(v);
+        }
+        for (const c of vars) if (a!==b && b!==c && a!==c) make("clamp",a,b,c);
+      }
+    }
+    yield shortlist("Primitive expressions","Compared variables, elementary functions and direct input interactions.");
+
+    // Enumerate useful interiors even if a product or difference alone has little correlation with y.
+    const seeds=[...new Set([...structural,...rawLeaders,...shapeLeaders,...vars])];
+    if (d<=3) {
+      for (const v of vars) for (const op of unary) {
+        const part=make(op,v); if (part) seeds.push(part);
+      }
+    }
+    for (const inner of new Set(seeds)) {
+      if (cooperative) yield* checkpoint();
+      for (const op of unary) make(op,inner);
+      for (const v of vars) {
+        make("*",inner,v);make("+",inner,v);make("/",inner,v);
+      }
+    }
+    const partners=[...new Set([...shapeLeaders,...rawLeaders,...vars])];
+    for (const a of partners) {
+      if (cooperative) yield* checkpoint();
+      for (const b of partners) for (const op of ["+","-","*","/"]) make(op,a,b);
+    }
+    yield shortlist("Nested expressions","Composed operators on input interactions and combined promising subexpressions.");
+
+    const pool=[...cache.values()].filter(v=>v && Number.isFinite(v.shapeLoss) && v.size<=8);
+    const sumSquares=y.reduce((sum,v)=>sum+(v-meanY)**2,0);
+    const columns=new Map();
+    function centered(node) {
+      if (columns.has(node)) return columns.get(node);
+      const scale=peakOf(node.values);
+      const col=Float64Array.from(node.values,v=>v/scale);
+      const mean=col.reduce((a,b)=>a+b,0)/n;
+      let norm=0;
+      for (let i=0;i<n;i++) {col[i]-=mean;norm+=col[i]**2;}
+      norm=Math.sqrt(norm);
+      let dot=0;
+      for (let i=0;i<n;i++) {col[i]/=norm;dot+=col[i]*(y[i]-meanY);}
+      const info={col,dot};
+      columns.set(node,info);return info;
+    }
+    const pairs=[],pairKeys=new Set();
+    const simpleTerms=vars.flatMap(v=>(d<=3 ? unary : ["sin","exp","square"]).map(op=>make(op,v)).filter(Boolean));
+    const starters=[...new Set([...shapeLeaders.slice(0,10),...vars,...simpleTerms])];
+    for (const a of starters) {
+      if (!Number.isFinite(a.shapeLoss)) continue;
+      const u=centered(a);
+      for (let k=0;k<pool.length;k++) {
+        if (cooperative && k%128===0) yield* checkpoint();
+        const b=pool[k];
+        if (a===b) continue;
+        const v=centered(b);
+        let overlap=0;
+        for (let i=0;i<n;i++) overlap+=u.col[i]*v.col[i];
+        const independent=1-overlap*overlap;
+        if (independent<1e-9) continue;
+        const gain=(v.dot-u.dot*overlap)**2/independent;
+        const loss=Math.sqrt(Math.max(0,sumSquares-u.dot*u.dot-gain)/n)/spread+2e-5*(a.size+b.size);
+        if (pairs.length>=5 && loss>=pairs.at(-1).loss) continue;
+        const key=JSON.stringify([a.text,b.text].sort());
+        if (pairKeys.has(key)) continue;
+        pairKeys.add(key);
+        pairs.push({a,b,loss,key});pairs.sort((a,b)=>a.loss-b.loss);
+        if (pairs.length>5) pairKeys.delete(pairs.pop().key);
+      }
+    }
+    columns.clear();
+    yield {stage:"Sums of expressions",description:"Selected independently varying symbolic terms on the training sample.",
+      specs:pairs.map(({a,b})=>({terms:[a.text,b.text],expr:a.text+" + "+b.text,
+        nodes:a.size+b.size+1,learned:a.learned+b.learned,affine:true}))};
+
+    // Seeded, steady-state regularized evolution. Each island uses tournament selection,
+    // replaces its oldest member, and exchanges its best member with the adjacent island.
+    const champions=()=>[...new Set([...rawLeaders,...shapeLeaders,...front.values()])].sort(ordered("rank"));
+    const initial=champions();
+    const islands=Array.from({length:3},()=>Array.from({length:40},()=>choose(initial)));
+    const cursor=[0,0,0];
+    const fresh=()=>rng()<0.58 ? choose(vars) : choose(nums);
+    function subtree(root) {
+      if (!root.args.length || rng()<1/root.size) return root;
+      return subtree(choose(root.args));
+    }
+    function edit(root,change) {
+      if (!root.args.length || rng()<1/root.size) return change(root);
+      const i=Math.floor(rng()*root.args.length);
+      const args=root.args.slice();args[i]=edit(args[i],change);
+      return make(root.op,...args);
+    }
+    function tournament(pop) {
+      let best=choose(pop);
+      for (let i=0;i<3;i++) {
+        const rival=choose(pop);
+        if (rival.rank<best.rank) best=rival;
+      }
+      return best;
+    }
+    function mutation(node) {
+      const draw=rng();
+      if (draw<0.14) return node.args.length ? choose(node.args) : fresh();
+      if (draw<0.30 && node.args.length) return make(chooseOp(node.args.length),...node.args);
+      if (draw<0.43) {
+        if (node.op==="num") return terminal("num",node.value+(rng()-0.5)*Math.max(0.1,Math.abs(node.value)),true);
+        return make("*",node,terminal("num",4*rng()-2,true));
+      }
+      if (draw<0.7) return make(choose(unary),node);
+      if (draw<0.96) return make(choose(binary),node,fresh());
+      return make("clamp",node,fresh(),fresh());
+    }
+
+    // Refine a constant at its actual position in the expression while fitting outer scale and offset.
+    function refine(root) {
+      const paths=[];
+      function visit(node,path) {
+        if (node.op==="num") paths.push(path);
+        node.args.forEach((child,i)=>visit(child,[...path,i]));
+      }
+      visit(root,[]);
+      const rebuild=(node,path,value)=> {
+        if (!path.length) return terminal("num",value,true);
+        const i=path[0], args=node.args.slice();
+        args[i]=rebuild(args[i],path.slice(1),value);
+        return make(node.op,...args);
+      };
+      for (const path of paths.slice(0,3)) {
+        let current=root;
+        for (const i of path) current=current?.args[i];
+        if (current?.op!=="num") continue;
+        let value=current.value, delta=Math.max(Math.abs(value)*0.3,0.2);
+        for (let iter=0;iter<32;iter++) {
+          let best=root,next=value;
+          for (const k of [value-delta,value+delta]) {
+            const trial=rebuild(root,path,k);
+            if (trial && trial.rank<best.rank) {best=trial;next=k;}
+          }
+          if (best===root) delta*=0.45;
+          root=best;value=next;
+        }
+      }
+      return root;
+    }
+    for (let generation=0;generation<16;generation++) {
+      for (let j=0;j<islands.length;j++) {
+        const pop=islands[j];
+        for (let i=0;i<40;i++) {
+          if (cooperative) yield* checkpoint();
+          const parent=tournament(pop);
+          const offspring=rng()<0.27 ? edit(parent,()=>subtree(tournament(pop))) : edit(parent,mutation);
+          if (offspring) pop[cursor[j]++%pop.length]=offspring;
+        }
+      }
+      if (generation%4===3) {
+        const elite=islands.map(pop=>[...pop].sort(ordered("rank"))[0]);
+        for (let j=0;j<islands.length;j++) {
+          if (cooperative) yield* checkpoint();
+          islands[(j+1)%3][cursor[(j+1)%3]++%40]=refine(elite[j]);
+        }
+      }
+    }
+    yield shortlist("Evolved expressions","Searched nested trees by mutation, crossover, migration and numerical constant refinement.");
+  }
+
+  function* search(data, {cooperative=false, externalCandidates=[]}={}) {
+    let sliceStart = cooperative ? performance.now() : 0;
+    function* checkpoint() {
+      if (performance.now() - sliceStart < SLICE_MS) return;
+      yield SEARCH_SLICE;
+      sliceStart = performance.now();
+    }
+
     const s = splitDataset(data);
     const multi = data.inputs.length > 1;
+    const agreementSample = multi ? chartSample(data.rows.length,s.indices,750) : [];
     const targetAt = data.inputs.length;
     const axes = data.inputs.map((name, i) => axisFor(data.rows, i, name));
-    const targetPeak = peakOf(s.training.map(row => row[targetAt])) || 1;
+    // A shared scale keeps finite targets finite even when validation contains an outlier.
+    const targetPeak = peakOf(data.rows.map(row => row[targetAt])) || 1;
     const yTrain = s.training.map(row => row[targetAt] / targetPeak);
     const yAll = data.rows.map(row => row[targetAt] / targetPeak);
     const yValidation = s.validation.map(row => row[targetAt] / targetPeak);
     const mean = yTrain.reduce((a,b) => a+b,0)/yTrain.length;
     const spread = rmse(yTrain.map(y => y-mean)) || 1;
+    const screenRows=s.training.length>384 ? Array.from({length:384},
+      (_,i)=>s.training[Math.floor((i+0.5)*s.training.length/384)]) : s.training;
+    const screenTarget=screenRows===s.training ? yTrain : screenRows.map(row=>row[targetAt]/targetPeak);
     const rankings = [];
+    const scoreFor = (error, parameters) => Math.min(Number.MAX_VALUE, error/spread) + PENALTY*parameters;
 
     function fit(candidate, shape=[], settings={}) {
       const {final=false, evaluate=true, precision=false} = settings;
-      const rows = final ? data.rows : s.training;
-      const target = final ? yAll : yTrain;
+      const screen=settings.screen && screenRows!==s.training && !final && !evaluate;
+      const rows = final ? data.rows : screen ? screenRows : s.training;
+      const target = final ? yAll : screen ? screenTarget : yTrain;
+      if (candidate.direct) {
+        const parameters=candidate.extraParams ?? 0;
+        if (parameters>(final ? s.distinct : s.distinctTrain)) return null;
+        const equation=data.result+" = "+candidate.direct;
+        return assess(candidate,shape,parameters,false,null,rows,target,final,equation,
+                      equationPredictor(equation,data.inputs));
+      }
       const basis = [...candidate.terms(shape), blank];
-      const parameters = basis.length + shape.length;
+      const parameters = basis.length + shape.length + (candidate.extraParams ?? 0);
       if (parameters > (final ? s.distinct : s.distinctTrain)) return null;
       const columns = basis.map(feature => Float64Array.from(rows, feature.calc));
       const scales = columns.map(peakOf);
@@ -778,63 +1447,178 @@
       }
       if (!weights.every(Number.isFinite)) return null;
       const error = errorsFor();
-      const train = rmse(error);
-      const objective = precision ? rmse(error.map((value,i) => value/rowScale[i])) : train;
+      const objective = precision ? rmse(error.map((value,i) => value/rowScale[i])) : rmse(error);
       if (!Number.isFinite(objective)) return null;
+      if (!evaluate) return {candidate, shape, objective};
+
       const normalized = row => testValue(row, basis, weights, scales);
-      const model = {candidate, shape, parameters, precision, objective, train:train*targetPeak, normalized,
-        validate:null, validationPrecision:null, trainingPrecision:null, score:train/spread + PENALTY*parameters, equation:""};
-      if (!evaluate) return model;
+      const fullCoefficients = weights.map((weight,i) => weight*targetPeak/scales[i]);
+      const threshold = 5e-13 * Math.max(1,peakOf(weights));
+      const termsToKeep = precision ? columns.map((column,j) =>
+        rmse(column.map((value,i) => value*weights[j]/rowScale[i])) >= EPS)
+        : Array.from(weights, value => Math.abs(value) >= threshold);
+      const shorterCoefficients = fullCoefficients.map((value,i) => termsToKeep[i] ? value : 0);
+      const proposals = [];
+      if (fullCoefficients.every(Number.isFinite)) {
+        if (!precision && candidate.degree && Math.abs(axes[0].center/axes[0].span) <= 4) {
+          const expanded = expandPolynomial(axes[0], shorterCoefficients);
+          if (expanded) {
+            const degree = candidate.degree;
+            const labels = expanded.map((_, i) => ({label:i === degree ? "" : i === degree-1 ? axes[0].name
+              : axes[0].name + "^" + (degree-i)}));
+            const rawPeak = Math.max(1, Math.abs(axes[0].low), Math.abs(axes[0].high));
+            const cleaned = expanded.map((value,i) => Math.abs(value)*rawPeak**(degree-i) < 5e-13*targetPeak ? 0 : value);
+            proposals.push(formula(labels, cleaned, data.result, short));
+          }
+        }
+        proposals.push(formula(basis, shorterCoefficients, data.result, short),
+                       formula(basis, fullCoefficients, data.result, String));
+      }
+
+      // Check simplified text on both splits before using it for metrics or charts.
+      let equation, predict;
+      const reference = proposals.length ? data.rows.map(normalized) : [];
+      const fitTolerance = precision ? 0 : objective*1e-6;
+      for (const proposal of new Set(proposals)) {
+        const evaluateProposal = equationPredictor(proposal, data.inputs);
+        const faithful = data.rows.every((row,i) => {
+          const predicted = evaluateProposal(row) / targetPeak;
+          if (!Number.isFinite(predicted)) return false;
+          const expected = reference[i];
+          let magnitude=Math.abs(expected);
+          if (!precision) {
+            // Cancellation makes an error bound based only on the final sum too strict.
+            let absoluteSum=0;
+            for (let j=0;j<basis.length;j++) absoluteSum+=Math.abs(basis[j].calc(row)/scales[j]*weights[j]);
+            magnitude=Math.max(magnitude,Math.min(absoluteSum,spread/PRECISION_ERROR*1e-8));
+          }
+          const tolerance = PRECISION_ERROR*magnitude + Math.min(fitTolerance, magnitude*1e-10);
+          return Number.isFinite(expected) && Math.abs(predicted-expected) <= tolerance;
+        });
+        if (faithful) {
+          equation = proposal;
+          predict = evaluateProposal;
+          break;
+        }
+      }
+      if (!predict) {
+        equation = scaledFormula(basis, weights, scales, data.result, targetPeak);
+        predict = equationPredictor(equation, data.inputs);
+      }
+      return assess(candidate, shape, parameters, precision, objective, rows, target, final, equation, predict);
+    }
+
+    function assess(candidate, shape, parameters, precision, objective, rows, target, final, equation, predict) {
+      const cost=parameters+(candidate.structureCost ?? 0);
+      const residuals = samples => samples.map(row => {
+        const observed = row[targetAt], predicted = predict(row);
+        if (!Number.isFinite(predicted)) return Infinity;
+        const difference = predicted-observed;
+        return Number.isFinite(difference) ? difference/targetPeak : predicted/targetPeak-observed/targetPeak;
+      });
+      const fitErrors = residuals(rows);
+      const train = rmse(fitErrors);
+      if (!Number.isFinite(train)) return null;
+      const model = {candidate, shape, parameters, precision, objective:objective ?? train, train:train*targetPeak, predict,
+        relativeTrain:train/spread, relativeValidation:null, cost,
+        validate:null, validationPrecision:null, trainingPrecision:null, score:scoreFor(train,cost), equation};
       if (!final && s.validation.length) {
-        const validationErrors = s.validation.map((row,i) => normalized(row) - yValidation[i]);
+        const validationErrors = residuals(s.validation);
         const validation = rmse(validationErrors);
         if (!Number.isFinite(validation)) return null;
         model.validate = validation*targetPeak;
-        model.score = validation/spread + PENALTY*parameters;
+        model.relativeValidation=validation/spread;
+        model.score = scoreFor(validation,cost);
         if (multi) {
-          model.trainingPrecision = precision ? objective : rmse(error.map((err,i) => err/resolution(target[i])));
+          model.trainingPrecision = rmse(fitErrors.map((err,i) => err/resolution(target[i])));
           model.validationPrecision = rmse(validationErrors.map((err,i) => err/resolution(yValidation[i])));
         }
       }
-      let labels = basis;
-      let coefficients = weights.map((weight,i) => weight*targetPeak/scales[i]);
-      let contributions = null;
-      if (precision) {
-        contributions = columns.map((column,j) => rmse(column.map((value,i) => value*weights[j]/rowScale[i])));
-        coefficients = coefficients.map((value,i) => contributions[i] < EPS ? 0 : value);
-      } else {
-        const threshold = 5e-13 * Math.max(1,peakOf(weights));
-        coefficients = coefficients.map((value,i) => Math.abs(weights[i]) < threshold ? 0 : value);
-        if (candidate.degree && Math.abs(axes[0].center/axes[0].span) <= 4) {
-          const expanded = expandPolynomial(axes[0], coefficients);
-          if (expanded && rows.every((row,i) => {
-            const raw = expanded.reduce((value,next) => value*row[0]+next,0) / targetPeak;
-            return Math.abs(raw-normalized(row)) <= 1e-9*Math.abs(target[i]) + 1e-11;
-          })) {
-            const degree = candidate.degree;
-            labels = expanded.map((_, i) => ({label:i === degree ? "" : i === degree-1 ? axes[0].name
-                                               : axes[0].name + "^" + (degree-i)}));
-            const rawPeak = Math.max(1, Math.abs(axes[0].low), Math.abs(axes[0].high));
-            coefficients = expanded.map((value,i) => Math.abs(value)*rawPeak**(degree-i) < 5e-13*targetPeak ? 0 : value);
+      return model;
+    }
+
+    function* polishShape(candidate, scans, start, spacing) {
+      let best = fit(candidate, start, {evaluate:false});
+      if (!best) return null;
+      if (scans.length === 1) {
+        const spec = scans[0];
+        let a = Math.max(spec.low, start[0] - spacing[0] * 2);
+        let b = Math.min(spec.high, start[0] + spacing[0] * 2);
+        const phi = (Math.sqrt(5) - 1) / 2;
+        let c = b - phi * (b - a);
+        let d = a + phi * (b - a);
+        let fc = fit(candidate, [c], {evaluate:false});
+        let fd = fit(candidate, [d], {evaluate:false});
+        for (let i = 0; i < 48; i++) {
+          if (cooperative) yield* checkpoint();
+          const vc = fc ? fc.objective : Infinity;
+          const vd = fd ? fd.objective : Infinity;
+          if (vc < best.objective) best = fc;
+          if (vd < best.objective) best = fd;
+          if (vc <= vd) {
+            b = d; d = c; fd = fc;
+            c = b - phi * (b - a);
+            fc = fit(candidate, [c], {evaluate:false});
+          } else {
+            a = c; c = d; fc = fd;
+            d = a + phi * (b - a);
+            fd = fit(candidate, [d], {evaluate:false});
+          }
+          if (b - a <= 1e-14 * (1 + Math.abs(best.shape[0]))) break;
+        }
+        return best;
+      }
+      const clamp = pt => pt.map((v, i) => Math.max(scans[i].low, Math.min(scans[i].high, v)));
+      const evalPt = pt => {
+        const clamped = clamp(pt);
+        const m = fit(candidate, clamped, {evaluate:false});
+        if (m && m.objective < best.objective) best = m;
+        return {pt:clamped, val:m ? m.objective : Infinity};
+      };
+      const simplex = [
+        evalPt(start),
+        evalPt([start[0] + spacing[0], start[1]]),
+        evalPt([start[0], start[1] + spacing[1]]),
+      ];
+      for (let iter = 0; iter < 120; iter++) {
+        if (cooperative) yield* checkpoint();
+        simplex.sort((a, b) => a.val - b.val);
+        const [s0, s1, s2] = simplex;
+        if (Math.hypot(s2.pt[0] - s0.pt[0], s2.pt[1] - s0.pt[1]) <= 1e-13) break;
+        const mid = [(s0.pt[0] + s1.pt[0]) * 0.5, (s0.pt[1] + s1.pt[1]) * 0.5];
+        const ref = evalPt([mid[0] + (mid[0] - s2.pt[0]), mid[1] + (mid[1] - s2.pt[1])]);
+        if (ref.val < s0.val) {
+          const exp = evalPt([mid[0] + 2 * (mid[0] - s2.pt[0]), mid[1] + 2 * (mid[1] - s2.pt[1])]);
+          simplex[2] = exp.val < ref.val ? exp : ref;
+        } else if (ref.val < s1.val) {
+          simplex[2] = ref;
+        } else {
+          const con = ref.val < s2.val
+            ? evalPt([mid[0] + 0.5 * (ref.pt[0] - mid[0]), mid[1] + 0.5 * (ref.pt[1] - mid[1])])
+            : evalPt([mid[0] + 0.5 * (s2.pt[0] - mid[0]), mid[1] + 0.5 * (s2.pt[1] - mid[1])]);
+          if (con.val < Math.min(ref.val, s2.val)) {
+            simplex[2] = con;
+          } else {
+            simplex[1] = evalPt([(s0.pt[0] + s1.pt[0]) * 0.5, (s0.pt[1] + s1.pt[1]) * 0.5]);
+            simplex[2] = evalPt([(s0.pt[0] + s2.pt[0]) * 0.5, (s0.pt[1] + s2.pt[1]) * 0.5]);
           }
         }
       }
-      if (!coefficients.every(Number.isFinite)) return null;
-      model.equation = formula(labels,coefficients,data.result,contributions);
-      return model;
+      return best;
     }
 
     function chart(model) {
       if (!model) return null;
       if (multi) {
-        const stride = Math.max(1, Math.ceil(data.rows.length / 750));
-        return {kind:"agreement", points:data.rows.flatMap((row,i) => i%stride ? []
-          : [[row[targetAt], model.normalized(row)*targetPeak, s.indices.has(i)]])};
+        return {kind:"agreement", points:agreementSample.map(i => {
+          const row = data.rows[i];
+          return [row[targetAt], model.predict(row), s.indices.has(i)];
+        })};
       }
       const axis = axes[0];
-      const x = linspace(axis.low,axis.high,220);
+      const x = linspace(axis.low,axis.high,400);
       if (model.candidate.pole && axis.low<0 && axis.high>0) x.push(0);
-      return {kind:"curve", points:x.sort((a,b) => a-b).map(value => [value, model.normalized([value])*targetPeak])};
+      return {kind:"curve", points:x.sort((a,b) => a-b).map(value => [value, model.predict([value])])};
     }
 
     function step(phase,name,detail,model=null,ranked=false,final=false) {
@@ -854,21 +1638,104 @@
     yield {...step("Prepare","Split data",split+rule+" The score also includes a penalty for each fitted parameter."),
            heldOut:[...s.indices]};
 
-    if (multi) {
+    const matches = model => model.relativeValidation!=null && model.relativeValidation<=2e-11
+      && model.relativeTrain<=2e-11 && (!multi || model.trainingPrecision<=1e-9 && model.validationPrecision<=1e-9);
+    // PySR runs on the same training split. Re-parse its candidates with the offline grammar.
+    for (const spec of externalCandidates.slice(0,80)) {
+      if (!spec || typeof spec.expr!=="string" || spec.expr.length>MAX_EXPRESSION ||
+          !Number.isInteger(spec.nodes) || spec.nodes<1 || !Number.isInteger(spec.learned) || spec.learned<0) continue;
+      try {
+        const parsed=parseEquation(data.result+" = "+spec.expr);
+        const unknown=node=>node.op==="var" ? !data.inputs.includes(node.value) : node.args.some(unknown);
+        if (unknown(parsed.tree)) continue;
+        const candidate={name:"PySR · "+spec.nodes+" nodes",direct:spec.expr,extraParams:spec.learned,structureCost:0.2*spec.nodes};
+        const model=fit(candidate);
+        if (model) {
+          rankings.push(model);
+          yield step("PySR",candidate.name,"Evaluated a PySR candidate on the original training and held-out splits.",model,true);
+        }
+      } catch { /* A backend expression outside the local real-valued grammar is ineligible. */ }
+    }
+    let simpleMatch=false;
+    for (const batch of expressionSearch(s.training,data.inputs,checkpoint,cooperative)) {
+      if (batch===SEARCH_SLICE) {yield SEARCH_SLICE;continue;}
+      for (const spec of batch.specs) {
+        if (cooperative) yield* checkpoint();
+        const name=(spec.affine?"Scaled ":"")+spec.expr;
+        const options={extraParams:spec.learned,structureCost:0.2*spec.nodes};
+        const candidate=spec.affine
+          ? family(name,()=>(spec.terms ?? [spec.expr]).map(expr=>term("("+expr+")",equationPredictor(data.result+" = "+expr,data.inputs))),options)
+          : {name,direct:spec.expr,...options};
+        const model=fit(candidate);
+        if (!model) continue;
+        rankings.push(model);
+        yield step("Symbolic",name,batch.stage+". "+batch.description+" Re-evaluated on the full fitting split.",model,true);
+        if (matches(model)) simpleMatch=true;
+      }
+      if (simpleMatch) break;
+    }
+
+    if (!simpleMatch && multi) {
       const {linear,squares,cubes,transforms,interactions} = multiTerms(data.rows,axes);
-      const combined = (name,basis) => family(name, () => basis);
+      const combined = (name,basis,options={}) => family(name, () => basis, options);
       yield fixed("Basics", combined("Constant",[]));
       yield fixed("Basics", combined("Linear model",linear));
-      yield fixed("Basics", combined("Quadratic model",[...linear,...squares,...interactions]));
+      yield fixed("Basics", combined("Quadratic model",[...linear,...squares,...interactions.slice(0, linear.length*(linear.length-1)/2)]));
       yield fixed("Basics", combined("Additive cubic",[...linear,...squares,...cubes]));
+
+      // Fast log-space multiplicative families when observed outputs share a single sign.
+      const activeAxes = axes.filter(axis => axis.low !== axis.high);
+      const sameSign = s.training.every(r => r[targetAt] > 0) || s.training.every(r => r[targetAt] < 0);
+      if (sameSign && activeAxes.length >= 1 && s.distinctTrain > activeAxes.length + 2) {
+        const logY = Float64Array.from(s.training, r => Math.log(Math.abs(r[targetAt])));
+        const ones = new Float64Array(s.training.length).fill(1);
+        const expSolve = leastSquares([...activeAxes.map(a => Float64Array.from(s.training, r => r[a.index])), ones], s.training.length);
+        if (expSolve) {
+          const w = expSolve(logY);
+          const rates = activeAxes.map((_, i) => Math.abs(w[i]) < 1e-12 ? 0 : w[i]);
+          const used = rates.filter(r => r !== 0).length;
+          if (used > 0 && rates.every(Number.isFinite)) {
+            const inner = signedSum(rates, (abs, i) => abs === 1 ? activeAxes[i].name : abs + " * " + activeAxes[i].name);
+            const expCand = combined("Multi-exponential", [term("exp(" + inner + ")", row => {
+              let z = 0;
+              for (let i = 0; i < activeAxes.length; i++) z += rates[i] * row[activeAxes[i].index];
+              return safeExp(z);
+            })], {extraParams: used});
+            yield fixed("Transforms", expCand);
+          }
+        }
+        if (activeAxes.every(a => a.low > 0)) {
+          const powSolve = leastSquares([...activeAxes.map(a => Float64Array.from(s.training, r => Math.log(r[a.index]))), ones], s.training.length);
+          if (powSolve) {
+            const w = powSolve(logY);
+            const parts = [], usedAxes = [];
+            for (let i = 0; i < activeAxes.length; i++) {
+              if (!Number.isFinite(w[i]) || Math.abs(w[i]) < 1e-12) continue;
+              const p = w[i];
+              usedAxes.push([activeAxes[i].index, p]);
+              parts.push(p === 1 ? activeAxes[i].name : activeAxes[i].name + "^(" + p + ")");
+            }
+            if (usedAxes.length > 0) {
+              const powCand = combined("Power-law product", [term(parts.join(" * "), row => {
+                let prod = 1;
+                for (const [idx, p] of usedAxes) prod *= Math.pow(row[idx], p);
+                return prod;
+              })], {extraParams: usedAxes.length});
+              yield fixed("Transforms", powCand);
+            }
+          }
+        }
+      }
+
       const available = [...linear,...squares,...cubes,...transforms,...interactions];
       const chosen = [];
       let error = Infinity, precision = false;
-      const limit = Math.min(8, available.length, s.distinctTrain-1);
+      const limit = Math.min(10, available.length, s.distinctTrain-1);
       for (let count=1; count<=limit; count++) {
         const name = "Feature mix (" + count + ")";
         let best = null, bestIndex = 0;
         for (let i=0; i<available.length; i++) {
+          if (cooperative) yield* checkpoint();
           const trial = fit(combined(name, [...chosen, available[i]]),[],{evaluate:false,precision});
           if (trial && (!best || trial.objective < best.objective)) {best=trial; bestIndex=i;}
         }
@@ -886,7 +1753,7 @@
           + " gave the best training fit." + (precision ? rule : ""),model,true);
         if (precision && error <= 2*EPS) break;
       }
-    } else {
+    } else if (!simpleMatch) {
       for (const [phase,candidate] of singleFamilies(data,axes[0],s.distinctTrain,s.training)) {
         if (candidate.issue) {
           yield step(phase,candidate.name,candidate.issue);
@@ -904,19 +1771,23 @@
         }
         let grids = scans.map(spec => linspace(spec.low,spec.high,spec.count));
         let spacing = grids.map(grid => grid[1]-grid[0]);
-        const iterations = scans.length > 1 ? 11 : 8;
-        let best = null;
+        const iterations = scans.length > 1 ? 10 : 8;
+        let best = candidate.start ? fit(candidate,candidate.start,{evaluate:false,screen:true}) : null;
         for (let iteration=0; iteration<=iterations; iteration++) {
           let tried = 0;
           for (const first of grids[0]) for (const second of grids[1] ?? [null]) {
+            if (cooperative) yield* checkpoint();
             const shape = second === null ? [first] : [first,second];
             tried++;
-            const model = fit(candidate,shape,{evaluate:false});
+            const model = fit(candidate,shape,{evaluate:false,screen:true});
             if (model && (!best || model.objective<best.objective)) best=model;
           }
           if (!best) {
             yield step(phase,candidate.name,"Skipped because no trial shape could be fitted.");
             break;
+          }
+          if (iteration === iterations && !candidate.noPolish) {
+            best = (yield* polishShape(candidate, scans, best.shape, spacing)) ?? best;
           }
           const model = fit(candidate,best.shape);
           const ranked = Boolean(model && iteration===iterations);
@@ -944,18 +1815,48 @@
       reason = closest<=PRECISION_ERROR ? "matched the held-out rows to numerical precision"
         : "best explained small effects in the held-out rows";
     } else if (!multi && s.validation.length) {
-      const exact = rankings.filter(model => model.objective/spread<=1e-9 && model.score-PENALTY*model.parameters<=1e-9);
+      const exact = rankings.filter(model => model.relativeTrain<=1e-9 && model.relativeValidation<=1e-9);
       if (exact.length) {finalists=exact; reason="matched the held-out rows to numerical precision";}
     }
     if (!finalists.length) throw new Error("No supported equation could be fitted to this dataset.");
-    const rank = model => Math.round(model.score * 1e12) / 1e12;
+    const rank = model => model.score < Number.MAX_VALUE/1e12 ? Math.round(model.score * 1e12) / 1e12 : model.score;
     const winner = finalists.slice().sort((a,b) => rank(a)-rank(b) || a.parameters-b.parameters)[0];
     const final = fit(winner.candidate,winner.shape,{final:true,precision:winner.precision});
-    const detail = winner.candidate.name + " " + reason + " (score " + short(winner.score) + ") among "
-      + rankings.length + " ranked models. " + (final ? "Refitted the coefficients on all " + data.rows.length + " rows."
+    let detail = winner.candidate.name + " " + reason + " (score " + short(winner.score) + ") among "
+      + rankings.length + " ranked models. " + (final ? (winner.candidate.direct ? "Evaluated the selected expression on all " : "Refitted linear coefficients on all ") + data.rows.length + " rows."
       : "Showing the training fit because the full-data refit was unstable.")
       + (winner.validate == null ? "" : " Held-out RMSE before refitting was " + short(winner.validate) + ".");
-    yield step("Select",winner.candidate.name,detail,final ?? winner,false,true);
+    if (!s.validation.length) detail+=" Only training error is available for this sample.";
+    if (matches(winner)) detail+=ambiguityNote(winner,rankings.filter(matches),axes,targetPeak,spread);
+    const selection=step("Select",winner.candidate.name,detail,final ?? winner,false,true);
+    selection.model.allRows=Boolean(final);
+    selection.model.selectionRMSE=winner.validate;
+    yield selection;
+  }
+
+  // Evaluate alternatives only at hypothetical x values. No synthetic y enters selection.
+  function ambiguityNote(winner,alternatives,axes,peak,spread) {
+    const mid=axes.map(a=>a.center);
+    for (const axis of axes) {
+      const cuts=[0,1,-1,0.5,-0.5,axis.low,axis.high,Math.round(axis.center),
+                  axis.center,axis.center-axis.span*0.25,axis.center+axis.span*0.25];
+      for (const x of cuts) {
+        if (x<axis.low || x>axis.high) continue;
+        const point=mid.slice(); point[axis.index]=x;
+        const a=winner.predict(point);
+        if (!Number.isFinite(a)) continue;
+        for (const other of alternatives) {
+          if (other===winner || other.equation===winner.equation) continue;
+          const b=other.predict(point);
+          const tolerance=Math.max(32*EPS*Math.max(Math.abs(a),Math.abs(b)),1e-7*spread*peak);
+          if (!Number.isFinite(b) || Math.abs(a-b)<=tolerance) continue;
+          return " The observations also fit "+other.equation+". At "+
+            axes.map((axis,i)=>axis.name+" = "+short(point[i])).join(", ")+
+            " the two predict "+short(a)+" and "+short(b)+". A measurement there can distinguish them.";
+        }
+      }
+    }
+    return "";
   }
 
   function expandPolynomial(axis,coefficients) {
@@ -975,26 +1876,85 @@
 
   function multiTerms(rows, axes) {
     const groups = [[],[],[]], transforms = [], interactions = [];
-    const from = (axis,label,call) => term(label,row => call(row[axis.index]));
+    const from = (axis,label,call,exactLabel) => term(label,row => call(row[axis.index]),exactLabel);
+    const activeAxes = [];
     for (const axis of axes) {
       if (axis.low === axis.high) continue;
+      activeAxes.push(axis);
       const normalized = Math.abs(axis.center/axis.span)>4;
       const variable = normalized ? axis.label : axis.name;
       groups.forEach((group,i) => {
         const label = i ? variable + "^" + (i+1) : variable;
         group.push(term(label,row => (normalized ? axis.normal(row) : row[axis.index])**(i+1)));
       });
+      transforms.push(term(variable + "^4", row => (normalized ? axis.normal(row) : row[axis.index])**4));
       if (!rows.some(row => row[axis.index]===0)) {
-        transforms.push(from(axis,"1 / "+axis.name,v=>1/v),from(axis,"1 / "+axis.name+"^2",v=>v**-2));
+        transforms.push(
+          from(axis,"1 / "+axis.name,v=>1/v),
+          from(axis,"1 / "+axis.name+"^2",v=>v**-2,axis.name+"^(-2)"),
+          from(axis,"1 / "+axis.name+"^3",v=>v**-3,axis.name+"^(-3)")
+        );
       }
-      if (axis.low>0) transforms.push(from(axis,"log("+axis.name+")",Math.log));
+      if (axis.low>0) {
+        transforms.push(
+          from(axis,"log("+axis.name+")",Math.log),
+          from(axis,axis.name+" * log("+axis.name+")",v=>v*Math.log(v))
+        );
+      }
       if (axis.low>=0) transforms.push(from(axis,"sqrt("+axis.name+")",Math.sqrt));
-      for (const name of ["abs","cbrt","sin","cos"]) transforms.push(from(axis,name+"("+axis.name+")",fn[name]));
+      if (axis.high<=200) transforms.push(from(axis,"exp("+axis.name+")",safeExp));
+      if (axis.low>=-200) transforms.push(from(axis,"exp(-"+axis.name+")",v=>safeExp(-v)));
+      if (Math.max(Math.abs(axis.low),Math.abs(axis.high))<=200) {
+        transforms.push(
+          from(axis,"sinh("+axis.name+")",safeSinh),
+          from(axis,"cosh("+axis.name+")",safeCosh)
+        );
+      }
+      for (const name of ["abs","cbrt","sin","cos","tanh","asinh","atan","erf"]) {
+        transforms.push(from(axis,name+"("+axis.name+")",fn[name]));
+      }
+      if (rows.every(row => Number.isFinite(safeTan(row[axis.index])))) {
+        transforms.push(from(axis,"tan("+axis.name+")",safeTan));
+      }
+      if (axis.low >= -1 && axis.high <= 1) {
+        transforms.push(from(axis,"asin("+axis.name+")",Math.asin), from(axis,"acos("+axis.name+")",Math.acos));
+      }
+      if (axis.low > -1 && axis.high < 1) transforms.push(from(axis,"atanh("+axis.name+")",Math.atanh));
+      if (axis.low >= 1) transforms.push(from(axis,"acosh("+axis.name+")",Math.acosh));
+      if (Math.floor(axis.high) > Math.floor(axis.low)) {
+        transforms.push(from(axis,"floor("+axis.name+")",Math.floor), from(axis,"ceil("+axis.name+")",Math.ceil));
+      }
     }
     const [linear,squares,cubes] = groups;
+    // Keep pairwise linear products first so Quadratic model can slice them cleanly.
     for (let i=0; i<linear.length; i++) for (let j=i+1; j<linear.length; j++) {
       const a=linear[i], b=linear[j];
       interactions.push(term(a.label+" * "+b.label,row=>a.calc(row)*b.calc(row)));
+    }
+    for (let i=0; i<activeAxes.length; i++) for (let j=i+1; j<activeAxes.length; j++) {
+      const ax=activeAxes[i], bx=activeAxes[j];
+      if (!rows.some(r => r[bx.index]===0)) {
+        interactions.push(term(ax.name+" / "+bx.name, row=>row[ax.index]/row[bx.index]));
+      }
+      if (!rows.some(r => r[ax.index]===0)) {
+        interactions.push(term(bx.name+" / "+ax.name, row=>row[bx.index]/row[ax.index]));
+      }
+      if (activeAxes.length <= 6) {
+        interactions.push(
+          term(linear[i].label+"^2 * "+linear[j].label, row=>squares[i].calc(row)*linear[j].calc(row)),
+          term(linear[i].label+" * "+linear[j].label+"^2", row=>linear[i].calc(row)*squares[j].calc(row)),
+          term("hypot("+ax.name+", "+bx.name+")", row=>Math.hypot(row[ax.index], row[bx.index]))
+        );
+        if (rows.every(r => r[ax.index]+r[bx.index] > 0)) {
+          interactions.push(term("log("+ax.name+" + "+bx.name+")", row=>Math.log(row[ax.index]+row[bx.index])));
+        }
+        if (rows.every(r => r[ax.index]+r[bx.index] !== 0)) {
+          interactions.push(term("1 / ("+ax.name+" + "+bx.name+")", row=>safeInv(row[ax.index]+row[bx.index])));
+        }
+        if (rows.every(r => r[ax.index]+r[bx.index] <= 200)) {
+          interactions.push(term("exp("+ax.name+" + "+bx.name+")", row=>safeExp(row[ax.index]+row[bx.index])));
+        }
+      }
     }
     return {linear,squares,cubes,transforms,interactions};
   }
@@ -1005,8 +1965,11 @@
     const zero = domain(!data.rows.some(row=>row[0]===0),"This family is undefined at an observed input of zero.");
     const positive = domain(axis.low>0,"This family requires positive inputs.");
     const nonnegative = domain(axis.low>=0,"This family requires non-negative inputs.");
-    const fixed = (label,expression,call,options) => family(label,()=>[term(expression,row=>call(raw(row)))],options);
-    const names = ["Constant","Straight line","Quadratic","Cubic","Degree 4 polynomial","Degree 5 polynomial"];
+    const tanSafe = domain(data.rows.every(row=>Number.isFinite(safeTan(row[0]))),"This family has an asymptote at an observed input.");
+    const hypSafe = domain(Math.max(Math.abs(axis.low),Math.abs(axis.high))<=200,"Input magnitude exceeds hyperbolic range.");
+    const fixed = (label,expression,call,options,exactLabel) =>
+      family(label,()=>[term(expression,row=>call(raw(row)),exactLabel)],options);
+    const names = ["Constant","Straight line","Quadratic","Cubic","Degree 4 polynomial","Degree 5 polynomial","Degree 6 polynomial"];
     for (const [degree,label] of names.entries()) {
       yield ["Basics",family(label,()=>Array.from({length:degree},(_,i)=>{
         const power=degree-i;
@@ -1014,41 +1977,229 @@
       }),{degree})];
     }
     const reciprocal=fixed("Reciprocal","1 / "+name,x=>1/x,{issue:zero,pole:true});
-    const square=fixed("Inverse square","1 / "+name+"^2",x=>x**-2,{issue:zero,pole:true});
+    const square=fixed("Inverse square","1 / "+name+"^2",x=>x**-2,{issue:zero,pole:true},name+"^(-2)");
+    const invCube=fixed("Inverse cube","1 / "+name+"^3",x=>x**-3,{issue:zero,pole:true},name+"^(-3)");
     const log=fixed("Logarithm","log("+name+")",Math.log,{issue:positive});
-    for (const candidate of [reciprocal,square,log,fixed("Square root","sqrt("+name+")",Math.sqrt,{issue:nonnegative}),
-                             fixed("Cube root","cbrt("+name+")",Math.cbrt),fixed("Absolute value","abs("+name+")",Math.abs)]) {
-      yield ["Transforms",candidate];
+    const transforms = [
+      reciprocal, square, invCube, log,
+      fixed("Log-linear",name+" * log("+name+")",x=>x*Math.log(x),{issue:positive}),
+      fixed("Square root","sqrt("+name+")",Math.sqrt,{issue:nonnegative}),
+      fixed("Cube root","cbrt("+name+")",Math.cbrt),
+      fixed("Absolute value","abs("+name+")",Math.abs),
+      fixed("Sine","sin("+name+")",Math.sin),
+      fixed("Cosine","cos("+name+")",Math.cos),
+      fixed("Tangent (unit)","tan("+name+")",safeTan,{issue:tanSafe,pole:true}),
+      fixed("Hyperbolic sine (unit)","sinh("+name+")",safeSinh,{issue:hypSafe}),
+      fixed("Hyperbolic cosine (unit)","cosh("+name+")",safeCosh,{issue:hypSafe}),
+      fixed("Hyperbolic tangent (unit)","tanh("+name+")",Math.tanh),
+      fixed("Inverse hyperbolic sine","asinh("+name+")",Math.asinh),
+      fixed("Arctangent (unit)","atan("+name+")",Math.atan),
+      fixed("Error function (unit)","erf("+name+")",erf),
+      fixed("Floor step","floor("+name+")",Math.floor),
+      fixed("Ceiling step","ceil("+name+")",Math.ceil),
+      fixed("Sawtooth",name+" % 1",x=>x-Math.floor(x)),
+    ];
+    if (axis.low >= -1 && axis.high <= 1) {
+      transforms.push(fixed("Arcsine","asin("+name+")",Math.asin), fixed("Arccosine","acos("+name+")",Math.acos));
     }
+    if (axis.low > -1 && axis.high < 1) transforms.push(fixed("Inverse hyperbolic tangent","atanh("+name+")",Math.atanh));
+    if (axis.low >= 1) transforms.push(fixed("Inverse hyperbolic cosine","acosh("+name+")",Math.acosh));
+    for (const candidate of transforms) yield ["Transforms",candidate];
+
+    const useRawCoord = Math.abs(axis.center/axis.span)<=4;
+    const poleShift = s => axis.center + axis.span * (s / (1 - s * s));
+    const shiftedReciprocal = family("Shifted reciprocal",([s])=>{
+      const c = poleShift(s);
+      return [term("1 / "+shiftExpr(name,c), row=>safeInv(raw(row)-c))];
+    },{shape:[scan("pole map",-0.97,0.97,81)],pole:true});
+    const shiftedInvSquare = family("Shifted inverse square",([s])=>{
+      const c = poleShift(s);
+      const label = c===0 ? "1 / "+name+"^2" : "1 / "+shiftExpr(name,c)+"^2";
+      return [term(label, row=>{const d=raw(row)-c; const inv=safeInv(d); return inv*inv;})];
+    },{shape:[scan("pole map",-0.97,0.97,81)],pole:true});
+    const shiftedLog = family("Shifted logarithm",([logOffset])=>{
+      const c = axis.low - axis.span * Math.exp(logOffset);
+      return [term("log("+shiftInner(name,c)+")", row=>safeLog(raw(row)-c))];
+    },{shape:[scan("log offset",-10,6,65)]});
+    const shiftedSqrt = family("Shifted square root",([logOffset])=>{
+      const c = axis.low - axis.span * Math.exp(logOffset);
+      return [term("sqrt("+shiftInner(name,c)+")", row=>safeSqrt(raw(row)-c))];
+    },{shape:[scan("log offset",-12,6,65)]});
+    const shiftedAbs = family("Shifted absolute value",([center])=>{
+      const c = axis.center + axis.span * center;
+      return [term("abs("+shiftInner(name,c)+")", row=>Math.abs(raw(row)-c))];
+    },{shape:[scan("vertex",-1,1,65)]});
+    const stepFamily = family("Step function",([center])=>{
+      const c = axis.center + axis.span * center;
+      return [term("step("+shiftInner(name,c)+")", row=>raw(row)>=c?1:0)];
+    },{shape:[scan("threshold",-0.98,0.98,65)],noPolish:true});
+
     const cycles = Math.max(0.3, Math.min(24,(distinct-1)/2));
     const harmonic=family("Sinusoid",([count])=>{
       const omega=Math.PI*count/axis.span;
-      const useRaw=Math.abs(axis.center/axis.span)<=4 && Number.isFinite(omega);
-      const argument=useRaw ? short(omega)+" * "+name : short(Math.PI*count)+" * "+axis.label;
+      const useRaw=useRawCoord && Number.isFinite(omega);
+      const rawArg=omega===1 ? name : omega+" * "+name;
+      const argument=useRaw ? rawArg : (Math.PI*count)+" * "+axis.label;
       const value=useRaw ? row=>omega*raw(row) : row=>Math.PI*count*t(row);
       return [term("sin("+argument+")",row=>Math.sin(value(row))),term("cos("+argument+")",row=>Math.cos(value(row)))];
-    },{shape:[scan("cycles",0.15,cycles,Math.floor(cycles*14)+9)]});
+    },{shape:[scan("cycles",0.02,cycles,Math.floor(cycles*16)+15)]});
+    const tanCycles = Math.max(0.5, Math.min(12,(distinct-1)/3));
+    const tangent=family("Tangent",([halfCycles,phase])=>{
+      const omega=Math.PI*halfCycles/(2*axis.span);
+      const useRaw=useRawCoord && Number.isFinite(omega);
+      if (useRaw) {
+        const rawPhase=wrapHalfPi(phase - omega*axis.center);
+        const base=omega===1 ? name : omega+" * "+name;
+        const argument=rawPhase===0 ? base : base+(rawPhase<0 ? " - " : " + ")+Math.abs(rawPhase);
+        return [term("tan("+argument+")",row=>safeTan(omega*raw(row)+rawPhase))];
+      }
+      const scaledOmega=Math.PI*halfCycles/2;
+      const cleanPhase=wrapHalfPi(phase);
+      const base=scaledOmega+" * "+axis.label;
+      const argument=cleanPhase===0 ? base : base+(cleanPhase<0 ? " - " : " + ")+Math.abs(cleanPhase);
+      return [term("tan("+argument+")",row=>safeTan(scaledOmega*t(row)+cleanPhase))];
+    },{shape:[
+      scan("half-cycles",0.02,tanCycles,Math.min(85,Math.floor(tanCycles*10)+13)),
+      scan("phase",-Math.PI*0.6,Math.PI*0.6,17),
+    ],pole:true});
     const exponential=family("Exponential",([rate])=>{
       const rawRate=rate/axis.span;
       const useRaw=Math.abs(axis.center/axis.span*rate)<=12 && Number.isFinite(rawRate);
-      return [useRaw ? term("exp("+short(rawRate)+" * "+name+")",row=>Math.exp(rawRate*raw(row)))
-                     : term("exp("+short(rate)+" * "+axis.label+")",row=>Math.exp(rate*t(row)))];
+      return [useRaw ? term("exp("+rawRate+" * "+name+")",row=>safeExp(rawRate*raw(row)))
+                     : term("exp("+rate+" * "+axis.label+")",row=>safeExp(rate*t(row)))];
     },{shape:[scan("rate across half range",-24,24,65)]});
-    const shapeFamily=(label, logistic) => family(label,([center,logWidth])=>{
+    const hyperbolic=family("Hyperbolic",([rate])=>{
+      const rawRate=rate/axis.span;
+      const useRaw=useRawCoord && Math.abs(rawRate*axis.low)<=25 && Math.abs(rawRate*axis.high)<=25 && Number.isFinite(rawRate);
+      const arg=useRaw ? (rawRate===1?name:rawRate+" * "+name) : rate+" * "+axis.label;
+      const val=useRaw ? row=>rawRate*raw(row) : row=>rate*t(row);
+      return [term("sinh("+arg+")",row=>safeSinh(val(row))), term("cosh("+arg+")",row=>safeCosh(val(row)))];
+    },{shape:[scan("rate",0.05,16,57)]});
+    const surge=family("Surge curve",([rate])=>{
+      const rawRate=rate/axis.span;
+      const useRaw=Math.abs(axis.center/axis.span*rate)<=12 && Number.isFinite(rawRate);
+      return [useRaw ? term(name+" * exp("+rawRate+" * "+name+")",row=>raw(row)*safeExp(rawRate*raw(row)))
+                     : term(axis.label+" * exp("+rate+" * "+axis.label+")",row=>t(row)*safeExp(rate*t(row)))];
+    },{shape:[scan("rate across half range",-24,24,65)]});
+    const centeredShape = (label, build, widthBounds=[-3.5,1], widthCount=10) => family(label,([center,logWidth])=>{
       const width=Math.exp(logWidth);
-      const expression="(("+axis.label+" - ("+short(center)+")) / "+short(width)+")";
-      return logistic ? [term("(1 / (1 + exp(-"+expression+")))",row=>1/(1+Math.exp(-(t(row)-center)/width)))]
-        : [term("exp(-0.5 * "+expression+"^2)",row=>Math.exp(-0.5*((t(row)-center)/width)**2))];
-    },{shape:[scan("center",-1.25,1.25,13),scan("log width",logistic?-4:-3.5,1,logistic?11:10)]});
-    const power=family("Power law",([exponent])=>[term(name+"^("+short(exponent)+")",row=>raw(row)**exponent)],
+      if (useRawCoord) {
+        const rawCenter = axis.center + center * axis.span;
+        const rawWidth = width * axis.span;
+        const expr = "(" + shiftExpr(name, rawCenter) + " / " + rawWidth + ")";
+        return build(expr, row => (raw(row) - rawCenter) / rawWidth);
+      }
+      const expr="(("+axis.label+" - ("+center+")) / "+width+")";
+      return build(expr, row => (t(row) - center) / width);
+    },{shape:[scan("center",-1.25,1.25,13),scan("log width",widthBounds[0],widthBounds[1],widthCount)]});
+    const narrowest=Math.max(-12,Math.min(-3.5,Math.log(0.65/distinct)));
+    const gaussian = centeredShape("Gaussian peak",(expr,u)=>[term("exp(-0.5 * "+expr+"^2)",row=>Math.exp(-0.5*u(row)**2))],[narrowest,1],13);
+    const sortedPeak=training.slice().sort((a,b)=>a[0]-b[0]);
+    const ys=sortedPeak.map(row=>row[1]).sort((a,b)=>a-b);
+    const baseline=ys[Math.floor(ys.length/2)];
+    // Recover fast oscillations from the spacing between upward level crossings.
+    // Index longer gaps by whole periods to allow for missed crossings in irregular data.
+    const crossings=[];
+    for (let i=1;i<sortedPeak.length;i++) {
+      const [x0,y0]=sortedPeak[i-1], [x1,y1]=sortedPeak[i];
+      if (y0<baseline && y1>=baseline && x1>x0) {
+        const fraction=(baseline-y0)/(y1-y0);
+        crossings.push(t([x0*(1-fraction)+x1*fraction]));
+      }
+    }
+    let fastHarmonic=null;
+    if (crossings.length>=12) {
+      const gaps=crossings.slice(1).map((v,i)=>v-crossings[i]).sort((a,b)=>a-b);
+      const period=gaps[Math.floor(gaps.length/2)];
+      if (period>0) {
+        let orbit=0;
+        for (let i=1;i<crossings.length;i++) orbit+=Math.max(1,Math.round((crossings[i]-crossings[i-1])/period));
+        const estimated=2*orbit/(crossings.at(-1)-crossings[0]);
+        if (estimated>cycles-1 && estimated<distinct/2) {
+          const radius=Math.max(1,Math.min(40,0.035*estimated));
+          fastHarmonic={...harmonic,name:"Sinusoid from observed periods",start:[estimated],
+            shape:[scan("cycles",Math.max(0.02,estimated-radius),estimated+radius,Math.ceil(radius*16)+1)]};
+        }
+      }
+    }
+
+    const peakIndex=sortedPeak.reduce((best,row,i)=>Math.abs(row[1]-baseline)>Math.abs(sortedPeak[best][1]-baseline)?i:best,0);
+    const peak=sortedPeak[peakIndex], height=peak[1]-baseline;
+    if (height!==0 && Number.isFinite(height)) {
+      let left=peakIndex,right=peakIndex;
+      const above=row=>(row[1]-baseline)/height>Math.exp(-0.5);
+      while (left>0 && above(sortedPeak[left])) left--;
+      while (right<sortedPeak.length-1 && above(sortedPeak[right])) right++;
+      const estimate=(sortedPeak[right][0]-sortedPeak[left][0])/(2*axis.span);
+      if (estimate>0) gaussian.start=[t(peak),Math.max(narrowest,Math.min(1,Math.log(estimate)))];
+    }
+    const lorentzian = centeredShape("Lorentzian peak",(expr,u)=>[term("1 / (1 + "+expr+"^2)",row=>1/(1+u(row)**2))]);
+    const logistic = centeredShape("Logistic curve",(expr,u)=>[term("(1 / (1 + exp(-"+expr+")))",row=>1/(1+Math.exp(-u(row))))],[-4,1],11);
+    const arctanCurve = centeredShape("Arctangent curve",(expr,u)=>[term("atan("+expr+")",row=>Math.atan(u(row)))],[-4,1],11);
+    const erfCurve = centeredShape("Error function curve",(expr,u)=>[term("erf("+expr+")",row=>erf(u(row)))],[-4,1],11);
+    const harmonicExp=family("Sinusoid + exponential",([count,rate])=>[
+      ...harmonic.terms([count]),...exponential.terms([rate])
+    ],{shape:[scan("cycles",0.02,cycles,Math.min(81,Math.ceil(cycles*6)+15)),scan("rate",-24,24,25)]});
+    const dampedCycles = Math.max(0.5, Math.min(10,(distinct-2)/3));
+    const dampedSinusoid = family("Damped sinusoid",([count,rate])=>{
+      const omega=Math.PI*count/axis.span;
+      const rawRate=rate/axis.span;
+      const useRaw=useRawCoord && Math.abs(rawRate*axis.low)<=25 && Math.abs(rawRate*axis.high)<=25 && Number.isFinite(omega);
+      if (useRaw) {
+        const expLabel="exp("+rawRate+" * "+name+")";
+        const arg=omega===1 ? name : omega+" * "+name;
+        return [
+          term(expLabel+" * sin("+arg+")",row=>safeExp(rawRate*raw(row))*Math.sin(omega*raw(row))),
+          term(expLabel+" * cos("+arg+")",row=>safeExp(rawRate*raw(row))*Math.cos(omega*raw(row))),
+        ];
+      }
+      const expLabel="exp("+rate+" * "+axis.label+")";
+      const arg=(Math.PI*count)+" * "+axis.label;
+      return [
+        term(expLabel+" * sin("+arg+")",row=>safeExp(rate*t(row))*Math.sin(Math.PI*count*t(row))),
+        term(expLabel+" * cos("+arg+")",row=>safeExp(rate*t(row))*Math.cos(Math.PI*count*t(row))),
+      ];
+    },{shape:[scan("cycles",0.1,dampedCycles,Math.min(41,Math.floor(dampedCycles*5)+11)),scan("decay rate",-10,4,11)]});
+    const doubleExp = family("Double exponential",([rate1,delta])=>{
+      const rate2 = rate1 + delta;
+      const r1 = rate1/axis.span, r2 = rate2/axis.span;
+      const useRaw = useRawCoord && Math.abs(r1*axis.low)<=25 && Math.abs(r1*axis.high)<=25
+        && Math.abs(r2*axis.low)<=25 && Math.abs(r2*axis.high)<=25;
+      if (useRaw) {
+        return [
+          term("exp("+r1+" * "+name+")",row=>safeExp(r1*raw(row))),
+          term("exp("+r2+" * "+name+")",row=>safeExp(r2*raw(row))),
+        ];
+      }
+      return [
+        term("exp("+rate1+" * "+axis.label+")",row=>safeExp(rate1*t(row))),
+        term("exp("+rate2+" * "+axis.label+")",row=>safeExp(rate2*t(row))),
+      ];
+    },{shape:[scan("rate 1",-18,10,15),scan("rate gap",0.25,20,13)]});
+    const power=family("Power law",([exponent])=>[term(name+"^("+exponent+")",row=>raw(row)**exponent)],
                        {shape:[scan("exponent",-8,8,65)],issue:positive});
-    for (const candidate of [power,exponential,harmonic,shapeFamily("Gaussian peak",false),shapeFamily("Logistic curve",true)]) {
+    const hill=family("Hill saturation",([logK,n])=>{
+      const K=Math.exp(logK);
+      return [term("(1 / (1 + ("+K+" / "+name+")^("+n+")))",row=>{
+        const ratio = Math.pow(K / raw(row), n);
+        return Number.isFinite(ratio) ? 1 / (1 + ratio) : 0;
+      })];
+    },{shape:[
+      scan("log K", axis.low>0 ? Math.log(axis.low)-1.5 : -2, axis.high>0 ? Math.log(axis.high)+1.5 : 2, 15),
+      scan("Hill n", 0.25, 8, 13),
+    ],issue:positive});
+
+    for (const candidate of [
+      power, exponential, hyperbolic, surge,
+      shiftedReciprocal, shiftedInvSquare, shiftedLog, shiftedSqrt, shiftedAbs, stepFamily,
+      harmonic, ...(fastHarmonic ? [fastHarmonic] : []), tangent, harmonicExp, dampedSinusoid, doubleExp,
+      gaussian, lorentzian, logistic, arctanCurve, erfCurve, hill,
+    ]) {
       yield ["Tune shape",candidate];
     }
-    const useRaw = Math.abs(axis.center/axis.span)<=4;
-    const variable = useRaw ? name : axis.label;
-    const x = useRaw ? raw : t;
-    for (const candidate of [reciprocal,square,log,harmonic]) {
+    const variable = useRawCoord ? name : axis.label;
+    const x = useRawCoord ? raw : t;
+    for (const candidate of [reciprocal,square,log,shiftedReciprocal,shiftedAbs,exponential,hyperbolic,harmonic,tangent]) {
       yield ["Mixed terms",{...candidate,name:candidate.name+" + line",terms:shape=>[...candidate.terms(shape),term(variable,x)]}];
     }
     const xs=[...new Set(training.map(raw))].sort((a,b)=>a-b);
@@ -1064,9 +2215,9 @@
     }
   }
 
-  globalThis.EquationEngine = Object.freeze({parseEquation, generate, read, write, search});
+  globalThis.EquationEngine = Object.freeze({parseEquation, generate, read, write, search, chartSample, SEARCH_SLICE,
+    samplingPlan, functions:Object.freeze(Object.keys(fn)), trainingRows:data=>splitDataset(data).training});
 })();
-
 </script>
 <script>
 (() => {
@@ -1141,8 +2292,10 @@
       if (!agreement) first = data.inputs.findIndex((_,i) => data.rows.some(row => row[i] !== data.rows[0][i]));
       const xLabel = agreement ? "Observed " + data.result : data.inputs[first];
       const yLabel = agreement ? "Predicted " + data.result : data.result;
-      const stride = Math.max(1,Math.ceil(data.rows.length/850));
-      const observed = agreement ? model.points : data.rows.flatMap((row,i) => i % stride ? [] : [[row[first],row[output],held.has(i)]]);
+      const observed = agreement ? model.points : E.chartSample(data.rows.length,held,850).map(i => {
+        const row = data.rows[i];
+        return [row[first], row[output], held.has(i)];
+      });
       const points = observed.filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
       canvas.setAttribute("aria-label", agreement ? "Observed versus predicted "+data.result+". The diagonal marks perfect agreement."
         : "Scatter plot of "+data.result+" against "+xLabel+(model ? " with the fitted curve." : "."));
@@ -1215,15 +2368,20 @@
         ctx.setLineDash([5,4]);line(left,bottom,right,top);ctx.setLineDash([]);
       } else if (model) {
         ctx.beginPath();
-        let contiguous=false;
+        let contiguous=false, prevScaled=null;
+        const ySpan=ymax-ymin;
         for (const [x,y] of model.points) {
           const scaled=y/yPeak;
-          if (!Number.isFinite(scaled) || scaled < ymin-2*(ymax-ymin) || scaled > ymax+2*(ymax-ymin)) {
-            contiguous=false;continue;
+          if (!Number.isFinite(scaled) || scaled < ymin-2*ySpan || scaled > ymax+2*ySpan) {
+            contiguous=false; prevScaled=null; continue;
+          }
+          if (contiguous && prevScaled != null && Math.abs(scaled - prevScaled) > ySpan * 1.5) {
+            contiguous=false;
           }
           if (contiguous) ctx.lineTo(px(x/xPeak),py(scaled));
           else ctx.moveTo(px(x/xPeak),py(scaled));
           contiguous=true;
+          prevScaled=scaled;
         }
         ctx.stroke();
       }
@@ -1246,12 +2404,71 @@
   const searchChart = new Chart($("search-chart"));
   const generatorChart = new Chart($("generator-chart"));
   let data, generated, held = new Set();
-  let worker, workUrl, localSearch, epoch = 0, pending = false, timer, playing = false, complete = false;
+  let worker, workUrl, localSearch, bufferedStep=null, epoch = 0;
+  let pending = false, manualStep = false, timer, localTimer, playing = false, complete = false;
   let history = [], selected = -1, loadRequest=0;
+
+  // Only the bundled loopback launcher supplies this token. Opening the HTML directly is fully offline.
+  const nativeToken=document.querySelector('meta[name="local-pysr"]')?.content;
+  let nativeJob=null, externalCandidates=[];
+  $("pysr").hidden=!nativeToken;
+  function nativeCall(job,method,options={}) {
+    return fetch(job.url,{method,headers:{"Content-Type":"application/json","X-Explorer-Token":nativeToken},
+      cache:"no-store",...options}).then(async response=>{
+      const result=await response.json();
+      if (!response.ok) throw new Error(result.message || "Local PySR request failed.");
+      return result;
+    });
+  }
+  function cancelNative() {
+    const job=nativeJob;
+    if (!job) return;
+    nativeJob=null;
+    job.controller.abort();
+    // Account for cancellation while the local launcher is still creating the job.
+    job.started.then(()=>nativeCall(job,"DELETE",{keepalive:true})).catch(()=>{});
+  }
+  async function runNative() {
+    if (nativeJob) {resetSearch();return;}
+    if (!nativeToken || !data) return;
+    resetSearch();
+    const token=epoch;
+    const job={url:"/api/jobs/"+crypto.randomUUID(),controller:new AbortController()};
+    nativeJob=job;
+    $("search-status").textContent="PySR is searching on this computer. First use may install Julia.";
+    syncButtons();
+    job.started=nativeCall(job,"POST",{body:JSON.stringify({inputs:data.inputs,training:E.trainingRows(data)})});
+    try {
+      await job.started;
+      while (token===epoch) {
+        const state=await nativeCall(job,"GET",{signal:job.controller.signal});
+        if (token!==epoch) return;
+        if (state.status==="error") throw new Error(state.message);
+        if (state.status==="done") {
+          if (!Array.isArray(state.candidates) || !state.candidates.length) throw new Error("PySR returned no candidates.");
+          externalCandidates=state.candidates;
+          nativeJob=null;
+          nativeCall(job,"DELETE").catch(()=>{});
+          playing=true;syncButtons();requestStep();
+          return;
+        }
+        await new Promise(resolve=>setTimeout(resolve,500));
+      }
+    } catch (error) {
+      if (token===epoch) {
+        cancelNative();
+        $("search-status").textContent="PySR stopped. The browser search is available.";
+        alertAt("search-error","Local PySR: "+error.message);
+        syncButtons();
+      }
+    }
+  }
+  $("pysr").addEventListener("click",runNative);
+  window.addEventListener("pagehide",cancelNative);
 
   function example() {
     const equation = E.parseEquation("1/x^2");
-    return E.generate(equation,new Map([["x",[1,10]]]),100,"random",42,0,"Inverse-square example");
+    return E.generate(equation,new Map([["x",[1,10]]]),30,"coverage",42,0,"Inverse-square example");
   }
 
   function closeWorker() {
@@ -1263,10 +2480,15 @@
 
   function stopSearch() {
     epoch++;
+    cancelNative();
+    externalCandidates=[];
     clearTimeout(timer);
+    clearTimeout(localTimer);
     closeWorker();
     localSearch=null;
+    bufferedStep=null;
     pending=false;
+    manualStep=false;
     playing=false;
   }
 
@@ -1294,8 +2516,10 @@
   }
 
   function syncButtons() {
-    $("next").disabled=!data || pending || playing || complete;
-    $("run").disabled=!data;
+    $("next").disabled=!data || pending || playing || complete || Boolean(nativeJob);
+    $("run").disabled=!data || Boolean(nativeJob);
+    $("pysr").textContent=nativeJob ? "Cancel PySR" : "Run with PySR";
+    $("pysr").disabled=!data;
     $("run").textContent=playing ? "Pause" : complete ? "Run again" : history.length ? "Resume" : "Run search";
   }
 
@@ -1311,7 +2535,7 @@
     let rounds;
     self.onmessage = ({data}) => {
       try {
-        if (data.type === "start") rounds = self.EquationEngine.search(data.dataset);
+        if (data.type === "start") rounds = self.EquationEngine.search(data.dataset,{externalCandidates:data.candidates});
         else if (data.type === "next") self.postMessage(rounds.next());
       } catch (error) { self.postMessage({error: error.message}); }
     };
@@ -1326,18 +2550,27 @@
       worker.onmessage = ({data:message}) => {
         if (token !== epoch) return;
         if (message.error) reportSearchError(message.error);
-        else receiveStep(message);
+        else if (!playing && !manualStep) {
+          // Keep an in-flight automatic step until the user resumes or requests it.
+          bufferedStep=message;
+          pending=false;
+          syncButtons();
+        } else receiveStep(message);
       };
       worker.onerror = event => {
         event.preventDefault();
         if (token !== epoch) return;
         if (!history.length) {
           closeWorker();
-          localSearch=E.search(data);
-          runLocal(token);
+          localSearch=E.search(data,{cooperative:true,externalCandidates});
+          if (playing || manualStep) runLocal(token);
+          else {
+            pending=false;
+            syncButtons();
+          }
         } else reportSearchError("The fitting process stopped. Run the search again to retry.");
       };
-      worker.postMessage({type:"start",dataset:data});
+      worker.postMessage({type:"start",dataset:data,candidates:externalCandidates});
       return true;
     } catch {
       closeWorker();
@@ -1345,26 +2578,37 @@
     }
   }
 
-  function requestStep() {
-    if (!data || complete || pending) return;
+  function requestStep(manual=false) {
+    if (!data || complete || pending || nativeJob) return;
     pending=true;
+    manualStep=manual;
+    if (bufferedStep) {
+      const step=bufferedStep;
+      bufferedStep=null;
+      receiveStep(step);
+      return;
+    }
     syncButtons();
     const token=epoch;
-    if (!worker && !localSearch && !makeWorker(token)) localSearch=E.search(data);
+    if (!worker && !localSearch && !makeWorker(token)) localSearch=E.search(data,{cooperative:true,externalCandidates});
     if (worker) worker.postMessage({type:"next"});
     else runLocal(token);
   }
 
   function runLocal(token) {
-    setTimeout(() => {
-      if (token !== epoch) return;
-      try {receiveStep(localSearch.next());}
-      catch (error) {reportSearchError(error.message);}
+    localTimer=setTimeout(() => {
+      if (token !== epoch || !pending || (!playing && !manualStep)) return;
+      try {
+        const result=localSearch.next();
+        if (result.value === E.SEARCH_SLICE) runLocal(token);
+        else receiveStep(result);
+      } catch (error) {reportSearchError(error.message);}
     },0);
   }
 
   function receiveStep({value,done}) {
     pending=false;
+    manualStep=false;
     if (done || !value) {
       reportSearchError("The search ended without a final equation.");
       return;
@@ -1380,10 +2624,11 @@
     if (complete) {
       playing=false;
       closeWorker();
+      localSearch=null;
       $("search-status").textContent="Complete · "+count(ranked)+" ranked · "+count(history.length)+" steps";
     } else {
       $("search-status").textContent="Step "+count(history.length)+" · "+value.phase;
-      if (playing) timer=setTimeout(requestStep,45);
+      if (playing) timer=setTimeout(requestStep, value.ranked ? 28 : 10);
     }
     syncButtons();
   }
@@ -1392,6 +2637,10 @@
     if (playing) {
       playing=false;
       clearTimeout(timer);
+      if (localSearch && !manualStep) {
+        clearTimeout(localTimer);
+        pending=false;
+      }
       $("search-status").textContent="Paused at step "+history.length;
       syncButtons();
       return;
@@ -1453,8 +2702,9 @@
     $("copy-status").textContent="";
     $("metrics").replaceChildren();
     if (model) {
-      const labels = [[step.final && model.validate==null ? "All-data RMSE" : "Fit RMSE", model.train],
-                      ["Held-out RMSE",model.validate],["Score",model.score]];
+      const labels = [[model.allRows ? "All-data RMSE" : "Fit RMSE", model.train],
+                      [model.allRows ? "Held-out RMSE at selection" : "Held-out RMSE",
+                       step.final ? model.selectionRMSE : model.validate],["Score",model.score]];
       for (const [label,value] of labels) if (value!=null) {
         const item=document.createElement("span");
         item.textContent=label+" "+fmt(value);
@@ -1463,6 +2713,7 @@
     }
     $("step-detail").textContent=step?.detail ?? "Run the search or advance one step at a time.";
     $("validation-legend").hidden=!held.size;
+    $("validation-legend-text").textContent=model?.allRows ? "Held out at selection" : "Held out";
     $("model-legend").hidden=!model;
     const agreement=model?.chart?.kind==="agreement";
     $("chart-title").textContent=agreement ? "Observed vs. predicted" : "Data and fit";
@@ -1471,7 +2722,7 @@
     searchChart.show(data,model?.chart,held);
   }
 
-  $("next").addEventListener("click",requestStep);
+  $("next").addEventListener("click",()=>requestStep(true));
   $("run").addEventListener("click",toggleRun);
   $("example").addEventListener("click",()=>loadData(example()));
   $("open-file").addEventListener("click",()=>$("upload").click());
@@ -1510,6 +2761,31 @@
 
   const rangeSettings=new Map();
   let equation, previewLabels=[];
+  $("function-list").textContent=E.functions.join(", ")+". Constants: pi, e, tau, phi.";
+  function currentRanges(inputs) {
+    return new Map(inputs.map(name=>[name,(rangeSettings.get(name) ?? ["1","10"])
+      .map(value=>value.trim()==="" ? NaN : Number(value))]));
+  }
+  function updateAdvice() {
+    if (!equation) { $("row-advice").textContent=""; return; }
+    const ranges=currentRanges(equation.inputs);
+    if ([...ranges.values()].some(([lo,hi])=>!Number.isFinite(hi-lo) || lo>=hi)) {
+      $("row-advice").textContent="Enter valid ranges to see the row recommendation.";return;
+    }
+    const plan=E.samplingPlan(equation,ranges,Number($("noise").value));
+    if ($("auto-rows").checked) $("row-count").value=plan.rows;
+    const details=[plan.parameters+" "+plan.basis];
+    if (plan.cycles>=1) details.push("about "+Math.ceil(plan.cycles)+" cycles across the range");
+    if (plan.widths>6) details.push("a narrow or steep feature within the range");
+    if (plan.crossings) details.push(count(plan.crossings)+" rounding boundaries");
+    if (Number($("noise").value)>0) details.push("extra rows for noise");
+    $("row-advice").textContent="Suggested "+count(plan.rows)+" rows for "+details.join(", ")+
+      ". This estimate allows for validation. Typing a row count selects manual sizing."+
+      (plan.capped ? " The estimate exceeds the 20,000-row limit." : "");
+  }
+  $("row-count").addEventListener("input",()=>{$("auto-rows").checked=false;updateAdvice();});
+  $("auto-rows").addEventListener("change",()=>{updateAdvice();invalidatePreview();});
+  $("noise").addEventListener("input",updateAdvice);
   function rangeEditor(input,index,values) {
     const row=document.createElement("div");
     row.className="range-row";
@@ -1528,7 +2804,7 @@
       control.type="number";control.step="any";control.inputMode="decimal";control.id=id;
       control.setAttribute("aria-label",label+" "+input);
       control.value=values[column];
-      control.addEventListener("input",()=>{values[column]=control.value;invalidatePreview();});
+      control.addEventListener("input",()=>{values[column]=control.value;updateAdvice();invalidatePreview();});
       field.append(caption,control);
       row.append(field);
     }
@@ -1548,10 +2824,12 @@
           return rangeEditor(input,index,rangeSettings.get(input));
         }));
       }
+      updateAdvice();
       setPreviewHeaders([...inputs,result]);
       alertAt("generator-error");
     } catch (error) {
       equation=null;
+      updateAdvice();
       $("input-summary").textContent=error.message;
     }
   }
@@ -1612,10 +2890,7 @@
     alertAt("generator-error");
     try {
       equation=E.parseEquation($("generator-equation").value);
-      const ranges=new Map(equation.inputs.map(name=>{
-        const values=rangeSettings.get(name) ?? ["1","10"];
-        return [name,values.map(value=>value.trim()==="" ? NaN : Number(value))];
-      }));
+      const ranges=currentRanges(equation.inputs);
       const seed=$("seed").value.trim();
       const mode=new FormData(event.currentTarget).get("sampling");
       generated=E.generate(equation,ranges,Number($("row-count").value),mode,seed===""?null:Number(seed),Number($("noise").value));
@@ -1648,7 +2923,6 @@
   preview("Generate data to see a preview.");
   loadData(example());
 })();
-
 </script>
 </body>
 </html>
